@@ -77,30 +77,24 @@ module.exports = {
         'accordion-up': {
           from: { height: 'var(--radix-accordion-content-height)' },
           to: { height: '0' }
-        },
-        'fade-in': {
-          from: { opacity: '0', transform: 'translateY(10px)' },
-          to: { opacity: '1', transform: 'translateY(0)' }
-        },
-        'slide-in-left': {
-          from: { opacity: '0', transform: 'translateX(-20px)' },
-          to: { opacity: '1', transform: 'translateX(0)' }
-        },
-        'slide-in-right': {
-          from: { opacity: '0', transform: 'translateX(20px)' },
-          to: { opacity: '1', transform: 'translateX(0)' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        'fade-in': 'fade-in 0.5s ease-out forwards',
-        'slide-in-left': 'slide-in-left 0.5s ease-out forwards',
-        'slide-in-right': 'slide-in-right 0.5s ease-out forwards'
+        'accordion-up': 'accordion-up 0.2s ease-out'
       },
       boxShadow: {
-        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-        'hard': '4px 4px 0px 0px rgba(15, 23, 42, 1)'
+        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.06)',
+        'glow': '0 0 40px rgba(22, 163, 74, 0.15)',
+        'glow-strong': '0 0 60px rgba(22, 163, 74, 0.25)'
+      },
+      backgroundImage: {
+        'grid-pattern': 'linear-gradient(to right, rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,0.03) 1px, transparent 1px)',
+        'hero-gradient': 'radial-gradient(ellipse 80% 50% at 50% -20%, rgba(22, 163, 74, 0.15), transparent)',
+        'card-gradient': 'linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 100%)'
+      },
+      backgroundSize: {
+        'grid': '40px 40px'
       }
     }
   },
