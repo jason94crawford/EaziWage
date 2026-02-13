@@ -98,10 +98,10 @@ export default function AboutPage() {
       <MarketingNav />
       
       {/* Hero */}
-      <section className="pt-32 pb-20 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh" />
-        <div className="absolute inset-0 bg-grid" />
-        <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
+      <section className="pt-32 pb-24 relative overflow-hidden bg-gradient-to-b from-white to-slate-50 dark:from-slate-950 dark:to-slate-900">
+        <div className="absolute inset-0 bg-grid opacity-30" />
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px]" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
@@ -123,12 +123,14 @@ export default function AboutPage() {
       </section>
 
       {/* Stats */}
-      <section className="py-16 bg-slate-900 dark:bg-slate-800">
+      <section className="py-20 bg-slate-900 dark:bg-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, i) => (
               <div key={i} className="text-center">
-                <stat.icon className="w-10 h-10 text-primary mx-auto mb-4" />
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <stat.icon className="w-7 h-7 text-primary" />
+                </div>
                 <p className="text-4xl sm:text-5xl font-bold text-white mb-2">{stat.value}</p>
                 <p className="text-slate-400">{stat.label}</p>
               </div>
