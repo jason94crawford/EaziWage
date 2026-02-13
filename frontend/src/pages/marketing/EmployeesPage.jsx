@@ -114,7 +114,7 @@ const faqs = [
   },
   {
     q: "How fast do I get my money?",
-    a: "Instantly! Funds are sent to your M-PESA or mobile money in under 3 seconds. Bank transfers may take 1-2 days."
+    a: "Instantly! Funds are sent to your Mobile Wallet in under 3 seconds. Bank transfers may take 1-2 days."
   },
   {
     q: "What if my employer isn't registered?",
