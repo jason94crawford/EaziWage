@@ -11,7 +11,7 @@ import { Footer } from '../../components/layout/Footer';
 
 const stats = [
   { value: '50,000+', label: 'Active Workers', icon: Users },
-  { value: 'KES 2B+', label: 'Disbursed', icon: TrendingUp },
+  { value: '$2B+', label: 'Disbursed', icon: TrendingUp },
   { value: '4', label: 'Countries', icon: Globe },
   { value: '500+', label: 'Partner Companies', icon: Building2 },
 ];
@@ -21,25 +21,25 @@ const values = [
     icon: Heart,
     title: 'People First',
     description: 'Every decision we make starts with one question: How does this help workers achieve financial dignity?',
-    color: 'from-rose-500 to-pink-600'
+    color: 'from-primary to-emerald-600'
   },
   {
     icon: Shield,
     title: 'Trust & Transparency',
     description: 'No hidden fees, no fine print. We believe financial services should be clear, honest, and fair.',
-    color: 'from-blue-500 to-indigo-600'
+    color: 'from-emerald-600 to-teal-600'
   },
   {
     icon: Zap,
     title: 'Speed Matters',
     description: 'When you need money, you need it now. We\'ve built our entire platform around instant access.',
-    color: 'from-amber-500 to-orange-600'
+    color: 'from-teal-600 to-primary'
   },
   {
     icon: Target,
     title: 'Local Focus',
     description: 'Built in Africa, for Africa. We understand the unique challenges of working life in East Africa.',
-    color: 'from-emerald-500 to-teal-600'
+    color: 'from-primary to-emerald-500'
   },
 ];
 
@@ -47,7 +47,7 @@ const team = [
   {
     name: 'Daniel Kimani',
     role: 'CEO & Co-Founder',
-    bio: 'Former fintech lead at Safaricom M-PESA. 15+ years in mobile financial services across Africa.',
+    bio: 'Former fintech lead in mobile financial services. 15+ years experience across Africa.',
     avatar: 'DK'
   },
   {
