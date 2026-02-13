@@ -17,7 +17,7 @@ const contactMethods = [
     description: 'Get a response within 24 hours',
     value: 'hello@eaziwage.com',
     href: 'mailto:hello@eaziwage.com',
-    color: 'from-blue-500 to-indigo-600'
+    color: 'from-primary to-emerald-600'
   },
   {
     icon: Phone,
@@ -33,7 +33,7 @@ const contactMethods = [
     description: 'Available 24/7 for quick help',
     value: 'Start a conversation',
     href: '#chat',
-    color: 'from-purple-500 to-pink-600'
+    color: 'from-teal-500 to-primary'
   },
   {
     icon: MapPin,
@@ -41,7 +41,7 @@ const contactMethods = [
     description: 'Come say hello at our office',
     value: 'Westlands, Nairobi',
     href: '#location',
-    color: 'from-amber-500 to-orange-600'
+    color: 'from-primary to-emerald-500'
   },
 ];
 
