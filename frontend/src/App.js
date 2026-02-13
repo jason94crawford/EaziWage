@@ -89,6 +89,7 @@ function App() {
           <Route path="/" element={<LandingPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
           <Route path="/employers" element={<EmployersPage />} />
+          <Route path="/employees" element={<EmployeesPage />} />
           <Route path="/pricing" element={<PricingPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
@@ -97,6 +98,7 @@ function App() {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
+          <Route path="/calculator" element={<CalculatorPage />} />
 
           {/* Auth Routes */}
           <Route path="/login" element={<LoginPage />} />
