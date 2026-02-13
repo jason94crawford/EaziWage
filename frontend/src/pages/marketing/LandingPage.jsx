@@ -108,7 +108,7 @@ const testimonials = [
     rating: 5
   },
   {
-    quote: "The speed is unbelievable! I requested KES 5,000 for an emergency and it was in my M-PESA before I could put my phone down. I tell all my colleagues about EaziWage.",
+    quote: "The speed is unbelievable! I requested $50 for an emergency and it was in my Mobile Wallet before I could put my phone down. I tell all my colleagues about EaziWage.",
     author: "Joseph Mugisha",
     role: "Delivery Driver at Glovo",
     location: "Kampala, Uganda",
