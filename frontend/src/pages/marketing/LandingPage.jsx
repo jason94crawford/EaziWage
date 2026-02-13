@@ -23,42 +23,42 @@ const features = [
     icon: Zap,
     title: 'Lightning Fast Transfers',
     description: 'Get your money in under 3 seconds via Mobile Wallet or bank transfer. No waiting, no hassle.',
-    gradient: 'from-amber-500 to-orange-600',
+    gradient: 'from-primary to-emerald-600',
     stats: '< 3 seconds'
   },
   {
     icon: Shield,
     title: 'Bank-Grade Security',
     description: 'Your data is protected with 256-bit encryption, two-factor authentication, and full compliance with local regulations.',
-    gradient: 'from-blue-500 to-indigo-600',
+    gradient: 'from-emerald-500 to-teal-600',
     stats: '256-bit encrypted'
   },
   {
     icon: Banknote,
     title: 'Zero Interest, Always',
     description: 'Access your earned wages, not a loan. One transparent fee, no hidden charges, no compounding interest.',
-    gradient: 'from-emerald-500 to-teal-600',
+    gradient: 'from-teal-500 to-primary',
     stats: '0% interest'
   },
   {
     icon: Lock,
     title: 'Privacy Protected',
     description: 'Your employer only sees aggregated data. Your personal transactions and financial details stay completely private.',
-    gradient: 'from-purple-500 to-pink-600',
+    gradient: 'from-primary to-emerald-500',
     stats: '100% private'
   },
   {
     icon: Clock,
     title: '24/7 Availability',
     description: 'Access your wages anytime, anywhere. Our platform never sleeps, so you can get funds when you need them most.',
-    gradient: 'from-cyan-500 to-blue-600',
+    gradient: 'from-emerald-600 to-teal-600',
     stats: 'Always on'
   },
   {
     icon: Target,
     title: 'Smart Limits',
     description: 'Responsible access with built-in safeguards. Access up to 50% of earned wages to maintain financial balance.',
-    gradient: 'from-rose-500 to-red-600',
+    gradient: 'from-teal-600 to-primary',
     stats: 'Up to 50%'
   },
 ];
