@@ -144,7 +144,7 @@ const faqs = {
   technical: [
     {
       q: "What payment methods are supported?",
-      a: "We support all major mobile money providers: M-PESA (Kenya, Tanzania), MTN Mobile Money (Uganda, Rwanda), Airtel Money (all markets), and Tigo Pesa (Tanzania). Bank transfers are also available."
+      a: "We support all major Mobile Wallet providers including MTN Mobile Money, Airtel Money, and other local mobile money services across all markets. Bank transfers are also available."
     },
     {
       q: "Is there a mobile app?",
