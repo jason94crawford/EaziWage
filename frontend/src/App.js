@@ -14,15 +14,21 @@ import RegisterPage from "./pages/auth/RegisterPage";
 import EmployeeDashboard from "./pages/employee/Dashboard";
 import EmployeeOnboarding from "./pages/employee/Onboarding";
 import RequestAdvance from "./pages/employee/RequestAdvance";
+import EmployeeTransactions from "./pages/employee/Transactions";
+import EmployeeKYC from "./pages/employee/KYC";
 
 // Employer Pages
 import EmployerDashboard from "./pages/employer/Dashboard";
 import EmployerOnboarding from "./pages/employer/Onboarding";
+import EmployerEmployees from "./pages/employer/Employees";
+import EmployerPayroll from "./pages/employer/Payroll";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminEmployers from "./pages/admin/Employers";
 import AdminAdvances from "./pages/admin/Advances";
+import AdminKYCReview from "./pages/admin/KYCReview";
+import AdminRiskScoring from "./pages/admin/RiskScoring";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -34,7 +40,6 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   }
 
   if (allowedRoles && !allowedRoles.includes(user.role)) {
-    // Redirect to appropriate dashboard based on role
     switch (user.role) {
       case 'admin':
         return <Navigate to="/admin" replace />;
@@ -50,10 +55,13 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
   return children;
 };
 
-// Placeholder pages for routes that need basic implementation
+// Placeholder pages for routes not yet implemented
 const PlaceholderPage = ({ title, description }) => (
-  <div className="min-h-screen bg-slate-50 flex items-center justify-center">
-    <div className="text-center">
+  <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div className="text-center max-w-md">
+      <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+        <span className="text-2xl">🚧</span>
+      </div>
       <h1 className="font-heading text-2xl font-bold text-slate-900 mb-2">{title}</h1>
       <p className="text-slate-500">{description}</p>
     </div>
@@ -67,13 +75,12 @@ function App() {
         <Routes>
           {/* Marketing / Public Routes */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/employers" element={<PlaceholderPage title="For Employers" description="Employer information page" />} />
-          <Route path="/how-it-works" element={<PlaceholderPage title="How it Works" description="Step-by-step guide" />} />
-          <Route path="/pricing" element={<PlaceholderPage title="Pricing" description="Transparent pricing information" />} />
-          <Route path="/resources" element={<PlaceholderPage title="Resources" description="Helpful resources and guides" />} />
-          <Route path="/company" element={<PlaceholderPage title="About Us" description="Learn about EaziWage" />} />
+          <Route path="/how-it-works" element={<PlaceholderPage title="How it Works" description="Step-by-step guide to using EaziWage" />} />
+          <Route path="/employers" element={<PlaceholderPage title="For Employers" description="Learn how EaziWage benefits your company" />} />
+          <Route path="/pricing" element={<PlaceholderPage title="Pricing" description="Transparent fee structure" />} />
+          <Route path="/about" element={<PlaceholderPage title="About Us" description="Our mission to empower African workers" />} />
           <Route path="/contact" element={<PlaceholderPage title="Contact Us" description="Get in touch with our team" />} />
-          <Route path="/partners" element={<PlaceholderPage title="Partners" description="Our partner network" />} />
+          <Route path="/partners" element={<PlaceholderPage title="Partners" description="Join our partner ecosystem" />} />
           <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" description="How we protect your data" />} />
           <Route path="/terms" element={<PlaceholderPage title="Terms of Service" description="Terms and conditions" />} />
 
@@ -99,12 +106,12 @@ function App() {
           } />
           <Route path="/employee/transactions" element={
             <ProtectedRoute allowedRoles={['employee']}>
-              <PlaceholderPage title="Transactions" description="Your transaction history" />
+              <EmployeeTransactions />
             </ProtectedRoute>
           } />
           <Route path="/employee/kyc" element={
             <ProtectedRoute allowedRoles={['employee']}>
-              <PlaceholderPage title="KYC Documents" description="Upload and manage your documents" />
+              <EmployeeKYC />
             </ProtectedRoute>
           } />
           <Route path="/employee/profile" element={
@@ -126,22 +133,22 @@ function App() {
           } />
           <Route path="/employer/employees" element={
             <ProtectedRoute allowedRoles={['employer']}>
-              <PlaceholderPage title="Employees" description="Manage your employees" />
+              <EmployerEmployees />
             </ProtectedRoute>
           } />
           <Route path="/employer/payroll" element={
             <ProtectedRoute allowedRoles={['employer']}>
-              <PlaceholderPage title="Payroll" description="Upload and manage payroll data" />
+              <EmployerPayroll />
             </ProtectedRoute>
           } />
           <Route path="/employer/advances" element={
             <ProtectedRoute allowedRoles={['employer']}>
-              <PlaceholderPage title="Advances" description="View employee advances" />
+              <PlaceholderPage title="Advances" description="View employee wage advances" />
             </ProtectedRoute>
           } />
           <Route path="/employer/reports" element={
             <ProtectedRoute allowedRoles={['employer']}>
-              <PlaceholderPage title="Reports" description="Analytics and reports" />
+              <PlaceholderPage title="Reports" description="Analytics and reporting" />
             </ProtectedRoute>
           } />
           <Route path="/employer/settings" element={
@@ -173,12 +180,12 @@ function App() {
           } />
           <Route path="/admin/kyc" element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <PlaceholderPage title="KYC Review" description="Review KYC documents" />
+              <AdminKYCReview />
             </ProtectedRoute>
           } />
           <Route path="/admin/risk-scoring" element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <PlaceholderPage title="Risk Scoring" description="Calculate and update risk scores" />
+              <AdminRiskScoring />
             </ProtectedRoute>
           } />
           <Route path="/admin/settings" element={
@@ -191,7 +198,7 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-      <Toaster position="top-right" />
+      <Toaster position="top-right" richColors />
     </div>
   );
 }
