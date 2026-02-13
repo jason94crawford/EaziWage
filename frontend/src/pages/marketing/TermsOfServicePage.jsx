@@ -106,7 +106,7 @@ EaziWage does not charge:
 - If your wages are insufficient to cover the full deduction, the remaining balance may be deducted from subsequent paychecks
 
 **Payment Processing**
-- Advances are disbursed via M-PESA, MTN Mobile Money, Airtel Money, or bank transfer
+- Advances are disbursed via Mobile Wallet (MTN Mobile Money, Airtel Money, etc.) or bank transfer
 - Disbursement is typically instant for mobile money (under 3 seconds)
 - Bank transfers may take 1-2 business days
 - We are not responsible for delays caused by third-party payment providers`
