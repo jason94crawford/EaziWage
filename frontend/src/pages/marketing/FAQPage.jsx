@@ -130,7 +130,7 @@ const faqs = {
     },
     {
       q: "What security measures protect my account?",
-      a: "Multiple layers: (1) Encrypted data transmission, (2) Two-factor authentication option, (3) Biometric login on mobile, (4) Session timeouts, (5) Suspicious activity monitoring, (6) Secure M-PESA integration."
+      a: "Multiple layers: (1) Encrypted data transmission, (2) Two-factor authentication option, (3) Biometric login on mobile, (4) Session timeouts, (5) Suspicious activity monitoring, (6) Secure Mobile Wallet integration."
     },
     {
       q: "Is EaziWage regulated?",
