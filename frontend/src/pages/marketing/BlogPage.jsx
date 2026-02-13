@@ -68,7 +68,7 @@ const blogPosts = [
   },
   {
     title: "Mobile Money Integration: Building for East Africa",
-    excerpt: "Technical insights into how we built seamless M-PESA and MTN Mobile Money integrations.",
+    excerpt: "Technical insights into how we built seamless Mobile Wallet and MTN Mobile Money integrations.",
     author: "Samuel Osei",
     date: "November 8, 2025",
     readTime: "8 min read",
