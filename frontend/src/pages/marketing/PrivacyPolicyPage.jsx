@@ -234,8 +234,9 @@ export default function PrivacyPolicyPage() {
       
       {/* Hero */}
       <section className="pt-32 pb-12 relative overflow-hidden">
-        <div className="absolute inset-0 gradient-mesh opacity-50" />
-        <div className="absolute inset-0 bg-grid opacity-50" />
+        <div className="absolute inset-0 gradient-mesh" />
+        <div className="absolute inset-0 bg-grid" />
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl">
