@@ -28,6 +28,7 @@ Features include mobile money (M-PESA, MTN, Airtel) and bank transfer disburseme
 All marketing pages redesigned with modern "African-fintech" aesthetic:
 
 - ✅ **Landing Page** (/) - Hero section with phone mockup, animated stats, features, testimonials, countries, CTAs
+- ✅ **Africa Map Component** - Professional animated map using react-simple-maps library showing full African continent with Kenya, Uganda, Tanzania, Rwanda highlighted in green with pulsing city markers (Nairobi, Kampala, Dar es Salaam, Kigali)
 - ✅ **About Page** (/about) - Company story, mission, values, team, timeline, investors
 - ✅ **How It Works** (/how-it-works) - 4-step process with sleek infographics, benefits, FAQ, video section
 - ✅ **For Employers** (/employers) - Benefits, features, process, testimonials
