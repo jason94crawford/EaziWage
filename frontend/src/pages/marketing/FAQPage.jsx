@@ -151,7 +151,7 @@ const faqs = {
       a: "Yes! EaziWage is available as a mobile app for iOS and Android, as well as a web application. All features are available across all platforms with real-time sync."
     },
     {
-      q: "What if M-PESA or my mobile money is down?",
+      q: "What if my Mobile Wallet provider is down?",
       a: "We monitor mobile money provider status continuously. If your primary provider is experiencing issues, you can choose an alternative payment method. We'll also notify you of any known outages."
     },
     {
