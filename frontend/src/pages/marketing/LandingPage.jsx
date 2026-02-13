@@ -22,7 +22,7 @@ const features = [
   {
     icon: Zap,
     title: 'Lightning Fast Transfers',
-    description: 'Get your money in under 3 seconds via M-PESA, MTN Mobile Money, or Airtel Money. No waiting, no hassle.',
+    description: 'Get your money in under 3 seconds via Mobile Wallet or bank transfer. No waiting, no hassle.',
     gradient: 'from-amber-500 to-orange-600',
     stats: '< 3 seconds'
   },
