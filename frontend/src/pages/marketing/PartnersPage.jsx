@@ -17,7 +17,7 @@ const partnerTypes = [
     benefits: ['Free implementation', 'Dedicated support', 'Custom branding available'],
     cta: 'Register as Employer',
     link: '/register?role=employer',
-    color: 'from-blue-500 to-indigo-600'
+    color: 'from-primary to-emerald-600'
   },
   {
     icon: Banknote,
@@ -35,7 +35,7 @@ const partnerTypes = [
     benefits: ['Co-branded solutions', 'Data insights', 'Shared distribution'],
     cta: 'Explore Partnership',
     link: '/contact?type=financial',
-    color: 'from-purple-500 to-pink-600'
+    color: 'from-teal-500 to-primary'
   },
   {
     icon: Users,
@@ -44,7 +44,7 @@ const partnerTypes = [
     benefits: ['Referral commissions', 'Training & resources', 'Partner portal access'],
     cta: 'Join Referral Program',
     link: '/contact?type=referral',
-    color: 'from-amber-500 to-orange-600'
+    color: 'from-primary to-emerald-500'
   },
 ];
 
