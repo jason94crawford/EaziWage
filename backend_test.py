@@ -227,6 +227,66 @@ class EaziWageAPITester:
         
         return self.run_test("Employer Dashboard", "GET", "dashboard/employer", 200, token=self.employer_token)
 
+    def test_admin_login(self):
+        """Test admin login with provided credentials"""
+        admin_data = {
+            "email": "superadmin@eaziwage.com",
+            "password": "Admin@12345"
+        }
+        
+        success, response = self.run_test("Admin Login", "POST", "auth/login", 200, admin_data)
+        if success and 'access_token' in response:
+            self.admin_token = response['access_token']
+            print(f"   Admin token obtained: {self.admin_token[:20]}...")
+        return success, response
+
+    def test_admin_dashboard(self):
+        """Test admin dashboard endpoint"""
+        if not self.admin_token:
+            print("⚠️ Skipping - No admin token available")
+            return False, {}
+        
+        return self.run_test("Admin Dashboard", "GET", "dashboard/admin", 200, token=self.admin_token)
+
+    def test_kyc_endpoints(self):
+        """Test KYC document endpoints"""
+        if not self.employee_token:
+            print("⚠️ Skipping - No employee token available")
+            return False, {}
+        
+        # Test KYC document upload
+        doc_data = {
+            "document_type": "national_id",
+            "document_url": "/uploads/kyc/test_id.jpg",
+            "document_number": "12345678"
+        }
+        
+        success, response = self.run_test("KYC Document Upload", "POST", "kyc/documents", 200, 
+                                        doc_data, token=self.employee_token)
+        
+        # Test KYC document list
+        self.run_test("KYC Document List", "GET", "kyc/documents", 200, token=self.employee_token)
+        
+        return success, response
+
+    def test_risk_scoring_endpoints(self):
+        """Test risk scoring endpoints"""
+        if not self.admin_token or not self.employer_id:
+            print("⚠️ Skipping - No admin token or employer ID available")
+            return False, {}
+        
+        # Test employer risk scoring
+        risk_data = {
+            "legal_compliance": {"registration_status": 4, "tax_compliance": 3, "ewa_agreement": 5},
+            "financial_health": {"audited_financials": 3, "liquidity_ratio": 4, "payroll_sustainability": 3},
+            "operational": {"employee_count": 4, "churn_rate": 3, "payroll_integration": 4},
+            "sector_exposure": {"industry_risk": 3, "regulatory_exposure": 4},
+            "aml_transparency": {"beneficial_ownership": 4, "pep_screening": 5}
+        }
+        
+        return self.run_test("Employer Risk Scoring", "POST", f"risk-scores/employer/{self.employer_id}", 
+                           200, risk_data, token=self.admin_token)
+
     def test_role_based_access(self):
         """Test role-based access control"""
         if not self.employee_token or not self.employer_token:
