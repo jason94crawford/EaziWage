@@ -1,89 +1,152 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Twitter, Linkedin, Facebook, Mail, Phone, MapPin } from 'lucide-react';
+import { Twitter, Linkedin, Facebook, Instagram, Mail, Phone, MapPin, ArrowUpRight } from 'lucide-react';
+
+const footerLinks = {
+  product: [
+    { label: 'How it Works', href: '/how-it-works' },
+    { label: 'For Employers', href: '/employers' },
+    { label: 'Pricing', href: '/pricing' },
+    { label: 'Mobile App', href: '/app' },
+  ],
+  company: [
+    { label: 'About Us', href: '/about' },
+    { label: 'Careers', href: '/careers' },
+    { label: 'Press', href: '/press' },
+    { label: 'Contact', href: '/contact' },
+  ],
+  resources: [
+    { label: 'Help Center', href: '/help' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'API Docs', href: '/docs' },
+    { label: 'Partners', href: '/partners' },
+  ],
+  legal: [
+    { label: 'Privacy Policy', href: '/privacy' },
+    { label: 'Terms of Service', href: '/terms' },
+    { label: 'Cookie Policy', href: '/cookies' },
+  ],
+};
 
 export const Footer = () => {
   return (
     <footer className="bg-slate-900 text-slate-300">
+      {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Brand */}
-          <div>
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">E</span>
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-12">
+          {/* Brand Column */}
+          <div className="col-span-2">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-xl">E</span>
               </div>
               <span className="font-heading font-bold text-xl text-white">EaziWage</span>
             </div>
-            <p className="text-sm text-slate-400 mb-6">
-              Disruptive earned wage access for employees across East Africa. 
-              No loans. No interest. Just your money, when you need it.
+            <p className="text-slate-400 mb-6 max-w-sm leading-relaxed">
+              Empowering African workers with instant access to earned wages. 
+              No loans, no interest - just financial freedom.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="#" className="text-slate-400 hover:text-white transition-colors duration-200">
-                <Facebook className="w-5 h-5" />
-              </a>
+              {[
+                { icon: Twitter, href: '#' },
+                { icon: Linkedin, href: '#' },
+                { icon: Facebook, href: '#' },
+                { icon: Instagram, href: '#' },
+              ].map((social, i) => (
+                <a 
+                  key={i}
+                  href={social.href}
+                  className="w-10 h-10 bg-slate-800 rounded-lg flex items-center justify-center text-slate-400 hover:bg-primary hover:text-white transition-colors duration-200"
+                >
+                  <social.icon className="w-5 h-5" />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Product */}
+          {/* Link Columns */}
           <div>
             <h3 className="font-heading font-semibold text-white mb-4">Product</h3>
             <ul className="space-y-3">
-              <li><Link to="/how-it-works" className="text-slate-400 hover:text-white transition-colors duration-200">How it Works</Link></li>
-              <li><Link to="/employers" className="text-slate-400 hover:text-white transition-colors duration-200">For Employers</Link></li>
-              <li><Link to="/pricing" className="text-slate-400 hover:text-white transition-colors duration-200">Pricing</Link></li>
-              <li><Link to="/resources" className="text-slate-400 hover:text-white transition-colors duration-200">Resources</Link></li>
+              {footerLinks.product.map((link) => (
+                <li key={link.href}>
+                  <Link to={link.href} className="text-slate-400 hover:text-white transition-colors duration-200">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Company */}
           <div>
             <h3 className="font-heading font-semibold text-white mb-4">Company</h3>
             <ul className="space-y-3">
-              <li><Link to="/company" className="text-slate-400 hover:text-white transition-colors duration-200">About Us</Link></li>
-              <li><Link to="/careers" className="text-slate-400 hover:text-white transition-colors duration-200">Careers</Link></li>
-              <li><Link to="/partners" className="text-slate-400 hover:text-white transition-colors duration-200">Partners</Link></li>
-              <li><Link to="/contact" className="text-slate-400 hover:text-white transition-colors duration-200">Contact</Link></li>
+              {footerLinks.company.map((link) => (
+                <li key={link.href}>
+                  <Link to={link.href} className="text-slate-400 hover:text-white transition-colors duration-200">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact */}
+          <div>
+            <h3 className="font-heading font-semibold text-white mb-4">Resources</h3>
+            <ul className="space-y-3">
+              {footerLinks.resources.map((link) => (
+                <li key={link.href}>
+                  <Link to={link.href} className="text-slate-400 hover:text-white transition-colors duration-200">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Contact Column */}
           <div>
             <h3 className="font-heading font-semibold text-white mb-4">Contact</h3>
             <ul className="space-y-3">
-              <li className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-primary" />
-                <a href="mailto:support@eaziwage.com" className="text-slate-400 hover:text-white transition-colors duration-200">
-                  support@eaziwage.com
+              <li>
+                <a href="mailto:hello@eaziwage.com" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-200">
+                  <Mail className="w-4 h-4 text-primary" />
+                  hello@eaziwage.com
                 </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-primary" />
-                <span>+254 700 000 000</span>
+              <li>
+                <a href="tel:+254700000000" className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors duration-200">
+                  <Phone className="w-4 h-4 text-primary" />
+                  +254 700 000 000
+                </a>
               </li>
-              <li className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-primary mt-1" />
-                <span>Nairobi, Kenya</span>
+              <li className="flex items-start gap-2 text-slate-400">
+                <MapPin className="w-4 h-4 text-primary mt-1 flex-shrink-0" />
+                <span>Westlands, Nairobi<br />Kenya</span>
               </li>
             </ul>
           </div>
         </div>
+      </div>
 
-        {/* Bottom */}
-        <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-slate-500">
-            &copy; {new Date().getFullYear()} EaziWage. All rights reserved.
-          </p>
-          <div className="flex gap-6 text-sm">
-            <Link to="/privacy" className="text-slate-500 hover:text-white transition-colors duration-200">Privacy Policy</Link>
-            <Link to="/terms" className="text-slate-500 hover:text-white transition-colors duration-200">Terms of Service</Link>
+      {/* Bottom Bar */}
+      <div className="border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-slate-500">
+              © {new Date().getFullYear()} EaziWage. All rights reserved.
+            </p>
+            <div className="flex flex-wrap justify-center gap-6">
+              {footerLinks.legal.map((link) => (
+                <Link 
+                  key={link.href}
+                  to={link.href}
+                  className="text-sm text-slate-500 hover:text-white transition-colors duration-200"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

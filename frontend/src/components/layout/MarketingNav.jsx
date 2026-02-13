@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Menu, X, ChevronDown, User, LogOut 
-} from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import {
   DropdownMenu,
@@ -16,18 +14,26 @@ import { logout } from '../../lib/auth';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/employers', label: 'Employers' },
-  { href: '/how-it-works', label: 'How it works' },
+  { href: '/how-it-works', label: 'How it Works' },
+  { href: '/employers', label: 'For Employers' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/resources', label: 'Resources' },
-  { href: '/company', label: 'Company' },
+  { href: '/about', label: 'About' },
 ];
 
 export const MarketingNav = () => {
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('eaziwage_user') || 'null');
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -45,28 +51,33 @@ export const MarketingNav = () => {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+      isScrolled 
+        ? "bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm" 
+        : "bg-transparent"
+    )}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2" data-testid="logo-link">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">E</span>
+          <Link to="/" className="flex items-center gap-3 group" data-testid="logo-link">
+            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+              <span className="text-white font-bold text-xl">E</span>
             </div>
             <span className="font-heading font-bold text-xl text-slate-900">EaziWage</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-8">
+          <div className="hidden lg:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
                 to={link.href}
                 className={cn(
-                  "text-sm font-medium transition-colors duration-200",
+                  "px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200",
                   location.pathname === link.href
-                    ? "text-primary"
-                    : "text-slate-600 hover:text-slate-900"
+                    ? "text-primary bg-primary/5"
+                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                 )}
                 data-testid={`nav-${link.label.toLowerCase().replace(/\s/g, '-')}`}
               >
@@ -76,34 +87,44 @@ export const MarketingNav = () => {
           </div>
 
           {/* Desktop Actions */}
-          <div className="hidden lg:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3">
             {user ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="flex items-center gap-2" data-testid="user-menu-btn">
-                    <User className="w-4 h-4" />
-                    <span>{user.full_name}</span>
-                    <ChevronDown className="w-4 h-4" />
+                  <Button variant="ghost" className="flex items-center gap-2 h-10" data-testid="user-menu-btn">
+                    <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                      <User className="w-4 h-4 text-primary" />
+                    </div>
+                    <span className="font-medium">{user.full_name?.split(' ')[0]}</span>
+                    <ChevronDown className="w-4 h-4 text-slate-400" />
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuContent align="end" className="w-56">
+                  <div className="px-3 py-2">
+                    <p className="font-medium text-slate-900">{user.full_name}</p>
+                    <p className="text-sm text-slate-500">{user.email}</p>
+                  </div>
+                  <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => navigate(getDashboardLink())} data-testid="dashboard-link">
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
                     Dashboard
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} data-testid="logout-btn">
+                  <DropdownMenuItem onClick={handleLogout} className="text-red-600" data-testid="logout-btn">
                     <LogOut className="w-4 h-4 mr-2" />
-                    Logout
+                    Sign out
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
               <>
                 <Link to="/login">
-                  <Button variant="ghost" data-testid="login-btn">Login</Button>
+                  <Button variant="ghost" className="h-10 px-4 font-medium" data-testid="login-btn">
+                    Sign in
+                  </Button>
                 </Link>
                 <Link to="/register">
-                  <Button className="bg-primary text-white hover:bg-primary/90" data-testid="get-started-btn">
+                  <Button className="bg-primary text-white hover:bg-primary/90 h-10 px-5 rounded-xl font-medium" data-testid="get-started-btn">
                     Get Started
                   </Button>
                 </Link>
@@ -113,7 +134,7 @@ export const MarketingNav = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="lg:hidden p-2"
+            className="lg:hidden p-2 rounded-lg hover:bg-slate-100 transition-colors"
             onClick={() => setIsOpen(!isOpen)}
             data-testid="mobile-menu-btn"
           >
@@ -123,17 +144,17 @@ export const MarketingNav = () => {
 
         {/* Mobile Navigation */}
         {isOpen && (
-          <div className="lg:hidden py-4 border-t border-slate-100">
-            <div className="flex flex-col gap-2">
+          <div className="lg:hidden py-4 border-t border-slate-100 bg-white">
+            <div className="flex flex-col gap-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   to={link.href}
                   className={cn(
-                    "px-4 py-2 rounded-lg text-sm font-medium",
+                    "px-4 py-3 rounded-lg font-medium transition-colors",
                     location.pathname === link.href
-                      ? "text-primary bg-primary/10"
-                      : "text-slate-600 hover:bg-slate-100"
+                      ? "text-primary bg-primary/5"
+                      : "text-slate-600 hover:bg-slate-50"
                   )}
                   onClick={() => setIsOpen(false)}
                 >
@@ -145,35 +166,27 @@ export const MarketingNav = () => {
                   <>
                     <Link
                       to={getDashboardLink()}
-                      className="block px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
+                      className="block px-4 py-3 font-medium text-slate-600 hover:bg-slate-50 rounded-lg"
                       onClick={() => setIsOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <button
                       onClick={() => { handleLogout(); setIsOpen(false); }}
-                      className="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg"
+                      className="w-full text-left px-4 py-3 font-medium text-red-600 hover:bg-red-50 rounded-lg"
                     >
-                      Logout
+                      Sign out
                     </button>
                   </>
                 ) : (
-                  <>
-                    <Link
-                      to="/login"
-                      className="block px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Login
+                  <div className="flex flex-col gap-2 px-4">
+                    <Link to="/login" onClick={() => setIsOpen(false)}>
+                      <Button variant="outline" className="w-full h-11">Sign in</Button>
                     </Link>
-                    <Link
-                      to="/register"
-                      className="block px-4 py-2 text-sm font-medium text-primary hover:bg-primary/10 rounded-lg"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Get Started
+                    <Link to="/register" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full h-11 bg-primary">Get Started</Button>
                     </Link>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
