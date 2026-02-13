@@ -11,29 +11,29 @@ const footerLinks = {
   product: [
     { label: 'How it Works', href: '/how-it-works' },
     { label: 'For Employers', href: '/employers' },
+    { label: 'For Employees', href: '/employees' },
     { label: 'Pricing', href: '/pricing' },
-    { label: 'Mobile App', href: '/app' },
-    { label: 'API Documentation', href: '/docs' },
+    { label: 'Calculator', href: '/calculator' },
   ],
   company: [
     { label: 'About Us', href: '/about' },
-    { label: 'Careers', href: '/careers' },
-    { label: 'Press & Media', href: '/press' },
     { label: 'Partners', href: '/partners' },
     { label: 'Contact', href: '/contact' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'FAQ', href: '/faq' },
   ],
   resources: [
-    { label: 'Help Center', href: '/help' },
+    { label: 'Help Center', href: '/faq' },
+    { label: 'Wage Calculator', href: '/calculator' },
     { label: 'Blog', href: '/blog' },
-    { label: 'Success Stories', href: '/stories' },
-    { label: 'Webinars', href: '/webinars' },
-    { label: 'Downloads', href: '/downloads' },
+    { label: 'For Companies', href: '/employers' },
+    { label: 'Get Started', href: '/register' },
   ],
   legal: [
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Terms of Service', href: '/terms' },
     { label: 'Cookie Policy', href: '/cookies' },
-    { label: 'Security', href: '/security' },
+    { label: 'Data Protection', href: '/privacy#data-security' },
   ],
 };
 
