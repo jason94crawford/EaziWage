@@ -56,7 +56,7 @@ const faqs = {
     },
     {
       q: "How fast will I receive my money?",
-      a: "Instantly! Once you confirm the advance, funds are sent to your M-PESA or mobile money account in under 3 seconds. Bank transfers may take 1-2 business days depending on your bank."
+      a: "Instantly! Once you confirm the advance, funds are sent to your Mobile Wallet in under 3 seconds. Bank transfers may take 1-2 business days depending on your bank."
     },
     {
       q: "When do I pay back the advance?",
