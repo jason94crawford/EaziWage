@@ -144,7 +144,7 @@ const testimonials = [
 const countries = [
   { name: 'Kenya', flag: '🇰🇪', providers: ['Mobile Wallet', 'Airtel Money'], users: '25,000+', currency: 'KES' },
   { name: 'Uganda', flag: '🇺🇬', providers: ['MTN MoMo', 'Airtel Money'], users: '12,000+', currency: 'UGX' },
-  { name: 'Tanzania', flag: '🇹🇿', providers: ['M-PESA', 'Tigo Pesa'], users: '8,000+', currency: 'TZS' },
+  { name: 'Tanzania', flag: '🇹🇿', providers: ['Mobile Wallet', 'Tigo Pesa'], users: '8,000+', currency: 'TZS' },
   { name: 'Rwanda', flag: '🇷🇼', providers: ['MTN MoMo', 'Airtel Money'], users: '5,000+', currency: 'RWF' },
 ];
 
