@@ -516,7 +516,7 @@ export default function LandingPage() {
           </div>
 
           <div className="text-center mt-10">
-            <Link to="/help">
+            <Link to="/faq">
               <Button variant="outline" size="lg" className="rounded-xl">
                 View All FAQs
                 <ArrowRight className="w-4 h-4 ml-2" />
