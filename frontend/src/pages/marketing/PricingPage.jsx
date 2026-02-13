@@ -1,114 +1,91 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  ArrowRight, Check, X, HelpCircle, Building2, Users, 
-  Zap, Shield, Clock, Star, Calculator, ChevronDown
+  ArrowRight, Check, X, HelpCircle, Calculator, Shield, 
+  Zap, Clock, CreditCard, Banknote, Users, Building2
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { MarketingNav } from '../../components/layout/MarketingNav';
 import { Footer } from '../../components/layout/Footer';
 
-const plans = [
+const feeStructure = [
   {
-    name: 'Starter',
-    description: 'For small businesses getting started with EWA',
-    priceRange: '5.5% - 6.5%',
-    priceNote: 'per advance',
-    highlight: false,
-    features: [
-      { text: 'Up to 50 employees', included: true },
-      { text: 'Basic payroll integration', included: true },
-      { text: 'M-PESA disbursement', included: true },
-      { text: 'Standard support (9-5)', included: true },
-      { text: 'Monthly reporting', included: true },
-      { text: 'API access', included: false },
-      { text: 'Custom branding', included: false },
-      { text: 'Dedicated account manager', included: false },
-    ],
-    cta: 'Get Started',
-    ctaLink: '/register?role=employer&plan=starter'
+    title: '0% Interest Charges',
+    description: 'Enjoy the freedom of accessing your wages without any interest. This is your money, not a loan.',
+    icon: Banknote,
+    highlight: true
   },
   {
-    name: 'Business',
-    description: 'For growing companies with larger workforces',
-    priceRange: '4.0% - 5.5%',
-    priceNote: 'per advance',
-    highlight: true,
-    badge: 'Most Popular',
-    features: [
-      { text: 'Up to 500 employees', included: true },
-      { text: 'Advanced payroll integration', included: true },
-      { text: 'M-PESA + Bank transfers', included: true },
-      { text: 'Priority support (24/7)', included: true },
-      { text: 'Real-time reporting', included: true },
-      { text: 'API access', included: true },
-      { text: 'Custom branding', included: false },
-      { text: 'Dedicated account manager', included: true },
-    ],
-    cta: 'Start Free Trial',
-    ctaLink: '/register?role=employer&plan=business'
+    title: 'No Subscription Fees',
+    description: 'Access our services without any recurring subscription or monthly fees. Pay only when you use it.',
+    icon: CreditCard,
+    highlight: false
   },
   {
-    name: 'Enterprise',
-    description: 'For large organizations with custom needs',
-    priceRange: '3.5% - 4.0%',
-    priceNote: 'per advance',
-    highlight: false,
-    features: [
-      { text: 'Unlimited employees', included: true },
-      { text: 'Custom integrations', included: true },
-      { text: 'All payment methods', included: true },
-      { text: 'Dedicated support team', included: true },
-      { text: 'Advanced analytics', included: true },
-      { text: 'Full API access', included: true },
-      { text: 'White-label solution', included: true },
-      { text: 'Dedicated account manager', included: true },
-    ],
-    cta: 'Contact Sales',
-    ctaLink: '/contact?subject=enterprise'
-  }
-];
-
-const feeBreakdown = [
-  { label: 'Base Platform Fee', value: '3.5%', description: 'Covers our operational costs and technology' },
-  { label: 'Risk Assessment', value: '0% - 1.5%', description: 'Based on employee tenure and history' },
-  { label: 'Processing Fee', value: '0% - 1.5%', description: 'Mobile money or bank transfer costs' },
+    title: '$0.80 Processing Fee',
+    description: 'A fixed processing fee per transaction covers mobile money and bank transfer costs.',
+    icon: Zap,
+    highlight: false
+  },
+  {
+    title: 'No Hidden Fees',
+    description: 'Complete transparency with no hidden charges. What you see is exactly what you pay.',
+    icon: Shield,
+    highlight: false
+  },
+  {
+    title: '3.5% - 6% Application Fee',
+    description: 'A transparent application fee based on your eligibility and the amount you access.',
+    icon: Calculator,
+    highlight: true
+  },
+  {
+    title: 'No Data Fees',
+    description: 'No charges for accessing your data, viewing history, or retrieving your information.',
+    icon: Users,
+    highlight: false
+  },
 ];
 
 const comparisons = [
-  { feature: 'Interest Rate', eaziwage: '0%', loan: '30-120% APR', bank: '20-50% APR' },
-  { feature: 'Approval Time', eaziwage: 'Instant', loan: '1-3 days', bank: '1-2 weeks' },
-  { feature: 'Credit Check', eaziwage: 'None', loan: 'Required', bank: 'Required' },
-  { feature: 'Hidden Fees', eaziwage: 'None', loan: 'Many', bank: 'Some' },
-  { feature: 'Debt Created', eaziwage: 'No', loan: 'Yes', bank: 'Yes' },
-  { feature: 'Impact on Credit', eaziwage: 'None', loan: 'Negative', bank: 'Negative' },
+  { feature: 'Interest Rate', eaziwage: '0%', payday: '30-120% APR', bank: '20-50% APR' },
+  { feature: 'Application Fee', eaziwage: '3.5% - 6%', payday: 'Up to 15%', bank: 'Varies' },
+  { feature: 'Processing Fee', eaziwage: '$0.80 fixed', payday: 'Variable', bank: '$5-25' },
+  { feature: 'Hidden Fees', eaziwage: 'None', payday: 'Many', bank: 'Some' },
+  { feature: 'Approval Time', eaziwage: 'Instant', payday: '1-3 days', bank: '1-2 weeks' },
+  { feature: 'Credit Check', eaziwage: 'Not Required', payday: 'Required', bank: 'Required' },
+  { feature: 'Creates Debt', eaziwage: 'No', payday: 'Yes', bank: 'Yes' },
+  { feature: 'Available 24/7', eaziwage: 'Yes', payday: 'No', bank: 'No' },
 ];
 
 const faqs = [
   {
-    q: 'Who pays the fees — employer or employee?',
-    a: 'The employee pays a small fee on each advance. Employers pay nothing to offer EaziWage as a benefit. This keeps the service sustainable while ensuring workers always have access when they need it.'
+    q: 'What fees will I pay when using EaziWage?',
+    a: 'You pay a small application fee (3.5% - 6%) plus a fixed processing fee of $0.80 per transaction. That\'s it — no interest, no hidden charges, no subscription fees.'
   },
   {
-    q: 'How is my fee rate determined?',
-    a: 'Fee rates depend on your employer\'s plan tier and your personal risk score (based on tenure, advance history, and repayment record). The exact fee is always shown before you confirm any advance.'
+    q: 'Why is there a fee range (3.5% - 6%)?',
+    a: 'The exact fee depends on factors like your employment tenure, advance history, and employer plan. Longer tenure and good history typically result in lower fees.'
   },
   {
-    q: 'Are there any hidden fees or penalties?',
-    a: 'Absolutely not. The fee shown when you request an advance is the only fee you\'ll ever pay. No late fees, no penalties, no hidden charges. Ever.'
+    q: 'Is the processing fee the same for all countries?',
+    a: 'Yes, the processing fee is a fixed $0.80 (converted to local currency) regardless of whether you\'re in Kenya, Uganda, Tanzania, or Rwanda.'
   },
   {
-    q: 'What happens if I take multiple advances?',
-    a: 'Each advance has its own fee calculated independently. There\'s no compounding or stacking of fees. You can take multiple advances up to your available limit.'
+    q: 'Are there any fees for employers?',
+    a: 'No! EaziWage is completely free for employers. There are no setup fees, monthly charges, or per-employee costs. Employers can offer EaziWage as a benefit at zero cost.'
   },
   {
-    q: 'Is there a minimum or maximum advance amount?',
-    a: 'Minimums vary by country (typically KES 500 / UGX 10,000). Maximum is 50% of your earned wages. These limits help ensure responsible usage.'
+    q: 'How does this compare to a payday loan?',
+    a: 'Payday loans typically charge 30-120% APR interest plus various fees. EaziWage has zero interest and much lower total costs. Plus, you\'re accessing your own earned money, not borrowing.'
   },
-  {
-    q: 'Can employers subsidize the fees?',
-    a: 'Yes! Enterprise customers can negotiate employer-subsidized fees as part of their benefits package. Contact our sales team to learn more.'
-  }
+];
+
+const employers = [
+  { title: 'Zero Setup Cost', description: 'No implementation fees whatsoever' },
+  { title: 'No Monthly Fees', description: 'Free to offer as an employee benefit' },
+  { title: 'No Per-Employee Cost', description: 'Unlimited employees at no cost' },
+  { title: 'Free Support', description: 'Dedicated account manager included' },
 ];
 
 export default function PricingPage() {
@@ -128,16 +105,16 @@ export default function PricingPage() {
               Transparent Pricing
             </div>
             <h1 className="font-heading text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white mb-6">
-              Simple, Fair <span className="text-gradient">Pricing</span>
+              Fast. Fair. <span className="text-gradient">Fully Transparent.</span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8">
-              No setup fees. No monthly charges for employers. Just one transparent fee per advance 
-              that employees see before they confirm.
+              It's not a loan, it's freedom — the freedom to live, plan, and dream without waiting for payday. 
+              Simple, honest pricing with no hidden surprises.
             </p>
             <div className="flex flex-wrap justify-center gap-6 text-sm">
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                 <Check className="w-5 h-5 text-primary" />
-                Zero cost for employers
+                Zero interest, always
               </div>
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                 <Check className="w-5 h-5 text-primary" />
@@ -145,167 +122,213 @@ export default function PricingPage() {
               </div>
               <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                 <Check className="w-5 h-5 text-primary" />
-                No interest charges
+                Free for employers
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Pricing Cards */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-3 gap-8">
-            {plans.map((plan, i) => (
-              <div 
-                key={i} 
-                className={`relative rounded-3xl p-8 transition-all duration-500 ${
-                  plan.highlight 
-                    ? 'bg-gradient-to-br from-slate-900 to-slate-800 text-white scale-105 shadow-2xl z-10' 
-                    : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:shadow-xl'
-                }`}
-              >
-                {plan.badge && (
-                  <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="px-4 py-2 bg-gradient-to-r from-primary to-emerald-600 rounded-full text-sm font-bold text-white shadow-lg">
-                      {plan.badge}
-                    </span>
-                  </div>
-                )}
-                <div className="mb-8">
-                  <h3 className={`font-heading text-2xl font-bold mb-2 ${plan.highlight ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
-                    {plan.name}
-                  </h3>
-                  <p className={`text-sm ${plan.highlight ? 'text-slate-300' : 'text-slate-500 dark:text-slate-400'}`}>
-                    {plan.description}
-                  </p>
+      {/* Main Pricing Card */}
+      <section className="py-16 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="bg-gradient-to-r from-primary via-emerald-600 to-teal-600 p-8 text-white text-center">
+              <h2 className="font-heading text-3xl font-bold mb-2">Employee Fee Structure</h2>
+              <p className="opacity-80">Transparent pricing for wage access</p>
+            </div>
+            <div className="p-8 lg:p-12">
+              <div className="grid md:grid-cols-2 gap-8 mb-8">
+                <div className="bg-slate-50 dark:bg-slate-700 rounded-2xl p-6 text-center">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">Application Fee</p>
+                  <p className="text-5xl font-bold text-slate-900 dark:text-white mb-2">3.5% - 6%</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">per advance amount</p>
                 </div>
-                <div className="mb-8">
-                  <div className="flex items-baseline gap-2">
-                    <span className={`text-4xl font-bold ${plan.highlight ? 'text-white' : 'text-slate-900 dark:text-white'}`}>
-                      {plan.priceRange}
-                    </span>
-                  </div>
-                  <p className={`text-sm mt-1 ${plan.highlight ? 'text-slate-400' : 'text-slate-500 dark:text-slate-400'}`}>
-                    {plan.priceNote}
-                  </p>
+                <div className="bg-slate-50 dark:bg-slate-700 rounded-2xl p-6 text-center">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">Processing Fee</p>
+                  <p className="text-5xl font-bold text-slate-900 dark:text-white mb-2">$0.80</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">fixed per transaction</p>
                 </div>
-                <ul className="space-y-4 mb-8">
-                  {plan.features.map((feature, j) => (
-                    <li key={j} className="flex items-center gap-3">
-                      {feature.included ? (
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.highlight ? 'bg-primary' : 'bg-primary/10 dark:bg-primary/20'}`}>
-                          <Check className={`w-3 h-3 ${plan.highlight ? 'text-white' : 'text-primary'}`} />
-                        </div>
-                      ) : (
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center ${plan.highlight ? 'bg-slate-700' : 'bg-slate-100 dark:bg-slate-700'}`}>
-                          <X className={`w-3 h-3 ${plan.highlight ? 'text-slate-500' : 'text-slate-400'}`} />
-                        </div>
-                      )}
-                      <span className={`text-sm ${
-                        feature.included 
-                          ? plan.highlight ? 'text-white' : 'text-slate-700 dark:text-slate-300'
-                          : plan.highlight ? 'text-slate-500' : 'text-slate-400'
-                      }`}>
-                        {feature.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-                <Link to={plan.ctaLink}>
-                  <Button 
-                    className={`w-full h-12 rounded-xl font-medium ${
-                      plan.highlight 
-                        ? 'bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 text-white' 
-                        : 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:bg-slate-800 dark:hover:bg-slate-100'
-                    }`}
-                  >
-                    {plan.cta}
-                    <ArrowRight className="w-4 h-4 ml-2" />
+              </div>
+              
+              <div className="bg-primary/5 dark:bg-primary/10 rounded-2xl p-6 mb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                    <Calculator className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white">Example Calculation</h3>
+                </div>
+                <div className="grid md:grid-cols-3 gap-6 text-sm">
+                  <div>
+                    <p className="text-slate-500 dark:text-slate-400">Advance Amount</p>
+                    <p className="text-xl font-bold text-slate-900 dark:text-white">$100.00</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 dark:text-slate-400">Total Fee (at 4.5%)</p>
+                    <p className="text-xl font-bold text-slate-900 dark:text-white">$5.30</p>
+                    <p className="text-xs text-slate-400">($4.50 + $0.80)</p>
+                  </div>
+                  <div>
+                    <p className="text-slate-500 dark:text-slate-400">You Receive</p>
+                    <p className="text-xl font-bold text-primary">$100.00</p>
+                    <p className="text-xs text-slate-400">(fee deducted from payroll)</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <Link to="/calculator">
+                  <Button size="lg" className="h-14 px-8 rounded-2xl bg-gradient-to-r from-primary to-emerald-600 text-white">
+                    <Calculator className="w-5 h-5 mr-2" />
+                    Calculate Your Access
+                    <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Fee Breakdown */}
       <section className="py-24 bg-white dark:bg-slate-950">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-heading text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              How Fees Are <span className="text-gradient">Calculated</span>
+              What's <span className="text-gradient">Included</span>
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300">
-              Complete transparency — here's exactly what goes into your fee
+              Complete transparency — know exactly what you're paying for
             </p>
           </div>
-          <div className="bg-slate-50 dark:bg-slate-800 rounded-3xl p-8 border border-slate-200 dark:border-slate-700">
-            <div className="space-y-6">
-              {feeBreakdown.map((item, i) => (
-                <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 py-4 border-b border-slate-200 dark:border-slate-700 last:border-0">
-                  <div>
-                    <h3 className="font-semibold text-slate-900 dark:text-white">{item.label}</h3>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">{item.description}</p>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {feeStructure.map((item, i) => (
+              <div 
+                key={i} 
+                className={`rounded-2xl p-6 border transition-all duration-300 hover:shadow-lg ${
+                  item.highlight 
+                    ? 'bg-primary/5 dark:bg-primary/10 border-primary/30' 
+                    : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'
+                }`}
+              >
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
+                  item.highlight ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'
+                }`}>
+                  <item.icon className={`w-6 h-6 ${item.highlight ? 'text-white' : 'text-slate-600 dark:text-slate-400'}`} />
+                </div>
+                <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white mb-2">{item.title}</h3>
+                <p className="text-slate-600 dark:text-slate-400 text-sm">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Employer Section */}
+      <section className="py-24 bg-slate-900 dark:bg-slate-950">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/20 rounded-full text-sm font-semibold text-primary mb-6">
+                <Building2 className="w-4 h-4" />
+                For Employers
+              </div>
+              <h2 className="font-heading text-4xl font-bold text-white mb-6">
+                100% Free for <span className="text-gradient">Employers</span>
+              </h2>
+              <p className="text-lg text-slate-400 mb-8">
+                Offer EaziWage as a workplace benefit at absolutely no cost. No setup fees, no monthly charges, 
+                no per-employee costs. It's completely free for your organization.
+              </p>
+              <div className="grid grid-cols-2 gap-4 mb-8">
+                {employers.map((item, i) => (
+                  <div key={i} className="bg-slate-800 rounded-xl p-4 border border-slate-700">
+                    <div className="w-8 h-8 bg-primary/20 rounded-lg flex items-center justify-center mb-3">
+                      <Check className="w-4 h-4 text-primary" />
+                    </div>
+                    <h3 className="font-semibold text-white mb-1">{item.title}</h3>
+                    <p className="text-sm text-slate-400">{item.description}</p>
                   </div>
-                  <span className="text-2xl font-bold text-primary">{item.value}</span>
-                </div>
-              ))}
+                ))}
+              </div>
+              <Link to="/employers">
+                <Button size="lg" className="h-14 px-8 rounded-2xl bg-white text-primary hover:bg-slate-100">
+                  Learn More for Employers
+                  <ArrowRight className="w-5 h-5 ml-2" />
+                </Button>
+              </Link>
             </div>
-            <div className="mt-8 pt-6 border-t border-slate-300 dark:border-slate-600">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div>
-                  <h3 className="font-heading text-xl font-bold text-slate-900 dark:text-white">Total Fee Range</h3>
-                  <p className="text-sm text-slate-500 dark:text-slate-400">Depending on plan and risk profile</p>
+            <div className="bg-slate-800 rounded-3xl p-8 border border-slate-700">
+              <h3 className="font-heading text-xl font-bold text-white mb-6">Why It's Free</h3>
+              <p className="text-slate-400 mb-6">
+                Our business model charges a small fee to employees when they access their wages. 
+                This means employers can offer EaziWage as a valuable benefit without any budget impact.
+              </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-primary" />
+                  </div>
+                  <p className="text-slate-300 text-sm">Improve employee satisfaction at zero cost</p>
                 </div>
-                <span className="text-3xl font-bold text-gradient">3.5% - 6.5%</span>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-primary" />
+                  </div>
+                  <p className="text-slate-300 text-sm">Reduce HR time on salary advance requests</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="w-3 h-3 text-primary" />
+                  </div>
+                  <p className="text-slate-300 text-sm">Attract and retain top talent</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Comparison */}
-      <section className="py-24 bg-slate-900 dark:bg-slate-950">
+      {/* Comparison Table */}
+      <section className="py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="font-heading text-4xl font-bold text-white mb-4">
-              EaziWage vs. Alternatives
+            <h2 className="font-heading text-4xl font-bold text-slate-900 dark:text-white mb-4">
+              EaziWage vs <span className="text-gradient">Alternatives</span>
             </h2>
-            <p className="text-lg text-slate-400">
+            <p className="text-lg text-slate-600 dark:text-slate-300">
               See how we compare to payday loans and bank overdrafts
             </p>
           </div>
-          <div className="bg-slate-800 rounded-3xl overflow-hidden border border-slate-700">
+          <div className="bg-white dark:bg-slate-800 rounded-3xl overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700">
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-700">
-                    <th className="text-left p-6 text-slate-400 font-medium">Feature</th>
+                  <tr className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+                    <th className="text-left p-6 text-slate-600 dark:text-slate-400 font-medium">Feature</th>
                     <th className="text-center p-6">
                       <div className="flex flex-col items-center">
                         <div className="w-12 h-12 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center mb-2">
                           <span className="text-white font-bold">E</span>
                         </div>
-                        <span className="text-white font-bold">EaziWage</span>
+                        <span className="text-slate-900 dark:text-white font-bold">EaziWage</span>
                       </div>
                     </th>
-                    <th className="text-center p-6 text-slate-400 font-medium">Payday Loans</th>
-                    <th className="text-center p-6 text-slate-400 font-medium">Bank Overdraft</th>
+                    <th className="text-center p-6 text-slate-600 dark:text-slate-400 font-medium">Payday Loans</th>
+                    <th className="text-center p-6 text-slate-600 dark:text-slate-400 font-medium">Bank Overdraft</th>
                   </tr>
                 </thead>
                 <tbody>
                   {comparisons.map((row, i) => (
-                    <tr key={i} className="border-b border-slate-700 last:border-0">
-                      <td className="p-6 text-slate-300">{row.feature}</td>
+                    <tr key={i} className="border-b border-slate-200 dark:border-slate-700 last:border-0">
+                      <td className="p-6 text-slate-700 dark:text-slate-300 font-medium">{row.feature}</td>
                       <td className="p-6 text-center">
-                        <span className="px-4 py-2 bg-primary/20 text-primary rounded-full text-sm font-semibold">
+                        <span className="px-4 py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-full text-sm font-semibold">
                           {row.eaziwage}
                         </span>
                       </td>
-                      <td className="p-6 text-center text-slate-400">{row.loan}</td>
-                      <td className="p-6 text-center text-slate-400">{row.bank}</td>
+                      <td className="p-6 text-center text-slate-500 dark:text-slate-400">{row.payday}</td>
+                      <td className="p-6 text-center text-slate-500 dark:text-slate-400">{row.bank}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -315,79 +338,8 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Calculator Preview */}
-      <section className="py-24 bg-white dark:bg-slate-950">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="font-heading text-4xl font-bold text-slate-900 dark:text-white mb-6">
-                Calculate Your <span className="text-gradient">Fee</span>
-              </h2>
-              <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
-                Wondering what you'll pay? Our calculator shows you exactly what to expect 
-                before you take your first advance.
-              </p>
-              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center gap-4 mb-4">
-                  <Calculator className="w-8 h-8 text-primary" />
-                  <div>
-                    <p className="font-semibold text-slate-900 dark:text-white">Example Calculation</p>
-                    <p className="text-sm text-slate-500">KES 5,000 advance at 5% fee</p>
-                  </div>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-slate-600 dark:text-slate-400">Advance Amount</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">KES 5,000</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-600 dark:text-slate-400">Fee (5%)</span>
-                    <span className="font-semibold text-slate-900 dark:text-white">KES 250</span>
-                  </div>
-                  <div className="border-t border-slate-200 dark:border-slate-700 pt-3 flex justify-between">
-                    <span className="text-slate-600 dark:text-slate-400">Total Deducted</span>
-                    <span className="font-bold text-primary text-lg">KES 5,250</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/5 dark:to-emerald-500/5 rounded-3xl p-8 lg:p-12">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-200 dark:border-slate-700">
-                <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white mb-6">Fee Calculator</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2 block">Advance Amount</label>
-                    <div className="flex items-center bg-slate-50 dark:bg-slate-700 rounded-xl px-4 h-12">
-                      <span className="text-slate-500 mr-2">KES</span>
-                      <input type="text" value="10,000" readOnly className="bg-transparent flex-1 font-semibold text-slate-900 dark:text-white outline-none" />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-2 block">Fee Rate</label>
-                    <div className="flex items-center bg-slate-50 dark:bg-slate-700 rounded-xl px-4 h-12">
-                      <input type="text" value="4.5" readOnly className="bg-transparent flex-1 font-semibold text-slate-900 dark:text-white outline-none" />
-                      <span className="text-slate-500">%</span>
-                    </div>
-                  </div>
-                  <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                    <div className="flex justify-between items-center">
-                      <span className="text-slate-600 dark:text-slate-400">You Receive</span>
-                      <span className="text-2xl font-bold text-primary">KES 10,000</span>
-                    </div>
-                    <div className="flex justify-between items-center mt-2">
-                      <span className="text-slate-600 dark:text-slate-400">Fee Amount</span>
-                      <span className="font-semibold text-slate-900 dark:text-white">KES 450</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* FAQ */}
-      <section className="py-24 bg-slate-50 dark:bg-slate-900">
+      <section className="py-24 bg-white dark:bg-slate-950">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="font-heading text-4xl font-bold text-slate-900 dark:text-white mb-4">
@@ -396,7 +348,7 @@ export default function PricingPage() {
           </div>
           <div className="space-y-4">
             {faqs.map((faq, i) => (
-              <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
+              <div key={i} className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
                 <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-3 flex items-start gap-3">
                   <HelpCircle className="w-6 h-6 text-primary flex-shrink-0 mt-0.5" />
                   {faq.q}
@@ -415,7 +367,7 @@ export default function PricingPage() {
             Ready to Get Started?
           </h2>
           <p className="text-xl text-white/80 mb-10">
-            Join thousands of workers accessing their earned wages today.
+            Access your earned wages with transparent, fair pricing.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/register">
@@ -424,9 +376,10 @@ export default function PricingPage() {
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </Link>
-            <Link to="/contact">
+            <Link to="/calculator">
               <Button size="lg" variant="outline" className="h-14 px-10 rounded-2xl border-white/30 text-white hover:bg-white/10">
-                Talk to Sales
+                <Calculator className="w-5 h-5 mr-2" />
+                Calculate Access
               </Button>
             </Link>
           </div>
