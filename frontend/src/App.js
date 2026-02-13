@@ -5,6 +5,16 @@ import { Toaster } from "./components/ui/sonner";
 
 // Marketing Pages
 import LandingPage from "./pages/marketing/LandingPage";
+import HowItWorksPage from "./pages/marketing/HowItWorksPage";
+import EmployersPage from "./pages/marketing/EmployersPage";
+import AboutPage from "./pages/marketing/AboutPage";
+import PricingPage from "./pages/marketing/PricingPage";
+import ContactPage from "./pages/marketing/ContactPage";
+import PartnersPage from "./pages/marketing/PartnersPage";
+import FAQPage from "./pages/marketing/FAQPage";
+import BlogPage from "./pages/marketing/BlogPage";
+import PrivacyPolicyPage from "./pages/marketing/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/marketing/TermsOfServicePage";
 
 // Auth Pages
 import LoginPage from "./pages/auth/LoginPage";
