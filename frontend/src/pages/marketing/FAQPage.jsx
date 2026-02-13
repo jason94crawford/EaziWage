@@ -10,12 +10,12 @@ import { MarketingNav } from '../../components/layout/MarketingNav';
 import { Footer } from '../../components/layout/Footer';
 
 const categories = [
-  { id: 'general', label: 'General', icon: HelpCircle, color: 'from-blue-500 to-indigo-600' },
+  { id: 'general', label: 'General', icon: HelpCircle, color: 'from-primary to-emerald-600' },
   { id: 'employees', label: 'For Employees', icon: Users, color: 'from-emerald-500 to-teal-600' },
-  { id: 'employers', label: 'For Employers', icon: Building2, color: 'from-purple-500 to-pink-600' },
-  { id: 'fees', label: 'Fees & Pricing', icon: CreditCard, color: 'from-amber-500 to-orange-600' },
-  { id: 'security', label: 'Security & Privacy', icon: Shield, color: 'from-rose-500 to-red-600' },
-  { id: 'technical', label: 'Technical', icon: Clock, color: 'from-cyan-500 to-blue-600' },
+  { id: 'employers', label: 'For Employers', icon: Building2, color: 'from-teal-500 to-primary' },
+  { id: 'fees', label: 'Fees & Pricing', icon: CreditCard, color: 'from-primary to-emerald-500' },
+  { id: 'security', label: 'Security & Privacy', icon: Shield, color: 'from-emerald-600 to-teal-600' },
+  { id: 'technical', label: 'Technical', icon: Clock, color: 'from-teal-600 to-primary' },
 ];
 
 const faqs = {
