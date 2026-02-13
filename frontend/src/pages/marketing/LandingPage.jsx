@@ -10,6 +10,7 @@ import { Button } from '../../components/ui/button';
 import { MarketingNav } from '../../components/layout/MarketingNav';
 import { Footer } from '../../components/layout/Footer';
 import { AnimatedCounter, AnimatedStatCard, useInView } from '../../components/AnimatedCounter';
+import { AfricaMap } from '../../components/AfricaMap';
 
 const heroStats = [
   { value: '50K+', label: 'Active Users', icon: Users },
