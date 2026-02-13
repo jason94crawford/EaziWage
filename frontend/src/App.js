@@ -7,6 +7,7 @@ import { Toaster } from "./components/ui/sonner";
 import LandingPage from "./pages/marketing/LandingPage";
 import HowItWorksPage from "./pages/marketing/HowItWorksPage";
 import EmployersPage from "./pages/marketing/EmployersPage";
+import EmployeesPage from "./pages/marketing/EmployeesPage";
 import AboutPage from "./pages/marketing/AboutPage";
 import PricingPage from "./pages/marketing/PricingPage";
 import ContactPage from "./pages/marketing/ContactPage";
@@ -15,6 +16,7 @@ import FAQPage from "./pages/marketing/FAQPage";
 import BlogPage from "./pages/marketing/BlogPage";
 import PrivacyPolicyPage from "./pages/marketing/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/marketing/TermsOfServicePage";
+import CalculatorPage from "./pages/marketing/CalculatorPage";
 
 // Auth Pages
 import LoginPage from "./pages/auth/LoginPage";
