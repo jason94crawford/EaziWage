@@ -44,12 +44,12 @@ export const AfricaMap = memo(() => {
         <ComposableMap
           projection="geoMercator"
           projectionConfig={{
-            center: [20, 0],
-            scale: 350,
+            center: [18, 2],
+            scale: 300,
           }}
           style={{ width: '100%', height: 'auto' }}
           width={400}
-          height={450}
+          height={480}
         >
           <Geographies geography={geoUrl}>
             {({ geographies }) =>
