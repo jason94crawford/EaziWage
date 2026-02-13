@@ -45,7 +45,7 @@ const steps = [
   {
     num: '02',
     title: 'Sign Up in Minutes',
-    description: 'Download the app, verify your ID, and link your M-PESA or bank account. Takes under 5 minutes.'
+    description: 'Download the app, verify your ID, and link your Mobile Wallet or bank account. Takes under 5 minutes.'
   },
   {
     num: '03',
