@@ -85,14 +85,16 @@ function App() {
         <Routes>
           {/* Marketing / Public Routes */}
           <Route path="/" element={<LandingPage />} />
-          <Route path="/how-it-works" element={<PlaceholderPage title="How it Works" description="Step-by-step guide to using EaziWage" />} />
-          <Route path="/employers" element={<PlaceholderPage title="For Employers" description="Learn how EaziWage benefits your company" />} />
-          <Route path="/pricing" element={<PlaceholderPage title="Pricing" description="Transparent fee structure" />} />
-          <Route path="/about" element={<PlaceholderPage title="About Us" description="Our mission to empower African workers" />} />
-          <Route path="/contact" element={<PlaceholderPage title="Contact Us" description="Get in touch with our team" />} />
-          <Route path="/partners" element={<PlaceholderPage title="Partners" description="Join our partner ecosystem" />} />
-          <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" description="How we protect your data" />} />
-          <Route path="/terms" element={<PlaceholderPage title="Terms of Service" description="Terms and conditions" />} />
+          <Route path="/how-it-works" element={<HowItWorksPage />} />
+          <Route path="/employers" element={<EmployersPage />} />
+          <Route path="/pricing" element={<PricingPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/partners" element={<PartnersPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsOfServicePage />} />
 
           {/* Auth Routes */}
           <Route path="/login" element={<LoginPage />} />
