@@ -80,7 +80,7 @@ We share aggregated, anonymized usage data with employers for reporting purposes
 
 **With Service Providers**
 We work with trusted third-party service providers who assist us in operating our Services, including:
-- Mobile money providers (M-PESA, MTN, Airtel) for payment processing
+- Mobile Wallet providers for payment processing
 - Cloud hosting providers for data storage
 - Identity verification services
 - Customer support platforms
