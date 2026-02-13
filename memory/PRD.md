@@ -29,21 +29,22 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 
 - ✅ **Landing Page** (/) - Hero section with phone mockup, animated stats, features, testimonials, countries, CTAs
 - ✅ **About Page** (/about) - Company story, mission, values, team, timeline, investors
-- ✅ **How It Works** (/how-it-works) - 4-step process, benefits, FAQ, video section
+- ✅ **How It Works** (/how-it-works) - 4-step process with sleek infographics, benefits, FAQ, video section
 - ✅ **For Employers** (/employers) - Benefits, features, process, testimonials
-- ✅ **For Employees** (/employees) - NEW: Benefits, use cases, testimonials, FAQs
-- ✅ **Pricing Page** (/pricing) - UPDATED: No tiers, 3.5%-6% fee + $0.80 processing, comparison table
-- ✅ **Calculator Page** (/calculator) - NEW: Interactive wage access calculator with country selection
+- ✅ **For Employees** (/employees) - Benefits, use cases, testimonials, FAQs
+- ✅ **Pricing Page** (/pricing) - Simple fee structure: 3.5%-6% + $0.80 processing, comparison table
+- ✅ **Calculator Page** (/calculator) - Interactive wage access calculator with country selection
 - ✅ **Contact Page** (/contact) - Contact form, 4 office locations (Kenya, Uganda, Tanzania, Rwanda)
 - ✅ **Partners Page** (/partners) - Partner types, current partners, integration steps
-- ✅ **FAQ Page** (/faq) - Searchable FAQs with 6 categories (General, Employees, Employers, Fees, Security, Technical)
+- ✅ **FAQ Page** (/faq) - Searchable FAQs with 6 categories
 - ✅ **Blog Page** (/blog) - Featured post, article grid, categories, newsletter signup
 - ✅ **Privacy Policy** (/privacy) - Full legal content with TOC sidebar
 - ✅ **Terms of Service** (/terms) - Full legal content with TOC sidebar
 - ✅ **Dark/Light Theme Toggle** - Working across all pages
-- ✅ **Consistent Green Theme** - Primary color #16A34A maintained
-- ✅ **Animated Counters** - Stats animate on scroll into view
-- ✅ **Updated Footer** - Proper legal links, For Employees link, Calculator link
+- ✅ **Consistent Green Theme** - Primary color #16A34A maintained (no blue/yellow/red)
+- ✅ **Navigation Updated** - About Us, How it Works, For Employers, For Employees, Pricing, Calculator
+- ✅ **M-PESA → Mobile Wallet** - All references changed to generic "Mobile Wallet"
+- ✅ **Clean Hero Sections** - Clear section breaks with proper backgrounds
 
 ### Backend (FastAPI + MongoDB)
 - ✅ User authentication (register, login, JWT tokens)
