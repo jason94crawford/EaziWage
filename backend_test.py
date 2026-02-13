@@ -323,6 +323,7 @@ def main():
         print("\n🔐 Testing Authentication...")
         tester.test_employee_registration()
         tester.test_employer_registration()
+        tester.test_admin_login()  # Test admin login with provided credentials
         
         # Test protected endpoint without token
         tester.test_protected_endpoint_without_token()
@@ -345,6 +346,15 @@ def main():
         print("\n📈 Testing Dashboard Endpoints...")
         tester.test_employee_dashboard()
         tester.test_employer_dashboard()
+        tester.test_admin_dashboard()
+        
+        # Test KYC endpoints
+        print("\n📄 Testing KYC Endpoints...")
+        tester.test_kyc_endpoints()
+        
+        # Test Risk Scoring endpoints  
+        print("\n⚖️ Testing Risk Scoring Endpoints...")
+        tester.test_risk_scoring_endpoints()
         
         # Test role-based access
         tester.test_role_based_access()
