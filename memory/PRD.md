@@ -27,11 +27,13 @@ Features include mobile money (M-PESA, MTN, Airtel) and bank transfer disburseme
 ### Marketing Website (COMPLETED - Dec 2025)
 All marketing pages redesigned with modern "African-fintech" aesthetic:
 
-- ✅ **Landing Page** (/) - Hero section with phone mockup, stats, features, testimonials, countries, CTAs
+- ✅ **Landing Page** (/) - Hero section with phone mockup, animated stats, features, testimonials, countries, CTAs
 - ✅ **About Page** (/about) - Company story, mission, values, team, timeline, investors
 - ✅ **How It Works** (/how-it-works) - 4-step process, benefits, FAQ, video section
 - ✅ **For Employers** (/employers) - Benefits, features, process, testimonials
-- ✅ **Pricing Page** (/pricing) - 3-tier pricing (Starter/Business/Enterprise), fee breakdown, comparison table
+- ✅ **For Employees** (/employees) - NEW: Benefits, use cases, testimonials, FAQs
+- ✅ **Pricing Page** (/pricing) - UPDATED: No tiers, 3.5%-6% fee + $0.80 processing, comparison table
+- ✅ **Calculator Page** (/calculator) - NEW: Interactive wage access calculator with country selection
 - ✅ **Contact Page** (/contact) - Contact form, 4 office locations (Kenya, Uganda, Tanzania, Rwanda)
 - ✅ **Partners Page** (/partners) - Partner types, current partners, integration steps
 - ✅ **FAQ Page** (/faq) - Searchable FAQs with 6 categories (General, Employees, Employers, Fees, Security, Technical)
@@ -40,6 +42,8 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 - ✅ **Terms of Service** (/terms) - Full legal content with TOC sidebar
 - ✅ **Dark/Light Theme Toggle** - Working across all pages
 - ✅ **Consistent Green Theme** - Primary color #16A34A maintained
+- ✅ **Animated Counters** - Stats animate on scroll into view
+- ✅ **Updated Footer** - Proper legal links, For Employees link, Calculator link
 
 ### Backend (FastAPI + MongoDB)
 - ✅ User authentication (register, login, JWT tokens)
