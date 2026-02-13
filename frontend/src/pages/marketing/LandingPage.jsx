@@ -397,6 +397,29 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Animated Stats Section */}
+      <section className="py-20 bg-slate-950 relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid opacity-5" />
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-primary/20 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-emerald-500/20 rounded-full blur-[150px]" />
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-4">
+              Connecting Africa to <span className="text-gradient">Fair & Timely Pay</span>
+            </h2>
+            <p className="text-slate-400 text-lg">Real numbers, real impact</p>
+          </div>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+            <AnimatedStatCard value="50000" label="Targeted Customers" icon={Users} suffix="+" />
+            <AnimatedStatCard value="500" label="Targeted Companies" icon={Building2} suffix="+" />
+            <AnimatedStatCard value="2" label="Annual Advances (USD)" icon={Banknote} prefix="$" suffix="B+" />
+            <AnimatedStatCard value="4" label="Countries" icon={Globe} suffix="" />
+          </div>
+        </div>
+      </section>
+
       {/* Testimonials */}
       <section className="py-24 lg:py-32 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
