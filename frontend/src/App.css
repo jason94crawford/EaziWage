@@ -1,141 +1,28 @@
-/* EaziWage Custom Styles */
+/* EaziWage App Styles - Minimal custom styles */
+/* Most styles are handled by Tailwind + index.css */
 
-/* Navigation */
-.nav-link {
-  @apply text-slate-600 hover:text-slate-900 transition-colors duration-200 font-medium;
+/* Ensure proper root layout */
+#root {
+  min-height: 100vh;
 }
 
-.nav-link.active {
-  @apply text-primary;
-}
-
-/* Cards */
-.card-marketing {
-  @apply bg-white/50 backdrop-blur-md border border-white/20 shadow-xl rounded-2xl overflow-hidden;
-}
-
-.card-dashboard {
-  @apply bg-white border border-slate-200 rounded-xl hover:border-slate-300 transition-colors duration-200;
-}
-
-/* Buttons */
-.btn-primary {
-  @apply bg-primary text-white hover:bg-primary/90 shadow-sm rounded-lg font-medium px-6 py-2.5 transition-all duration-200 active:scale-95;
-}
-
-.btn-secondary {
-  @apply bg-white text-slate-900 border border-slate-200 hover:bg-slate-50 shadow-sm rounded-lg font-medium px-6 py-2.5 transition-all duration-200;
-}
-
-.btn-ghost {
-  @apply text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg px-4 py-2 transition-colors duration-200;
-}
-
-/* Inputs */
-.input-base {
-  @apply bg-white border border-slate-200 rounded-lg h-11 px-4 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 placeholder:text-slate-400;
-}
-
-/* Sidebar */
-.sidebar {
-  @apply fixed left-0 top-0 h-screen w-[280px] bg-slate-900 text-slate-300;
-}
-
-.sidebar-item {
-  @apply flex items-center gap-3 px-4 py-3 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors duration-200;
-}
-
-.sidebar-item.active {
-  @apply bg-primary text-white;
-}
-
-/* Tables */
-.table-header {
-  @apply bg-slate-50 text-slate-600 font-medium text-sm;
-}
-
-.table-row {
-  @apply border-b border-slate-100 hover:bg-slate-50 transition-colors duration-200;
-}
-
-/* Status badges */
-.badge-success {
-  @apply bg-green-100 text-green-700 px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-
-.badge-warning {
-  @apply bg-amber-100 text-amber-700 px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-
-.badge-error {
-  @apply bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-
-.badge-info {
-  @apply bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-
-.badge-neutral {
-  @apply bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full text-xs font-medium;
-}
-
-/* Risk score colors */
-.risk-a {
-  @apply text-green-600 bg-green-50;
-}
-
-.risk-b {
-  @apply text-amber-600 bg-amber-50;
-}
-
-.risk-c {
-  @apply text-orange-600 bg-orange-50;
-}
-
-.risk-d {
-  @apply text-red-600 bg-red-50;
-}
-
-/* Dashboard stats cards */
-.stat-card {
-  @apply bg-white border border-slate-200 rounded-xl p-6 hover:shadow-md transition-shadow duration-200;
-}
-
-.stat-value {
-  @apply text-3xl font-bold text-slate-900 tracking-tight;
-}
-
-.stat-label {
-  @apply text-sm text-slate-500 mt-1;
-}
-
-/* Page transitions */
-.page-enter {
+/* Smooth page transitions */
+.page-transition-enter {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(8px);
 }
 
-.page-enter-active {
+.page-transition-enter-active {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 200ms ease-out, transform 200ms ease-out;
 }
 
-/* Container */
-.container-marketing {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+.page-transition-exit {
+  opacity: 1;
 }
 
-.container-dashboard {
-  @apply max-w-[1600px] mx-auto px-4 sm:px-6;
-}
-
-/* Hero section */
-.hero-gradient {
-  background: linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%);
-}
-
-/* Footer */
-.footer-link {
-  @apply text-slate-400 hover:text-white transition-colors duration-200;
+.page-transition-exit-active {
+  opacity: 0;
+  transition: opacity 150ms ease-in;
 }
