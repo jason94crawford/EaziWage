@@ -14,13 +14,12 @@ import { logout } from '../../lib/auth';
 import { useTheme } from '../../lib/ThemeContext';
 
 const navLinks = [
-  { href: '/', label: 'Home' },
+  { href: '/about', label: 'About Us' },
   { href: '/how-it-works', label: 'How it Works' },
   { href: '/employers', label: 'For Employers' },
   { href: '/employees', label: 'For Employees' },
   { href: '/pricing', label: 'Pricing' },
-  { href: '/about', label: 'About' },
-  { href: '/contact', label: 'Contact' },
+  { href: '/calculator', label: 'Calculator' },
 ];
 
 export const MarketingNav = () => {
