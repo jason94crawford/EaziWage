@@ -5,9 +5,9 @@ import {
   Settings, LogOut, Shield, ChevronRight, Clock, Bell,
   Wallet, History, Upload, BarChart3, CheckCircle2
 } from 'lucide-react';
-import { cn, generateInitials } from '../lib/utils';
-import { logout } from '../lib/auth';
-import { Avatar, AvatarFallback } from '../components/ui/avatar';
+import { cn, generateInitials } from '../../lib/utils';
+import { logout } from '../../lib/auth';
+import { Avatar, AvatarFallback } from '../../components/ui/avatar';
 
 const employeeLinks = [
   { href: '/employee', label: 'Dashboard', icon: LayoutDashboard },

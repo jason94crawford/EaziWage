@@ -3,16 +3,16 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Menu, X, ChevronDown, User, LogOut 
 } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { Button } from '../../components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu';
-import { cn } from '../lib/utils';
-import { logout } from '../lib/auth';
+} from '../../components/ui/dropdown-menu';
+import { cn } from '../../lib/utils';
+import { logout } from '../../lib/auth';
 
 const navLinks = [
   { href: '/', label: 'Home' },
