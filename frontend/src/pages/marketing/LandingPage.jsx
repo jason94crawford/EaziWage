@@ -398,25 +398,78 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Animated Stats Section */}
-      <section className="py-20 bg-slate-950 relative overflow-hidden">
+      {/* Animated Stats Section with Africa Map */}
+      <section className="py-24 bg-slate-950 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid opacity-5" />
-        <div className="absolute top-0 left-1/3 w-96 h-96 bg-primary/20 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-emerald-500/20 rounded-full blur-[150px]" />
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-emerald-500/20 rounded-full blur-[150px]" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-4">
+          <div className="text-center mb-12">
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4">
               Connecting Africa to <span className="text-gradient">Fair & Timely Pay</span>
             </h2>
-            <p className="text-slate-400 text-lg">Real numbers, real impact</p>
+            <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+              Empowering workers across East Africa with instant access to their earned wages
+            </p>
           </div>
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            <AnimatedStatCard value="50000" label="Targeted Customers" icon={Users} suffix="+" />
-            <AnimatedStatCard value="500" label="Targeted Companies" icon={Building2} suffix="+" />
-            <AnimatedStatCard value="2" label="Annual Advances (USD)" icon={Banknote} prefix="$" suffix="B+" />
-            <AnimatedStatCard value="4" label="Countries" icon={Globe} suffix="" />
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Africa Map */}
+            <div className="order-2 lg:order-1">
+              <AfricaMap />
+            </div>
+            
+            {/* Stats */}
+            <div className="order-1 lg:order-2">
+              <div className="grid grid-cols-2 gap-6">
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-colors">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Users className="w-6 h-6 text-primary" />
+                  </div>
+                  <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                    <AnimatedCounter end={50000} suffix="+" duration={2500} />
+                  </p>
+                  <p className="text-slate-400 text-sm">Targeted Customers</p>
+                </div>
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-colors">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Building2 className="w-6 h-6 text-primary" />
+                  </div>
+                  <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                    <AnimatedCounter end={500} suffix="+" duration={2500} />
+                  </p>
+                  <p className="text-slate-400 text-sm">Targeted Companies</p>
+                </div>
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-colors">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Banknote className="w-6 h-6 text-primary" />
+                  </div>
+                  <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                    $<AnimatedCounter end={2} suffix="B+" duration={2500} />
+                  </p>
+                  <p className="text-slate-400 text-sm">Annual Advances (USD)</p>
+                </div>
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 text-center hover:bg-white/10 transition-colors">
+                  <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Globe className="w-6 h-6 text-primary" />
+                  </div>
+                  <p className="text-3xl sm:text-4xl font-bold text-white mb-1">
+                    <AnimatedCounter end={4} suffix="" duration={2500} />
+                  </p>
+                  <p className="text-slate-400 text-sm">Countries</p>
+                </div>
+              </div>
+              
+              {/* Country list */}
+              <div className="mt-8 flex flex-wrap gap-3 justify-center lg:justify-start">
+                {['🇰🇪 Kenya', '🇺🇬 Uganda', '🇹🇿 Tanzania', '🇷🇼 Rwanda'].map((country) => (
+                  <span key={country} className="px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-slate-300">
+                    {country}
+                  </span>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
