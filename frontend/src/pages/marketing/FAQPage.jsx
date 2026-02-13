@@ -30,7 +30,7 @@ const faqs = {
     },
     {
       q: "Which countries is EaziWage available in?",
-      a: "EaziWage is currently available in Kenya, Uganda, Tanzania, and Rwanda. We support local mobile money providers in each country including M-PESA, MTN Mobile Money, Airtel Money, and Tigo Pesa."
+      a: "EaziWage is currently available in Kenya, Uganda, Tanzania, and Rwanda. We support local mobile wallet providers in each country including Mobile Wallet services like MTN Mobile Money, Airtel Money, and others."
     },
     {
       q: "How is EaziWage different from payday loans?",
