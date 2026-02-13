@@ -13,7 +13,7 @@ const benefits = [
   {
     icon: Zap,
     title: 'Instant Access',
-    description: 'Get your earned wages in under 3 seconds, directly to your M-PESA or bank account.',
+    description: 'Get your earned wages in under 3 seconds, directly to your Mobile Wallet or bank account.',
     stat: '<3 sec'
   },
   {
