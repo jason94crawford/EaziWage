@@ -345,9 +345,9 @@ export default function CalculatorPage() {
           </div>
 
           {/* Disclaimer */}
-          <div className="mt-8 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800">
-            <p className="text-sm text-amber-800 dark:text-amber-200">
-              <strong>Disclaimer:</strong> The calculated figure is an estimate for informational purposes only. 
+          <div className="mt-8 p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 dark:border-primary/30">
+            <p className="text-sm text-slate-700 dark:text-slate-300">
+              <strong className="text-primary">Note:</strong> The calculated figure is an estimate for informational purposes only. 
               Actual amounts depend on payroll verification, residency, and EaziWage eligibility requirements.
             </p>
           </div>
