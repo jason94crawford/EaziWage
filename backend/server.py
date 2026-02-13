@@ -1,15 +1,17 @@
-from fastapi import FastAPI, APIRouter
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
 import logging
 from pathlib import Path
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List
+from pydantic import BaseModel, Field, EmailStr
+from typing import List, Optional, Dict, Any
 import uuid
-from datetime import datetime, timezone
-
+from datetime import datetime, timezone, timedelta
+import bcrypt
+import jwt
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -19,54 +21,1055 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Create the main app without a prefix
-app = FastAPI()
+# JWT Config
+JWT_SECRET = os.environ.get('JWT_SECRET', 'eaziwage-secret-key-2026')
+JWT_ALGORITHM = "HS256"
+JWT_EXPIRATION_HOURS = 24
 
-# Create a router with the /api prefix
+# Create the main app
+app = FastAPI(title="EaziWage API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
+security = HTTPBearer()
 
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
-# Define Models
-class StatusCheck(BaseModel):
-    model_config = ConfigDict(extra="ignore")  # Ignore MongoDB's _id field
+# ======================== MODELS ========================
+
+class UserRole:
+    EMPLOYEE = "employee"
+    EMPLOYER = "employer"
+    ADMIN = "admin"
+
+class UserBase(BaseModel):
+    email: EmailStr
+    phone: str
+    full_name: str
+    role: str
+
+class UserCreate(UserBase):
+    password: str
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    phone: str
+    full_name: str
+    role: str
+    created_at: str
+    is_verified: bool = False
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+
+# Employer Models
+class EmployerCreate(BaseModel):
+    company_name: str
+    registration_number: str
+    tax_id: str
+    country: str
+    address: str
+    employee_count: int
+    industry: str
+    payroll_cycle: str  # weekly, bi-weekly, monthly
+    contact_person: str
+    contact_email: EmailStr
+    contact_phone: str
+
+class EmployerResponse(BaseModel):
+    id: str
+    user_id: str
+    company_name: str
+    registration_number: str
+    tax_id: str
+    country: str
+    address: str
+    employee_count: int
+    industry: str
+    payroll_cycle: str
+    contact_person: str
+    contact_email: str
+    contact_phone: str
+    status: str  # pending, approved, rejected
+    risk_score: Optional[float] = None
+    created_at: str
+
+# Employee Models
+class EmployeeCreate(BaseModel):
+    employer_id: str
+    employee_code: str
+    national_id: str
+    date_of_birth: str
+    employment_type: str  # full-time, part-time, contract
+    job_title: str
+    monthly_salary: float
+    bank_name: Optional[str] = None
+    bank_account: Optional[str] = None
+    mobile_money_provider: Optional[str] = None
+    mobile_money_number: Optional[str] = None
+    country: str
+
+class EmployeeResponse(BaseModel):
+    id: str
+    user_id: str
+    employer_id: str
+    employer_name: Optional[str] = None
+    employee_code: str
+    national_id: str
+    date_of_birth: str
+    employment_type: str
+    job_title: str
+    monthly_salary: float
+    bank_name: Optional[str] = None
+    bank_account: Optional[str] = None
+    mobile_money_provider: Optional[str] = None
+    mobile_money_number: Optional[str] = None
+    country: str
+    status: str
+    risk_score: Optional[float] = None
+    kyc_status: str  # pending, submitted, approved, rejected
+    earned_wages: float = 0
+    advance_limit: float = 0
+    created_at: str
+
+# Advance Request Models
+class AdvanceCreate(BaseModel):
+    amount: float
+    disbursement_method: str  # mobile_money, bank_transfer
+    reason: Optional[str] = None
+
+class AdvanceResponse(BaseModel):
+    id: str
+    employee_id: str
+    employee_name: str
+    employer_id: str
+    employer_name: str
+    amount: float
+    fee_percentage: float
+    fee_amount: float
+    net_amount: float
+    disbursement_method: str
+    disbursement_details: Dict[str, Any]
+    status: str  # pending, approved, disbursed, repaid, rejected
+    reason: Optional[str] = None
+    created_at: str
+    processed_at: Optional[str] = None
+
+# KYC Document Models
+class KYCDocumentCreate(BaseModel):
+    document_type: str  # national_id, passport, tax_certificate, payslip, bank_statement
+    document_url: str
+    document_number: Optional[str] = None
+
+class KYCDocumentResponse(BaseModel):
+    id: str
+    user_id: str
+    document_type: str
+    document_url: str
+    document_number: Optional[str] = None
+    status: str  # pending, approved, rejected
+    reviewer_notes: Optional[str] = None
+    created_at: str
+    reviewed_at: Optional[str] = None
+
+# Risk Score Models
+class RiskScoreUpdate(BaseModel):
+    legal_compliance: Dict[str, int]  # registration_status, tax_compliance, etc.
+    financial_health: Dict[str, int]  # audited_financials, liquidity_ratio, etc.
+    operational: Dict[str, int]  # employee_count, churn_rate, payroll_integration
+    sector_exposure: Dict[str, int]  # industry_risk, regulatory_exposure
+    aml_transparency: Dict[str, int]  # beneficial_ownership, pep_screening
+
+class RiskScoreResponse(BaseModel):
+    entity_type: str  # employer or employee
+    entity_id: str
+    legal_compliance_score: float
+    financial_health_score: float
+    operational_score: float
+    sector_exposure_score: float
+    aml_transparency_score: float
+    composite_risk_score: float
+    risk_rating: str  # A, B, C, D
+    application_fee_percentage: float
+    calculated_at: str
+
+# Payroll Models
+class PayrollUpload(BaseModel):
+    month: str  # YYYY-MM
+    employees: List[Dict[str, Any]]  # [{employee_code, days_worked, gross_salary, deductions}]
+
+# Transaction Models
+class TransactionResponse(BaseModel):
+    id: str
+    type: str  # advance, repayment, fee
+    amount: float
+    reference: str
+    status: str
+    created_at: str
+    metadata: Dict[str, Any]
+
+# Dashboard Stats Models
+class EmployeeDashboardStats(BaseModel):
+    earned_wages: float
+    advance_limit: float
+    total_advances: float
+    pending_repayment: float
+    recent_transactions: List[TransactionResponse]
+
+class EmployerDashboardStats(BaseModel):
+    total_employees: int
+    active_employees: int
+    total_advances_disbursed: float
+    pending_advances: int
+    monthly_payroll: float
+    risk_score: Optional[float] = None
+
+class AdminDashboardStats(BaseModel):
+    total_employers: int
+    total_employees: int
+    pending_employer_verifications: int
+    pending_employee_verifications: int
+    total_advances_today: float
+    pending_disbursements: int
+
+# ======================== UTILITIES ========================
+
+def hash_password(password: str) -> str:
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+def verify_password(password: str, hashed: str) -> bool:
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+
+def create_token(user_id: str, role: str) -> str:
+    payload = {
+        "sub": user_id,
+        "role": role,
+        "exp": datetime.now(timezone.utc) + timedelta(hours=JWT_EXPIRATION_HOURS)
+    }
+    return jwt.encode(payload, JWT_SECRET, algorithm=JWT_ALGORITHM)
+
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    try:
+        payload = jwt.decode(credentials.credentials, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+        user_id = payload.get("sub")
+        user = await db.users.find_one({"id": user_id}, {"_id": 0})
+        if not user:
+            raise HTTPException(status_code=401, detail="User not found")
+        return user
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+def require_role(*roles):
+    async def role_checker(user: dict = Depends(get_current_user)):
+        if user.get("role") not in roles:
+            raise HTTPException(status_code=403, detail="Insufficient permissions")
+        return user
+    return role_checker
+
+# Risk Scoring Calculations
+EMPLOYER_WEIGHTS = {
+    "legal_compliance": {"registration_status": 0.10, "tax_compliance": 0.07, "ewa_agreement": 0.03},
+    "financial_health": {"audited_financials": 0.15, "liquidity_ratio": 0.10, "payroll_sustainability": 0.10},
+    "operational": {"employee_count": 0.05, "churn_rate": 0.05, "payroll_integration": 0.10},
+    "sector_exposure": {"industry_risk": 0.10, "regulatory_exposure": 0.05},
+    "aml_transparency": {"beneficial_ownership": 0.05, "pep_screening": 0.05}
+}
+
+EMPLOYEE_WEIGHTS = {
+    "legal_compliance": {"verification_status": 0.15, "tax_compliance": 0.10, "consent_data_rights": 0.10},
+    "financial_health": {"account_verification": 0.45},
+    "operational": {"employment_status": 0.075, "employment_contract": 0.075, "recent_payslips": 0.025, "bank_statements": 0.025}
+}
+
+def calculate_composite_risk_score(scores: Dict[str, Dict[str, int]], weights: Dict[str, Dict[str, float]]) -> float:
+    total_weighted_score = 0
+    total_weight = 0
+    for category, factors in weights.items():
+        if category in scores:
+            for factor, weight in factors.items():
+                if factor in scores[category]:
+                    score = scores[category][factor]
+                    total_weighted_score += score * weight
+                    total_weight += weight
+    return total_weighted_score / total_weight if total_weight > 0 else 0
+
+def get_risk_rating(crs: float) -> str:
+    if crs >= 4.0:
+        return "A"  # Low Risk
+    elif crs >= 3.0:
+        return "B"  # Medium Risk
+    elif crs >= 2.6:
+        return "C"  # High Risk
+    else:
+        return "D"  # Very High Risk
+
+def calculate_application_fee(crs_total: float) -> float:
+    base_fee = 3.5
+    risk_adjustment = 3.0
+    return base_fee + (risk_adjustment * (1 - crs_total / 5))
+
+# Industry Risk Classification (Kenya)
+INDUSTRY_RISK = {
+    "agriculture": 3, "manufacturing": 3, "construction": 3, "mining": 1,
+    "retail": 3, "hospitality": 3, "healthcare": 5, "education": 5,
+    "financial_services": 5, "technology": 5, "transport": 3, "utilities": 5,
+    "real_estate": 3, "professional_services": 5, "government": 5, "ngo": 3,
+    "other": 3
+}
+
+# ======================== AUTH ENDPOINTS ========================
+
+@api_router.post("/auth/register", response_model=TokenResponse)
+async def register(user_data: UserCreate):
+    # Check if user exists
+    existing = await db.users.find_one({"email": user_data.email})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
     
-    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
-    client_name: str
-    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    user_id = str(uuid.uuid4())
+    user_doc = {
+        "id": user_id,
+        "email": user_data.email,
+        "phone": user_data.phone,
+        "full_name": user_data.full_name,
+        "role": user_data.role,
+        "password_hash": hash_password(user_data.password),
+        "is_verified": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(user_doc)
+    
+    token = create_token(user_id, user_data.role)
+    return TokenResponse(
+        access_token=token,
+        user=UserResponse(
+            id=user_id,
+            email=user_data.email,
+            phone=user_data.phone,
+            full_name=user_data.full_name,
+            role=user_data.role,
+            created_at=user_doc["created_at"],
+            is_verified=False
+        )
+    )
 
-class StatusCheckCreate(BaseModel):
-    client_name: str
+@api_router.post("/auth/login", response_model=TokenResponse)
+async def login(credentials: UserLogin):
+    user = await db.users.find_one({"email": credentials.email}, {"_id": 0})
+    if not user or not verify_password(credentials.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    
+    token = create_token(user["id"], user["role"])
+    return TokenResponse(
+        access_token=token,
+        user=UserResponse(
+            id=user["id"],
+            email=user["email"],
+            phone=user["phone"],
+            full_name=user["full_name"],
+            role=user["role"],
+            created_at=user["created_at"],
+            is_verified=user.get("is_verified", False)
+        )
+    )
 
-# Add your routes to the router instead of directly to app
+@api_router.get("/auth/me", response_model=UserResponse)
+async def get_me(user: dict = Depends(get_current_user)):
+    return UserResponse(
+        id=user["id"],
+        email=user["email"],
+        phone=user["phone"],
+        full_name=user["full_name"],
+        role=user["role"],
+        created_at=user["created_at"],
+        is_verified=user.get("is_verified", False)
+    )
+
+# ======================== EMPLOYER ENDPOINTS ========================
+
+@api_router.post("/employers", response_model=EmployerResponse)
+async def create_employer(data: EmployerCreate, user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    # Check if employer profile exists
+    existing = await db.employers.find_one({"user_id": user["id"]})
+    if existing:
+        raise HTTPException(status_code=400, detail="Employer profile already exists")
+    
+    employer_id = str(uuid.uuid4())
+    employer_doc = {
+        "id": employer_id,
+        "user_id": user["id"],
+        **data.model_dump(),
+        "status": "pending",
+        "risk_score": None,
+        "risk_factors": {},
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.employers.insert_one(employer_doc)
+    
+    return EmployerResponse(**{k: v for k, v in employer_doc.items() if k != "_id"})
+
+@api_router.get("/employers/me", response_model=EmployerResponse)
+async def get_my_employer(user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    return EmployerResponse(**employer)
+
+@api_router.get("/employers", response_model=List[EmployerResponse])
+async def list_employers(status: Optional[str] = None, user: dict = Depends(require_role(UserRole.ADMIN))):
+    query = {}
+    if status:
+        query["status"] = status
+    employers = await db.employers.find(query, {"_id": 0}).to_list(1000)
+    return [EmployerResponse(**e) for e in employers]
+
+@api_router.get("/employers/{employer_id}", response_model=EmployerResponse)
+async def get_employer(employer_id: str, user: dict = Depends(require_role(UserRole.ADMIN, UserRole.EMPLOYER))):
+    employer = await db.employers.find_one({"id": employer_id}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    return EmployerResponse(**employer)
+
+@api_router.patch("/employers/{employer_id}/status")
+async def update_employer_status(employer_id: str, status: str, user: dict = Depends(require_role(UserRole.ADMIN))):
+    result = await db.employers.update_one(
+        {"id": employer_id},
+        {"$set": {"status": status}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    return {"message": "Status updated"}
+
+# ======================== EMPLOYEE ENDPOINTS ========================
+
+@api_router.post("/employees", response_model=EmployeeResponse)
+async def create_employee(data: EmployeeCreate, user: dict = Depends(require_role(UserRole.EMPLOYEE))):
+    # Check if employee profile exists
+    existing = await db.employees.find_one({"user_id": user["id"]})
+    if existing:
+        raise HTTPException(status_code=400, detail="Employee profile already exists")
+    
+    # Verify employer exists
+    employer = await db.employers.find_one({"id": data.employer_id}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    employee_id = str(uuid.uuid4())
+    advance_limit = data.monthly_salary * 0.5  # 50% of salary
+    
+    employee_doc = {
+        "id": employee_id,
+        "user_id": user["id"],
+        **data.model_dump(),
+        "status": "pending",
+        "risk_score": None,
+        "risk_factors": {},
+        "kyc_status": "pending",
+        "earned_wages": 0,
+        "advance_limit": advance_limit,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.employees.insert_one(employee_doc)
+    
+    return EmployeeResponse(
+        **{k: v for k, v in employee_doc.items() if k != "_id"},
+        employer_name=employer.get("company_name")
+    )
+
+@api_router.get("/employees/me", response_model=EmployeeResponse)
+async def get_my_employee(user: dict = Depends(require_role(UserRole.EMPLOYEE))):
+    employee = await db.employees.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee profile not found")
+    
+    employer = await db.employers.find_one({"id": employee.get("employer_id")}, {"_id": 0})
+    return EmployeeResponse(
+        **employee,
+        employer_name=employer.get("company_name") if employer else None
+    )
+
+@api_router.get("/employees", response_model=List[EmployeeResponse])
+async def list_employees(
+    employer_id: Optional[str] = None,
+    status: Optional[str] = None,
+    kyc_status: Optional[str] = None,
+    user: dict = Depends(require_role(UserRole.ADMIN, UserRole.EMPLOYER))
+):
+    query = {}
+    if user["role"] == UserRole.EMPLOYER:
+        employer = await db.employers.find_one({"user_id": user["id"]})
+        if employer:
+            query["employer_id"] = employer["id"]
+    elif employer_id:
+        query["employer_id"] = employer_id
+    if status:
+        query["status"] = status
+    if kyc_status:
+        query["kyc_status"] = kyc_status
+    
+    employees = await db.employees.find(query, {"_id": 0}).to_list(1000)
+    
+    # Get employer names
+    employer_ids = list(set(e.get("employer_id") for e in employees))
+    employers = await db.employers.find({"id": {"$in": employer_ids}}, {"_id": 0}).to_list(1000)
+    employer_map = {e["id"]: e["company_name"] for e in employers}
+    
+    return [EmployeeResponse(**e, employer_name=employer_map.get(e.get("employer_id"))) for e in employees]
+
+@api_router.patch("/employees/{employee_id}/status")
+async def update_employee_status(employee_id: str, status: str, user: dict = Depends(require_role(UserRole.ADMIN))):
+    result = await db.employees.update_one(
+        {"id": employee_id},
+        {"$set": {"status": status}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return {"message": "Status updated"}
+
+@api_router.patch("/employees/{employee_id}/kyc-status")
+async def update_employee_kyc_status(employee_id: str, kyc_status: str, user: dict = Depends(require_role(UserRole.ADMIN))):
+    result = await db.employees.update_one(
+        {"id": employee_id},
+        {"$set": {"kyc_status": kyc_status}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    return {"message": "KYC status updated"}
+
+# ======================== ADVANCE ENDPOINTS ========================
+
+@api_router.post("/advances", response_model=AdvanceResponse)
+async def create_advance(data: AdvanceCreate, user: dict = Depends(require_role(UserRole.EMPLOYEE))):
+    employee = await db.employees.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee profile not found")
+    
+    if employee["status"] != "approved" or employee["kyc_status"] != "approved":
+        raise HTTPException(status_code=400, detail="Account not verified")
+    
+    if data.amount > employee["advance_limit"]:
+        raise HTTPException(status_code=400, detail=f"Amount exceeds limit of {employee['advance_limit']}")
+    
+    if data.amount > employee["earned_wages"]:
+        raise HTTPException(status_code=400, detail=f"Amount exceeds earned wages of {employee['earned_wages']}")
+    
+    employer = await db.employers.find_one({"id": employee["employer_id"]}, {"_id": 0})
+    
+    # Calculate fee based on risk scores
+    employee_crs = employee.get("risk_score", 3.0)
+    employer_crs = employer.get("risk_score", 3.0) if employer else 3.0
+    total_crs = (employee_crs + employer_crs) / 2
+    fee_percentage = calculate_application_fee(total_crs)
+    fee_amount = data.amount * (fee_percentage / 100)
+    net_amount = data.amount - fee_amount
+    
+    # Get disbursement details
+    disbursement_details = {}
+    if data.disbursement_method == "mobile_money":
+        disbursement_details = {
+            "provider": employee.get("mobile_money_provider"),
+            "number": employee.get("mobile_money_number")
+        }
+    else:
+        disbursement_details = {
+            "bank": employee.get("bank_name"),
+            "account": employee.get("bank_account")
+        }
+    
+    advance_id = str(uuid.uuid4())
+    advance_doc = {
+        "id": advance_id,
+        "employee_id": employee["id"],
+        "employee_name": user["full_name"],
+        "employer_id": employee["employer_id"],
+        "employer_name": employer["company_name"] if employer else "Unknown",
+        "amount": data.amount,
+        "fee_percentage": fee_percentage,
+        "fee_amount": fee_amount,
+        "net_amount": net_amount,
+        "disbursement_method": data.disbursement_method,
+        "disbursement_details": disbursement_details,
+        "status": "pending",
+        "reason": data.reason,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "processed_at": None
+    }
+    await db.advances.insert_one(advance_doc)
+    
+    # Create transaction record
+    await db.transactions.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": user["id"],
+        "type": "advance_request",
+        "amount": data.amount,
+        "reference": advance_id,
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "metadata": {"advance_id": advance_id}
+    })
+    
+    return AdvanceResponse(**{k: v for k, v in advance_doc.items() if k != "_id"})
+
+@api_router.get("/advances", response_model=List[AdvanceResponse])
+async def list_advances(
+    status: Optional[str] = None,
+    user: dict = Depends(get_current_user)
+):
+    query = {}
+    
+    if user["role"] == UserRole.EMPLOYEE:
+        employee = await db.employees.find_one({"user_id": user["id"]})
+        if employee:
+            query["employee_id"] = employee["id"]
+    elif user["role"] == UserRole.EMPLOYER:
+        employer = await db.employers.find_one({"user_id": user["id"]})
+        if employer:
+            query["employer_id"] = employer["id"]
+    
+    if status:
+        query["status"] = status
+    
+    advances = await db.advances.find(query, {"_id": 0}).sort("created_at", -1).to_list(1000)
+    return [AdvanceResponse(**a) for a in advances]
+
+@api_router.get("/advances/{advance_id}", response_model=AdvanceResponse)
+async def get_advance(advance_id: str, user: dict = Depends(get_current_user)):
+    advance = await db.advances.find_one({"id": advance_id}, {"_id": 0})
+    if not advance:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    return AdvanceResponse(**advance)
+
+@api_router.patch("/advances/{advance_id}/approve")
+async def approve_advance(advance_id: str, user: dict = Depends(require_role(UserRole.ADMIN))):
+    advance = await db.advances.find_one({"id": advance_id}, {"_id": 0})
+    if not advance:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    
+    if advance["status"] != "pending":
+        raise HTTPException(status_code=400, detail="Advance already processed")
+    
+    # Update advance status
+    await db.advances.update_one(
+        {"id": advance_id},
+        {"$set": {"status": "approved", "processed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Update employee earned wages
+    await db.employees.update_one(
+        {"id": advance["employee_id"]},
+        {"$inc": {"earned_wages": -advance["amount"]}}
+    )
+    
+    # Update transaction
+    await db.transactions.update_one(
+        {"reference": advance_id},
+        {"$set": {"status": "approved"}}
+    )
+    
+    return {"message": "Advance approved"}
+
+@api_router.patch("/advances/{advance_id}/disburse")
+async def disburse_advance(advance_id: str, user: dict = Depends(require_role(UserRole.ADMIN))):
+    advance = await db.advances.find_one({"id": advance_id}, {"_id": 0})
+    if not advance:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    
+    if advance["status"] != "approved":
+        raise HTTPException(status_code=400, detail="Advance not approved")
+    
+    # Mock disbursement - in production, integrate with mobile money/bank APIs
+    disbursement_ref = f"EW-{datetime.now().strftime('%Y%m%d%H%M%S')}-{advance_id[:8]}"
+    
+    await db.advances.update_one(
+        {"id": advance_id},
+        {"$set": {
+            "status": "disbursed",
+            "disbursement_reference": disbursement_ref,
+            "disbursed_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    # Create disbursement transaction
+    await db.transactions.insert_one({
+        "id": str(uuid.uuid4()),
+        "user_id": advance["employee_id"],
+        "type": "disbursement",
+        "amount": advance["net_amount"],
+        "reference": disbursement_ref,
+        "status": "completed",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "metadata": {"advance_id": advance_id, "method": advance["disbursement_method"]}
+    })
+    
+    return {"message": "Disbursement initiated", "reference": disbursement_ref}
+
+@api_router.patch("/advances/{advance_id}/reject")
+async def reject_advance(advance_id: str, reason: str = "", user: dict = Depends(require_role(UserRole.ADMIN))):
+    result = await db.advances.update_one(
+        {"id": advance_id, "status": "pending"},
+        {"$set": {"status": "rejected", "rejection_reason": reason, "processed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=400, detail="Advance not found or already processed")
+    
+    await db.transactions.update_one(
+        {"reference": advance_id},
+        {"$set": {"status": "rejected"}}
+    )
+    
+    return {"message": "Advance rejected"}
+
+# ======================== KYC ENDPOINTS ========================
+
+@api_router.post("/kyc/documents", response_model=KYCDocumentResponse)
+async def upload_kyc_document(data: KYCDocumentCreate, user: dict = Depends(get_current_user)):
+    doc_id = str(uuid.uuid4())
+    doc = {
+        "id": doc_id,
+        "user_id": user["id"],
+        **data.model_dump(),
+        "status": "pending",
+        "reviewer_notes": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "reviewed_at": None
+    }
+    await db.kyc_documents.insert_one(doc)
+    
+    # Update KYC status to submitted
+    if user["role"] == UserRole.EMPLOYEE:
+        await db.employees.update_one(
+            {"user_id": user["id"]},
+            {"$set": {"kyc_status": "submitted"}}
+        )
+    
+    return KYCDocumentResponse(**{k: v for k, v in doc.items() if k != "_id"})
+
+@api_router.get("/kyc/documents", response_model=List[KYCDocumentResponse])
+async def list_kyc_documents(
+    user_id: Optional[str] = None,
+    status: Optional[str] = None,
+    user: dict = Depends(get_current_user)
+):
+    query = {}
+    if user["role"] != UserRole.ADMIN:
+        query["user_id"] = user["id"]
+    elif user_id:
+        query["user_id"] = user_id
+    if status:
+        query["status"] = status
+    
+    docs = await db.kyc_documents.find(query, {"_id": 0}).to_list(1000)
+    return [KYCDocumentResponse(**d) for d in docs]
+
+@api_router.patch("/kyc/documents/{doc_id}/review")
+async def review_kyc_document(doc_id: str, status: str, notes: str = "", user: dict = Depends(require_role(UserRole.ADMIN))):
+    result = await db.kyc_documents.update_one(
+        {"id": doc_id},
+        {"$set": {
+            "status": status,
+            "reviewer_notes": notes,
+            "reviewed_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.modified_count == 0:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"message": "Document reviewed"}
+
+# ======================== RISK SCORING ENDPOINTS ========================
+
+@api_router.post("/risk-scores/employer/{employer_id}")
+async def update_employer_risk_score(employer_id: str, data: RiskScoreUpdate, user: dict = Depends(require_role(UserRole.ADMIN))):
+    employer = await db.employers.find_one({"id": employer_id}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    scores = {
+        "legal_compliance": data.legal_compliance,
+        "financial_health": data.financial_health,
+        "operational": data.operational,
+        "sector_exposure": data.sector_exposure,
+        "aml_transparency": data.aml_transparency
+    }
+    
+    crs = calculate_composite_risk_score(scores, EMPLOYER_WEIGHTS)
+    rating = get_risk_rating(crs)
+    fee = calculate_application_fee(crs)
+    
+    await db.employers.update_one(
+        {"id": employer_id},
+        {"$set": {
+            "risk_score": crs,
+            "risk_factors": scores,
+            "risk_rating": rating
+        }}
+    )
+    
+    # Store risk score history
+    await db.risk_scores.insert_one({
+        "id": str(uuid.uuid4()),
+        "entity_type": "employer",
+        "entity_id": employer_id,
+        "scores": scores,
+        "composite_risk_score": crs,
+        "risk_rating": rating,
+        "application_fee_percentage": fee,
+        "calculated_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return RiskScoreResponse(
+        entity_type="employer",
+        entity_id=employer_id,
+        legal_compliance_score=calculate_composite_risk_score({"legal_compliance": data.legal_compliance}, {"legal_compliance": EMPLOYER_WEIGHTS["legal_compliance"]}),
+        financial_health_score=calculate_composite_risk_score({"financial_health": data.financial_health}, {"financial_health": EMPLOYER_WEIGHTS["financial_health"]}),
+        operational_score=calculate_composite_risk_score({"operational": data.operational}, {"operational": EMPLOYER_WEIGHTS["operational"]}),
+        sector_exposure_score=calculate_composite_risk_score({"sector_exposure": data.sector_exposure}, {"sector_exposure": EMPLOYER_WEIGHTS["sector_exposure"]}),
+        aml_transparency_score=calculate_composite_risk_score({"aml_transparency": data.aml_transparency}, {"aml_transparency": EMPLOYER_WEIGHTS["aml_transparency"]}),
+        composite_risk_score=crs,
+        risk_rating=rating,
+        application_fee_percentage=fee,
+        calculated_at=datetime.now(timezone.utc).isoformat()
+    )
+
+@api_router.post("/risk-scores/employee/{employee_id}")
+async def update_employee_risk_score(employee_id: str, data: RiskScoreUpdate, user: dict = Depends(require_role(UserRole.ADMIN))):
+    employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    scores = {
+        "legal_compliance": data.legal_compliance,
+        "financial_health": data.financial_health,
+        "operational": data.operational
+    }
+    
+    crs = calculate_composite_risk_score(scores, EMPLOYEE_WEIGHTS)
+    rating = get_risk_rating(crs)
+    
+    await db.employees.update_one(
+        {"id": employee_id},
+        {"$set": {
+            "risk_score": crs,
+            "risk_factors": scores,
+            "risk_rating": rating
+        }}
+    )
+    
+    # Store risk score history
+    await db.risk_scores.insert_one({
+        "id": str(uuid.uuid4()),
+        "entity_type": "employee",
+        "entity_id": employee_id,
+        "scores": scores,
+        "composite_risk_score": crs,
+        "risk_rating": rating,
+        "calculated_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": "Risk score updated", "composite_risk_score": crs, "risk_rating": rating}
+
+@api_router.get("/risk-scores/{entity_type}/{entity_id}")
+async def get_risk_score(entity_type: str, entity_id: str, user: dict = Depends(require_role(UserRole.ADMIN))):
+    score = await db.risk_scores.find_one(
+        {"entity_type": entity_type, "entity_id": entity_id},
+        {"_id": 0},
+        sort=[("calculated_at", -1)]
+    )
+    if not score:
+        raise HTTPException(status_code=404, detail="Risk score not found")
+    return score
+
+# ======================== PAYROLL ENDPOINTS ========================
+
+@api_router.post("/payroll/upload")
+async def upload_payroll(data: PayrollUpload, user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    # Process each employee's payroll
+    for emp_data in data.employees:
+        employee = await db.employees.find_one({
+            "employer_id": employer["id"],
+            "employee_code": emp_data.get("employee_code")
+        })
+        
+        if employee:
+            days_worked = emp_data.get("days_worked", 0)
+            gross_salary = emp_data.get("gross_salary", employee.get("monthly_salary", 0))
+            
+            # Calculate earned wages (pro-rata based on days worked)
+            daily_rate = gross_salary / 30
+            earned_wages = daily_rate * days_worked
+            advance_limit = earned_wages * 0.5  # 50% of earned wages
+            
+            await db.employees.update_one(
+                {"id": employee["id"]},
+                {"$set": {
+                    "earned_wages": earned_wages,
+                    "advance_limit": advance_limit,
+                    "last_payroll_update": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+    
+    # Store payroll record
+    await db.payroll_records.insert_one({
+        "id": str(uuid.uuid4()),
+        "employer_id": employer["id"],
+        "month": data.month,
+        "employees": data.employees,
+        "uploaded_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": f"Payroll uploaded for {len(data.employees)} employees"}
+
+@api_router.get("/payroll/history")
+async def get_payroll_history(user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    records = await db.payroll_records.find(
+        {"employer_id": employer["id"]},
+        {"_id": 0}
+    ).sort("uploaded_at", -1).to_list(100)
+    
+    return records
+
+# ======================== TRANSACTION ENDPOINTS ========================
+
+@api_router.get("/transactions", response_model=List[TransactionResponse])
+async def list_transactions(user: dict = Depends(get_current_user)):
+    query = {"user_id": user["id"]}
+    
+    if user["role"] == UserRole.EMPLOYEE:
+        employee = await db.employees.find_one({"user_id": user["id"]})
+        if employee:
+            query = {"$or": [{"user_id": user["id"]}, {"user_id": employee["id"]}]}
+    
+    transactions = await db.transactions.find(query, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return [TransactionResponse(**t) for t in transactions]
+
+# ======================== DASHBOARD ENDPOINTS ========================
+
+@api_router.get("/dashboard/employee", response_model=EmployeeDashboardStats)
+async def get_employee_dashboard(user: dict = Depends(require_role(UserRole.EMPLOYEE))):
+    employee = await db.employees.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee profile not found")
+    
+    # Get total advances
+    advances = await db.advances.find({"employee_id": employee["id"]}, {"_id": 0}).to_list(1000)
+    total_advances = sum(a.get("amount", 0) for a in advances if a.get("status") in ["approved", "disbursed"])
+    pending_repayment = sum(a.get("amount", 0) for a in advances if a.get("status") == "disbursed")
+    
+    # Get recent transactions
+    transactions = await db.transactions.find(
+        {"$or": [{"user_id": user["id"]}, {"user_id": employee["id"]}]},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(10)
+    
+    return EmployeeDashboardStats(
+        earned_wages=employee.get("earned_wages", 0),
+        advance_limit=employee.get("advance_limit", 0),
+        total_advances=total_advances,
+        pending_repayment=pending_repayment,
+        recent_transactions=[TransactionResponse(**t) for t in transactions]
+    )
+
+@api_router.get("/dashboard/employer", response_model=EmployerDashboardStats)
+async def get_employer_dashboard(user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    employees = await db.employees.find({"employer_id": employer["id"]}, {"_id": 0}).to_list(1000)
+    active_employees = [e for e in employees if e.get("status") == "approved"]
+    
+    advances = await db.advances.find({"employer_id": employer["id"]}, {"_id": 0}).to_list(1000)
+    total_disbursed = sum(a.get("amount", 0) for a in advances if a.get("status") in ["approved", "disbursed"])
+    pending_advances = len([a for a in advances if a.get("status") == "pending"])
+    
+    monthly_payroll = sum(e.get("monthly_salary", 0) for e in active_employees)
+    
+    return EmployerDashboardStats(
+        total_employees=len(employees),
+        active_employees=len(active_employees),
+        total_advances_disbursed=total_disbursed,
+        pending_advances=pending_advances,
+        monthly_payroll=monthly_payroll,
+        risk_score=employer.get("risk_score")
+    )
+
+@api_router.get("/dashboard/admin", response_model=AdminDashboardStats)
+async def get_admin_dashboard(user: dict = Depends(require_role(UserRole.ADMIN))):
+    employers = await db.employers.find({}, {"_id": 0}).to_list(1000)
+    employees = await db.employees.find({}, {"_id": 0}).to_list(1000)
+    
+    pending_employer_verifications = len([e for e in employers if e.get("status") == "pending"])
+    pending_employee_verifications = len([e for e in employees if e.get("kyc_status") == "submitted"])
+    
+    # Today's advances
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    advances = await db.advances.find({"created_at": {"$gte": today_start.isoformat()}}, {"_id": 0}).to_list(1000)
+    total_advances_today = sum(a.get("amount", 0) for a in advances)
+    pending_disbursements = len([a for a in advances if a.get("status") == "approved"])
+    
+    return AdminDashboardStats(
+        total_employers=len(employers),
+        total_employees=len(employees),
+        pending_employer_verifications=pending_employer_verifications,
+        pending_employee_verifications=pending_employee_verifications,
+        total_advances_today=total_advances_today,
+        pending_disbursements=pending_disbursements
+    )
+
+# ======================== UTILITY ENDPOINTS ========================
+
+@api_router.get("/countries")
+async def get_countries():
+    return [
+        {"code": "KE", "name": "Kenya", "currency": "KES", "mobile_money": ["M-PESA", "Airtel Money"]},
+        {"code": "UG", "name": "Uganda", "currency": "UGX", "mobile_money": ["MTN Mobile Money", "Airtel Money"]},
+        {"code": "TZ", "name": "Tanzania", "currency": "TZS", "mobile_money": ["M-PESA", "Tigo Pesa", "Airtel Money"]},
+        {"code": "RW", "name": "Rwanda", "currency": "RWF", "mobile_money": ["MTN Mobile Money", "Airtel Money"]}
+    ]
+
+@api_router.get("/industries")
+async def get_industries():
+    return [
+        {"code": "agriculture", "name": "Agriculture", "risk": "medium"},
+        {"code": "manufacturing", "name": "Manufacturing", "risk": "medium"},
+        {"code": "construction", "name": "Construction", "risk": "medium"},
+        {"code": "mining", "name": "Mining & Quarrying", "risk": "high"},
+        {"code": "retail", "name": "Retail & Wholesale", "risk": "medium"},
+        {"code": "hospitality", "name": "Hospitality & Tourism", "risk": "medium"},
+        {"code": "healthcare", "name": "Healthcare", "risk": "low"},
+        {"code": "education", "name": "Education", "risk": "low"},
+        {"code": "financial_services", "name": "Financial Services", "risk": "low"},
+        {"code": "technology", "name": "Technology & IT", "risk": "low"},
+        {"code": "transport", "name": "Transport & Logistics", "risk": "medium"},
+        {"code": "utilities", "name": "Utilities", "risk": "low"},
+        {"code": "real_estate", "name": "Real Estate", "risk": "medium"},
+        {"code": "professional_services", "name": "Professional Services", "risk": "low"},
+        {"code": "government", "name": "Government", "risk": "low"},
+        {"code": "ngo", "name": "NGO & Non-Profit", "risk": "medium"},
+        {"code": "other", "name": "Other", "risk": "medium"}
+    ]
+
 @api_router.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "EaziWage API v1.0", "status": "running"}
 
-@api_router.post("/status", response_model=StatusCheck)
-async def create_status_check(input: StatusCheckCreate):
-    status_dict = input.model_dump()
-    status_obj = StatusCheck(**status_dict)
-    
-    # Convert to dict and serialize datetime to ISO string for MongoDB
-    doc = status_obj.model_dump()
-    doc['timestamp'] = doc['timestamp'].isoformat()
-    
-    _ = await db.status_checks.insert_one(doc)
-    return status_obj
-
-@api_router.get("/status", response_model=List[StatusCheck])
-async def get_status_checks():
-    # Exclude MongoDB's _id field from the query results
-    status_checks = await db.status_checks.find({}, {"_id": 0}).to_list(1000)
-    
-    # Convert ISO string timestamps back to datetime objects
-    for check in status_checks:
-        if isinstance(check['timestamp'], str):
-            check['timestamp'] = datetime.fromisoformat(check['timestamp'])
-    
-    return status_checks
-
-# Include the router in the main app
+# Include router and middleware
 app.include_router(api_router)
 
 app.add_middleware(
@@ -76,13 +1079,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
 
 @app.on_event("shutdown")
 async def shutdown_db_client():
