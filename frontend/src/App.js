@@ -1,52 +1,197 @@
-import { useEffect } from "react";
+import React from 'react';
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "./components/ui/sonner";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+// Marketing Pages
+import LandingPage from "./pages/marketing/LandingPage";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
+// Auth Pages
+import LoginPage from "./pages/auth/LoginPage";
+import RegisterPage from "./pages/auth/RegisterPage";
+
+// Employee Pages
+import EmployeeDashboard from "./pages/employee/Dashboard";
+import EmployeeOnboarding from "./pages/employee/Onboarding";
+import RequestAdvance from "./pages/employee/RequestAdvance";
+
+// Employer Pages
+import EmployerDashboard from "./pages/employer/Dashboard";
+import EmployerOnboarding from "./pages/employer/Onboarding";
+
+// Admin Pages
+import AdminDashboard from "./pages/admin/Dashboard";
+import AdminEmployers from "./pages/admin/Employers";
+import AdminAdvances from "./pages/admin/Advances";
+
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const user = JSON.parse(localStorage.getItem('eaziwage_user') || 'null');
+  const token = localStorage.getItem('eaziwage_token');
+
+  if (!token || !user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    // Redirect to appropriate dashboard based on role
+    switch (user.role) {
+      case 'admin':
+        return <Navigate to="/admin" replace />;
+      case 'employer':
+        return <Navigate to="/employer" replace />;
+      case 'employee':
+        return <Navigate to="/employee" replace />;
+      default:
+        return <Navigate to="/login" replace />;
     }
-  };
+  }
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
-
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
+  return children;
 };
+
+// Placeholder pages for routes that need basic implementation
+const PlaceholderPage = ({ title, description }) => (
+  <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+    <div className="text-center">
+      <h1 className="font-heading text-2xl font-bold text-slate-900 mb-2">{title}</h1>
+      <p className="text-slate-500">{description}</p>
+    </div>
+  </div>
+);
 
 function App() {
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
+          {/* Marketing / Public Routes */}
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/employers" element={<PlaceholderPage title="For Employers" description="Employer information page" />} />
+          <Route path="/how-it-works" element={<PlaceholderPage title="How it Works" description="Step-by-step guide" />} />
+          <Route path="/pricing" element={<PlaceholderPage title="Pricing" description="Transparent pricing information" />} />
+          <Route path="/resources" element={<PlaceholderPage title="Resources" description="Helpful resources and guides" />} />
+          <Route path="/company" element={<PlaceholderPage title="About Us" description="Learn about EaziWage" />} />
+          <Route path="/contact" element={<PlaceholderPage title="Contact Us" description="Get in touch with our team" />} />
+          <Route path="/partners" element={<PlaceholderPage title="Partners" description="Our partner network" />} />
+          <Route path="/privacy" element={<PlaceholderPage title="Privacy Policy" description="How we protect your data" />} />
+          <Route path="/terms" element={<PlaceholderPage title="Terms of Service" description="Terms and conditions" />} />
+
+          {/* Auth Routes */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+
+          {/* Employee Routes */}
+          <Route path="/employee" element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <EmployeeDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/employee/onboarding" element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <EmployeeOnboarding />
+            </ProtectedRoute>
+          } />
+          <Route path="/employee/advances" element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <RequestAdvance />
+            </ProtectedRoute>
+          } />
+          <Route path="/employee/transactions" element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <PlaceholderPage title="Transactions" description="Your transaction history" />
+            </ProtectedRoute>
+          } />
+          <Route path="/employee/kyc" element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <PlaceholderPage title="KYC Documents" description="Upload and manage your documents" />
+            </ProtectedRoute>
+          } />
+          <Route path="/employee/profile" element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <PlaceholderPage title="Profile" description="Manage your profile settings" />
+            </ProtectedRoute>
+          } />
+
+          {/* Employer Routes */}
+          <Route path="/employer" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <EmployerDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/onboarding" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <EmployerOnboarding />
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/employees" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <PlaceholderPage title="Employees" description="Manage your employees" />
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/payroll" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <PlaceholderPage title="Payroll" description="Upload and manage payroll data" />
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/advances" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <PlaceholderPage title="Advances" description="View employee advances" />
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/reports" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <PlaceholderPage title="Reports" description="Analytics and reports" />
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/settings" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <PlaceholderPage title="Settings" description="Company settings" />
+            </ProtectedRoute>
+          } />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/employers" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminEmployers />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/employees" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <PlaceholderPage title="Employees" description="Manage all employees" />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/advances" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminAdvances />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/kyc" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <PlaceholderPage title="KYC Review" description="Review KYC documents" />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/risk-scoring" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <PlaceholderPage title="Risk Scoring" description="Calculate and update risk scores" />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/settings" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <PlaceholderPage title="Settings" description="System settings" />
+            </ProtectedRoute>
+          } />
+
+          {/* Catch-all redirect */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
+      <Toaster position="top-right" />
     </div>
   );
 }
