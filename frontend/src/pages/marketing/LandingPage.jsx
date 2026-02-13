@@ -277,7 +277,7 @@ export default function LandingPage() {
                         </div>
                         <div>
                           <p className="font-semibold text-slate-900 dark:text-white">KES 5,000 Sent</p>
-                          <p className="text-sm text-slate-500">To M-PESA · 2 sec ago</p>
+                          <p className="text-sm text-slate-500">To Mobile Wallet · 2 sec ago</p>
                         </div>
                       </div>
                     </div>
