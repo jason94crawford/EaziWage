@@ -17,7 +17,7 @@ const countries = [
 ];
 
 const paymentMethods = [
-  { id: 'mpesa', name: 'M-PESA', countries: ['KE', 'TZ'] },
+  { id: 'mobile_wallet', name: 'Mobile Wallet', countries: ['KE', 'TZ', 'UG', 'RW'] },
   { id: 'mtn', name: 'MTN Mobile Money', countries: ['UG', 'RW'] },
   { id: 'airtel', name: 'Airtel Money', countries: ['KE', 'UG', 'TZ', 'RW'] },
   { id: 'bank', name: 'Bank Transfer', countries: ['KE', 'UG', 'TZ', 'RW'] },
