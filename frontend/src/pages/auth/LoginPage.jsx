@@ -27,49 +27,30 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_URL}/api/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+      const data = response.data;
 
-      // Clone the response to read it safely
-      const clonedResponse = response.clone();
+      localStorage.setItem('eaziwage_token', data.access_token);
+      localStorage.setItem('eaziwage_user', JSON.stringify(data.user));
       
-      let data;
-      try {
-        data = await clonedResponse.json();
-      } catch (parseError) {
-        console.error('JSON parse error:', parseError);
-        data = { detail: 'Invalid response from server.' };
-      }
-
-      if (response.ok) {
-        localStorage.setItem('eaziwage_token', data.access_token);
-        localStorage.setItem('eaziwage_user', JSON.stringify(data.user));
-        
-        const user = data.user;
-        switch (user.role) {
-          case 'admin':
-            navigate('/admin');
-            break;
-          case 'employer':
-            navigate('/employer');
-            break;
-          case 'employee':
-            navigate('/employee');
-            break;
-          default:
-            navigate('/');
-        }
-      } else {
-        setError(data.detail || 'Login failed. Please check your credentials.');
+      const user = data.user;
+      switch (user.role) {
+        case 'admin':
+          navigate('/admin');
+          break;
+        case 'employer':
+          navigate('/employer');
+          break;
+        case 'employee':
+          navigate('/employee');
+          break;
+        default:
+          navigate('/');
       }
     } catch (err) {
       console.error('Login error:', err);
-      setError('Network error. Please check your connection and try again.');
+      const errorMessage = err.response?.data?.detail || 'Login failed. Please check your credentials.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
