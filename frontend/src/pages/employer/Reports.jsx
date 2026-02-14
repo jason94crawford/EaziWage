@@ -356,8 +356,8 @@ export default function EmployerReports() {
           {/* Monthly Summary */}
           <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary/10 to-emerald-500/10 rounded-xl flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-white" />
               </div>
               <div>
                 <h2 className="font-bold text-slate-900 dark:text-white">Monthly Summary</h2>
