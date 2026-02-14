@@ -87,19 +87,39 @@ export default function RequestAdvance() {
     );
   }
 
+  // Check if KYC is submitted (in review) vs not started
+  const kycInReview = employee?.kyc_status === 'submitted';
+
   if (!canRequest) {
     return (
       <EmployeePageLayout>
         <EmployeeHeader title="Request Advance" />
         <div className="relative z-10 flex flex-col items-center justify-center px-4 pt-20">
-          <div className="w-20 h-20 bg-amber-100 dark:bg-amber-500/20 rounded-3xl flex items-center justify-center mb-6 shadow-lg">
-            <Info className="w-10 h-10 text-amber-600 dark:text-amber-400" />
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 text-center">Account Not Verified</h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-8 text-center max-w-xs text-sm">Complete your KYC verification to start requesting advances.</p>
-          <Button onClick={() => navigate('/employee/onboarding')} className="h-12 px-8 bg-gradient-to-r from-primary to-emerald-600 text-white font-semibold rounded-xl shadow-lg shadow-primary/25" data-testid="complete-verification-btn">
-            Complete Verification <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          {kycInReview ? (
+            // KYC Submitted - Under Review
+            <>
+              <div className="w-20 h-20 bg-primary/10 rounded-3xl flex items-center justify-center mb-6 shadow-lg">
+                <Clock className="w-10 h-10 text-primary" />
+              </div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 text-center">Verification in Progress</h1>
+              <p className="text-slate-600 dark:text-slate-400 mb-4 text-center max-w-xs text-sm">Your documents are being reviewed by our team. This usually takes 1-2 business days.</p>
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 max-w-xs text-center">
+                <p className="text-xs text-slate-600 dark:text-slate-400">You'll receive a notification once your account is verified and ready to use.</p>
+              </div>
+            </>
+          ) : (
+            // KYC Not Started
+            <>
+              <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mb-6 shadow-lg">
+                <Info className="w-10 h-10 text-white" />
+              </div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-3 text-center">Complete Verification</h1>
+              <p className="text-slate-600 dark:text-slate-400 mb-8 text-center max-w-xs text-sm">Complete your KYC verification to start requesting advances.</p>
+              <Button onClick={() => navigate('/employee/onboarding')} className="h-12 px-8 bg-gradient-to-r from-primary to-emerald-600 text-white font-semibold rounded-xl shadow-lg shadow-primary/25" data-testid="complete-verification-btn">
+                Start Verification <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </>
+          )}
         </div>
       </EmployeePageLayout>
     );
