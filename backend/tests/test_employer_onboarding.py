@@ -13,7 +13,7 @@ import os
 import uuid
 from datetime import datetime
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://eazi-kenya-test.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://eazi-employer-hub.preview.emergentagent.com').rstrip('/')
 
 
 class TestEmployerOnboardingAPI:
