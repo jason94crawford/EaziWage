@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { 
   CreditCard, Search, Download, Clock, CheckCircle2,
   XCircle, AlertCircle, TrendingUp, Eye, Filter,
-  ArrowUpRight, ChevronRight, DollarSign, Users, Zap
+  ArrowUpRight, ChevronRight, DollarSign, Users, Zap, Calendar, Globe
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
+import { 
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+} from '../../components/ui/select';
 import { EmployerPortalLayout } from '../../components/employer/EmployerLayout';
 import { advanceApi, employerApi } from '../../lib/api';
 import { formatCurrency, formatDateTime, cn } from '../../lib/utils';
+import { GradientIconBox, GradientAvatar, currencies, countries } from '../../components/employer/SharedComponents';
 
 // Metric Card with solid green icon
 const MetricCard = ({ icon: Icon, label, value, subtext, valueColor }) => (
