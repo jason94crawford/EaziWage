@@ -247,8 +247,6 @@ export default function EmployerReports() {
             change="+5.3%"
             changeType="positive"
             icon={Users}
-            iconBg="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-500/20 dark:to-amber-500/10"
-            iconColor="text-amber-600"
           />
         </div>
 
