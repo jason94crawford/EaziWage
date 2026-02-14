@@ -453,19 +453,19 @@ export default function EmployerEmployees() {
         {extendedStats?.department_breakdown && Object.keys(extendedStats.department_breakdown).length > 0 && (
           <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30">
             <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Department Distribution</h2>
-            <div className="flex flex-wrap gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
               {Object.entries(extendedStats.department_breakdown).map(([dept, count]) => (
                 <div 
                   key={dept}
-                  className="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 rounded-xl flex items-center gap-2"
+                  className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/30"
                 >
-                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                    <Building2 className="w-4 h-4 text-white" />
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-6 h-6 bg-gradient-to-br from-primary to-emerald-600 rounded-md flex items-center justify-center">
+                      <Building2 className="w-3 h-3 text-white" />
+                    </div>
+                    <span className="text-lg font-bold text-slate-900 dark:text-white">{count}</span>
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-white">{dept}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{count} employees</p>
-                  </div>
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{dept}</p>
                 </div>
               ))}
             </div>
