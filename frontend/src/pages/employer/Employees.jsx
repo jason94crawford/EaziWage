@@ -66,15 +66,14 @@ const KYCBadge = ({ status }) => {
 };
 
 // Employee Row
-const EmployeeRow = ({ employee, onViewDetails, onEditEWA }) => (
+const EmployeeRow = ({ employee, onViewDetails, onEditEWA, currency }) => (
   <div className="flex items-center gap-4 p-4 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors group">
     {/* Avatar */}
-    <div className="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-md shrink-0">
-      <span className="text-white font-bold text-sm">
-        {employee.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 
+    <GradientAvatar 
+      initials={employee.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 
          employee.job_title?.charAt(0) || 'E'}
-      </span>
-    </div>
+      size="md"
+    />
     
     {/* Info */}
     <div className="flex-1 min-w-0">
