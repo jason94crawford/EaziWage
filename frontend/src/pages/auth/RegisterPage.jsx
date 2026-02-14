@@ -184,7 +184,20 @@ export default function RegisterPage() {
       }
     } catch (err) {
       console.error('Registration error:', err);
-      const errorMessage = err.response?.data?.detail || 'Registration failed. Please try again.';
+      let errorMessage = 'Registration failed. Please try again.';
+      
+      const detail = err.response?.data?.detail;
+      if (detail) {
+        if (typeof detail === 'string') {
+          errorMessage = detail;
+        } else if (Array.isArray(detail)) {
+          // Pydantic validation errors come as an array of objects
+          errorMessage = detail.map(e => e.msg || e.message || JSON.stringify(e)).join(', ');
+        } else if (typeof detail === 'object' && detail.msg) {
+          errorMessage = detail.msg;
+        }
+      }
+      
       setError(errorMessage);
     } finally {
       setIsLoading(false);
