@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Settings as SettingsIcon, Building2, Users, CreditCard, Bell,
   Shield, Globe, Clock, Save, AlertCircle, CheckCircle2, Info,
-  Percent, Calendar, Wallet, Lock, Eye, EyeOff, Mail, Phone
+  Percent, Calendar, Wallet, Lock, Eye, EyeOff, Mail, Phone, BarChart3
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
