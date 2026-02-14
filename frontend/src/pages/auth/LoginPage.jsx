@@ -1,9 +1,11 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, EyeOff, Mail, Lock, AlertCircle, Scan } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Mail, Lock, AlertCircle, Sparkles } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Alert, AlertDescription } from '../../components/ui/alert';
+import { useTheme } from '../../lib/ThemeContext';
+import { Sun, Moon } from 'lucide-react';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -16,6 +18,7 @@ const authAxios = axios.create({
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -68,162 +71,167 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] font-sans antialiased text-slate-900 dark:text-white transition-colors duration-200">
-      {/* Mobile Container */}
-      <div className="relative flex min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl">
-        
-        {/* Header / Nav */}
-        <div className="flex items-center p-4 pt-12 pb-2 justify-between">
-          <Link 
-            to="/" 
-            className="text-slate-900 dark:text-white flex w-12 h-12 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-            data-testid="back-button"
-          >
-            <ArrowLeft className="w-6 h-6" />
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 relative overflow-hidden">
+      {/* Hero Background - Matching Landing Page */}
+      <div className="absolute inset-0 gradient-mesh" />
+      <div className="absolute inset-0 bg-grid" />
+      <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
+      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[150px]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-teal-500/5 rounded-full blur-[200px]" />
+      
+      {/* Header */}
+      <header className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-3 group" data-testid="logo-link">
+            <div className="relative">
+              <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/30">
+                <span className="text-white font-bold text-xl">E</span>
+              </div>
+              <div className="absolute inset-0 bg-primary/30 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300 -z-10" />
+            </div>
+            <span className="font-heading font-bold text-2xl text-slate-900 dark:text-white">EaziWage</span>
           </Link>
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#0df259] flex items-center justify-center text-[#102216] font-bold text-xl">
-              E
-            </div>
-            <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">EaziWage</h2>
-          </div>
-          <div className="w-12"></div> {/* Spacer for visual balance */}
-        </div>
-
-        {/* Main Content Scrollable Area */}
-        <div className="flex-1 flex flex-col px-6 pt-6 pb-8 overflow-y-auto">
           
-          {/* Headline Section */}
-          <div className="mb-10 text-center">
-            <h1 className="text-slate-900 dark:text-white tracking-tight text-[32px] font-bold leading-tight mb-2">
-              Welcome Back
-            </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-base font-normal leading-normal">
-              Access your earnings, anytime
-            </p>
-          </div>
+          <button
+            onClick={toggleTheme}
+            className="p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300"
+            data-testid="theme-toggle"
+          >
+            {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          </button>
+        </div>
+      </header>
 
-          {/* Error Message */}
-          {error && (
-            <Alert variant="destructive" className="mb-6 bg-red-500/10 border-red-500/20 rounded-xl" data-testid="login-error">
-              <AlertCircle className="h-4 w-4 text-red-400" />
-              <AlertDescription className="text-red-400">{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {/* Login Form */}
-          <div className="flex flex-col gap-5 w-full">
+      {/* Main Content */}
+      <main className="relative z-10 flex items-center justify-center min-h-[calc(100vh-120px)] px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-md">
+          {/* Content Card */}
+          <div className="stagger">
+            {/* Badge */}
+            <div className="flex justify-center mb-8">
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary/10 dark:bg-primary/20 border border-primary/20 rounded-full text-sm font-semibold text-primary">
+                <Sparkles className="w-4 h-4" />
+                Welcome back to EaziWage
+              </div>
+            </div>
             
-            {/* Email Field */}
-            <div className="flex flex-col gap-2">
-              <label className="text-slate-900 dark:text-white text-sm font-medium leading-normal ml-1">
-                Email Address
-              </label>
-              <div className="relative flex w-full items-center rounded-xl bg-white dark:bg-[#1a2e22] border border-slate-200 dark:border-slate-700 focus-within:border-[#0df259] focus-within:ring-1 focus-within:ring-[#0df259] transition-all duration-200">
-                <Input
-                  type="email"
-                  placeholder="employee@company.com"
-                  className="flex w-full min-w-0 flex-1 bg-transparent text-slate-900 dark:text-white h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-4 pr-12 text-base font-normal leading-normal border-none focus:ring-0 rounded-xl"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  data-testid="login-email"
-                />
-                <div className="absolute right-4 text-slate-400 dark:text-slate-500 pointer-events-none flex items-center">
-                  <Mail className="w-5 h-5" />
+            {/* Headline */}
+            <div className="text-center mb-10">
+              <h1 className="font-heading text-4xl sm:text-5xl font-bold text-slate-900 dark:text-white leading-tight mb-4">
+                Sign In to Your
+                <br />
+                <span className="text-gradient">Account</span>
+              </h1>
+              <p className="text-lg text-slate-600 dark:text-slate-300">
+                Access your earnings, anytime, anywhere.
+              </p>
+            </div>
+
+            {/* Error Message */}
+            {error && (
+              <Alert variant="destructive" className="mb-6 bg-red-500/10 border-red-500/20 rounded-xl backdrop-blur-sm" data-testid="login-error">
+                <AlertCircle className="h-4 w-4 text-red-400" />
+                <AlertDescription className="text-red-400">{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {/* Login Form */}
+            <div className="glass-card rounded-3xl p-8 shadow-xl">
+              <div className="flex flex-col gap-5">
+                {/* Email Field */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                    Email Address
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type="email"
+                      placeholder="employee@company.com"
+                      className="h-14 pl-4 pr-12 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      data-testid="login-email"
+                    />
+                    <Mail className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                  </div>
                 </div>
-              </div>
-            </div>
 
-            {/* Password Field */}
-            <div className="flex flex-col gap-2">
-              <label className="text-slate-900 dark:text-white text-sm font-medium leading-normal ml-1">
-                Password
-              </label>
-              <div className="relative flex w-full items-center rounded-xl bg-white dark:bg-[#1a2e22] border border-slate-200 dark:border-slate-700 focus-within:border-[#0df259] focus-within:ring-1 focus-within:ring-[#0df259] transition-all duration-200">
-                <Input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••••"
-                  className="flex w-full min-w-0 flex-1 bg-transparent text-slate-900 dark:text-white h-14 placeholder:text-slate-400 dark:placeholder:text-slate-500 p-4 pr-12 text-base font-normal leading-normal border-none focus:ring-0 rounded-xl"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  data-testid="login-password"
-                />
-                <button
+                {/* Password Field */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                    Password
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? 'text' : 'password'}
+                      placeholder="••••••••••"
+                      className="h-14 pl-4 pr-12 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      onKeyPress={handleKeyPress}
+                      data-testid="login-password"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary transition-colors"
+                      onClick={() => setShowPassword(!showPassword)}
+                      data-testid="toggle-password"
+                    >
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Forgot Password */}
+                <div className="flex justify-end">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary transition-colors"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
+
+                {/* Login Button */}
+                <Button
                   type="button"
-                  className="absolute right-4 text-slate-400 dark:text-slate-500 hover:text-[#0df259] transition-colors flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                  data-testid="toggle-password"
+                  onClick={handleSubmit}
+                  disabled={isLoading}
+                  className="w-full h-14 mt-2 rounded-2xl bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 text-white font-semibold text-base shadow-xl shadow-primary/30 btn-glow"
+                  data-testid="login-submit-btn"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      Signing in...
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-2">
+                      Sign In
+                      <ArrowRight className="w-5 h-5" />
+                    </span>
+                  )}
+                </Button>
               </div>
             </div>
 
-            {/* Forgot Password */}
-            <div className="flex justify-end">
-              <Link 
-                to="/forgot-password" 
-                className="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-[#0df259] transition-colors"
-              >
-                Forgot Password?
-              </Link>
+            {/* Register CTA */}
+            <div className="mt-8 text-center">
+              <p className="text-slate-600 dark:text-slate-400">
+                New to EaziWage?{' '}
+                <Link 
+                  to="/register" 
+                  className="text-primary font-semibold hover:underline"
+                  data-testid="register-link"
+                >
+                  Create an account
+                </Link>
+              </p>
             </div>
-
-            {/* Spacer */}
-            <div className="h-4"></div>
-
-            {/* Login Button */}
-            <Button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="w-full h-14 bg-[#0df259] hover:bg-[#0be050] active:scale-[0.98] transition-all duration-200 rounded-full text-[#102216] font-bold text-lg shadow-[0_0_15px_rgba(13,242,89,0.2)] border-0"
-              data-testid="login-submit-btn"
-            >
-              {isLoading ? (
-                <span className="flex items-center gap-2">
-                  <div className="w-5 h-5 border-2 border-[#102216]/30 border-t-[#102216] rounded-full animate-spin" />
-                  Logging in...
-                </span>
-              ) : (
-                'Log In'
-              )}
-            </Button>
-
-            {/* Biometric Login */}
-            <div className="flex justify-center mt-2">
-              <button
-                type="button"
-                className="flex items-center gap-2 text-[#0df259] text-sm font-medium py-2 px-4 rounded-lg hover:bg-white/5 transition-colors"
-              >
-                <Scan className="w-6 h-6" />
-                <span>Log in with Face ID</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Footer / Register CTA */}
-          <div className="mt-auto pt-10 pb-4 text-center">
-            <p className="text-slate-500 dark:text-slate-400 text-sm">
-              New to EaziWage?{' '}
-              <Link 
-                to="/register" 
-                className="text-[#0df259] font-semibold hover:underline ml-1"
-                data-testid="register-link"
-              >
-                Create Account
-              </Link>
-            </p>
-          </div>
-
-          {/* Bottom Safe Area Indicator */}
-          <div className="w-full flex justify-center pt-6 pb-2">
-            <div className="w-[134px] h-[5px] bg-slate-300 dark:bg-slate-700 rounded-full"></div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
