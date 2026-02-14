@@ -66,6 +66,7 @@ Login and Registration pages with centered logo, social auth options, and multi-
 
 - ✅ **Login Page** (/login) - Centered EaziWage logo, hero section styling (gradient-mesh, bg-grid), email/password fields, "Sign In" gradient button, social login options: Google OAuth (functional via Emergent), Apple Sign-In (PLACEHOLDER), Face ID (PLACEHOLDER), theme toggle, "Create account" link
 - ✅ **Registration Page** (/register) - Centered logo, **Employee/Employer toggle** selector, dynamic form fields:
+  - **Mobile Number Field** (NEW - Feb 2026): Required field with dialing code selector dropdown (Kenya +254, Tanzania +255, Uganda +256, Rwanda +250)
   - **Employee Flow**: "Find your company..." search button → Company search modal → Select company (read-only display) OR "My company isn't listed" → Employer referral form (Name, Email, Phone)
   - **Employer Flow**: Company Name input field
   - Button text: "Create Employee Account" / "Create Employer Account"
@@ -76,13 +77,21 @@ Login and Registration pages with centered logo, social auth options, and multi-
 - ✅ **Backend Google OAuth** - POST /api/auth/google/callback endpoint
 - ✅ **Backend Public Employers** - GET /api/employers/public/approved (no auth required, for registration)
 
-### Multi-Step Onboarding (NEW - Feb 2026)
+### Multi-Step Onboarding (ENHANCED - Feb 2026)
 5-step onboarding flow matching auth page design:
 
 **Employee Onboarding** (/employee/onboarding):
+- ✅ **Centered Logo** (NEW) - Logo centered in header with theme toggle on right
 - Step 1: **Welcome** - Personalized greeting, "Secure & Private", "Instant Transfers", "No Paperwork" badges
-- Step 2: **Terms & Privacy** - Terms of Service link, Privacy Policy link, checkbox agreement required
-- Step 3: **Personal Info** - National ID, Date of Birth, Country selection
+- Step 2: **Terms & Privacy** (ENHANCED):
+  - ✅ **Inline Scrollable Content** (NEW) - "Read full terms" and "Read privacy policy" buttons expand scrollable sections below instead of navigating away
+  - Checkbox agreement required
+- Step 3: **Personal Info** (ENHANCED):
+  - ✅ **ID Type Selector** (NEW) - Toggle between "National ID" and "Passport"
+  - When "National ID" selected: Shows "National ID Number" field only
+  - When "Passport" selected: Shows "Passport Number" field + **"Country of Nationality"** dropdown (full country list ~200 countries)
+  - ✅ **Country of Work** (RENAMED from "Country") - Dropdown restricted to Kenya, Uganda, Tanzania, Rwanda
+  - Date of Birth field
 - Step 4: **Employment** - Employer selection, Employee Code, Job Title, Employment Type, Monthly Salary
 - Step 5: **Payment** - Mobile Money provider/number (required), Bank account (optional)
 
