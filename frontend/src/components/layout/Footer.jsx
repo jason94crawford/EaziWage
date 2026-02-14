@@ -28,7 +28,6 @@ const footerLinks = {
   legal: [
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Terms of Service', href: '/terms' },
-    { label: 'Data Policy', href: '/data-policy' },
     { label: 'ABC Policy', href: '/abc-policy' },
     { label: 'Code of Ethics', href: '/code-of-ethics' },
     { label: 'Gifts Policy', href: '/gifts-policy' },
