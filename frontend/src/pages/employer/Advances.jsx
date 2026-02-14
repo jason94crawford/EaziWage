@@ -188,16 +188,12 @@ export default function EmployerAdvances() {
             label="Total Requests"
             value={stats.total}
             subtext={formatCurrency(stats.totalAmount) + ' total'}
-            iconBg="bg-gradient-to-br from-primary/20 to-emerald-500/20"
-            iconColor="text-primary"
           />
           <MetricCard 
             icon={CheckCircle2}
             label="Disbursed"
             value={stats.disbursed}
             subtext={formatCurrency(stats.disbursedAmount)}
-            iconBg="bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/10"
-            iconColor="text-emerald-600"
             valueColor="text-emerald-600"
           />
           <MetricCard 
@@ -205,8 +201,6 @@ export default function EmployerAdvances() {
             label="Pending"
             value={stats.pending}
             subtext={formatCurrency(stats.pendingAmount)}
-            iconBg="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-500/20 dark:to-amber-500/10"
-            iconColor="text-amber-600"
             valueColor="text-amber-600"
           />
           <MetricCard 
@@ -214,8 +208,6 @@ export default function EmployerAdvances() {
             label="Avg. Fee Rate"
             value={stats.avgFee + '%'}
             subtext="Based on risk scores"
-            iconBg="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-500/20 dark:to-purple-500/10"
-            iconColor="text-purple-600"
           />
         </div>
 
