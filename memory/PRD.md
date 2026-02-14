@@ -62,13 +62,14 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 - ✅ **Mobile/Tablet Responsive** - Tested at 414px (iPhone XR) viewport
 
 ### Authentication Pages (REDESIGNED - Feb 2026)
-Login and Registration pages completely redesigned to match website theme:
+Login and Registration pages completely redesigned with mobile-first centered layout matching the stitch screenshots:
 
-- ✅ **Login Page** (/login) - Split-screen layout: dark branding panel (left) with EaziWage logo, "Access Your Earned Wages Instantly" headline, feature pills (Instant Transfers, Bank-Grade Security, Zero Interest), mock phone UI showing KES 24,500 balance, bottom stats (50K+ users, $2B+ disbursed, <3s transfer); clean form card (right) with error handling, password visibility toggle
-- ✅ **Registration Page** (/register) - Split-screen layout: dark branding panel with "Start Your Financial Freedom Journey Today" headline, benefits list, country flags (🇰🇪🇺🇬🇹🇿🇷🇼), Mary Wanjiku testimonial; form card with Employee/Employer role selection cards, full name/email/phone/password fields, validation
-- ✅ **Error Handling** - Custom axios instance (authAxios) without interceptors to avoid 401 redirect loops, proper error state display for invalid credentials
+- ✅ **Login Page** (/login) - Mobile-first centered design (max-w-md), dark green background (#102216), EaziWage branding header, "Welcome Back" headline, email/password inputs with icons, password visibility toggle, "Forgot Password?" link, bright green (#0df259) pill-shaped "Log In" button with glow shadow, "Log in with Face ID" option, "New to EaziWage? Create Account" footer link, bottom home indicator
+- ✅ **Registration Page** (/register) - Mobile-first centered design, "Access your wages, anytime" headline, form fields: Full Name, Work Email, Company Code (with "Find my code" helper), Password with visibility toggle, Terms & Privacy checkbox, "Create Account" button, "Bank-grade 256-bit encryption" security indicator, "Already have an account? Log in" footer
+- ✅ **Color Theme** - Dark mode: #102216 (background), #0df259 (primary green), #1a2e22 (input surface), matches website homepage
+- ✅ **Error Handling** - Custom axios instance (authAxios) without interceptors to prevent 401 redirect loops, proper error state display
 - ✅ **Form State Retention** - Form values preserved after failed submission
-- ✅ **Navigation** - Bidirectional links between Login and Register pages
+- ✅ **Navigation** - Back arrow returns to homepage, bidirectional links between Login/Register
 
 **Test Employee Account**: demo.employee@eaziwage.com / Employee@123
 
