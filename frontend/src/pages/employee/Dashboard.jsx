@@ -315,7 +315,7 @@ export default function EmployeeDashboard() {
 
   return (
     <EmployeePageLayout>
-      <EmployeeHeader user={user} employee={employee} showBack={false} />
+      <DashboardHeader user={user} employee={employee} />
 
       <main className="relative z-10 max-w-md mx-auto px-4 pb-28 space-y-5">
         {/* KYC Alert Banner */}
