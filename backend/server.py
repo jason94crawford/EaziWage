@@ -612,9 +612,19 @@ async def create_employee(data: EmployeeCreate, user: dict = Depends(require_rol
         "risk_score": None,
         "risk_factors": {},
         "kyc_status": "pending",
+        "kyc_step": 0,
         "earned_wages": 0,
         "advance_limit": advance_limit,
-        "created_at": datetime.now(timezone.utc).isoformat()
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        # Initialize KYC document fields
+        "id_document_front": None,
+        "id_document_back": None,
+        "address_proof": None,
+        "tax_certificate": None,
+        "payslip_1": None,
+        "payslip_2": None,
+        "bank_statement": None,
+        "selfie": None
     }
     await db.employees.insert_one(employee_doc)
     
