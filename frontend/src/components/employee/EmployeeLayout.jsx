@@ -191,4 +191,15 @@ export const EmployeePageLayout = ({ children, className }) => (
   </div>
 );
 
+// Layout without FloatingNav for custom implementations
+export const EmployeePageLayoutBase = ({ children, className }) => (
+  <div className={cn(
+    "min-h-screen bg-white dark:bg-slate-950 transition-colors duration-300 relative overflow-hidden",
+    className
+  )}>
+    <EmployeeBackground />
+    {children}
+  </div>
+);
+
 export default EmployeePageLayout;
