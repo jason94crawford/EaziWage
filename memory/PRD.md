@@ -27,132 +27,124 @@ Features include mobile money (M-PESA, MTN, Airtel) and bank transfer disburseme
 ### Marketing Website (COMPLETED - Dec 2025)
 All marketing pages redesigned with modern "African-fintech" aesthetic:
 
-- ✅ **Landing Page** (/) - Hero section with phone mockup, animated stats, features, testimonials, countries, CTAs
-- ✅ **Africa Map Component** - Professional animated map using react-simple-maps library showing full African continent with Kenya, Uganda, Tanzania, Rwanda highlighted in green with pulsing city markers (Nairobi, Kampala, Dar es Salaam, Kigali)
-- ✅ **About Page** (/about) - Mission (To empower employees and employers...), Vision (To be Africa's most trusted workplace finance partner...), Our Story (EaziWage was born from a simple truth...), company values, founders quotes, journey timeline
-- ✅ **How It Works** (/how-it-works) - 4-step process with sleek infographics, benefits, FAQ, video section
-- ✅ **For Employers** (/employers) - Benefits, features, process, testimonials
-- ✅ **For Employees** (/employees) - Benefits, use cases, testimonials, FAQs
-- ✅ **Pricing Page** (/pricing) - Simple fee structure: 3.5%-6% + $0.80 processing, comparison table
-- ✅ **Calculator Page** (/calculator) - Interactive wage access calculator with country selection
-- ✅ **Contact Page** (/contact) - Contact form, 4 office locations (Kenya, Uganda, Tanzania, Rwanda), no interactive map
-- ✅ **Partners Page** (/partners) - Pre-seed aspirational positioning, "Building the Partner Ecosystem" section with target partner types (Mobile Money Providers, Banking Institutions, Payroll Platforms, Enterprise Employers), no fictional partner logos
-- ✅ **FAQ Page** (/faq) - Searchable FAQs with 6 categories
-- ✅ **Blog Page** (/blog) - Featured CEO article by Jason Crawford "The Future of Earned Wage Access in Africa: 2026 Trends", 6 external article links from real sources (AfriDigest, WeeTracker, EBNet, Unipesa, Fintech Futures)
-- ✅ **Privacy Policy** (/privacy) - Full legal content with TOC sidebar
-- ✅ **Terms of Service** (/terms) - Full legal content with TOC sidebar
-- ✅ **Legal Policy Pages** - ABC Policy, Code of Ethics, Gifts/Hospitality/Entertainment Policy, AML & CFT Policy, Whistleblowing Policy (all with sidebar table of contents matching Terms of Service design, official content from October 2025 documents)
-- ✅ **Dark/Light Theme Toggle** - Working across all pages
-- ✅ **Consistent Green Theme** - Primary color #16A34A maintained (no blue/yellow/red)
-- ✅ **Navigation Updated** - About Us, How it Works, For Employers, For Employees, Pricing, Calculator
-- ✅ **M-PESA → Mobile Wallet** - All references changed to generic "Mobile Wallet"
-- ✅ **Clean Hero Sections** - Clear section breaks with proper backgrounds
-- ✅ **Footer Legal Section** - 7 policy links (Cookie Policy and Data Policy removed), Legal & Compliance heading font size matches Product heading
+- Landing Page, About, How It Works, For Employers, For Employees, Pricing
+- Calculator, Contact, Partners, FAQ, Blog, Privacy Policy, Terms of Service
+- Legal Policy Pages (ABC, Code of Ethics, Gifts, AML & CFT, Whistleblowing)
+- Dark/Light Theme Toggle, Africa Map Component, Footer scroll-to-top
 
 ### Employee Portal (REDESIGNED - Feb 2026)
-All employee-facing pages redesigned with modern mobile-first design and light/dark mode:
+- Employee Dashboard with salary breakdown and quick stats
+- Request Advance Page with slider-based amount selection
+- Transaction History Page with filters and export
+- Settings Page with profile management
+- Light/Dark Mode Toggle
+- Mobile-first responsive design
 
-- ✅ **Employee Dashboard** (/employee) - "Available to Withdraw" hero card, salary breakdown with progress bar, quick stats (Next Payday, Projected Salary), recent activity, account status
-- ✅ **Request Advance Page** (/employee/advances) - Slider-based amount selection, quick amount chips (Ksh 50/100/200/Max), fee breakdown with percentage calculation, M-PESA destination selector, "Transfer Now" button
-- ✅ **Transaction History Page** (/employee/transactions) - Monthly total display, filter chips (All/Pending/Completed/Failed), Export CSV button, transaction list with status indicators
-- ✅ **Settings Page** (/employee/settings) - Profile header, Finance section (Bank Account, Salary Cycle), Compliance section (KYC & Onboarding, Audit Log), Security section (Change Password, Biometric Login), Preferences section (Notifications, Theme Toggle, Language), Support section, Logout button
-- ✅ **Light/Dark Mode Toggle** - Theme persists in localStorage, consistent theming across all pages
-- ✅ **Bottom Navigation (Mobile)** - Home, Wallet, History, Profile tabs
-- ✅ **Sidebar Navigation (Desktop)** - Dashboard, Request Advance, Transaction History, Documents & KYC, Settings
-- ✅ **Mobile/Tablet Responsive** - Tested at 414px (iPhone XR) viewport
+### Authentication Pages (COMPLETED - Feb 2026)
+- Login Page with social auth options (Google OAuth functional, Apple PLACEHOLDER)
+- Registration Page with Employee/Employer toggle and company search
+- Auth Callback for Google OAuth
+- Multi-step Onboarding flows
 
-### Authentication Pages (REDESIGNED V4 - Feb 2026)
-Login and Registration pages with centered logo, social auth options, and multi-step onboarding:
+### Comprehensive KYC Onboarding (NEW - Feb 2026) 
+7-step employee onboarding flow with full KYC/verification:
 
-- ✅ **Login Page** (/login) - Centered EaziWage logo, hero section styling (gradient-mesh, bg-grid), email/password fields, "Sign In" gradient button, social login options: Google OAuth (functional via Emergent), Apple Sign-In (PLACEHOLDER), Face ID (PLACEHOLDER), theme toggle, "Create account" link
-- ✅ **Registration Page** (/register) - Centered logo, **Employee/Employer toggle** selector, dynamic form fields:
-  - **Mobile Number Field** (NEW - Feb 2026): Required field with dialing code selector dropdown (Kenya +254, Tanzania +255, Uganda +256, Rwanda +250)
-  - **Employee Flow**: "Find your company..." search button → Company search modal → Select company (read-only display) OR "My company isn't listed" → Employer referral form (Name, Email, Phone)
-  - **Employer Flow**: Company Name input field
-  - Button text: "Create Employee Account" / "Create Employer Account"
-  - Google OAuth signup, Apple placeholder, terms checkbox
-- ✅ **Company Search Modal** - Search by name/code, displays matching employers, "My company isn't listed — Continue without code" option
-- ✅ **Employer Referral Form** - Warning "Company not on EaziWage yet", fields for Employer/Company Name, HR/Contact Email, HR/Contact Phone, "Search for company again" link
-- ✅ **Auth Callback** (/auth/callback) - Handles Emergent Google OAuth redirect
-- ✅ **Backend Google OAuth** - POST /api/auth/google/callback endpoint
-- ✅ **Backend Public Employers** - GET /api/employers/public/approved (no auth required, for registration)
+**Step 1: Welcome**
+- Personalized greeting with user's name
+- Feature highlights: Secure & Private, Instant Transfers, Quick Verification
 
-### Multi-Step Onboarding (ENHANCED - Feb 2026)
-5-step onboarding flow matching auth page design:
+**Step 2: Terms & Privacy**
+- Inline expandable Terms of Service content
+- Inline expandable Privacy Policy content
+- Checkbox agreement required to proceed
 
-**Employee Onboarding** (/employee/onboarding):
-- ✅ **Centered Logo** (NEW) - Logo centered in header with theme toggle on right
-- Step 1: **Welcome** - Personalized greeting, "Secure & Private", "Instant Transfers", "No Paperwork" badges
-- Step 2: **Terms & Privacy** (ENHANCED):
-  - ✅ **Inline Scrollable Content** (NEW) - "Read full terms" and "Read privacy policy" buttons expand scrollable sections below instead of navigating away
-  - Checkbox agreement required
-- Step 3: **Personal Info** (ENHANCED):
-  - ✅ **ID Type Selector** (NEW) - Toggle between "National ID" and "Passport"
-  - When "National ID" selected: Shows "National ID Number" field only
-  - When "Passport" selected: Shows "Passport Number" field + **"Country of Nationality"** dropdown (full country list ~200 countries)
-  - ✅ **Country of Work** (RENAMED from "Country") - Dropdown restricted to Kenya, Uganda, Tanzania, Rwanda
-  - Date of Birth field
-- Step 4: **Employment** - Employer selection, Employee Code, Job Title, Employment Type, Monthly Salary
-- Step 5: **Payment** - Mobile Money provider/number (required), Bank account (optional)
+**Step 3: ID Verification**
+- ID Type selector (National ID / Passport toggle)
+- ID/Passport number input
+- Date of Birth field
+- Country of Nationality (shown only for Passport)
+- Document upload: Front Side (required), Back Side (optional)
 
-**Employer Onboarding** (/employer/onboarding):
-- Step 1: **Welcome** - "Happy Employees", "Zero Risk to You", "Easy Integration" badges
-- Step 2: **Terms & Privacy** - Employer Agreement, Data Processing Agreement, checkbox required
-- Step 3: **Company Info** - Company Name, Registration No., Tax ID, Country, Industry, Address
-- Step 4: **Workforce** - Employee Count, Payroll Cycle
-- Step 5: **Contact** - Contact Person Name, Email, Phone
+**Step 4: Address Verification**
+- Country of Work selector (Kenya, Uganda, Tanzania, Rwanda)
+- Address Line 1, Line 2
+- City/Town, Postal Code
+- Address Proof document upload (utility bill, bank statement, lease)
 
-Both onboarding flows feature:
-- Progress indicator with step icons
-- Glass-card design matching auth pages
-- Gradient "Continue" buttons
-- Form validation before proceeding
-- Terms checkbox must be checked to proceed past Step 2
+**Step 5: Tax Information**
+- Tax Identification Number (TIN/PIN) input
+- Tax Certificate upload (optional)
+- Skip option for users without TIN
 
-**Test Employee Account**: demo.employee@eaziwage.com / Employee@123
+**Step 6: Employment & Salary**
+- Employer selector from approved employers list
+- Employee Code/ID
+- Department
+- Job Title
+- Employment Type (Full-time, Part-time, Contract)
+- Start Date
+- Monthly Gross Salary
+- Payslip uploads (1-2 recent payslips)
+
+**Step 7: Payment Details**
+- Mobile Money Provider selector (based on country)
+- Mobile Money Number (required)
+- Bank Name (optional)
+- Bank Account Number (optional)
+- Bank Statement upload (optional)
+
+### Backend KYC System (NEW - Feb 2026)
+- **POST /api/kyc/upload** - File upload endpoint with validation
+  - Accepts: JPEG, PNG, WebP, PDF
+  - Max size: 5MB
+  - Storage: Local filesystem (/app/backend/uploads/kyc/)
+  - Document types: id_front, id_back, address_proof, tax_certificate, payslip_1, payslip_2, bank_statement, selfie
+- **GET /api/employees/me/kyc-status** - Comprehensive KYC status with uploaded documents
+- **PATCH /api/employees/me/kyc-step** - Track onboarding progress
+- **GET /api/kyc/files/{filename}** - Serve uploaded KYC files securely
 
 ### Backend (FastAPI + MongoDB)
-- ✅ User authentication (register, login, JWT tokens)
-- ✅ Employer CRUD with verification workflow
-- ✅ Employee CRUD with KYC status tracking
-- ✅ Advance requests with fee calculation
-- ✅ Risk scoring APIs with weighted formulas
-- ✅ Payroll upload functionality
-- ✅ KYC document management
-- ✅ Dashboard stats endpoints
-- ✅ Transaction history
+- User authentication (register, login, JWT tokens)
+- Employer CRUD with verification workflow
+- Employee CRUD with KYC status tracking
+- Advance requests with fee calculation
+- Risk scoring APIs with weighted formulas
+- Payroll upload functionality
+- KYC document management
+- Dashboard stats endpoints
+- Transaction history
 
-### Application Dashboards (Existing - older design)
-- ✅ Employee Dashboard (earned wages, advance limit, transactions)
-- ✅ Employer Dashboard (employee stats, payroll stats)
-- ✅ Admin Dashboard (verification stats, quick actions)
-- ✅ Login/Register with role selection
+### Application Dashboards (Existing)
+- Employee Dashboard (earned wages, advance limit, transactions)
+- Employer Dashboard (employee stats, payroll stats)
+- Admin Dashboard (verification stats, quick actions)
 
 ### MOCKED Integrations
-- ⚠️ Mobile money disbursement (M-PESA, MTN, Airtel Money) - mock implementation
-- ⚠️ Bank transfer disbursement - mock implementation
-- ⚠️ File storage - local storage only (not cloud)
+- Mobile money disbursement (M-PESA, MTN, Airtel Money) - mock implementation
+- Bank transfer disbursement - mock implementation
+- Apple Login - placeholder
+- Biometric Face Scan - placeholder
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
 - **Employee**: demo.employee@eaziwage.com / Employee@123
+- **Test Onboarding User**: test.onboard.29147@eaziwage.com / TestPass@123
 
 ## Prioritized Backlog
 
 ### P0 (Critical for Production)
-- [x] ~~Registration mobile number field with dialing code selector~~ (COMPLETED - Feb 2026)
-- [x] ~~Employee onboarding: Centered logo, inline Terms/Privacy, ID type selector~~ (COMPLETED - Feb 2026)
+- [x] ~~Comprehensive KYC onboarding flow~~ (COMPLETED - Feb 2026)
+- [x] ~~Backend file upload for KYC documents~~ (COMPLETED - Feb 2026)
+- [x] ~~Footer scroll-to-top on link click~~ (COMPLETED - Feb 2026)
 - [ ] Real mobile money API integration (M-PESA Daraja, MTN MoMo)
 - [ ] Cloud file storage for KYC (AWS S3 or similar)
 - [ ] Email notifications (SendGrid/Resend)
 
 ### P1 (Important)
-- [ ] KYC document upload functionality (Employee /kyc page)
 - [ ] Admin KYC Review page - view/approve/reject submitted documents
 - [ ] Admin Risk Scoring calculator implementation
-- [ ] Redesign Admin/Employer dashboards to match new employee portal aesthetic
+- [ ] Redesign Admin/Employer dashboards to match employee portal aesthetic
 - [ ] Password reset functionality
-- [ ] Scroll-to-top on footer link clicks
 
 ### P2 (Nice to Have)
 - [ ] Employer Reports/Analytics page
@@ -168,7 +160,9 @@ Both onboarding flows feature:
 ├── backend/
 │   ├── server.py (FastAPI application)
 │   ├── requirements.txt
-│   └── .env (MONGO_URL, DB_NAME)
+│   ├── .env (MONGO_URL, DB_NAME)
+│   └── uploads/
+│       └── kyc/ (KYC document storage)
 ├── frontend/
 │   ├── src/
 │   │   ├── components/
@@ -176,11 +170,11 @@ Both onboarding flows feature:
 │   │   │   └── ui/ (Shadcn components)
 │   │   ├── lib/
 │   │   │   ├── ThemeContext.jsx (Dark/Light mode provider)
-│   │   │   ├── api.js
+│   │   │   ├── api.js (API client with kycApi)
 │   │   │   └── auth.js
 │   │   └── pages/
-│   │       ├── marketing/ (11 pages - COMPLETED)
-│   │       ├── auth/ (Login, Register)
+│   │       ├── marketing/ (11 pages)
+│   │       ├── auth/ (Login, Register, AuthCallback)
 │   │       ├── admin/ (Dashboard, Employers, Advances, KYC, RiskScoring)
 │   │       ├── employer/ (Dashboard, Employees, Payroll, Onboarding)
 │   │       └── employee/ (Dashboard, KYC, Transactions, Advances, Onboarding)
@@ -193,35 +187,20 @@ Both onboarding flows feature:
 ## Key API Endpoints
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
-- `GET /api/admin/employers` - List employers
-- `PUT /api/admin/employers/{id}/verify` - Verify employer
-- `GET /api/admin/employees` - List employees
-- `GET /api/admin/advances` - List advances
-- `POST /api/employee/request-advance` - Request wage advance
-- `GET /api/employee/dashboard` - Employee dashboard data
-- `GET /api/employer/dashboard` - Employer dashboard data
+- `POST /api/auth/google/callback` - Google OAuth callback
+- `POST /api/kyc/upload` - Upload KYC document file
+- `GET /api/employees/me/kyc-status` - Get comprehensive KYC status
+- `PATCH /api/employees/me/kyc-step` - Update onboarding progress
+- `GET /api/employers/public/approved` - List approved employers (public)
 
 ## Test Results (Feb 2026)
-- Frontend Marketing Pages: **100%** (12/12 pages passing)
-- Africa Map Component: **100%** (react-simple-maps with full continent render, 4 highlighted countries, 4 city markers with pulsing animations)
-- Theme Toggle: **Working**
-- Navigation: **Working**
-- Backend: 95% (previous test iteration)
-- UI/Content Update (Feb 2026): **100%** - About page Mission/Vision/Our Story, Footer Legal & Compliance font size, Partners page pre-seed positioning
-- Policy Pages Update (Feb 2026): **100%** - Cookie/Data Policy removed from footer, all 5 policy pages now have sidebar TOC matching Terms of Service
-- Employee Portal Redesign (Feb 2026): **100%** - All 4 pages (Dashboard, Request Advance, Transactions, Settings) tested and passing with light/dark mode
-- Auth Pages Redesign V3 (Feb 2026): **100%** - Login and Register pages match hero section (gradient-mesh, bg-grid, text-gradient, glass-card, gradient logo and button)
-- Auth Pages V4 + Onboarding (Feb 2026): **100%** - 14 backend + 10 frontend tests passing. Centered logo, Employee/Employer toggle, Google OAuth (functional), Apple/FaceID (MOCKED placeholders), multi-step onboarding with terms validation
-
-## Test Credentials
-- **Admin**: superadmin@eaziwage.com / Admin@12345
-- **Employee**: demo.employee@eaziwage.com / Employee@123
+- Backend KYC Upload: **93%** (13/14 tests passed)
+- Frontend KYC Onboarding: **100%** (All 7 steps verified)
+- Footer scroll-to-top: **Working**
 
 ## Notes
-- Marketing pages now have rich content, not minimalistic
-- Green theme (#16A34A for marketing, #0df259 for employee portal) maintained consistently
-- Dark/Light mode toggle in navigation header and employee settings
-- ThemeProvider wraps entire app in index.js
-- Employee portal uses mobile-first design with bottom navigation
-- Dark mode colors: Background #102216, Cards #1A2C20
-- Light mode colors: Background #f5f8f6, Cards white
+- KYC documents stored locally in /app/backend/uploads/kyc/
+- File upload validates type (JPEG/PNG/WebP/PDF) and size (max 5MB)
+- 7-step onboarding tracks progress with kyc_step field
+- Green theme (#16A34A) maintained consistently
+- Glass-morphism design pattern throughout
