@@ -49,16 +49,19 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 - ✅ **Clean Hero Sections** - Clear section breaks with proper backgrounds
 - ✅ **Footer Legal Section** - 7 policy links (Cookie Policy and Data Policy removed), Legal & Compliance heading font size matches Product heading
 
-### Employee Dashboard (REDESIGNED - Feb 2026)
-- ✅ Modern dark slate theme with green accents
-- ✅ Dark sidebar navigation for desktop
-- ✅ Bottom navigation bar for mobile
-- ✅ "Available to Withdraw" hero card with fee info
-- ✅ Salary breakdown with progress bar
-- ✅ Quick access cards (Next Payday, Projected Salary)
-- ✅ Recent activity section with transaction list
-- ✅ Account status section showing approval/KYC status
-- ✅ **Mobile/Tablet Responsive** - Tested at 375px and 768px viewports
+### Employee Portal (REDESIGNED - Feb 2026)
+All employee-facing pages redesigned with modern mobile-first design and light/dark mode:
+
+- ✅ **Employee Dashboard** (/employee) - "Available to Withdraw" hero card, salary breakdown with progress bar, quick stats (Next Payday, Projected Salary), recent activity, account status
+- ✅ **Request Advance Page** (/employee/advances) - Slider-based amount selection, quick amount chips (Ksh 50/100/200/Max), fee breakdown with percentage calculation, M-PESA destination selector, "Transfer Now" button
+- ✅ **Transaction History Page** (/employee/transactions) - Monthly total display, filter chips (All/Pending/Completed/Failed), Export CSV button, transaction list with status indicators
+- ✅ **Settings Page** (/employee/settings) - Profile header, Finance section (Bank Account, Salary Cycle), Compliance section (KYC & Onboarding, Audit Log), Security section (Change Password, Biometric Login), Preferences section (Notifications, Theme Toggle, Language), Support section, Logout button
+- ✅ **Light/Dark Mode Toggle** - Theme persists in localStorage, consistent theming across all pages
+- ✅ **Bottom Navigation (Mobile)** - Home, Wallet, History, Profile tabs
+- ✅ **Sidebar Navigation (Desktop)** - Dashboard, Request Advance, Transaction History, Documents & KYC, Settings
+- ✅ **Mobile/Tablet Responsive** - Tested at 414px (iPhone XR) viewport
+
+**Test Employee Account**: demo.employee@eaziwage.com / Employee@123
 
 ### Backend (FastAPI + MongoDB)
 - ✅ User authentication (register, login, JWT tokens)
