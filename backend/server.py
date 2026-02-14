@@ -119,25 +119,28 @@ class EmployeeCreate(BaseModel):
 class EmployeeResponse(BaseModel):
     id: str
     user_id: str
-    employer_id: str
+    employer_id: Optional[str] = None
     employer_name: Optional[str] = None
-    employee_code: str
-    national_id: str
-    date_of_birth: str
-    employment_type: str
-    job_title: str
-    monthly_salary: float
+    employee_code: Optional[str] = None
+    national_id: Optional[str] = None
+    date_of_birth: Optional[str] = None
+    employment_type: Optional[str] = None
+    job_title: Optional[str] = None
+    monthly_salary: float = 0
     bank_name: Optional[str] = None
     bank_account: Optional[str] = None
     mobile_money_provider: Optional[str] = None
     mobile_money_number: Optional[str] = None
-    country: str
-    status: str
+    country: Optional[str] = None
+    status: str = "pending"
     risk_score: Optional[float] = None
-    kyc_status: str  # pending, submitted, approved, rejected
+    kyc_status: str = "pending"
     earned_wages: float = 0
     advance_limit: float = 0
     created_at: str
+    full_name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
 
 # Advance Request Models
 class AdvanceCreate(BaseModel):
