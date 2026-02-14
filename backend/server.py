@@ -733,7 +733,7 @@ async def create_employer_onboarding(data: EmployerOnboardingCreate, user: dict 
     doc_fields = [
         'certificate_of_incorporation', 'business_registration', 'tax_compliance_certificate',
         'cr12_document', 'kra_pin_certificate', 'business_permit', 'audited_financials',
-        'bank_statement', 'proof_of_address'
+        'bank_statement', 'proof_of_address', 'proof_of_bank_account', 'employment_contract_template'
     ]
     for field in doc_fields:
         value = getattr(data, field, None)
@@ -759,6 +759,7 @@ async def create_employer_onboarding(data: EmployerOnboardingCreate, user: dict 
         "business_description": data.business_description,
         "years_in_operation": data.years_in_operation,
         "employee_count": data.employee_count,
+        "countries_of_operation": data.countries_of_operation or [],
         "annual_revenue_range": data.annual_revenue_range,
         "payroll_cycle": data.payroll_cycle,
         "monthly_payroll_amount": data.monthly_payroll_amount,
