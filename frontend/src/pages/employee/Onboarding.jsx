@@ -492,8 +492,8 @@ export default function EmployeeOnboarding() {
         return hasIdNumber && hasDob && hasIdFront && hasNationality;
       }
       case 3: {
-        // Address - need country and address line 1
-        return formData.country && formData.address_line1 && formData.city;
+        // Address - need country, address, city, and proof of address (mandatory)
+        return formData.country && formData.address_line1 && formData.city && uploadedFiles.address_proof;
       }
       case 4: {
         // Tax - TIN is optional but recommended
@@ -504,8 +504,9 @@ export default function EmployeeOnboarding() {
         return formData.job_title && formData.employment_type && formData.monthly_salary && uploadedFiles.payslip_1;
       }
       case 6: {
-        // Payment - need mobile money
-        return formData.mobile_money_provider && formData.mobile_money_number;
+        // Payment - need mobile money AND bank account (both mandatory)
+        return formData.mobile_money_provider && formData.mobile_money_number && 
+               formData.bank_name && formData.bank_account && uploadedFiles.bank_statement;
       }
       default: return false;
     }
