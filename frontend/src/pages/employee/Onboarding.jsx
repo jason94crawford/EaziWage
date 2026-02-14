@@ -500,8 +500,8 @@ export default function EmployeeOnboarding() {
         return true; // Can skip
       }
       case 5: {
-        // Employment
-        return formData.employer_id && formData.employee_code && formData.job_title && formData.employment_type && formData.monthly_salary;
+        // Employment - job title, type, salary, and at least one payslip required
+        return formData.job_title && formData.employment_type && formData.monthly_salary && uploadedFiles.payslip_1;
       }
       case 6: {
         // Payment - need mobile money
