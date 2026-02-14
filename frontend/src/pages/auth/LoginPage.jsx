@@ -15,7 +15,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { theme } = useTheme();
+  // const { theme } = useTheme();  // Disabled for debugging
 
   const handleSubmit = async (e) => {
     console.log('handleSubmit called');
