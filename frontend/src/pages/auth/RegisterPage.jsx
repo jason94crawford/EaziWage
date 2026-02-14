@@ -44,6 +44,10 @@ export default function RegisterPage() {
   const [selectedDialCode, setSelectedDialCode] = useState(DIALING_CODES[0]);
   const [showDialCodeDropdown, setShowDialCodeDropdown] = useState(false);
   
+  // Referral employer phone state (with dialing code)
+  const [referralPhoneDialCode, setReferralPhoneDialCode] = useState(DIALING_CODES[0]);
+  const [showReferralDialCodeDropdown, setShowReferralDialCodeDropdown] = useState(false);
+  
   // Company search modal state
   const [showCompanySearch, setShowCompanySearch] = useState(false);
   const [companySearchQuery, setCompanySearchQuery] = useState('');
