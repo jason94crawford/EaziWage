@@ -1,206 +1,219 @@
 # EaziWage - Earned Wage Access Platform PRD
 
-## Original Problem Statement
-Develop an earned wage access website and application for EaziWage targeting Kenya, Uganda, Tanzania and Rwanda. The platform needs:
-- Website (marketing/landing)
-- Employer Application
-- Employee Application  
-- Admin Application
+## Product Overview
+EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanzania, and Rwanda. The platform enables employees to access a portion of their earned wages before payday through mobile money and bank transfers.
 
-Features include mobile money (M-PESA, MTN, Airtel) and bank transfer disbursements with auto-scoring for employers and employees based on KYC/Due Diligence and Risk Scoring frameworks.
+## Core Features
 
-## User Personas
-1. **Employees**: Workers in Kenya, Uganda, Tanzania, Rwanda seeking access to earned wages before payday
-2. **Employers**: SMEs to large corporations offering EWA as an employee benefit
-3. **Administrators**: EaziWage staff managing verification, risk scoring, and disbursements
+### Authentication & User Management
+- JWT-based custom authentication ✅
+- Google OAuth integration (Emergent-managed) ✅
+- Apple Login (MOCKED - Not implemented)
+- Biometric Face ID (MOCKED - Not implemented)
+- Role-based access: Employee, Employer, Admin ✅
 
-## Core Requirements (Static)
-- JWT-based authentication with email/phone
-- Unified platform with role-based access (Employee, Employer, Admin)
-- Auto risk scoring using formula: Fee(%) = 3.5% + (3% × (1 - CRS/5))
-- Support for 4 countries: Kenya (M-PESA), Uganda (MTN), Tanzania (M-PESA/Tigo), Rwanda (MTN)
-- KYC document management
-- Advance request and disbursement workflow
+### Employee Features
+- **7-Step KYC Onboarding Flow** ✅
+  - Step 1: Welcome
+  - Step 2: Terms & Conditions
+  - Step 3: ID Verification (National ID/Passport upload)
+  - Step 4: Address Verification (Proof of address upload)
+  - Step 5: Employment Details (Job info, payslips, **Employment Contract upload**)
+  - Step 6: Payment Setup (Mobile Money & Bank Account)
+  - Step 7: Review & Submit
 
-## What's Been Implemented
+- **Employee Dashboard** ✅ (Redesigned Feb 2026)
+  - Speed Dial Counter showing available amount with animated circular progress
+  - Quick stats grid (Earned Wages, Next Payday, Withdrawn, Employer)
+  - Account status and KYC verification status
+  - Recent activity section
+  - Sidebar navigation (Desktop)
+  - Bottom navigation (Mobile)
 
-### Marketing Website (COMPLETED - Dec 2025)
-All marketing pages redesigned with modern "African-fintech" aesthetic:
+- **Request Advance Page** ✅ (Redesigned Feb 2026)
+  - Circular progress amount selector
+  - Amount slider with quick select buttons
+  - Transaction summary with fee calculation
+  - Disbursement method selector (Mobile Money / Bank)
 
-- Landing Page, About, How It Works, For Employers, For Employees, Pricing
-- Calculator, Contact, Partners, FAQ, Blog, Privacy Policy, Terms of Service
-- Legal Policy Pages (ABC, Code of Ethics, Gifts, AML & CFT, Whistleblowing)
-- Dark/Light Theme Toggle, Africa Map Component, Footer scroll-to-top
+- **Transaction History** ✅ (Redesigned Feb 2026)
+  - Monthly stats cards
+  - Filter pills (All, Pending, Completed, Failed)
+  - Transaction list with status indicators
 
-### Employee Portal (REDESIGNED - Feb 2026)
-- Employee Dashboard with salary breakdown and quick stats
-- Request Advance Page with slider-based amount selection
-- Transaction History Page with filters and export
-- Settings Page with profile management
-- Light/Dark Mode Toggle
+- **Profile & Settings** ✅ (Redesigned Feb 2026)
+  - Profile card with verification badge
+  - Payment methods display
+  - Security settings (password, biometric toggle)
+  - Preferences (notifications, theme, language)
+  - Support section
+
+### Employer Features (Partially Implemented)
+- Company onboarding ✅
+- Employer dashboard (Basic) ✅
+- Employee management (PENDING)
+- Payroll integration (PENDING)
+
+### Admin Features (Partially Implemented)
+- Admin dashboard ✅
+- Employee verification (Basic) ✅
+- KYC Review page (PENDING - P1)
+- Risk Scoring calculator (PENDING - P2)
+- Disbursement management (PENDING)
+
+## Technical Architecture
+
+### Backend (FastAPI)
+- Python 3.x with FastAPI framework
+- MongoDB database
+- JWT authentication
+- File upload handling for KYC documents
+- Local storage at `/app/backend/uploads`
+
+### Frontend (React)
+- React with React Router DOM
+- TailwindCSS styling
+- Glass-morphism design system
+- Shadcn/UI components
 - Mobile-first responsive design
 
-### Authentication Pages (COMPLETED - Feb 2026)
-- Login Page with social auth options (Google OAuth functional, Apple PLACEHOLDER)
-- Registration Page with Employee/Employer toggle and company search
-- Auth Callback for Google OAuth
-- Multi-step Onboarding flows
+### Database Schema (MongoDB)
+```javascript
+// users collection
+{
+  email: String,
+  password_hash: String,
+  role: String, // 'employee', 'employer', 'admin'
+  google_id: String,
+  full_name: String,
+  mobile_phone: String,
+  kyc_status: String, // 'pending', 'submitted', 'approved', 'rejected'
+  onboarding_step: Number,
+  
+  // KYC Documents
+  id_document_front: String,
+  id_document_back: String,
+  address_proof: String,
+  tax_certificate: String,
+  payslip_1: String,
+  payslip_2: String,
+  bank_statement: String,
+  selfie: String,
+  employment_contract: String,  // Added Feb 2026
+  
+  // Employment Details
+  job_title: String,
+  employment_type: String,
+  monthly_salary: Number,
+  country: String,
+  
+  // Payment Methods
+  bank_name: String,
+  bank_account: String,
+  mobile_money_provider: String,
+  mobile_money_number: String,
+  
+  // Account Status
+  status: String,
+  risk_score: Number,
+  advance_limit: Number,
+  earned_wages: Number
+}
+```
 
-### Comprehensive KYC Onboarding (NEW - Feb 2026) 
-7-step employee onboarding flow with full KYC/verification:
+## API Endpoints
 
-**Step 1: Welcome**
-- Personalized greeting with user's name
-- Feature highlights: Secure & Private, Instant Transfers, Quick Verification
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/google` - Google OAuth initiation
+- `GET /api/auth/google/callback` - Google OAuth callback
 
-**Step 2: Terms & Privacy**
-- Inline expandable Terms of Service content
-- Inline expandable Privacy Policy content
-- Checkbox agreement required to proceed
+### Employee
+- `GET /api/users/me` - Get current user
+- `PUT /api/users/me/kyc` - Update KYC information
+- `GET /api/employee/dashboard` - Dashboard stats
 
-**Step 3: ID Verification**
-- ID Type selector (National ID / Passport toggle)
-- ID/Passport number input
-- Date of Birth field
-- Country of Nationality (shown only for Passport)
-- Document upload: Front Side (required), Back Side (optional)
+### KYC Document Upload
+- `POST /api/kyc/upload/{doc_type}` - Upload KYC document
+  - Supported types: `id_document_front`, `id_document_back`, `address_proof`, `tax_certificate`, `payslip_1`, `payslip_2`, `bank_statement`, `selfie`, `employment_contract`
 
-**Step 4: Address Verification**
-- Country of Work selector (Kenya, Uganda, Tanzania, Rwanda)
-- Address Line 1, Line 2
-- City/Town, Postal Code
-- Address Proof document upload (utility bill, bank statement, lease)
+### Advances
+- `POST /api/advances` - Request advance
+- `GET /api/advances` - List advances
+- `GET /api/transactions` - List transactions
 
-**Step 5: Tax Information**
-- Tax Identification Number (TIN/PIN) input
-- Tax Certificate upload (optional)
-- Skip option for users without TIN
+## Design System
 
-**Step 6: Employment & Salary**
-- Employer selector from approved employers list
-- Employee Code/ID
-- Department
-- Job Title
-- Employment Type (Full-time, Part-time, Contract)
-- Start Date
-- Monthly Gross Salary
-- Payslip uploads (1-2 recent payslips)
+### Color Palette
+- Primary: `#0df259` (Emerald Green)
+- Secondary: `#10b981`
+- Dark mode backgrounds: `slate-900`, `slate-950`
+- Light mode backgrounds: `slate-50`, `white`
 
-**Step 7: Payment Details**
-- Mobile Money Provider selector (based on country)
-- Mobile Money Number (required)
-- Bank Name (optional)
-- Bank Account Number (optional)
-- Bank Statement upload (optional)
+### Glass-morphism Theme
+- Backdrop blur: `backdrop-blur-xl`
+- Semi-transparent backgrounds: `bg-white/70`, `bg-white/5`
+- Border styling: `border-slate-200/50`, `border-white/10`
+- Shadow effects: `shadow-lg`, `shadow-primary/30`
 
-### Backend KYC System (NEW - Feb 2026)
-- **POST /api/kyc/upload** - File upload endpoint with validation
-  - Accepts: JPEG, PNG, WebP, PDF
-  - Max size: 5MB
-  - Storage: Local filesystem (/app/backend/uploads/kyc/)
-  - Document types: id_front, id_back, address_proof, tax_certificate, payslip_1, payslip_2, bank_statement, selfie
-- **GET /api/employees/me/kyc-status** - Comprehensive KYC status with uploaded documents
-- **PATCH /api/employees/me/kyc-step** - Track onboarding progress
-- **GET /api/kyc/files/{filename}** - Serve uploaded KYC files securely
-
-### Backend (FastAPI + MongoDB)
-- User authentication (register, login, JWT tokens)
-- Employer CRUD with verification workflow
-- Employee CRUD with KYC status tracking
-- Advance requests with fee calculation
-- Risk scoring APIs with weighted formulas
-- Payroll upload functionality
-- KYC document management
-- Dashboard stats endpoints
-- Transaction history
-
-### Application Dashboards (Existing)
-- Employee Dashboard (earned wages, advance limit, transactions)
-- Employer Dashboard (employee stats, payroll stats)
-- Admin Dashboard (verification stats, quick actions)
-
-### MOCKED Integrations
-- Mobile money disbursement (M-PESA, MTN, Airtel Money) - mock implementation
-- Bank transfer disbursement - mock implementation
-- Apple Login - placeholder
-- Biometric Face Scan - placeholder
+### Typography
+- Headings: Bold, large sizes
+- Body: Medium weights, readable sizes
+- Mobile-first sizing with `sm:` and `lg:` breakpoints
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
 - **Employee**: demo.employee@eaziwage.com / Employee@123
-- **Test Onboarding User**: test.onboard.29147@eaziwage.com / TestPass@123
 
-## Prioritized Backlog
+## Completed Work (Feb 2026)
 
-### P0 (Critical for Production)
-- [x] ~~Comprehensive KYC onboarding flow~~ (COMPLETED - Feb 2026)
-- [x] ~~Backend file upload for KYC documents~~ (COMPLETED - Feb 2026)
-- [x] ~~Footer scroll-to-top on link click~~ (COMPLETED - Feb 2026)
-- [ ] Real mobile money API integration (M-PESA Daraja, MTN MoMo)
-- [ ] Cloud file storage for KYC (AWS S3 or similar)
-- [ ] Email notifications (SendGrid/Resend)
+### Session 1 - Core Platform
+- ✅ Marketing website (Landing, About, How It Works, etc.)
+- ✅ JWT authentication system
+- ✅ Google OAuth integration
+- ✅ 7-step KYC onboarding flow
+- ✅ Document upload endpoints
+- ✅ Dynamic mobile money providers by country
+- ✅ Business logic updates (mandatory fields, M-PESA text)
 
-### P1 (Important)
-- [ ] Admin KYC Review page - view/approve/reject submitted documents
-- [ ] Admin Risk Scoring calculator implementation
-- [ ] Redesign Admin/Employer dashboards to match employee portal aesthetic
-- [ ] Password reset functionality
+### Session 2 - Dashboard Redesign (Current)
+- ✅ Employment Contract upload field added to onboarding
+- ✅ Employee Dashboard redesigned with Speed Dial counter
+- ✅ Request Advance page redesigned with circular progress
+- ✅ Transactions page redesigned with filter pills
+- ✅ Settings/Profile page redesigned with payment methods
+- ✅ Footer scroll-to-top functionality fixed
 
-### P2 (Nice to Have)
-- [ ] Employer Reports/Analytics page
-- [ ] Admin Employees management page
-- [ ] SMS notifications (Twilio/Africa's Talking)
-- [ ] Admin/Employer Settings pages
-- [ ] Export data functionality
-- [ ] Mobile app (React Native)
+## Pending Tasks
 
-## Technical Architecture
-```
-/app/
-├── backend/
-│   ├── server.py (FastAPI application)
-│   ├── requirements.txt
-│   ├── .env (MONGO_URL, DB_NAME)
-│   └── uploads/
-│       └── kyc/ (KYC document storage)
-├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── layout/ (MarketingNav, Footer, DashboardLayout)
-│   │   │   └── ui/ (Shadcn components)
-│   │   ├── lib/
-│   │   │   ├── ThemeContext.jsx (Dark/Light mode provider)
-│   │   │   ├── api.js (API client with kycApi)
-│   │   │   └── auth.js
-│   │   └── pages/
-│   │       ├── marketing/ (11 pages)
-│   │       ├── auth/ (Login, Register, AuthCallback)
-│   │       ├── admin/ (Dashboard, Employers, Advances, KYC, RiskScoring)
-│   │       ├── employer/ (Dashboard, Employees, Payroll, Onboarding)
-│   │       └── employee/ (Dashboard, KYC, Transactions, Advances, Onboarding)
-│   ├── tailwind.config.js (darkMode: "class")
-│   └── .env (REACT_APP_BACKEND_URL)
-└── memory/
-    └── PRD.md
-```
+### P1 - High Priority
+- Admin KYC Review page UI
+- Risk Scoring calculator implementation
 
-## Key API Endpoints
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/auth/google/callback` - Google OAuth callback
-- `POST /api/kyc/upload` - Upload KYC document file
-- `GET /api/employees/me/kyc-status` - Get comprehensive KYC status
-- `PATCH /api/employees/me/kyc-step` - Update onboarding progress
-- `GET /api/employers/public/approved` - List approved employers (public)
+### P2 - Medium Priority
+- Employer employee management pages
+- Payroll integration
 
-## Test Results (Feb 2026)
-- Backend KYC Upload: **93%** (13/14 tests passed)
-- Frontend KYC Onboarding: **100%** (All 7 steps verified)
-- Footer scroll-to-top: **Working**
+### Future/Backlog
+- Biometric Face Scan functionality
+- Apple Login integration
+- Live Mobile Money API integration
+- Live Bank Transfer API integration
+- Push notifications
+- Email notifications
 
-## Notes
-- KYC documents stored locally in /app/backend/uploads/kyc/
-- File upload validates type (JPEG/PNG/WebP/PDF) and size (max 5MB)
-- 7-step onboarding tracks progress with kyc_step field
-- Green theme (#16A34A) maintained consistently
-- Glass-morphism design pattern throughout
+## Mocked Features
+- Mobile Money APIs (M-PESA, Airtel Money, MTN Mobile Money)
+- Bank Transfer APIs
+- Apple Login
+- Face ID Login
+
+## Third-Party Integrations
+- `emergentintegrations` - Google OAuth
+- `react-simple-maps` - Map visualization
+- `react-tooltip` - Tooltips
+- `axios` - API client
+
+---
+Last Updated: February 14, 2026
