@@ -22,28 +22,33 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Step 6: Payment Setup (Mobile Money & Bank Account)
   - Step 7: Review & Submit
 
-- **Employee Dashboard** ✅ (Redesigned Feb 2026)
-  - Speed Dial Counter showing available amount with animated circular progress
-  - Quick stats grid (Earned Wages, Next Payday, Withdrawn, Employer)
-  - Account status and KYC verification status
-  - Recent activity section
-  - Sidebar navigation (Desktop)
-  - Bottom navigation (Mobile)
+- **Employee Dashboard** ✅ (Redesigned v3 - Feb 2026)
+  - **SpeedDialCounter**: Animated circular progress showing available amount
+  - **Stats Grid**: Earned This Month, Next Payday, Total Withdrawn, Employer
+  - **Account Status**: Shows Account and KYC verification status
+  - **Recent Activity**: Shows latest transactions
+  - **Bottom Navigation**: Dark slate design with green gradient accents
+  - Green gradient theme consistent with main website
 
-- **Request Advance Page** ✅ (Redesigned Feb 2026)
+- **Request Advance Page** ✅ (Redesigned v3 - Feb 2026)
   - Circular progress amount selector
   - Amount slider with quick select buttons
   - Transaction summary with fee calculation
   - Disbursement method selector (Mobile Money / Bank)
+  - Not Verified state for pending KYC
 
-- **Transaction History** ✅ (Redesigned Feb 2026)
-  - Monthly stats cards
+- **Transaction History** ✅ (Redesigned v3 - Feb 2026)
+  - Stats cards (This Month total, Total Transactions)
   - Filter pills (All, Pending, Completed, Failed)
   - Transaction list with status indicators
+  - Export button for data export
 
-- **Profile & Settings** ✅ (Redesigned Feb 2026)
-  - Profile card with verification badge
-  - Payment methods display
+- **Profile & Settings** ✅ (Redesigned v3 - Feb 2026)
+  - **Profile Picture Upload**: Camera button to upload/change photo
+  - **Editable Personal Info**: Full Name, Email, Phone with inline editing
+  - **Editable Address**: Address Line 1, City, Postal Code
+  - **Payment Methods**: M-PESA and Bank Account with Active badges
+  - **KYC Documents Summary**: Shows status of all uploaded documents
   - Security settings (password, biometric toggle)
   - Preferences (notifications, theme, language)
   - Support section
@@ -67,7 +72,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Python 3.x with FastAPI framework
 - MongoDB database
 - JWT authentication
-- File upload handling for KYC documents
+- File upload handling for KYC documents and profile pictures
 - Local storage at `/app/backend/uploads`
 
 ### Frontend (React)
@@ -76,6 +81,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Glass-morphism design system
 - Shadcn/UI components
 - Mobile-first responsive design
+- Shared EmployeeLayout component with FloatingNav
 
 ### Database Schema (MongoDB)
 ```javascript
@@ -86,9 +92,38 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   role: String, // 'employee', 'employer', 'admin'
   google_id: String,
   full_name: String,
-  mobile_phone: String,
-  kyc_status: String, // 'pending', 'submitted', 'approved', 'rejected'
-  onboarding_step: Number,
+  phone: String,
+  phone_country_code: String,
+  profile_picture_url: String, // NEW - Profile picture path
+  is_verified: Boolean,
+  created_at: String
+}
+
+// employees collection
+{
+  user_id: String,
+  employer_id: String,
+  employer_name: String,
+  employee_code: String,
+  national_id: String,
+  id_type: String,
+  nationality: String,
+  date_of_birth: String,
+  employment_type: String,
+  job_title: String,
+  monthly_salary: Number,
+  
+  // Payment
+  bank_name: String,
+  bank_account: String,
+  mobile_money_provider: String,
+  mobile_money_number: String,
+  
+  // Address (NEW - Editable)
+  address_line1: String,
+  address_line2: String,
+  city: String,
+  postal_code: String,
   
   // KYC Documents
   id_document_front: String,
@@ -99,22 +134,11 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   payslip_2: String,
   bank_statement: String,
   selfie: String,
-  employment_contract: String,  // Added Feb 2026
+  employment_contract: String,
   
-  // Employment Details
-  job_title: String,
-  employment_type: String,
-  monthly_salary: Number,
-  country: String,
-  
-  // Payment Methods
-  bank_name: String,
-  bank_account: String,
-  mobile_money_provider: String,
-  mobile_money_number: String,
-  
-  // Account Status
+  // Status
   status: String,
+  kyc_status: String,
   risk_score: Number,
   advance_limit: Number,
   earned_wages: Number
@@ -126,17 +150,24 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 ### Authentication
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
-- `GET /api/auth/google` - Google OAuth initiation
-- `GET /api/auth/google/callback` - Google OAuth callback
+- `POST /api/auth/google/callback` - Google OAuth callback
+
+### User Settings (NEW)
+- `GET /api/users/me/full-profile` - Get complete user profile with employee data and KYC documents
+- `PUT /api/users/me/settings` - Update user settings (full_name, phone)
+- `POST /api/users/me/profile-picture` - Upload profile picture
 
 ### Employee
-- `GET /api/users/me` - Get current user
-- `PUT /api/users/me/kyc` - Update KYC information
-- `GET /api/employee/dashboard` - Dashboard stats
+- `GET /api/employees/me` - Get employee profile
+- `PUT /api/employees/me/settings` - Update employee settings (address, payment details)
+- `GET /api/employees/me/kyc-status` - Get KYC status with documents
 
 ### KYC Document Upload
-- `POST /api/kyc/upload/{doc_type}` - Upload KYC document
-  - Supported types: `id_document_front`, `id_document_back`, `address_proof`, `tax_certificate`, `payslip_1`, `payslip_2`, `bank_statement`, `selfie`, `employment_contract`
+- `POST /api/kyc/upload` - Upload KYC document
+  - Supported types: `id_front`, `id_back`, `address_proof`, `tax_certificate`, `payslip_1`, `payslip_2`, `bank_statement`, `selfie`, `employment_contract`
+
+### Dashboard
+- `GET /api/dashboard/employee` - Employee dashboard stats
 
 ### Advances
 - `POST /api/advances` - Request advance
@@ -151,22 +182,28 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Dark mode backgrounds: `slate-900`, `slate-950`
 - Light mode backgrounds: `slate-50`, `white`
 
+### Green Gradient Theme
+- Gradient backgrounds: `from-primary via-emerald-500 to-teal-500`
+- Gradient mesh backgrounds with subtle green glows
+- Button gradients: `from-primary to-emerald-600`
+- Icon backgrounds: `bg-primary/10` with `text-primary`
+
 ### Glass-morphism Theme
 - Backdrop blur: `backdrop-blur-xl`
-- Semi-transparent backgrounds: `bg-white/70`, `bg-white/5`
-- Border styling: `border-slate-200/50`, `border-white/10`
-- Shadow effects: `shadow-lg`, `shadow-primary/30`
+- Semi-transparent backgrounds: `bg-white/60`, `bg-slate-900/60`
+- Border styling: `border-slate-200/50`, `border-slate-700/30`
+- Shadow effects: `shadow-lg`, `shadow-primary/25`
 
 ### Typography
-- Headings: Bold, large sizes
-- Body: Medium weights, readable sizes
+- Headings: Bold, large sizes with Plus Jakarta Sans
+- Body: Inter font, medium weights, readable sizes
 - Mobile-first sizing with `sm:` and `lg:` breakpoints
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
 - **Employee**: demo.employee@eaziwage.com / Employee@123
 
-## Completed Work (Feb 2026)
+## Completed Work
 
 ### Session 1 - Core Platform
 - ✅ Marketing website (Landing, About, How It Works, etc.)
@@ -175,15 +212,32 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - ✅ 7-step KYC onboarding flow
 - ✅ Document upload endpoints
 - ✅ Dynamic mobile money providers by country
-- ✅ Business logic updates (mandatory fields, M-PESA text)
 
-### Session 2 - Dashboard Redesign (Current)
+### Session 2 - Dashboard Redesign v3 (Feb 14, 2026)
 - ✅ Employment Contract upload field added to onboarding
-- ✅ Employee Dashboard redesigned with Speed Dial counter
-- ✅ Request Advance page redesigned with circular progress
-- ✅ Transactions page redesigned with filter pills
-- ✅ Settings/Profile page redesigned with payment methods
-- ✅ Footer scroll-to-top functionality fixed
+- ✅ **Complete Employee Dashboard Redesign**
+  - SpeedDialCounter with animated circular progress
+  - Fixed text overlay issue on Available Earnings
+  - Green gradient theme matching main website
+  - Dark slate bottom navigation
+- ✅ **Request Advance Page Redesign**
+  - Circular progress amount selector
+  - Quick amount buttons
+  - Transaction summary with fees
+- ✅ **Transactions Page Redesign**
+  - Filter pills (All, Pending, Completed, Failed)
+  - Stats cards for monthly totals
+- ✅ **Settings Page Complete Overhaul**
+  - Profile picture upload functionality
+  - Editable personal information fields
+  - Editable address fields
+  - Payment methods display
+  - KYC Documents summary section
+- ✅ **New Backend Endpoints**
+  - GET /api/users/me/full-profile
+  - PUT /api/users/me/settings
+  - PUT /api/employees/me/settings
+  - POST /api/users/me/profile-picture
 
 ## Pending Tasks
 
