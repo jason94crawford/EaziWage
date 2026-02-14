@@ -99,9 +99,9 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 - [ ] KYC document upload functionality (Employee /kyc page)
 - [ ] Admin KYC Review page - view/approve/reject submitted documents
 - [ ] Admin Risk Scoring calculator implementation
-- [ ] Redesign Admin/Employer/Employee dashboards to match new marketing aesthetic
-- [ ] Employee Profile page
+- [ ] Redesign Admin/Employer dashboards to match new employee portal aesthetic
 - [ ] Password reset functionality
+- [ ] Scroll-to-top on footer link clicks
 
 ### P2 (Nice to Have)
 - [ ] Employer Reports/Analytics page
