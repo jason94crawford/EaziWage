@@ -226,8 +226,6 @@ export default function EmployerReports() {
             change="+12.5%"
             changeType="positive"
             icon={DollarSign}
-            iconBg="bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/10"
-            iconColor="text-emerald-600"
           />
           <MetricCard 
             title="Total Fees Collected"
@@ -235,8 +233,6 @@ export default function EmployerReports() {
             change="+8.2%"
             changeType="positive"
             icon={Wallet}
-            iconBg="bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-500/20 dark:to-blue-500/10"
-            iconColor="text-blue-600"
           />
           <MetricCard 
             title="Avg. Advance Amount"
@@ -244,8 +240,6 @@ export default function EmployerReports() {
             change="-2.1%"
             changeType="negative"
             icon={Activity}
-            iconBg="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-500/20 dark:to-purple-500/10"
-            iconColor="text-purple-600"
           />
           <MetricCard 
             title="Utilization Rate"
