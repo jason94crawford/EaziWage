@@ -956,54 +956,6 @@ export default function EmployeeOnboarding() {
             <div className="space-y-4 max-w-md mx-auto">
               <div className="flex flex-col gap-2">
                 <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                  Select Employer *
-                </Label>
-                <Select value={formData.employer_id} onValueChange={(v) => updateField('employer_id', v)}>
-                  <SelectTrigger className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700" data-testid="onboarding-employer">
-                    <SelectValue placeholder="Select your employer" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {employers.map((e) => (
-                      <SelectItem key={e.id} value={e.id}>{e.company_name}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                {employers.length === 0 && (
-                  <p className="text-sm text-amber-600 dark:text-amber-400">
-                    No employers available yet. Your employer needs to register first.
-                  </p>
-                )}
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div className="flex flex-col gap-2">
-                  <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                    Employee Code/ID *
-                  </Label>
-                  <Input
-                    placeholder="e.g. EMP001"
-                    value={formData.employee_code}
-                    onChange={(e) => updateField('employee_code', e.target.value)}
-                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
-                    data-testid="onboarding-employee-code"
-                  />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                    Department
-                  </Label>
-                  <Input
-                    placeholder="e.g. Engineering"
-                    value={formData.department}
-                    onChange={(e) => updateField('department', e.target.value)}
-                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
-                    data-testid="onboarding-department"
-                  />
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-2">
-                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
                   Job Title *
                 </Label>
                 <Input
@@ -1060,14 +1012,14 @@ export default function EmployeeOnboarding() {
                 />
               </div>
 
-              {/* Payslip Uploads */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+              {/* Payslip Uploads - Required */}
+              <div className="p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 space-y-3">
                 <h4 className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
                   <FileText className="w-4 h-4 text-primary" />
-                  Recent Payslips (Recommended)
+                  Recent Payslips *
                 </h4>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  Upload your last 1-2 payslips to verify your salary
+                  Upload your last 1-2 payslips to verify your salary (required for verification)
                 </p>
                 <div className="grid grid-cols-2 gap-4">
                   <FileUploader
@@ -1077,6 +1029,7 @@ export default function EmployeeOnboarding() {
                     uploadedFile={uploadedFiles.payslip_1}
                     uploading={uploadingFile === 'payslip_1'}
                     testId="upload-payslip1"
+                    required
                   />
                   <FileUploader
                     label="Payslip 2"
