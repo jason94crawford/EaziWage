@@ -284,6 +284,7 @@ export default function EmployeeOnboarding() {
     try {
       await employeeApi.create({
         ...formData,
+        id_type: idType,
         monthly_salary: parseFloat(formData.monthly_salary)
       });
       toast.success('Profile created successfully!');
@@ -298,10 +299,20 @@ export default function EmployeeOnboarding() {
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (field === 'country') {
+      // Find country in COUNTRIES_OF_WORK for mobile money providers
       const country = countries.find(c => c.code === value);
       setSelectedCountry(country);
       setFormData(prev => ({ ...prev, mobile_money_provider: '' }));
     }
+  };
+
+  const handleIdTypeChange = (type) => {
+    setIdType(type);
+    setFormData(prev => ({ 
+      ...prev, 
+      id_type: type,
+      nationality: type === 'national_id' ? '' : prev.nationality 
+    }));
   };
 
   const nextStep = () => {
