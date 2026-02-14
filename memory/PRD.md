@@ -65,9 +65,16 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 Login and Registration pages with centered logo, social auth options, and multi-step onboarding:
 
 - ✅ **Login Page** (/login) - Centered EaziWage logo, hero section styling (gradient-mesh, bg-grid), email/password fields, "Sign In" gradient button, social login options: Google OAuth (functional via Emergent), Apple Sign-In (PLACEHOLDER), Face ID (PLACEHOLDER), theme toggle, "Create account" link
-- ✅ **Registration Page** (/register) - Centered logo, **Employee/Employer toggle** selector, dynamic form fields (Company Code for Employee, Company Name for Employer), Google OAuth signup, Apple placeholder, terms checkbox, "Create Account" button
-- ✅ **Auth Callback** (/auth/callback) - Handles Emergent Google OAuth redirect, extracts session_id, creates/updates user, redirects to appropriate dashboard or onboarding
-- ✅ **Backend Google OAuth** - POST /api/auth/google/callback endpoint using httpx to verify with Emergent auth server, creates new users or logs in existing
+- ✅ **Registration Page** (/register) - Centered logo, **Employee/Employer toggle** selector, dynamic form fields:
+  - **Employee Flow**: "Find your company..." search button → Company search modal → Select company (read-only display) OR "My company isn't listed" → Employer referral form (Name, Email, Phone)
+  - **Employer Flow**: Company Name input field
+  - Button text: "Create Employee Account" / "Create Employer Account"
+  - Google OAuth signup, Apple placeholder, terms checkbox
+- ✅ **Company Search Modal** - Search by name/code, displays matching employers, "My company isn't listed — Continue without code" option
+- ✅ **Employer Referral Form** - Warning "Company not on EaziWage yet", fields for Employer/Company Name, HR/Contact Email, HR/Contact Phone, "Search for company again" link
+- ✅ **Auth Callback** (/auth/callback) - Handles Emergent Google OAuth redirect
+- ✅ **Backend Google OAuth** - POST /api/auth/google/callback endpoint
+- ✅ **Backend Public Employers** - GET /api/employers/public/approved (no auth required, for registration)
 
 ### Multi-Step Onboarding (NEW - Feb 2026)
 5-step onboarding flow matching auth page design:
