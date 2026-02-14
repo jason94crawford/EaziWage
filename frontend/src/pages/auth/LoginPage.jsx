@@ -184,7 +184,7 @@ export default function LoginPage() {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} action="#" className="space-y-6">
               <div>
                 <Label htmlFor="email" className="text-slate-700 dark:text-slate-300 font-medium">
                   Email address
