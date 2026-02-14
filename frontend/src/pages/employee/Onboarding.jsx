@@ -439,10 +439,9 @@ export default function EmployeeOnboarding() {
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    // Reset mobile money provider when country changes
     if (field === 'country') {
-      const country = countries.find(c => c.code === value);
-      setSelectedCountry(country);
-      setFormData(prev => ({ ...prev, mobile_money_provider: '' }));
+      setFormData(prev => ({ ...prev, [field]: value, mobile_money_provider: '' }));
     }
   };
 
