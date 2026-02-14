@@ -1,0 +1,257 @@
+import React, { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { 
+  LayoutDashboard, Users, CreditCard, BarChart3, Settings, LogOut, 
+  Sun, Moon, Bell, Menu, X, ChevronRight, Upload, HelpCircle, Building2
+} from 'lucide-react';
+import { cn } from '../../lib/utils';
+import { useTheme } from '../../lib/ThemeContext';
+
+// Background component - matching landing page style
+export const EmployerBackground = () => (
+  <>
+    <div className="fixed inset-0 gradient-mesh pointer-events-none" />
+    <div className="fixed inset-0 bg-grid pointer-events-none" />
+    <div className="fixed top-0 right-0 w-[600px] h-[600px] bg-primary/8 rounded-full blur-[150px] pointer-events-none" />
+    <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/8 rounded-full blur-[120px] pointer-events-none" />
+    <div className="fixed top-1/2 left-1/3 w-[400px] h-[400px] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
+  </>
+);
+
+// Sidebar Navigation
+const SidebarNav = ({ isOpen, onClose }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+  const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
+
+  const navItems = [
+    { href: '/employer', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/employer/employees', label: 'Employees', icon: Users },
+    { href: '/employer/payroll', label: 'Payroll', icon: Upload },
+    { href: '/employer/advances', label: 'Advances', icon: CreditCard },
+    { href: '/employer/reports', label: 'Reports', icon: BarChart3 },
+    { href: '/employer/settings', label: 'Settings', icon: Settings },
+  ];
+
+  const handleLogout = () => {
+    localStorage.removeItem('eaziwage_token');
+    localStorage.removeItem('eaziwage_user');
+    navigate('/login');
+  };
+
+  const isActive = (path) => location.pathname === path;
+
+  return (
+    <>
+      {/* Mobile Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside className={cn(
+        "fixed left-0 top-0 h-screen w-72 z-50 transition-transform duration-300 lg:translate-x-0",
+        isOpen ? "translate-x-0" : "-translate-x-full"
+      )}>
+        {/* Glass Background */}
+        <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50" />
+        
+        <div className="relative flex flex-col h-full">
+          {/* Logo Section */}
+          <div className="p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+            <Link to="/" className="flex items-center gap-3" data-testid="sidebar-logo">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/25">
+                <span className="text-white font-bold text-xl">E</span>
+              </div>
+              <div>
+                <span className="font-heading font-bold text-xl text-slate-900 dark:text-white block">EaziWage</span>
+                <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300">
+                  Employer
+                </span>
+              </div>
+            </Link>
+
+            {/* Mobile Close Button */}
+            <button 
+              onClick={onClose}
+              className="absolute top-6 right-4 p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Navigation */}
+          <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  onClick={onClose}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
+                    active
+                      ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary/25"
+                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50"
+                  )}
+                  data-testid={`nav-${item.label.toLowerCase().replace(/\s/g, '-')}`}
+                >
+                  <div className={cn(
+                    "w-9 h-9 rounded-xl flex items-center justify-center transition-all",
+                    active 
+                      ? "bg-white/20" 
+                      : "bg-slate-100 dark:bg-slate-800 group-hover:bg-primary/10 dark:group-hover:bg-primary/20"
+                  )}>
+                    <Icon className={cn(
+                      "w-5 h-5",
+                      active ? "text-white" : "text-slate-500 dark:text-slate-400 group-hover:text-primary"
+                    )} />
+                  </div>
+                  <span className="font-medium">{item.label}</span>
+                  {active && <ChevronRight className="w-4 h-4 ml-auto" />}
+                </Link>
+              );
+            })}
+          </nav>
+
+          {/* Help Card */}
+          <div className="px-4 mb-4">
+            <div className="bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-2xl p-4 border border-primary/20">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+                  <HelpCircle className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-900 dark:text-white">Need Help?</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">We're here 24/7</p>
+                </div>
+              </div>
+              <button className="w-full mt-2 px-4 py-2 bg-white dark:bg-slate-800 text-primary text-sm font-medium rounded-xl hover:shadow-md transition-all">
+                Contact Support
+              </button>
+            </div>
+          </div>
+
+          {/* User Section */}
+          <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+                <span className="text-white font-bold text-sm">
+                  {user.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
+                </span>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user.full_name}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user.email}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={toggleTheme}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+                data-testid="theme-toggle"
+              >
+                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {theme === 'dark' ? 'Light' : 'Dark'}
+              </button>
+              <button
+                onClick={handleLogout}
+                className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-colors"
+                data-testid="sidebar-logout-btn"
+              >
+                <LogOut className="w-4 h-4" />
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </>
+  );
+};
+
+// Top Header Bar
+const TopHeader = ({ onMenuClick, employer }) => {
+  const { theme, toggleTheme } = useTheme();
+  const [showNotifications, setShowNotifications] = useState(false);
+
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  return (
+    <header className="sticky top-0 z-30 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50">
+      <div className="px-4 lg:px-8 py-4">
+        <div className="flex items-center justify-between">
+          {/* Left side - Menu + Greeting */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onMenuClick}
+              className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 lg:hidden"
+              data-testid="mobile-menu-btn"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            <div>
+              <p className="text-sm text-slate-500 dark:text-slate-400">{getGreeting()}</p>
+              <h1 className="text-lg font-bold text-slate-900 dark:text-white">
+                {employer?.company_name || 'Company Portal'}
+              </h1>
+            </div>
+          </div>
+
+          {/* Right side - Actions */}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={toggleTheme}
+              className="p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors hidden sm:flex"
+              data-testid="header-theme-toggle"
+            >
+              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              data-testid="notifications-btn"
+            >
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full ring-2 ring-white dark:ring-slate-900" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};
+
+// Main Layout Component
+export const EmployerPortalLayout = ({ children, employer }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 transition-colors duration-300" data-testid="employer-dashboard">
+      <EmployerBackground />
+      
+      <SidebarNav isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      
+      <div className="lg:ml-72 relative">
+        <TopHeader onMenuClick={() => setSidebarOpen(true)} employer={employer} />
+        
+        <main className="p-4 lg:p-8">
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default EmployerPortalLayout;
