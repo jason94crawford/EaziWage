@@ -1368,6 +1368,167 @@ async def get_industries():
         {"code": "other", "name": "Other", "risk": "medium"}
     ]
 
+# ======================== PROFILE PICTURE ENDPOINTS ========================
+
+@api_router.post("/users/me/profile-picture")
+async def upload_profile_picture(
+    file: UploadFile = File(...),
+    user: dict = Depends(get_current_user)
+):
+    """Upload or update user's profile picture"""
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/png", "image/webp"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG, PNG, and WebP are allowed.")
+    
+    # Validate file size (max 2MB)
+    content = await file.read()
+    file_size = len(content)
+    if file_size > 2 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size must be less than 2MB")
+    
+    # Generate unique filename
+    file_ext = Path(file.filename).suffix if file.filename else ".jpg"
+    unique_filename = f"{user['id']}_profile_{uuid.uuid4().hex[:8]}{file_ext}"
+    file_path = PROFILE_UPLOAD_DIR / unique_filename
+    
+    # Save file
+    with open(file_path, "wb") as f:
+        f.write(content)
+    
+    profile_url = f"/api/profiles/{unique_filename}"
+    
+    # Update user's profile picture URL
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {"profile_picture_url": profile_url}}
+    )
+    
+    return {
+        "profile_picture_url": profile_url,
+        "file_size": file_size,
+        "message": "Profile picture uploaded successfully"
+    }
+
+@api_router.get("/profiles/{filename}")
+async def get_profile_picture(filename: str):
+    """Serve a profile picture file"""
+    file_path = PROFILE_UPLOAD_DIR / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    from fastapi.responses import FileResponse
+    return FileResponse(file_path)
+
+# ======================== USER SETTINGS ENDPOINTS ========================
+
+class UserSettingsUpdate(BaseModel):
+    full_name: Optional[str] = None
+    phone: Optional[str] = None
+    phone_country_code: Optional[str] = None
+
+class EmployeeSettingsUpdate(BaseModel):
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
+    city: Optional[str] = None
+    postal_code: Optional[str] = None
+    mobile_money_provider: Optional[str] = None
+    mobile_money_number: Optional[str] = None
+    bank_name: Optional[str] = None
+    bank_account: Optional[str] = None
+
+@api_router.put("/users/me/settings")
+async def update_user_settings(
+    data: UserSettingsUpdate,
+    user: dict = Depends(get_current_user)
+):
+    """Update user's basic settings"""
+    update_data = {}
+    if data.full_name is not None:
+        update_data["full_name"] = data.full_name
+    if data.phone is not None:
+        update_data["phone"] = data.phone
+    if data.phone_country_code is not None:
+        update_data["phone_country_code"] = data.phone_country_code
+    
+    if update_data:
+        await db.users.update_one(
+            {"id": user["id"]},
+            {"$set": update_data}
+        )
+    
+    return {"message": "Settings updated successfully"}
+
+@api_router.put("/employees/me/settings")
+async def update_employee_settings(
+    data: EmployeeSettingsUpdate,
+    user: dict = Depends(require_role(UserRole.EMPLOYEE))
+):
+    """Update employee's profile settings"""
+    update_data = {}
+    if data.address_line1 is not None:
+        update_data["address_line1"] = data.address_line1
+    if data.address_line2 is not None:
+        update_data["address_line2"] = data.address_line2
+    if data.city is not None:
+        update_data["city"] = data.city
+    if data.postal_code is not None:
+        update_data["postal_code"] = data.postal_code
+    if data.mobile_money_provider is not None:
+        update_data["mobile_money_provider"] = data.mobile_money_provider
+    if data.mobile_money_number is not None:
+        update_data["mobile_money_number"] = data.mobile_money_number
+    if data.bank_name is not None:
+        update_data["bank_name"] = data.bank_name
+    if data.bank_account is not None:
+        update_data["bank_account"] = data.bank_account
+    
+    if update_data:
+        result = await db.employees.update_one(
+            {"user_id": user["id"]},
+            {"$set": update_data}
+        )
+        if result.modified_count == 0 and result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Employee profile not found")
+    
+    return {"message": "Employee settings updated successfully"}
+
+@api_router.get("/users/me/full-profile")
+async def get_full_user_profile(user: dict = Depends(get_current_user)):
+    """Get complete user profile with all details including employee info"""
+    user_data = await db.users.find_one({"id": user["id"]}, {"_id": 0, "password_hash": 0})
+    
+    result = {
+        "id": user_data.get("id"),
+        "email": user_data.get("email"),
+        "phone": user_data.get("phone"),
+        "phone_country_code": user_data.get("phone_country_code"),
+        "full_name": user_data.get("full_name"),
+        "role": user_data.get("role"),
+        "profile_picture_url": user_data.get("profile_picture_url"),
+        "is_verified": user_data.get("is_verified", False),
+        "created_at": user_data.get("created_at"),
+    }
+    
+    # If employee, include employee profile data
+    if user_data.get("role") == "employee":
+        employee = await db.employees.find_one({"user_id": user["id"]}, {"_id": 0})
+        if employee:
+            result["employee"] = employee
+            
+            # Get employer name
+            if employee.get("employer_id"):
+                employer = await db.employers.find_one({"id": employee["employer_id"]}, {"_id": 0})
+                if employer:
+                    result["employee"]["employer_name"] = employer.get("company_name")
+            
+            # Get KYC documents
+            documents = await db.kyc_documents.find({"user_id": user["id"]}, {"_id": 0}).to_list(100)
+            result["kyc_documents"] = documents
+    
+    return result
+
 @api_router.get("/")
 async def root():
     return {"message": "EaziWage API v1.0", "status": "running"}
