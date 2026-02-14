@@ -179,17 +179,17 @@ function App() {
           } />
           <Route path="/employer/advances" element={
             <ProtectedRoute allowedRoles={['employer']}>
-              <PlaceholderPage title="Advances" description="View employee wage advances" />
+              <EmployerAdvances />
             </ProtectedRoute>
           } />
           <Route path="/employer/reports" element={
             <ProtectedRoute allowedRoles={['employer']}>
-              <PlaceholderPage title="Reports" description="Analytics and reporting" />
+              <EmployerReports />
             </ProtectedRoute>
           } />
           <Route path="/employer/settings" element={
             <ProtectedRoute allowedRoles={['employer']}>
-              <PlaceholderPage title="Settings" description="Company settings" />
+              <EmployerSettings />
             </ProtectedRoute>
           } />
 
