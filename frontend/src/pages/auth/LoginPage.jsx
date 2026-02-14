@@ -34,7 +34,12 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch (parseError) {
+        data = { detail: 'Server error. Please try again.' };
+      }
 
       if (response.ok) {
         localStorage.setItem('eaziwage_token', data.access_token);
@@ -58,7 +63,8 @@ export default function LoginPage() {
         setError(data.detail || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      setError('An unexpected error occurred. Please try again.');
+      console.error('Login error:', err);
+      setError('Network error. Please check your connection and try again.');
     } finally {
       setIsLoading(false);
     }
