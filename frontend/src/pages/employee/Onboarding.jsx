@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   User, MapPin, Building2, Calendar, ArrowRight, ArrowLeft,
   Phone, Briefcase, Wallet, CreditCard, Check, Sparkles,
-  Shield, FileText, AlertCircle, ChevronRight, ChevronDown, Globe
+  Shield, FileText, AlertCircle, ChevronRight, ChevronDown, Globe,
+  Upload, Camera, Home, Receipt, Landmark, X, File, Eye
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { employeeApi, employerApi, utilityApi } from '../../lib/api';
+import { employeeApi, employerApi, utilityApi, kycApi } from '../../lib/api';
 import { EMPLOYMENT_TYPES } from '../../lib/utils';
 import { toast } from 'sonner';
 import { useTheme } from '../../lib/ThemeContext';
@@ -219,10 +220,95 @@ Address: EaziWage Ltd, Westlands, Nairobi, Kenya`;
 const STEPS = [
   { id: 'welcome', title: 'Welcome', icon: Sparkles },
   { id: 'terms', title: 'Terms & Privacy', icon: Shield },
-  { id: 'personal', title: 'Personal Info', icon: User },
+  { id: 'identity', title: 'ID Verification', icon: FileText },
+  { id: 'address', title: 'Address', icon: Home },
+  { id: 'tax', title: 'Tax Info', icon: Receipt },
   { id: 'employment', title: 'Employment', icon: Briefcase },
   { id: 'payment', title: 'Payment', icon: Wallet },
 ];
+
+// File upload component
+const FileUploader = ({ 
+  label, 
+  accept = "image/*,application/pdf", 
+  description, 
+  onUpload, 
+  uploadedFile, 
+  uploading,
+  testId,
+  required = false 
+}) => {
+  const fileInputRef = useRef(null);
+  
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'];
+      if (!allowedTypes.includes(file.type)) {
+        toast.error('Please upload a valid image (JPEG, PNG) or PDF file');
+        return;
+      }
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size must be less than 5MB');
+        return;
+      }
+      onUpload(file);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium flex items-center gap-1">
+        {label} {required && <span className="text-red-500">*</span>}
+      </Label>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={accept}
+        onChange={handleFileSelect}
+        className="hidden"
+        data-testid={testId}
+      />
+      <div 
+        onClick={() => !uploading && fileInputRef.current?.click()}
+        className={`border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+          uploadedFile 
+            ? 'border-primary bg-primary/5 dark:bg-primary/10' 
+            : 'border-slate-200 dark:border-slate-700 hover:border-primary/50 dark:hover:border-primary/50'
+        }`}
+      >
+        {uploading ? (
+          <div className="flex items-center justify-center gap-2 py-2">
+            <div className="w-5 h-5 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+            <span className="text-sm text-slate-600 dark:text-slate-400">Uploading...</span>
+          </div>
+        ) : uploadedFile ? (
+          <div className="flex items-center justify-center gap-3">
+            <div className="w-10 h-10 bg-primary/10 dark:bg-primary/20 rounded-lg flex items-center justify-center">
+              <Check className="w-5 h-5 text-primary" />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-medium text-slate-900 dark:text-white truncate max-w-[180px]">
+                {uploadedFile.name || 'Document uploaded'}
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Click to replace</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+            <p className="text-sm text-slate-600 dark:text-slate-400">Click to upload</p>
+            {description && (
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{description}</p>
+            )}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default function EmployeeOnboarding() {
   const navigate = useNavigate();
@@ -242,6 +328,18 @@ export default function EmployeeOnboarding() {
   // ID type state
   const [idType, setIdType] = useState('national_id');
   
+  // File upload states
+  const [uploadingFile, setUploadingFile] = useState(null);
+  const [uploadedFiles, setUploadedFiles] = useState({
+    id_front: null,
+    id_back: null,
+    address_proof: null,
+    tax_certificate: null,
+    payslip_1: null,
+    payslip_2: null,
+    bank_statement: null,
+  });
+  
   const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
   
   const [formData, setFormData] = useState({
@@ -258,7 +356,15 @@ export default function EmployeeOnboarding() {
     bank_account: '',
     mobile_money_provider: '',
     mobile_money_number: '',
-    country: '', // Country of Work
+    country: '',
+    // New KYC fields
+    tax_id: '',
+    address_line1: '',
+    address_line2: '',
+    city: '',
+    postal_code: '',
+    department: '',
+    start_date: '',
   });
 
   useEffect(() => {
@@ -277,6 +383,32 @@ export default function EmployeeOnboarding() {
     fetchData();
   }, []);
 
+  const handleFileUpload = async (file, documentType) => {
+    setUploadingFile(documentType);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('document_type', documentType);
+      
+      const response = await kycApi.uploadFile(formData);
+      
+      setUploadedFiles(prev => ({
+        ...prev,
+        [documentType]: {
+          name: file.name,
+          url: response.data.document_url,
+          id: response.data.id
+        }
+      }));
+      
+      toast.success('Document uploaded successfully!');
+    } catch (err) {
+      toast.error(err.response?.data?.detail || 'Failed to upload document');
+    } finally {
+      setUploadingFile(null);
+    }
+  };
+
   const handleSubmit = async () => {
     setError('');
     setLoading(true);
@@ -287,7 +419,7 @@ export default function EmployeeOnboarding() {
         id_type: idType,
         monthly_salary: parseFloat(formData.monthly_salary)
       });
-      toast.success('Profile created successfully!');
+      toast.success('Profile created successfully! Your documents are under review.');
       navigate('/employee');
     } catch (err) {
       let errorMessage = 'Failed to create profile';
@@ -312,7 +444,6 @@ export default function EmployeeOnboarding() {
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (field === 'country') {
-      // Find country in COUNTRIES_OF_WORK for mobile money providers
       const country = countries.find(c => c.code === value);
       setSelectedCountry(country);
       setFormData(prev => ({ ...prev, mobile_money_provider: '' }));
@@ -336,6 +467,8 @@ export default function EmployeeOnboarding() {
     setError('');
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
+      // Track progress
+      kycApi.updateKycStep(currentStep + 1).catch(() => {});
     }
   };
 
@@ -351,16 +484,29 @@ export default function EmployeeOnboarding() {
       case 0: return true; // Welcome
       case 1: return agreedToTerms; // Terms
       case 2: {
-        // Personal Info validation
+        // ID Verification - need ID number, DOB, and at least front ID
         const hasIdNumber = formData.national_id;
         const hasDob = formData.date_of_birth;
-        const hasCountryOfWork = formData.country;
-        // If passport, nationality is required
+        const hasIdFront = uploadedFiles.id_front;
         const hasNationality = idType === 'passport' ? formData.nationality : true;
-        return hasIdNumber && hasDob && hasCountryOfWork && hasNationality;
+        return hasIdNumber && hasDob && hasIdFront && hasNationality;
       }
-      case 3: return formData.employer_id && formData.employee_code && formData.job_title && formData.employment_type && formData.monthly_salary; // Employment
-      case 4: return formData.mobile_money_provider && formData.mobile_money_number; // Payment
+      case 3: {
+        // Address - need country and address line 1
+        return formData.country && formData.address_line1 && formData.city;
+      }
+      case 4: {
+        // Tax - TIN is optional but recommended
+        return true; // Can skip
+      }
+      case 5: {
+        // Employment
+        return formData.employer_id && formData.employee_code && formData.job_title && formData.employment_type && formData.monthly_salary;
+      }
+      case 6: {
+        // Payment - need mobile money
+        return formData.mobile_money_provider && formData.mobile_money_number;
+      }
       default: return false;
     }
   };
@@ -377,13 +523,13 @@ export default function EmployeeOnboarding() {
               Welcome to EaziWage, {user.full_name?.split(' ')[0] || 'there'}!
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 max-w-md mx-auto">
-              Let's get you set up to access your earned wages instantly. This will only take a few minutes.
+              Let's get you verified to access your earned wages instantly. This comprehensive KYC process takes about 5-10 minutes.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-lg mx-auto">
               {[
                 { icon: Shield, text: 'Secure & Private' },
                 { icon: Wallet, text: 'Instant Transfers' },
-                { icon: FileText, text: 'No Paperwork' },
+                { icon: FileText, text: 'Quick Verification' },
               ].map((item, i) => (
                 <div key={i} className="flex items-center gap-2 p-3 bg-primary/5 dark:bg-primary/10 rounded-xl text-sm">
                   <item.icon className="w-5 h-5 text-primary" />
@@ -482,22 +628,22 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 2: // Personal Info
+      case 2: // ID Verification (Scan ID/Passport)
         return (
           <div className="py-6">
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
-                <User className="w-8 h-8 text-white" />
+                <FileText className="w-8 h-8 text-white" />
               </div>
               <h2 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                Personal Information
+                ID Verification
               </h2>
               <p className="text-slate-600 dark:text-slate-300">
-                We need some basic information for verification
+                Upload a clear photo of your identification document
               </p>
             </div>
             
-            <div className="space-y-4 max-w-md mx-auto">
+            <div className="space-y-5 max-w-md mx-auto">
               {/* ID Type Selector */}
               <div className="flex flex-col gap-2">
                 <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
@@ -577,14 +723,65 @@ export default function EmployeeOnboarding() {
                   data-testid="onboarding-dob"
                 />
               </div>
-              
+
+              {/* Document Uploads */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700 space-y-4">
+                <h4 className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                  <Camera className="w-4 h-4 text-primary" />
+                  Upload ID Document
+                </h4>
+                
+                <div className="grid grid-cols-2 gap-4">
+                  <FileUploader
+                    label="Front Side"
+                    description="Clear photo of front"
+                    onUpload={(file) => handleFileUpload(file, 'id_front')}
+                    uploadedFile={uploadedFiles.id_front}
+                    uploading={uploadingFile === 'id_front'}
+                    testId="upload-id-front"
+                    required
+                  />
+                  <FileUploader
+                    label="Back Side"
+                    description="Clear photo of back"
+                    onUpload={(file) => handleFileUpload(file, 'id_back')}
+                    uploadedFile={uploadedFiles.id_back}
+                    uploading={uploadingFile === 'id_back'}
+                    testId="upload-id-back"
+                  />
+                </div>
+                
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Ensure all text is clearly visible and the photo is not blurry
+                </p>
+              </div>
+            </div>
+          </div>
+        );
+
+      case 3: // Address Verification
+        return (
+          <div className="py-6">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
+                <Home className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                Address Verification
+              </h2>
+              <p className="text-slate-600 dark:text-slate-300">
+                Provide your current residential address
+              </p>
+            </div>
+            
+            <div className="space-y-4 max-w-md mx-auto">
               <div className="flex flex-col gap-2">
                 <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
                   Country of Work *
                 </Label>
                 <Select value={formData.country} onValueChange={(v) => updateField('country', v)}>
                   <SelectTrigger className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700" data-testid="onboarding-country">
-                    <SelectValue placeholder="Select your country of work" />
+                    <SelectValue placeholder="Select your country" />
                   </SelectTrigger>
                   <SelectContent>
                     {COUNTRIES_OF_WORK.map((c) => (
@@ -593,14 +790,155 @@ export default function EmployeeOnboarding() {
                   </SelectContent>
                 </Select>
                 <p className="text-slate-500 dark:text-slate-400 text-xs ml-1">
-                  EaziWage is currently available in Kenya, Uganda, Tanzania, and Rwanda
+                  EaziWage operates in Kenya, Uganda, Tanzania, and Rwanda
                 </p>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                  Address Line 1 *
+                </Label>
+                <Input
+                  placeholder="Street address, P.O. box"
+                  value={formData.address_line1}
+                  onChange={(e) => updateField('address_line1', e.target.value)}
+                  className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                  data-testid="onboarding-address1"
+                />
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                  Address Line 2
+                </Label>
+                <Input
+                  placeholder="Apartment, suite, building (optional)"
+                  value={formData.address_line2}
+                  onChange={(e) => updateField('address_line2', e.target.value)}
+                  className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                  data-testid="onboarding-address2"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                  <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                    City/Town *
+                  </Label>
+                  <Input
+                    placeholder="e.g. Nairobi"
+                    value={formData.city}
+                    onChange={(e) => updateField('city', e.target.value)}
+                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                    data-testid="onboarding-city"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                    Postal Code
+                  </Label>
+                  <Input
+                    placeholder="e.g. 00100"
+                    value={formData.postal_code}
+                    onChange={(e) => updateField('postal_code', e.target.value)}
+                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                    data-testid="onboarding-postal"
+                  />
+                </div>
+              </div>
+
+              {/* Address Proof Upload */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                <h4 className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  Proof of Address (Recommended)
+                </h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Upload a utility bill, bank statement, or lease agreement (less than 3 months old)
+                </p>
+                <FileUploader
+                  label="Address Proof Document"
+                  description="Utility bill, bank statement, or lease"
+                  onUpload={(file) => handleFileUpload(file, 'address_proof')}
+                  uploadedFile={uploadedFiles.address_proof}
+                  uploading={uploadingFile === 'address_proof'}
+                  testId="upload-address-proof"
+                />
               </div>
             </div>
           </div>
         );
 
-      case 3: // Employment
+      case 4: // Tax Identification
+        return (
+          <div className="py-6">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
+                <Receipt className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                Tax Information
+              </h2>
+              <p className="text-slate-600 dark:text-slate-300">
+                Provide your tax identification number for compliance
+              </p>
+            </div>
+            
+            <div className="space-y-4 max-w-md mx-auto">
+              <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 dark:border-amber-800/30">
+                <div className="flex gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm text-amber-800 dark:text-amber-200">
+                      <strong>Why we need this:</strong> Tax compliance is required by financial regulations in all our operating countries.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                  Tax Identification Number (TIN)
+                </Label>
+                <Input
+                  placeholder="Enter your TIN"
+                  value={formData.tax_id}
+                  onChange={(e) => updateField('tax_id', e.target.value)}
+                  className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                  data-testid="onboarding-tin"
+                />
+                <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                  Also known as PIN in Kenya, TIN in Tanzania, or TIN in Uganda/Rwanda
+                </p>
+              </div>
+
+              {/* Tax Certificate Upload */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                <h4 className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  Tax Certificate (Optional)
+                </h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Upload your tax registration certificate or compliance certificate
+                </p>
+                <FileUploader
+                  label="Tax Certificate"
+                  description="TIN certificate or compliance document"
+                  onUpload={(file) => handleFileUpload(file, 'tax_certificate')}
+                  uploadedFile={uploadedFiles.tax_certificate}
+                  uploading={uploadingFile === 'tax_certificate'}
+                  testId="upload-tax-cert"
+                />
+              </div>
+
+              <p className="text-center text-sm text-slate-500 dark:text-slate-400">
+                Don't have your TIN yet? You can <button type="button" onClick={nextStep} className="text-primary font-medium hover:underline">skip this step</button> and add it later.
+              </p>
+            </div>
+          </div>
+        );
+
+      case 5: // Employment & Salary
         return (
           <div className="py-6">
             <div className="text-center mb-8">
@@ -637,17 +975,31 @@ export default function EmployeeOnboarding() {
                 )}
               </div>
               
-              <div className="flex flex-col gap-2">
-                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                  Employee Code/ID *
-                </Label>
-                <Input
-                  placeholder="e.g. EMP001"
-                  value={formData.employee_code}
-                  onChange={(e) => updateField('employee_code', e.target.value)}
-                  className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  data-testid="onboarding-employee-code"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                  <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                    Employee Code/ID *
+                  </Label>
+                  <Input
+                    placeholder="e.g. EMP001"
+                    value={formData.employee_code}
+                    onChange={(e) => updateField('employee_code', e.target.value)}
+                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                    data-testid="onboarding-employee-code"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                    Department
+                  </Label>
+                  <Input
+                    placeholder="e.g. Engineering"
+                    value={formData.department}
+                    onChange={(e) => updateField('department', e.target.value)}
+                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                    data-testid="onboarding-department"
+                  />
+                </div>
               </div>
               
               <div className="flex flex-col gap-2">
@@ -658,7 +1010,7 @@ export default function EmployeeOnboarding() {
                   placeholder="e.g. Software Engineer"
                   value={formData.job_title}
                   onChange={(e) => updateField('job_title', e.target.value)}
-                  className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
                   data-testid="onboarding-job-title"
                 />
               </div>
@@ -679,19 +1031,60 @@ export default function EmployeeOnboarding() {
                     </SelectContent>
                   </Select>
                 </div>
-                
                 <div className="flex flex-col gap-2">
                   <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                    Monthly Salary *
+                    Start Date
                   </Label>
                   <Input
-                    type="number"
-                    placeholder="e.g. 50000"
-                    min="0"
-                    value={formData.monthly_salary}
-                    onChange={(e) => updateField('monthly_salary', e.target.value)}
-                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20"
-                    data-testid="onboarding-salary"
+                    type="date"
+                    value={formData.start_date}
+                    onChange={(e) => updateField('start_date', e.target.value)}
+                    className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                    data-testid="onboarding-start-date"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                  Monthly Gross Salary *
+                </Label>
+                <Input
+                  type="number"
+                  placeholder="e.g. 50000"
+                  min="0"
+                  value={formData.monthly_salary}
+                  onChange={(e) => updateField('monthly_salary', e.target.value)}
+                  className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
+                  data-testid="onboarding-salary"
+                />
+              </div>
+
+              {/* Payslip Uploads */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+                <h4 className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  Recent Payslips (Recommended)
+                </h4>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Upload your last 1-2 payslips to verify your salary
+                </p>
+                <div className="grid grid-cols-2 gap-4">
+                  <FileUploader
+                    label="Payslip 1"
+                    description="Most recent"
+                    onUpload={(file) => handleFileUpload(file, 'payslip_1')}
+                    uploadedFile={uploadedFiles.payslip_1}
+                    uploading={uploadingFile === 'payslip_1'}
+                    testId="upload-payslip1"
+                  />
+                  <FileUploader
+                    label="Payslip 2"
+                    description="Previous month"
+                    onUpload={(file) => handleFileUpload(file, 'payslip_2')}
+                    uploadedFile={uploadedFiles.payslip_2}
+                    uploading={uploadingFile === 'payslip_2'}
+                    testId="upload-payslip2"
                   />
                 </div>
               </div>
@@ -699,7 +1092,7 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 4: // Payment
+      case 6: // Payment (Bank/Wallet Verification)
         return (
           <div className="py-6">
             <div className="text-center mb-8">
@@ -732,7 +1125,7 @@ export default function EmployeeOnboarding() {
                       disabled={!selectedCountry}
                     >
                       <SelectTrigger className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700" data-testid="onboarding-mobile-provider">
-                        <SelectValue placeholder={selectedCountry ? "Select provider" : "Select country first"} />
+                        <SelectValue placeholder={selectedCountry ? "Select provider" : "Select country first (Step 3)"} />
                       </SelectTrigger>
                       <SelectContent>
                         {selectedCountry?.mobile_money?.map((p) => (
@@ -751,7 +1144,7 @@ export default function EmployeeOnboarding() {
                       placeholder="+254 700 000 000"
                       value={formData.mobile_money_number}
                       onChange={(e) => updateField('mobile_money_number', e.target.value)}
-                      className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
                       data-testid="onboarding-mobile-number"
                     />
                   </div>
@@ -761,7 +1154,7 @@ export default function EmployeeOnboarding() {
               {/* Bank Account */}
               <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  <CreditCard className="w-5 h-5 text-slate-500" />
+                  <Landmark className="w-5 h-5 text-slate-500" />
                   Bank Account (Optional)
                 </h3>
                 <div className="space-y-4">
@@ -773,7 +1166,7 @@ export default function EmployeeOnboarding() {
                       placeholder="e.g. Kenya Commercial Bank"
                       value={formData.bank_name}
                       onChange={(e) => updateField('bank_name', e.target.value)}
-                      className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
                       data-testid="onboarding-bank-name"
                     />
                   </div>
@@ -786,10 +1179,20 @@ export default function EmployeeOnboarding() {
                       placeholder="e.g. 1234567890"
                       value={formData.bank_account}
                       onChange={(e) => updateField('bank_account', e.target.value)}
-                      className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                      className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
                       data-testid="onboarding-bank-account"
                     />
                   </div>
+
+                  {/* Bank Statement Upload */}
+                  <FileUploader
+                    label="Bank Statement (Optional)"
+                    description="Last 3 months statement"
+                    onUpload={(file) => handleFileUpload(file, 'bank_statement')}
+                    uploadedFile={uploadedFiles.bank_statement}
+                    uploading={uploadingFile === 'bank_statement'}
+                    testId="upload-bank-statement"
+                  />
                 </div>
               </div>
             </div>
@@ -821,7 +1224,7 @@ export default function EmployeeOnboarding() {
             <span className="font-heading font-bold text-2xl text-slate-900 dark:text-white">EaziWage</span>
           </Link>
           
-          {/* Theme toggle - absolute positioned */}
+          {/* Theme toggle */}
           <button
             onClick={toggleTheme}
             className="absolute right-4 sm:right-6 lg:right-8 p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300"
@@ -834,9 +1237,9 @@ export default function EmployeeOnboarding() {
 
       {/* Main Content */}
       <main className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Progress Steps */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
+        {/* Progress Steps - Horizontal scrollable on mobile */}
+        <div className="mb-8 overflow-x-auto pb-2">
+          <div className="flex items-center justify-between min-w-max px-2">
             {STEPS.map((step, index) => (
               <div key={step.id} className="flex items-center">
                 <div
@@ -856,19 +1259,20 @@ export default function EmployeeOnboarding() {
                 </div>
                 {index < STEPS.length - 1 && (
                   <div
-                    className={`w-full h-1 mx-2 rounded-full transition-all ${
+                    className={`h-1 mx-1 sm:mx-2 rounded-full transition-all ${
                       index < currentStep ? 'bg-primary' : 'bg-slate-200 dark:bg-slate-700'
                     }`}
-                    style={{ width: '40px' }}
+                    style={{ width: '24px' }}
                   />
                 )}
               </div>
             ))}
           </div>
-          <p className="text-center text-sm text-slate-600 dark:text-slate-400">
-            Step {currentStep + 1} of {STEPS.length}: <span className="font-medium text-slate-900 dark:text-white">{STEPS[currentStep].title}</span>
-          </p>
         </div>
+        
+        <p className="text-center text-sm text-slate-600 dark:text-slate-400 mb-6">
+          Step {currentStep + 1} of {STEPS.length}: <span className="font-medium text-slate-900 dark:text-white">{STEPS[currentStep].title}</span>
+        </p>
 
         {/* Error Message */}
         {error && (
@@ -879,7 +1283,7 @@ export default function EmployeeOnboarding() {
         )}
 
         {/* Step Content */}
-        <div className="glass-card rounded-3xl p-8 shadow-xl mb-8">
+        <div className="glass-card rounded-3xl p-6 sm:p-8 shadow-xl mb-8">
           {renderStepContent()}
         </div>
 
@@ -891,6 +1295,7 @@ export default function EmployeeOnboarding() {
             onClick={prevStep}
             disabled={currentStep === 0}
             className="h-14 px-6 rounded-2xl border-slate-200 dark:border-slate-700"
+            data-testid="prev-step"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
             Back
