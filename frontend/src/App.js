@@ -22,6 +22,7 @@ import LegalPolicyPage from "./pages/marketing/LegalPolicyPage";
 // Auth Pages
 import LoginPage from "./pages/auth/LoginPage";
 import RegisterPage from "./pages/auth/RegisterPage";
+import AuthCallback from "./pages/auth/AuthCallback";
 
 // Employee Pages
 import EmployeeDashboard from "./pages/employee/Dashboard";
