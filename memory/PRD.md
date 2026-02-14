@@ -170,3 +170,22 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 ---
 Last Updated: February 14, 2026
+
+## Architecture - Employee Dark Theme
+```
+/app/frontend/src/
+├── components/employee/
+│   ├── EmployeeDarkLayout.jsx    <- NEW: Dark theme layout & components
+│   └── EmployeeLayout.jsx        <- Old layout (kept for reference)
+├── pages/employee/
+│   ├── Dashboard.jsx             <- Re-exports DashboardDark.jsx
+│   ├── DashboardDark.jsx         <- NEW: Dark dashboard
+│   ├── Settings.jsx              <- Re-exports SettingsDark.jsx
+│   ├── SettingsDark.jsx          <- NEW: Dark settings
+│   ├── RequestAdvance.jsx        <- Re-exports RequestAdvanceDark.jsx
+│   ├── RequestAdvanceDark.jsx    <- NEW: Dark request advance
+│   ├── Transactions.jsx          <- Re-exports TransactionsDark.jsx
+│   ├── TransactionsDark.jsx      <- NEW: Dark transactions
+│   ├── Onboarding.jsx            <- Still uses old theme (pending)
+│   └── KYC.jsx                   <- Uses old DashboardLayout
+```
