@@ -16,7 +16,7 @@ const heroStats = [
   { value: '50K+', label: 'Active Users', icon: Users },
   { value: '$2B+', label: 'Disbursed', icon: Banknote },
   { value: '<3s', label: 'Instant Transfer', icon: Zap },
-  { value: '4.9', label: 'App Rating', icon: Star },
+  { value: '4.9', label: 'Rating', icon: Star },
 ];
 
 const features = [
