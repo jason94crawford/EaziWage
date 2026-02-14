@@ -162,15 +162,22 @@ const ChangePasswordModal = ({ isOpen, onClose }) => {
       return;
     }
     setLoading(true);
-    // In a real app, call API to change password
-    setTimeout(() => {
+    try {
+      await userApi.changePassword({
+        current_password: currentPassword,
+        new_password: newPassword
+      });
       toast.success('Password changed successfully');
-      setLoading(false);
       onClose();
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-    }, 1000);
+    } catch (err) {
+      const message = err.response?.data?.detail || 'Failed to change password';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!isOpen) return null;
