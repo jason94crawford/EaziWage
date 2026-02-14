@@ -18,12 +18,12 @@ import { useTheme } from '../../lib/ThemeContext';
 import { Sun, Moon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-// Countries of Work (East African region only)
+// Countries of Work with Mobile Money Providers (East African region only)
 const COUNTRIES_OF_WORK = [
-  { code: 'KE', name: 'Kenya' },
-  { code: 'UG', name: 'Uganda' },
-  { code: 'TZ', name: 'Tanzania' },
-  { code: 'RW', name: 'Rwanda' },
+  { code: 'KE', name: 'Kenya', providers: ['M-PESA', 'Airtel Money'] },
+  { code: 'UG', name: 'Uganda', providers: ['MTN MoMo', 'Airtel Money'] },
+  { code: 'TZ', name: 'Tanzania', providers: ['M-PESA', 'Tigo Pesa'] },
+  { code: 'RW', name: 'Rwanda', providers: ['MTN MoMo', 'Airtel Money'] },
 ];
 
 // Full list of countries for nationality
