@@ -34,12 +34,15 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
-      const text = await response.text();
+      // Clone the response to read it safely
+      const clonedResponse = response.clone();
+      
       let data;
       try {
-        data = text ? JSON.parse(text) : {};
+        data = await clonedResponse.json();
       } catch (parseError) {
-        data = { detail: 'Server error. Please try again.' };
+        console.error('JSON parse error:', parseError);
+        data = { detail: 'Invalid response from server.' };
       }
 
       if (response.ok) {
