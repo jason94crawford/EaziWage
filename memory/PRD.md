@@ -128,7 +128,6 @@ Both onboarding flows feature:
 - [ ] Email notifications (SendGrid/Resend)
 
 ### P1 (Important)
-- [ ] Multi-step onboarding flow post-registration (Welcome, Terms, KYC steps)
 - [ ] KYC document upload functionality (Employee /kyc page)
 - [ ] Admin KYC Review page - view/approve/reject submitted documents
 - [ ] Admin Risk Scoring calculator implementation
