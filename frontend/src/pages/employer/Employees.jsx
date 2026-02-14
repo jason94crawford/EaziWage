@@ -305,6 +305,9 @@ export default function EmployerEmployees() {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState('');
+  const [countryFilter, setCountryFilter] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('KES');
+  const [dateRange, setDateRange] = useState({ from: '', to: '' });
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showEWAModal, setShowEWAModal] = useState(false);
   const [seeding, setSeeding] = useState(false);
