@@ -1,119 +1,232 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   Wallet, TrendingUp, Clock, ArrowRight, CreditCard, 
   AlertCircle, CheckCircle2, History, FileText, Bell,
-  Home, User, ArrowUpRight, Calendar, Building2, ChevronRight, Work
+  Home, User, ArrowUpRight, Calendar, Building2, ChevronRight,
+  Sun, Moon, LogOut, Settings
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { dashboardApi, employeeApi } from '../../lib/api';
 import { formatCurrency, formatDateTime, cn } from '../../lib/utils';
 import { useTheme } from '../../lib/ThemeContext';
 
+// Animated Speed Dial Counter Component
+const SpeedDialCounter = ({ value, max, label }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  const [rotation, setRotation] = useState(-135);
+  const animationRef = useRef(null);
+  
+  useEffect(() => {
+    const startTime = performance.now();
+    const duration = 1500;
+    const startValue = 0;
+    const endValue = value;
+    const startRotation = -135;
+    const endRotation = -135 + (270 * (value / max));
+    
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      
+      // Easing function (ease-out-cubic)
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      
+      const currentValue = startValue + (endValue - startValue) * easeOut;
+      const currentRotation = startRotation + (endRotation - startRotation) * easeOut;
+      
+      setDisplayValue(Math.round(currentValue));
+      setRotation(currentRotation);
+      
+      if (progress < 1) {
+        animationRef.current = requestAnimationFrame(animate);
+      }
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
+    
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [value, max]);
+  
+  const percentage = max > 0 ? (value / max) * 100 : 0;
+  
+  return (
+    <div className="relative w-48 h-48 mx-auto">
+      {/* Outer glow */}
+      <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl" />
+      
+      {/* Background circle */}
+      <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="8"
+          className="text-slate-200 dark:text-slate-800"
+        />
+        {/* Progress arc */}
+        <circle
+          cx="50"
+          cy="50"
+          r="45"
+          fill="none"
+          stroke="url(#gradient)"
+          strokeWidth="8"
+          strokeLinecap="round"
+          strokeDasharray={`${percentage * 2.83} 283`}
+          className="transition-all duration-300"
+        />
+        <defs>
+          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#0df259" />
+            <stop offset="100%" stopColor="#10b981" />
+          </linearGradient>
+        </defs>
+      </svg>
+      
+      {/* Center content */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">
+          {label}
+        </span>
+        <span className="text-3xl font-bold text-slate-900 dark:text-white">
+          {formatCurrency(displayValue)}
+        </span>
+        <span className="text-xs text-slate-400 dark:text-slate-500 mt-1">
+          of {formatCurrency(max)}
+        </span>
+      </div>
+      
+      {/* Needle indicator */}
+      <div 
+        className="absolute top-1/2 left-1/2 w-1 h-16 origin-bottom transition-transform duration-300"
+        style={{ transform: `translate(-50%, -100%) rotate(${rotation}deg)` }}
+      >
+        <div className="w-full h-full bg-gradient-to-t from-primary to-emerald-400 rounded-full shadow-lg shadow-primary/30" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 bg-primary rounded-full shadow-lg" />
+      </div>
+    </div>
+  );
+};
+
 // Bottom Navigation Component
 const BottomNav = ({ active }) => {
   const navigate = useNavigate();
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/employee' },
-    { id: 'wallet', icon: Wallet, label: 'Wallet', path: '/employee/advances' },
+    { id: 'wallet', icon: Wallet, label: 'Advance', path: '/employee/advances' },
     { id: 'history', icon: History, label: 'History', path: '/employee/transactions' },
     { id: 'profile', icon: User, label: 'Profile', path: '/employee/settings' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#15231b] border-t border-slate-200 dark:border-white/5 z-50 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-white/5 z-50 md:hidden">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center justify-center gap-1 w-full h-full transition-colors",
+              "flex flex-col items-center justify-center gap-1 w-full h-full transition-all duration-300",
               active === item.id 
                 ? "text-primary" 
                 : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
             )}
             data-testid={`nav-${item.id}`}
           >
-            <item.icon className="w-5 h-5" />
+            <item.icon className={cn("w-5 h-5 transition-transform", active === item.id && "scale-110")} />
             <span className="text-[10px] font-medium">{item.label}</span>
           </button>
         ))}
       </div>
-      {/* iOS Home Indicator Spacing */}
-      <div className="h-6 w-full bg-white dark:bg-[#15231b]" />
+      <div className="h-safe-bottom w-full bg-white/80 dark:bg-slate-900/80" />
     </nav>
   );
 };
 
 // Sidebar Navigation for Desktop
-const Sidebar = ({ active, employee }) => {
+const Sidebar = ({ active, employee, onLogout }) => {
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+  
   const navItems = [
     { id: 'home', icon: Home, label: 'Dashboard', path: '/employee' },
     { id: 'wallet', icon: CreditCard, label: 'Request Advance', path: '/employee/advances' },
     { id: 'history', icon: History, label: 'Transaction History', path: '/employee/transactions' },
     { id: 'kyc', icon: FileText, label: 'Documents & KYC', path: '/employee/kyc' },
-    { id: 'settings', icon: User, label: 'Settings', path: '/employee/settings' },
+    { id: 'settings', icon: Settings, label: 'Settings', path: '/employee/settings' },
   ];
 
   return (
-    <aside className="hidden md:flex flex-col w-64 bg-white dark:bg-[#152b1d] min-h-screen fixed left-0 top-0 border-r border-slate-200 dark:border-slate-800">
+    <aside className="hidden md:flex flex-col w-72 min-h-screen fixed left-0 top-0 bg-white/50 dark:bg-slate-900/50 backdrop-blur-xl border-r border-slate-200/50 dark:border-white/5">
       {/* Logo */}
-      <div className="p-6 border-b border-slate-200 dark:border-slate-800">
-        <Link to="/" className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-            <span className="text-black font-bold text-lg">E</span>
+      <div className="p-6 border-b border-slate-200/50 dark:border-white/5">
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
+            <span className="text-white font-bold text-lg">E</span>
           </div>
           <span className="font-bold text-xl text-slate-900 dark:text-white">EaziWage</span>
         </Link>
       </div>
 
       {/* User Info */}
-      <div className="p-4 border-b border-slate-200 dark:border-slate-800">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-to-br from-primary to-emerald-600 rounded-full flex items-center justify-center">
-            <span className="text-black font-bold">{employee?.full_name?.[0] || 'U'}</span>
+      <div className="p-5 border-b border-slate-200/50 dark:border-white/5">
+        <div className="flex items-center gap-4">
+          <div className="relative">
+            <div className="w-14 h-14 bg-gradient-to-br from-primary to-emerald-600 rounded-full flex items-center justify-center ring-4 ring-primary/10">
+              <span className="text-white font-bold text-lg">{employee?.full_name?.[0] || 'U'}</span>
+            </div>
+            <div className="absolute bottom-0 right-0 w-4 h-4 bg-primary rounded-full border-2 border-white dark:border-slate-900" />
           </div>
-          <div>
-            <p className="font-medium text-slate-900 dark:text-white">{employee?.full_name || 'User'}</p>
-            <p className="text-sm text-slate-500 dark:text-slate-400">{employee?.employer_name || 'Employee'}</p>
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-slate-900 dark:text-white truncate">{employee?.full_name || 'User'}</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{employee?.employer_name || 'Employee'}</p>
           </div>
         </div>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-1.5">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
             className={cn(
-              "w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all",
+              "w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-300",
               active === item.id 
-                ? "bg-primary/20 text-primary" 
-                : "text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
+                ? "bg-primary/10 text-primary shadow-sm" 
+                : "text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white"
             )}
             data-testid={`sidebar-${item.id}`}
           >
-            <item.icon className="w-5 h-5" />
+            <item.icon className={cn("w-5 h-5", active === item.id && "text-primary")} />
             <span className="font-medium">{item.label}</span>
           </button>
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="p-4 border-t border-slate-200 dark:border-slate-800">
+      {/* Theme Toggle & Logout */}
+      <div className="p-4 space-y-2 border-t border-slate-200/50 dark:border-white/5">
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100/50 dark:hover:bg-white/5 transition-all"
+          data-testid="theme-toggle"
+        >
+          {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          <span className="font-medium">{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+        </button>
         <button 
-          onClick={() => {
-            localStorage.removeItem('eaziwage_token');
-            localStorage.removeItem('eaziwage_user');
-            window.location.href = '/login';
-          }}
-          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400 transition-all"
+          onClick={onLogout}
+          className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-all"
           data-testid="logout-btn"
         >
-          <ArrowRight className="w-5 h-5 rotate-180" />
+          <LogOut className="w-5 h-5" />
           <span className="font-medium">Sign Out</span>
         </button>
       </div>
@@ -127,7 +240,7 @@ export default function EmployeeDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { theme } = useTheme();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -151,6 +264,12 @@ export default function EmployeeDashboard() {
     fetchData();
   }, []);
 
+  const handleLogout = () => {
+    localStorage.removeItem('eaziwage_token');
+    localStorage.removeItem('eaziwage_user');
+    navigate('/login');
+  };
+
   // Get greeting based on time
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -163,23 +282,16 @@ export default function EmployeeDashboard() {
   const getNextPayday = () => {
     const today = new Date();
     const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    const options = { month: 'short', day: 'numeric' };
-    return lastDay.toLocaleDateString('en-US', options);
-  };
-
-  const getPayPeriod = () => {
-    const today = new Date();
-    const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-    return `${firstDay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - ${lastDay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`;
+    const daysUntil = Math.ceil((lastDay - today) / (1000 * 60 * 60 * 24));
+    return { date: lastDay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }), daysUntil };
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-500 dark:text-slate-400">Loading your dashboard...</p>
+          <div className="w-14 h-14 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+          <p className="text-slate-500 dark:text-slate-400 font-medium">Loading your dashboard...</p>
         </div>
       </div>
     );
@@ -187,9 +299,9 @@ export default function EmployeeDashboard() {
 
   if (error === 'profile_not_found') {
     return (
-      <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center p-4">
         <div className="max-w-md text-center">
-          <div className="w-20 h-20 bg-amber-100 dark:bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-amber-100 dark:bg-amber-500/20 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
             <AlertCircle className="w-10 h-10 text-amber-600 dark:text-amber-400" />
           </div>
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Complete Your Profile</h1>
@@ -197,7 +309,7 @@ export default function EmployeeDashboard() {
             You need to complete your employee profile before you can access the dashboard and request advances.
           </p>
           <Link to="/employee/onboarding">
-            <Button className="bg-primary text-black hover:bg-primary/90 font-bold px-8 py-3" data-testid="complete-profile-btn">
+            <Button className="bg-gradient-to-r from-primary to-emerald-600 text-white hover:opacity-90 font-bold px-8 py-3 rounded-xl shadow-lg shadow-primary/30" data-testid="complete-profile-btn">
               Complete Profile
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
@@ -211,42 +323,52 @@ export default function EmployeeDashboard() {
   const advanceLimit = stats?.advance_limit || 0;
   const totalAdvances = stats?.total_advances || 0;
   const pendingRepayment = stats?.pending_repayment || 0;
-  const remainingSalary = earnedWages - advanceLimit;
-  const projectedSalary = earnedWages * 2; // Assuming full month projection
-  const earnedProgress = earnedWages > 0 ? (advanceLimit / earnedWages) * 100 : 0;
-  const withdrawnProgress = earnedWages > 0 ? (totalAdvances / earnedWages) * 100 : 0;
-
   const kycPending = employee?.kyc_status === 'pending' || employee?.kyc_status === 'submitted';
-  const canRequestAdvance = employee?.status === 'approved' && employee?.kyc_status === 'approved' && earnedWages > 0;
+  const canRequestAdvance = employee?.status === 'approved' && employee?.kyc_status === 'approved' && advanceLimit > 0;
+  const payday = getNextPayday();
 
   return (
-    <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] text-slate-900 dark:text-white">
-      <Sidebar active="home" employee={employee} />
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white">
+      {/* Background decorations */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[150px]" />
+      </div>
+      
+      <Sidebar active="home" employee={employee} onLogout={handleLogout} />
       
       {/* Main Content */}
-      <main className="md:ml-64 pb-28 md:pb-8">
+      <main className="md:ml-72 pb-28 md:pb-8 relative z-10">
         {/* Mobile Header */}
-        <header className="md:hidden sticky top-0 z-40 bg-[#f5f8f6]/95 dark:bg-[#102216]/95 backdrop-blur-md border-b border-slate-200 dark:border-white/5">
+        <header className="md:hidden sticky top-0 z-40 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/5">
           <div className="flex items-center p-4 justify-between max-w-lg mx-auto w-full">
             <div className="flex items-center gap-3">
               <div className="relative">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-full flex items-center justify-center ring-2 ring-primary/20">
-                  <span className="text-black font-bold">{employee?.full_name?.[0] || 'U'}</span>
+                <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-full flex items-center justify-center ring-2 ring-primary/20">
+                  <span className="text-white font-bold">{employee?.full_name?.[0] || 'U'}</span>
                 </div>
-                <div className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-[#f5f8f6] dark:border-[#102216]" />
+                <div className="absolute bottom-0 right-0 w-3 h-3 bg-primary rounded-full border-2 border-white dark:border-slate-900" />
               </div>
               <div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{getGreeting()},</p>
                 <h2 className="text-lg font-bold leading-tight">{employee?.full_name?.split(' ')[0] || 'User'}</h2>
               </div>
             </div>
-            <button 
-              className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
-              data-testid="notifications-btn"
-            >
-              <Bell className="w-6 h-6 text-slate-600 dark:text-slate-300" />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={toggleTheme}
+                className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+              >
+                {theme === 'dark' ? <Sun className="w-5 h-5 text-slate-400" /> : <Moon className="w-5 h-5 text-slate-600" />}
+              </button>
+              <button 
+                className="relative flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                data-testid="notifications-btn"
+              >
+                <Bell className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full" />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -258,17 +380,17 @@ export default function EmployeeDashboard() {
               <h1 className="text-3xl font-bold">{employee?.full_name || 'User'}</h1>
             </div>
             <button 
-              className="relative p-3 bg-white dark:bg-[#1A2C20] rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-transparent"
+              className="relative p-3 bg-white/50 dark:bg-white/5 backdrop-blur-sm rounded-xl hover:bg-white dark:hover:bg-white/10 transition-all border border-slate-200/50 dark:border-white/10"
               data-testid="notifications-btn-desktop"
             >
               <Bell className="w-6 h-6 text-slate-600 dark:text-slate-400" />
-              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[#1A2C20]" />
+              <span className="absolute top-2 right-2 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white dark:border-slate-900" />
             </button>
           </div>
 
           {/* KYC Alert */}
           {kycPending && (
-            <div className="bg-amber-50 dark:bg-amber-500/10 border border-amber-200 dark:border-amber-500/30 rounded-2xl p-4 flex items-start gap-4" data-testid="kyc-alert">
+            <div className="bg-amber-50/80 dark:bg-amber-500/10 backdrop-blur-sm border border-amber-200/50 dark:border-amber-500/20 rounded-2xl p-4 flex items-start gap-4" data-testid="kyc-alert">
               <div className="w-10 h-10 bg-amber-100 dark:bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
                 <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500" />
               </div>
@@ -290,39 +412,35 @@ export default function EmployeeDashboard() {
             </div>
           )}
 
-          {/* Hero Balance Card */}
-          <div className="relative overflow-hidden rounded-2xl bg-white dark:bg-[#1A2C20] shadow-sm border border-slate-200 dark:border-white/5" data-testid="withdraw-card">
-            {/* Decorative Background Element */}
-            <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+          {/* Speed Dial Hero Card */}
+          <div className="relative overflow-hidden rounded-3xl bg-white/70 dark:bg-white/5 backdrop-blur-xl shadow-xl border border-slate-200/50 dark:border-white/10" data-testid="withdraw-card">
+            {/* Decorative Background */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500/10 rounded-full blur-[80px] pointer-events-none" />
             
-            <div className="relative p-6 flex flex-col items-center text-center z-10">
-              <p className="text-slate-500 dark:text-[#9cbaa6] text-sm font-medium tracking-wide uppercase mb-2">
-                Available to Withdraw
-              </p>
-              <div className="flex items-baseline gap-1 mb-1">
-                <span className="text-4xl sm:text-5xl font-extrabold tracking-tight text-primary" data-testid="available-balance">
-                  {formatCurrency(advanceLimit)}
-                </span>
-              </div>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mb-6">
-                Instant transfer to your linked account
-              </p>
-
-              {/* Fee & Arrival Info */}
-              <div className="w-full grid grid-cols-2 gap-3 mb-6">
-                <div className="bg-slate-50 dark:bg-[#102216]/50 rounded-xl p-3 flex flex-col items-center justify-center border border-slate-200 dark:border-white/5">
-                  <span className="text-xs text-slate-500 mb-1">Fee</span>
-                  <span className="font-bold">3.5% - 6%</span>
+            <div className="relative p-6 z-10">
+              {/* Speed Dial Counter */}
+              <SpeedDialCounter 
+                value={advanceLimit} 
+                max={earnedWages || advanceLimit * 2 || 10000} 
+                label="Available"
+              />
+              
+              {/* Info Grid */}
+              <div className="grid grid-cols-2 gap-3 mt-6 mb-6">
+                <div className="bg-slate-50/50 dark:bg-white/5 rounded-xl p-3 text-center border border-slate-200/50 dark:border-white/5">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">Fee Rate</span>
+                  <span className="font-bold text-slate-900 dark:text-white">3.5% - 6%</span>
                 </div>
-                <div className="bg-slate-50 dark:bg-[#102216]/50 rounded-xl p-3 flex flex-col items-center justify-center border border-slate-200 dark:border-white/5">
-                  <span className="text-xs text-slate-500 mb-1">Arrives</span>
-                  <span className="font-bold">Instantly</span>
+                <div className="bg-slate-50/50 dark:bg-white/5 rounded-xl p-3 text-center border border-slate-200/50 dark:border-white/5">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 block mb-1">Transfer</span>
+                  <span className="font-bold text-slate-900 dark:text-white">Instant</span>
                 </div>
               </div>
 
-              <Link to="/employee/advances" className="w-full">
+              <Link to="/employee/advances" className="block">
                 <Button 
-                  className="w-full flex items-center justify-center gap-2 rounded-xl h-14 bg-primary text-black text-base font-bold shadow-[0_0_20px_rgba(13,242,89,0.3)] hover:shadow-[0_0_25px_rgba(13,242,89,0.5)] hover:bg-[#0be052] transition-all active:scale-[0.98]"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl h-14 bg-gradient-to-r from-primary to-emerald-600 text-white text-base font-bold shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 transition-all active:scale-[0.98]"
                   disabled={!canRequestAdvance}
                   data-testid="request-withdrawal-btn"
                 >
@@ -333,113 +451,141 @@ export default function EmployeeDashboard() {
             </div>
           </div>
 
-          {/* Salary Breakdown / Progress */}
-          <section data-testid="salary-breakdown">
-            <div className="flex items-center justify-between mb-3 px-1">
-              <h3 className="text-lg font-bold">Salary Breakdown</h3>
-              <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">
-                {getPayPeriod()}
-              </span>
-            </div>
-            <div className="bg-white dark:bg-[#1A2C20] p-5 rounded-2xl shadow-sm border border-slate-200 dark:border-white/5">
-              {/* Main Progress Bar */}
-              <div className="flex justify-between items-end mb-2">
-                <span className="text-sm font-medium text-slate-500 dark:text-[#9cbaa6]">Earned so far</span>
-                <span className="text-lg font-bold">{formatCurrency(earnedWages)}</span>
-              </div>
-              <div className="relative h-4 w-full bg-slate-100 dark:bg-[#102216] rounded-full overflow-hidden mb-4">
-                {/* Earned Segment */}
-                <div 
-                  className="absolute top-0 left-0 h-full bg-primary transition-all duration-1000 ease-out z-20 rounded-full"
-                  style={{ width: `${Math.min(earnedProgress, 100)}%` }}
-                />
-                {/* Withdrawn Marker */}
-                <div 
-                  className="absolute top-0 left-0 h-full bg-white/30 z-30 border-r border-black/20"
-                  style={{ width: `${Math.min(withdrawnProgress, earnedProgress)}%` }}
-                />
-              </div>
-
-              {/* Legend / Details */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-white/30 ring-1 ring-slate-400 dark:ring-0" />
-                    <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Withdrawn</p>
-                  </div>
-                  <p className="text-sm font-semibold">{formatCurrency(totalAdvances)}</p>
-                </div>
-                <div className="flex flex-col gap-1 border-l border-slate-200 dark:border-white/10 pl-3">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                    <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Available</p>
-                  </div>
-                  <p className="text-sm font-semibold text-primary">{formatCurrency(advanceLimit)}</p>
-                </div>
-                <div className="flex flex-col gap-1 border-l border-slate-200 dark:border-white/10 pl-3">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2 h-2 rounded-full bg-slate-200 dark:bg-white/10" />
-                    <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Remaining</p>
-                  </div>
-                  <p className="text-sm font-semibold">{formatCurrency(remainingSalary > 0 ? remainingSalary : 0)}</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
           {/* Quick Stats Grid */}
-          <section className="grid grid-cols-2 gap-3" data-testid="quick-stats">
-            <div className="bg-white dark:bg-[#1A2C20] p-4 rounded-2xl flex flex-col justify-between h-32 shadow-sm border border-slate-200 dark:border-white/5 relative overflow-hidden">
-              <div className="absolute -right-4 -bottom-4 text-slate-100 dark:text-white/5">
-                <Calendar className="w-20 h-20" />
-              </div>
-              <div className="flex items-start justify-between relative z-10">
-                <div className="p-2 bg-blue-100 dark:bg-blue-500/10 rounded-lg text-blue-500">
-                  <Calendar className="w-5 h-5" />
-                </div>
-              </div>
-              <div className="relative z-10">
-                <p className="text-sm text-slate-500 dark:text-[#9cbaa6] mb-0.5">Next Payday</p>
-                <p className="text-xl font-bold">{getNextPayday()}</p>
-              </div>
-            </div>
-            <div className="bg-white dark:bg-[#1A2C20] p-4 rounded-2xl flex flex-col justify-between h-32 shadow-sm border border-slate-200 dark:border-white/5 relative overflow-hidden">
-              <div className="absolute -right-4 -bottom-4 text-slate-100 dark:text-white/5">
+          <div className="grid grid-cols-2 gap-4" data-testid="quick-stats">
+            {/* Earned Wages */}
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 relative overflow-hidden group hover:shadow-lg transition-all">
+              <div className="absolute -right-4 -bottom-4 text-primary/10 group-hover:scale-110 transition-transform">
                 <TrendingUp className="w-20 h-20" />
               </div>
-              <div className="flex items-start justify-between relative z-10">
-                <div className="p-2 bg-primary/10 rounded-lg text-primary">
-                  <Building2 className="w-5 h-5" />
+              <div className="relative z-10">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center mb-3">
+                  <TrendingUp className="w-5 h-5 text-primary" />
                 </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Earned Wages</p>
+                <p className="text-xl font-bold mt-1">{formatCurrency(earnedWages)}</p>
+              </div>
+            </div>
+
+            {/* Next Payday */}
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 relative overflow-hidden group hover:shadow-lg transition-all">
+              <div className="absolute -right-4 -bottom-4 text-blue-500/10 group-hover:scale-110 transition-transform">
+                <Calendar className="w-20 h-20" />
               </div>
               <div className="relative z-10">
-                <p className="text-sm text-slate-500 dark:text-[#9cbaa6] mb-0.5">Projected Salary</p>
-                <p className="text-xl font-bold">{formatCurrency(projectedSalary)}</p>
+                <div className="w-10 h-10 bg-blue-500/10 rounded-xl flex items-center justify-center mb-3">
+                  <Calendar className="w-5 h-5 text-blue-500" />
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Next Payday</p>
+                <p className="text-xl font-bold mt-1">{payday.date}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500">{payday.daysUntil} days away</p>
+              </div>
+            </div>
+
+            {/* Total Withdrawn */}
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 relative overflow-hidden group hover:shadow-lg transition-all">
+              <div className="absolute -right-4 -bottom-4 text-orange-500/10 group-hover:scale-110 transition-transform">
+                <ArrowUpRight className="w-20 h-20" />
+              </div>
+              <div className="relative z-10">
+                <div className="w-10 h-10 bg-orange-500/10 rounded-xl flex items-center justify-center mb-3">
+                  <ArrowUpRight className="w-5 h-5 text-orange-500" />
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Withdrawn</p>
+                <p className="text-xl font-bold mt-1">{formatCurrency(totalAdvances)}</p>
+              </div>
+            </div>
+
+            {/* Employer */}
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm p-5 rounded-2xl border border-slate-200/50 dark:border-white/10 relative overflow-hidden group hover:shadow-lg transition-all">
+              <div className="absolute -right-4 -bottom-4 text-purple-500/10 group-hover:scale-110 transition-transform">
+                <Building2 className="w-20 h-20" />
+              </div>
+              <div className="relative z-10">
+                <div className="w-10 h-10 bg-purple-500/10 rounded-xl flex items-center justify-center mb-3">
+                  <Building2 className="w-5 h-5 text-purple-500" />
+                </div>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Employer</p>
+                <p className="text-base font-bold mt-1 truncate">{employee?.employer_name || 'Not assigned'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Account Status */}
+          <section data-testid="account-status">
+            <div className="flex items-center justify-between mb-4 px-1">
+              <h3 className="text-lg font-bold">Account Status</h3>
+            </div>
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-white/10 overflow-hidden">
+              <div className="flex items-center gap-4 p-4 border-b border-slate-100 dark:border-white/5">
+                <div className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center",
+                  employee?.status === 'approved' ? 'bg-green-100 dark:bg-green-500/20' : 'bg-amber-100 dark:bg-amber-500/20'
+                )}>
+                  {employee?.status === 'approved' ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  ) : (
+                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Account Status</p>
+                  <p className="font-semibold capitalize">{employee?.status || 'Pending'}</p>
+                </div>
+                {employee?.status === 'approved' && (
+                  <span className="px-2.5 py-1 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 text-xs font-medium rounded-full">
+                    Verified
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-4 p-4">
+                <div className={cn(
+                  "w-10 h-10 rounded-xl flex items-center justify-center",
+                  employee?.kyc_status === 'approved' ? 'bg-green-100 dark:bg-green-500/20' : 'bg-amber-100 dark:bg-amber-500/20'
+                )}>
+                  {employee?.kyc_status === 'approved' ? (
+                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
+                  ) : (
+                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">KYC Status</p>
+                  <p className="font-semibold capitalize">{employee?.kyc_status || 'Pending'}</p>
+                </div>
+                {employee?.kyc_status !== 'approved' && (
+                  <Link to="/employee/kyc">
+                    <Button size="sm" variant="outline" className="text-primary border-primary/30 hover:bg-primary/10">
+                      Complete
+                      <ChevronRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </Link>
+                )}
               </div>
             </div>
           </section>
 
           {/* Recent Activity */}
-          <section data-testid="recent-activity">
-            <div className="flex items-center justify-between mb-3 px-1">
+          <section data-testid="recent-activity" className="pb-6">
+            <div className="flex items-center justify-between mb-4 px-1">
               <h3 className="text-lg font-bold">Recent Activity</h3>
               <Link to="/employee/transactions" className="text-sm font-medium text-primary hover:underline">
                 See All
               </Link>
             </div>
-            <div className="bg-white dark:bg-[#1A2C20] rounded-2xl overflow-hidden border border-slate-200 dark:border-white/5 shadow-sm">
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-white/10 overflow-hidden">
               {stats?.recent_transactions?.length > 0 ? (
                 stats.recent_transactions.slice(0, 3).map((tx, index) => (
                   <div 
                     key={tx.id}
                     className={cn(
-                      "p-4 flex items-center justify-between hover:bg-slate-50 dark:hover:bg-white/5 transition-colors cursor-pointer",
-                      index < stats.recent_transactions.slice(0, 3).length - 1 && "border-b border-slate-100 dark:border-white/5"
+                      "p-4 flex items-center justify-between hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors",
+                      index < Math.min(stats.recent_transactions.length, 3) - 1 && "border-b border-slate-100 dark:border-white/5"
                     )}
                   >
                     <div className="flex items-center gap-3">
                       <div className={cn(
-                        "w-10 h-10 rounded-full flex items-center justify-center shrink-0",
+                        "w-10 h-10 rounded-full flex items-center justify-center",
                         tx.type === 'disbursement' ? 'bg-red-100 dark:bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary'
                       )}>
                         {tx.type === 'disbursement' ? (
@@ -452,12 +598,12 @@ export default function EmployeeDashboard() {
                         <p className="text-sm font-semibold">
                           {tx.type === 'disbursement' ? 'Early Withdrawal' : 'Shift Completed'}
                         </p>
-                        <p className="text-xs text-slate-500">{formatDateTime(tx.created_at)}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{formatDateTime(tx.created_at)}</p>
                       </div>
                     </div>
                     <span className={cn(
                       "text-sm font-bold",
-                      tx.type === 'disbursement' ? '' : 'text-primary'
+                      tx.type === 'disbursement' ? 'text-red-500' : 'text-primary'
                     )}>
                       {tx.type === 'disbursement' ? '-' : '+'}{formatCurrency(tx.amount)}
                     </span>
@@ -465,61 +611,13 @@ export default function EmployeeDashboard() {
                 ))
               ) : (
                 <div className="p-8 text-center">
-                  <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <div className="w-16 h-16 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mx-auto mb-4">
                     <History className="w-8 h-8 text-slate-400" />
                   </div>
-                  <p className="text-slate-500 font-medium">No transactions yet</p>
-                  <p className="text-slate-400 text-sm mt-1">Your activity will appear here</p>
+                  <p className="text-slate-600 dark:text-slate-400 font-medium">No transactions yet</p>
+                  <p className="text-slate-400 dark:text-slate-500 text-sm mt-1">Your activity will appear here</p>
                 </div>
               )}
-            </div>
-          </section>
-
-          {/* Account Status */}
-          <section data-testid="account-status" className="mb-8">
-            <h3 className="text-lg font-bold mb-3 px-1">Account Status</h3>
-            <div className="grid grid-cols-1 gap-3">
-              <div className="flex items-center gap-4 p-4 bg-white dark:bg-[#1A2C20] rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
-                <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center",
-                  employee?.status === 'approved' ? 'bg-green-100 dark:bg-green-500/20' : 'bg-amber-100 dark:bg-amber-500/20'
-                )}>
-                  {employee?.status === 'approved' ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  ) : (
-                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="text-slate-500 text-sm">Account</p>
-                  <p className="font-medium capitalize">{employee?.status || 'Pending'}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 p-4 bg-white dark:bg-[#1A2C20] rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
-                <div className={cn(
-                  "w-10 h-10 rounded-xl flex items-center justify-center",
-                  employee?.kyc_status === 'approved' ? 'bg-green-100 dark:bg-green-500/20' : 'bg-amber-100 dark:bg-amber-500/20'
-                )}>
-                  {employee?.kyc_status === 'approved' ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
-                  ) : (
-                    <Clock className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="text-slate-500 text-sm">KYC Status</p>
-                  <p className="font-medium capitalize">{employee?.kyc_status || 'Pending'}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4 p-4 bg-white dark:bg-[#1A2C20] rounded-xl border border-slate-200 dark:border-white/5 shadow-sm">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Building2 className="w-5 h-5 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-slate-500 text-sm">Employer</p>
-                  <p className="font-medium">{employee?.employer_name || 'Not assigned'}</p>
-                </div>
-              </div>
             </div>
           </section>
         </div>
