@@ -444,7 +444,7 @@ export default function EmployerOnboarding() {
       case 2: return formData.company_name && formData.registration_number && formData.country; // Company
       case 3: return formData.physical_address && formData.city; // Address
       case 4: return true; // Ownership (can skip)
-      case 5: return formData.industry && formData.sector && formData.employee_count; // Business
+      case 5: return formData.industry && formData.sector && formData.employee_count && countriesOfOperation.length > 0; // Business
       case 6: return formData.payroll_cycle; // Financial (minimal required)
       case 7: return formData.contact_person && formData.contact_email && formData.contact_phone; // Contact
       default: return false;
