@@ -491,11 +491,13 @@ async def get_my_employee(user: dict = Depends(require_role(UserRole.EMPLOYEE)))
     if not employee:
         raise HTTPException(status_code=404, detail="Employee profile not found")
     
-    employer = await db.employers.find_one({"id": employee.get("employer_id")}, {"_id": 0})
-    return EmployeeResponse(
-        **employee,
-        employer_name=employer.get("company_name") if employer else None
-    )
+    # Get employer name if not already in employee document
+    if not employee.get("employer_name") and employee.get("employer_id"):
+        employer = await db.employers.find_one({"id": employee.get("employer_id")}, {"_id": 0})
+        if employer:
+            employee["employer_name"] = employer.get("company_name")
+    
+    return EmployeeResponse(**employee)
 
 @api_router.get("/employees", response_model=List[EmployeeResponse])
 async def list_employees(
