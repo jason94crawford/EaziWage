@@ -49,8 +49,8 @@ export const Footer = () => {
 
   const handleLinkClick = (href) => (e) => {
     e.preventDefault();
+    window.scrollTo(0, 0);
     navigate(href);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
