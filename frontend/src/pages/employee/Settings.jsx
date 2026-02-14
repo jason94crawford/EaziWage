@@ -319,7 +319,7 @@ const HelpCenterSection = ({ isExpanded, onToggle }) => {
         onClick={onToggle}
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
       >
-        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/25">
           <HelpCircle className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1">
@@ -412,7 +412,7 @@ You have the right to access, correct, or delete your personal data. Contact sup
         onClick={onToggle}
         className="w-full flex items-center gap-3 px-4 py-3.5 text-left"
       >
-        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/25">
           <Scale className="w-5 h-5 text-white" />
         </div>
         <div className="flex-1">
@@ -990,7 +990,7 @@ export default function SettingsPage() {
               onClick={() => setShowPasswordModal(true)}
             />
             <div className="flex items-center gap-3 px-4 py-3.5">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
                 <ScanFace className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1">
@@ -1007,7 +1007,7 @@ export default function SettingsPage() {
           <SectionHeader title="Preferences" />
           <div className="divide-y divide-slate-200/50 dark:divide-slate-700/30">
             <div className="flex items-center gap-3 px-4 py-3.5">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
                 <Bell className="w-5 h-5 text-white" />
               </div>
               <div className="flex-1">
@@ -1021,7 +1021,7 @@ export default function SettingsPage() {
               className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
               data-testid="theme-toggle"
             >
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
                 {theme === 'dark' ? <Moon className="w-5 h-5 text-white" /> : <Sun className="w-5 h-5 text-white" />}
               </div>
               <div className="flex-1">
