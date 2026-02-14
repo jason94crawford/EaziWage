@@ -109,20 +109,20 @@ const benefits = [
   },
 ];
 
-const testimonials = [
+const aspirationalQuotes = [
   {
-    quote: "Integrating EaziWage into our payroll platform was seamless. Our clients love having EWA as an option, and it's become a key differentiator for us.",
-    author: "Sarah Okonkwo",
-    role: "CEO",
-    company: "PayrollPro Kenya",
-    avatar: "SO"
+    quote: "Integrating EWA into our payroll platform will allow us to offer real financial flexibility to our clients. We're excited to explore this partnership.",
+    author: "Partnership Opportunity",
+    role: "Payroll Platform",
+    company: "Integration Partners",
+    avatar: "PP"
   },
   {
-    quote: "The partnership model is genuinely win-win. EaziWage's team is responsive, the technology is solid, and our employees are happier.",
-    author: "James Mwangi",
-    role: "HR Director",
-    company: "Twiga Foods",
-    avatar: "JM"
+    quote: "EWA solutions like EaziWage represent the future of employee benefits. We're looking for partners who share our vision of workplace financial wellness.",
+    author: "Industry Vision",
+    role: "HR Leaders",
+    company: "Across East Africa",
+    avatar: "HR"
   },
 ];
 
