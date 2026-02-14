@@ -19,16 +19,21 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - **Transaction History** ✅
 - **Profile & Settings** ✅ (with Change Password API)
 
-### Employer Features ✅ NEW
-- **8-Step Comprehensive Onboarding Portal** ✅ (Built Feb 15, 2026)
+### Employer Features ✅ UPDATED
+- **8-Step Comprehensive Onboarding Portal** ✅ (Updated Feb 14, 2026)
   - Step 1: Welcome - Benefits overview, optional docs note
   - Step 2: Terms - Partnership Agreement with checkbox validation
   - Step 3: Company Info - Company name, registration, country + optional docs
   - Step 4: Address - Physical address, tax info + optional docs
   - Step 5: Beneficial Ownership - Directors/shareholders (optional, can skip)
-  - Step 6: Business Operations - Industry, sector, employees + permit doc
-  - Step 7: Financial Info - Revenue, payroll, bank + financial docs
+  - Step 6: Business Operations - Industry, sector, **Countries of Operation (multi-select)**, employees + permit doc + **Employment Contract Template**
+  - Step 7: Financial Info - Revenue, payroll, bank + financial docs + **Proof of Bank Account**
   - Step 8: Contact Person - Primary contact details
+
+- **New P0 Features (Feb 14, 2026):**
+  - ✅ **Countries of Operation** - Multi-select for Kenya, Uganda, Tanzania, Rwanda (Required field)
+  - ✅ **Employment Contract Template** - File upload in Step 6
+  - ✅ **Proof of Bank Account** - File upload in Step 7
   
 - **Document Types (All Optional - Can Skip):**
   - Certificate of Incorporation
@@ -40,6 +45,8 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Audited Financials
   - Bank Statement
   - Proof of Address
+  - Proof of Bank Account (NEW)
+  - Employment Contract Template (NEW)
 
 - **Business Sectors (19 options):**
   - Primary: Agriculture & Farming, Mining & Quarrying
@@ -55,12 +62,12 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 ## API Endpoints
 
-### Employer Onboarding (NEW)
+### Employer Onboarding
 - `GET /api/employers/onboarding/sectors` - Get 19 business sectors
-- `POST /api/employers/onboarding` - Create employer profile with all data
+- `POST /api/employers/onboarding` - Create employer profile with all data (includes countries_of_operation)
 - `PUT /api/employers/onboarding` - Update employer profile
 - `PATCH /api/employers/onboarding/step` - Update onboarding step progress
-- `POST /api/employers/onboarding/document` - Upload employer documents
+- `POST /api/employers/onboarding/document` - Upload employer documents (11 types supported)
 
 ### User Settings
 - `POST /api/users/me/change-password` - Change user password ✅
@@ -104,17 +111,32 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - ✅ **P0 Fix #3**: Mobile notifications panel - responsive and properly positioned
 - ✅ **P1 Fix**: Change Password API endpoint implemented
 - ✅ **P0 Feature**: Complete 8-step Employer Onboarding Portal
-  - Backend endpoints for sectors, profile creation, document upload
-  - Frontend with step navigation, terms validation, dynamic beneficial owners
-  - All documents marked optional with skip functionality
+
+### Session 4 - Feb 14, 2026
+- ✅ **P0 Feature**: Countries of Operation multi-select (Kenya, Uganda, Tanzania, Rwanda)
+- ✅ **P0 Feature**: Employment Contract Template upload in Business Operations step
+- ✅ **P0 Feature**: Proof of Bank Account upload in Financial Info step
+- ✅ **Bug Verification**: Audited Financials upload confirmed working (was reported as bug)
 
 ## Pending Tasks
 
 ### P1 - High Priority
+- Build entire Employer Portal application post-onboarding:
+  - Dashboard with API health status (mock)
+  - Employees page (view, enable/disable EWA)
+  - Advances page
+  - Reports page
+  - Settings page (adjust employee limits, set advance access periods)
+  - Notifications section
+  - View employee and employer risk scores
+- Dual-role user feature (Employer/Employee on same account with portal selector)
 - Admin KYC Review page UI
 - Risk Scoring calculator
 
 ### P2 - Medium Priority
+- Contact Support modal functionality
+- Help Centre content
+- Terms & Privacy content
 - Employer employee management pages
 - Payroll integration
 
@@ -130,4 +152,4 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Biometric Face Scan (UI present, simulated)
 
 ---
-Last Updated: February 15, 2026
+Last Updated: February 14, 2026
