@@ -78,7 +78,20 @@ export default function EmployerOnboarding() {
       toast.success('Company profile created successfully!');
       navigate('/employer');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to create company profile');
+      let errorMessage = 'Failed to create company profile';
+      
+      const detail = err.response?.data?.detail;
+      if (detail) {
+        if (typeof detail === 'string') {
+          errorMessage = detail;
+        } else if (Array.isArray(detail)) {
+          errorMessage = detail.map(e => e.msg || e.message || JSON.stringify(e)).join(', ');
+        } else if (typeof detail === 'object' && detail.msg) {
+          errorMessage = detail.msg;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
