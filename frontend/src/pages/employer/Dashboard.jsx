@@ -123,14 +123,12 @@ const MetricCard = ({ icon: Icon, label, value, subtext, trend, trendUp }) => (
   </div>
 );
 
-// Quick Action Card with solid green icon
+// Quick Action Card with gradient icon (matches website)
 const QuickActionCard = ({ icon: Icon, title, description, href }) => (
   <Link to={href} className="block group">
     <div className="relative overflow-hidden rounded-2xl p-5 border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/30">
       <div className="relative z-10">
-        <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-          <Icon className="w-7 h-7 text-white" />
-        </div>
+        <GradientIconBox icon={Icon} size="lg" className="mb-4 group-hover:scale-110 transition-transform duration-300" />
         <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{title}</h3>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{description}</p>
         <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-primary group-hover:translate-x-1 transition-all mt-3" />
