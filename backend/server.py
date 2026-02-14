@@ -107,6 +107,8 @@ class EmployeeCreate(BaseModel):
     employer_id: str
     employee_code: str
     national_id: str
+    id_type: Optional[str] = "national_id"  # national_id or passport
+    nationality: Optional[str] = None  # Required if id_type is passport
     date_of_birth: str
     employment_type: str  # full-time, part-time, contract
     job_title: str
@@ -115,7 +117,7 @@ class EmployeeCreate(BaseModel):
     bank_account: Optional[str] = None
     mobile_money_provider: Optional[str] = None
     mobile_money_number: Optional[str] = None
-    country: str
+    country: str  # Country of Work
 
 class EmployeeResponse(BaseModel):
     id: str
