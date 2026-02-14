@@ -313,7 +313,6 @@ export default function EmployerDashboard() {
               title="Reports"
               description="Analytics and insights"
               href="/employer/reports"
-              gradient="bg-gradient-to-br from-purple-500/5 to-pink-500/5"
             />
           </div>
         </div>
