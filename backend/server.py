@@ -126,6 +126,8 @@ class EmployeeResponse(BaseModel):
     employer_name: Optional[str] = None
     employee_code: Optional[str] = None
     national_id: Optional[str] = None
+    id_type: Optional[str] = "national_id"
+    nationality: Optional[str] = None
     date_of_birth: Optional[str] = None
     employment_type: Optional[str] = None
     job_title: Optional[str] = None
