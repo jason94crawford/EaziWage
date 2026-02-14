@@ -522,6 +522,13 @@ async def list_employers(status: Optional[str] = None, user: dict = Depends(requ
     employers = await db.employers.find(query, {"_id": 0}).to_list(1000)
     return [EmployerResponse(**e) for e in employers]
 
+# Public endpoint for employee registration - list approved employers only
+@api_router.get("/employers/public/approved", response_model=List[EmployerResponse])
+async def list_approved_employers_public():
+    """Public endpoint to list approved employers for employee registration"""
+    employers = await db.employers.find({"status": "approved"}, {"_id": 0}).to_list(1000)
+    return [EmployerResponse(**e) for e in employers]
+
 @api_router.get("/employers/{employer_id}", response_model=EmployerResponse)
 async def get_employer(employer_id: str, user: dict = Depends(require_role(UserRole.ADMIN, UserRole.EMPLOYER))):
     employer = await db.employers.find_one({"id": employer_id}, {"_id": 0})
