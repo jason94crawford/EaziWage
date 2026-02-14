@@ -11,12 +11,12 @@ import { EmployerPortalLayout } from '../../components/employer/EmployerLayout';
 import { advanceApi, employerApi } from '../../lib/api';
 import { formatCurrency, formatDateTime, cn } from '../../lib/utils';
 
-// Metric Card
-const MetricCard = ({ icon: Icon, label, value, subtext, iconBg, iconColor, valueColor }) => (
+// Metric Card with solid green icon
+const MetricCard = ({ icon: Icon, label, value, subtext, valueColor }) => (
   <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/50 dark:border-slate-700/30">
     <div className="flex items-start justify-between">
-      <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", iconBg)}>
-        <Icon className={cn("w-6 h-6", iconColor)} />
+      <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+        <Icon className="w-6 h-6 text-white" />
       </div>
     </div>
     <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-4">{label}</p>
