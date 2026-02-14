@@ -9,6 +9,7 @@ import { Button } from '../../components/ui/button';
 import { EmployerPortalLayout } from '../../components/employer/EmployerLayout';
 import { dashboardApi, employerApi } from '../../lib/api';
 import { formatCurrency, cn } from '../../lib/utils';
+import { GradientIconBox } from '../../components/employer/SharedComponents';
 
 // Animated Counter Component
 const AnimatedCounter = ({ value, prefix = '', suffix = '' }) => {
