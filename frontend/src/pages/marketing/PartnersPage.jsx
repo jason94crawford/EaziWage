@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowRight, Handshake, Building2, Globe, Zap, Shield, 
   TrendingUp, Award, Check, ChevronRight, Users, Banknote,
-  Phone, Mail, Star
+  Phone, Mail, Star, Rocket
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { MarketingNav } from '../../components/layout/MarketingNav';
@@ -237,25 +237,30 @@ export default function PartnersPage() {
         </div>
       </section>
 
-      {/* Current Partners with Logos */}
+      {/* Target Partners & Integration Roadmap */}
       <section className="py-16 sm:py-24 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 sm:mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 rounded-full text-sm font-semibold text-primary mb-4">
+              <Rocket className="w-4 h-4" />
+              Pre-Seed Stage
+            </div>
             <h2 className="font-heading text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
-              Trusted by <span className="text-gradient">Industry Leaders</span>
+              Building the <span className="text-gradient">Partner Ecosystem</span>
             </h2>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300">
-              Join these companies transforming financial access in East Africa
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+              We're actively building partnerships with industry leaders across East Africa. Here's who we're targeting to create a seamless earned wage access experience.
             </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
-            {currentPartners.map((partner, i) => (
+            {targetPartnerTypes.map((partner, i) => (
               <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 text-center border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all group">
-                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${partner.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4`}>
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${partner.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 group-hover:scale-110 transition-transform`}>
                   <span className="text-white font-bold text-lg sm:text-xl">{partner.initial}</span>
                 </div>
-                <h3 className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white">{partner.name}</h3>
-                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{partner.type}</p>
+                <h3 className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white mb-1">{partner.name}</h3>
+                <p className="text-xs sm:text-sm text-primary font-medium mb-2">{partner.type}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{partner.examples}</p>
               </div>
             ))}
           </div>
