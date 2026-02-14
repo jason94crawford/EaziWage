@@ -113,8 +113,8 @@ class EmployerResponse(BaseModel):
 
 # Employee Models
 class EmployeeCreate(BaseModel):
-    employer_id: str
-    employee_code: str
+    employer_id: Optional[str] = None  # Auto-assigned by backend
+    employee_code: Optional[str] = None  # Auto-assigned by backend
     national_id: str
     id_type: Optional[str] = "national_id"  # national_id or passport
     nationality: Optional[str] = None  # Required if id_type is passport
@@ -133,7 +133,7 @@ class EmployeeCreate(BaseModel):
     address_line2: Optional[str] = None
     city: Optional[str] = None
     postal_code: Optional[str] = None
-    department: Optional[str] = None
+    department: Optional[str] = None  # Auto-assigned by backend
     start_date: Optional[str] = None  # Employment start date
 
 class EmployeeResponse(BaseModel):
