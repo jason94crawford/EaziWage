@@ -235,12 +235,21 @@ export default function EmployeeOnboarding() {
   const [error, setError] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
+  // Terms & Privacy inline display state
+  const [showTermsContent, setShowTermsContent] = useState(false);
+  const [showPrivacyContent, setShowPrivacyContent] = useState(false);
+  
+  // ID type state
+  const [idType, setIdType] = useState('national_id');
+  
   const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
   
   const [formData, setFormData] = useState({
     employer_id: '',
     employee_code: '',
     national_id: '',
+    id_type: 'national_id',
+    nationality: '',
     date_of_birth: '',
     employment_type: '',
     job_title: '',
@@ -249,7 +258,7 @@ export default function EmployeeOnboarding() {
     bank_account: '',
     mobile_money_provider: '',
     mobile_money_number: '',
-    country: '',
+    country: '', // Country of Work
   });
 
   useEffect(() => {
