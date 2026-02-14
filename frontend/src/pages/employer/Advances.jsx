@@ -46,14 +46,13 @@ const StatusBadge = ({ status }) => {
 };
 
 // Advance Row
-const AdvanceRow = ({ advance }) => (
+const AdvanceRow = ({ advance, currency }) => (
   <div className="flex items-center gap-4 p-4 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors group">
     {/* Employee Avatar */}
-    <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md shrink-0">
-      <span className="text-white font-bold text-sm">
-        {advance.employee_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'EM'}
-      </span>
-    </div>
+    <GradientAvatar 
+      initials={advance.employee_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'EM'}
+      size="md"
+    />
     
     {/* Employee Info */}
     <div className="flex-1 min-w-0">
