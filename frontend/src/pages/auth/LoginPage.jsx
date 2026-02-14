@@ -18,12 +18,15 @@ export default function LoginPage() {
   const { theme } = useTheme();
 
   const handleSubmit = async (e) => {
+    console.log('handleSubmit called');
     if (e) e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
+      console.log('Calling login with:', formData.email);
       const result = await login(formData.email, formData.password);
+      console.log('Login result:', result);
       setIsLoading(false);
 
       if (result.success) {
@@ -43,10 +46,12 @@ export default function LoginPage() {
         }
       } else {
         const errorMessage = result.error || 'Login failed. Please check your credentials.';
+        console.log('Setting error:', errorMessage);
         setError(errorMessage);
         toast.error(errorMessage);
       }
     } catch (err) {
+      console.error('handleSubmit error:', err);
       setIsLoading(false);
       const errorMessage = 'An unexpected error occurred. Please try again.';
       setError(errorMessage);
