@@ -61,18 +61,37 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 - ✅ **Sidebar Navigation (Desktop)** - Dashboard, Request Advance, Transaction History, Documents & KYC, Settings
 - ✅ **Mobile/Tablet Responsive** - Tested at 414px (iPhone XR) viewport
 
-### Authentication Pages (REDESIGNED V3 - Feb 2026)
-Login and Registration pages completely redesigned to match the home page hero section aesthetic:
+### Authentication Pages (REDESIGNED V4 - Feb 2026)
+Login and Registration pages with centered logo, social auth options, and multi-step onboarding:
 
-- ✅ **Login Page** (/login) - Hero section styling with gradient-mesh background, bg-grid pattern overlay, blurred green orbs, gradient logo (from-primary to-emerald-600), "Sign In to Your Account" with text-gradient on "Account", glass-card form container with backdrop-blur, gradient "Sign In" button with arrow icon and btn-glow effect, theme toggle in header
-- ✅ **Registration Page** (/register) - Matching hero aesthetic, "Get Started with EaziWage" headline with text-gradient, "Join 50,000+ workers" badge, form fields with icons (User, Mail, Building2), "Bank-grade 256-bit encryption" security note
-- ✅ **Visual Elements Match Hero** - gradient-mesh, bg-grid, text-gradient, glass-card CSS classes from index.css
-- ✅ **Logo** - Gradient background (from-primary to-emerald-600) with shadow and hover glow effect
-- ✅ **Typography** - Plus Jakarta Sans for headings (font-heading class)
-- ✅ **Error Handling** - Custom axios instance (authAxios) without interceptors to prevent 401 redirect loops
-- ✅ **Form Validation** - Empty fields, password length, terms agreement
-- ✅ **Dark/Light Mode** - Theme toggle works, gradient backgrounds adapt to both modes
-- ✅ **Navigation** - Logo click returns to homepage, bidirectional links between Login/Register
+- ✅ **Login Page** (/login) - Centered EaziWage logo, hero section styling (gradient-mesh, bg-grid), email/password fields, "Sign In" gradient button, social login options: Google OAuth (functional via Emergent), Apple Sign-In (PLACEHOLDER), Face ID (PLACEHOLDER), theme toggle, "Create account" link
+- ✅ **Registration Page** (/register) - Centered logo, **Employee/Employer toggle** selector, dynamic form fields (Company Code for Employee, Company Name for Employer), Google OAuth signup, Apple placeholder, terms checkbox, "Create Account" button
+- ✅ **Auth Callback** (/auth/callback) - Handles Emergent Google OAuth redirect, extracts session_id, creates/updates user, redirects to appropriate dashboard or onboarding
+- ✅ **Backend Google OAuth** - POST /api/auth/google/callback endpoint using httpx to verify with Emergent auth server, creates new users or logs in existing
+
+### Multi-Step Onboarding (NEW - Feb 2026)
+5-step onboarding flow matching auth page design:
+
+**Employee Onboarding** (/employee/onboarding):
+- Step 1: **Welcome** - Personalized greeting, "Secure & Private", "Instant Transfers", "No Paperwork" badges
+- Step 2: **Terms & Privacy** - Terms of Service link, Privacy Policy link, checkbox agreement required
+- Step 3: **Personal Info** - National ID, Date of Birth, Country selection
+- Step 4: **Employment** - Employer selection, Employee Code, Job Title, Employment Type, Monthly Salary
+- Step 5: **Payment** - Mobile Money provider/number (required), Bank account (optional)
+
+**Employer Onboarding** (/employer/onboarding):
+- Step 1: **Welcome** - "Happy Employees", "Zero Risk to You", "Easy Integration" badges
+- Step 2: **Terms & Privacy** - Employer Agreement, Data Processing Agreement, checkbox required
+- Step 3: **Company Info** - Company Name, Registration No., Tax ID, Country, Industry, Address
+- Step 4: **Workforce** - Employee Count, Payroll Cycle
+- Step 5: **Contact** - Contact Person Name, Email, Phone
+
+Both onboarding flows feature:
+- Progress indicator with step icons
+- Glass-card design matching auth pages
+- Gradient "Continue" buttons
+- Form validation before proceeding
+- Terms checkbox must be checked to proceed past Step 2
 
 **Test Employee Account**: demo.employee@eaziwage.com / Employee@123
 
