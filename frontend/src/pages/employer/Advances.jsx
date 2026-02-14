@@ -162,6 +162,9 @@ export default function EmployerAdvances() {
       : 0
   };
 
+  // Format currency helper
+  const fc = (amount) => formatCurrency(amount, selectedCurrency);
+
   return (
     <EmployerPortalLayout employer={employer}>
       <div className="max-w-7xl mx-auto space-y-6">
