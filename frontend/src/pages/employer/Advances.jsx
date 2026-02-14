@@ -1,18 +1,112 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  CreditCard, Search, Filter, Download, Clock, CheckCircle2,
-  XCircle, AlertCircle, DollarSign, TrendingUp, Calendar, Eye
+  CreditCard, Search, Download, Clock, CheckCircle2,
+  XCircle, AlertCircle, TrendingUp, Eye, Filter,
+  ArrowUpRight, ChevronRight, DollarSign, Users, Zap
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/card';
-import { 
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
-} from '../../components/ui/table';
 import { Badge } from '../../components/ui/badge';
-import { DashboardLayout } from '../../components/layout/DashboardLayout';
+import { EmployerPortalLayout } from '../../components/employer/EmployerLayout';
 import { advanceApi, employerApi } from '../../lib/api';
 import { formatCurrency, formatDateTime, cn } from '../../lib/utils';
+
+// Metric Card
+const MetricCard = ({ icon: Icon, label, value, subtext, iconBg, iconColor, valueColor }) => (
+  <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/50 dark:border-slate-700/30">
+    <div className="flex items-start justify-between">
+      <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", iconBg)}>
+        <Icon className={cn("w-6 h-6", iconColor)} />
+      </div>
+    </div>
+    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium mt-4">{label}</p>
+    <p className={cn("text-2xl font-bold mt-1", valueColor || "text-slate-900 dark:text-white")}>{value}</p>
+    {subtext && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{subtext}</p>}
+  </div>
+);
+
+// Status Badge
+const StatusBadge = ({ status }) => {
+  const config = {
+    disbursed: { bg: 'bg-emerald-100 dark:bg-emerald-500/20', text: 'text-emerald-700 dark:text-emerald-300', label: 'Disbursed' },
+    approved: { bg: 'bg-blue-100 dark:bg-blue-500/20', text: 'text-blue-700 dark:text-blue-300', label: 'Approved' },
+    pending: { bg: 'bg-amber-100 dark:bg-amber-500/20', text: 'text-amber-700 dark:text-amber-300', label: 'Pending' },
+    rejected: { bg: 'bg-red-100 dark:bg-red-500/20', text: 'text-red-700 dark:text-red-300', label: 'Rejected' },
+    repaid: { bg: 'bg-slate-100 dark:bg-slate-700/50', text: 'text-slate-700 dark:text-slate-300', label: 'Repaid' },
+  };
+  const { bg, text, label } = config[status] || config.pending;
+  
+  return (
+    <span className={cn("px-3 py-1 rounded-full text-xs font-semibold", bg, text)}>
+      {label}
+    </span>
+  );
+};
+
+// Advance Row
+const AdvanceRow = ({ advance }) => (
+  <div className="flex items-center gap-4 p-4 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors group">
+    {/* Employee Avatar */}
+    <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md shrink-0">
+      <span className="text-white font-bold text-sm">
+        {advance.employee_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'EM'}
+      </span>
+    </div>
+    
+    {/* Employee Info */}
+    <div className="flex-1 min-w-0">
+      <p className="font-semibold text-slate-900 dark:text-white truncate">{advance.employee_name}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">ID: {advance.id?.slice(0, 8)}...</p>
+    </div>
+    
+    {/* Amount */}
+    <div className="text-right hidden sm:block">
+      <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(advance.amount)}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">Fee: {advance.fee_percentage}%</p>
+    </div>
+    
+    {/* Net Amount */}
+    <div className="text-right hidden md:block">
+      <p className="font-bold text-primary">{formatCurrency(advance.net_amount)}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">Net payout</p>
+    </div>
+    
+    {/* Method */}
+    <div className="hidden lg:block">
+      <span className="px-3 py-1.5 bg-slate-100 dark:bg-slate-700/50 rounded-lg text-xs font-medium text-slate-700 dark:text-slate-300 capitalize">
+        {advance.disbursement_method?.replace('_', ' ')}
+      </span>
+    </div>
+    
+    {/* Status */}
+    <StatusBadge status={advance.status} />
+    
+    {/* Date */}
+    <div className="text-right hidden xl:block">
+      <p className="text-sm text-slate-600 dark:text-slate-300">{formatDateTime(advance.created_at)}</p>
+    </div>
+    
+    {/* Action */}
+    <button className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors opacity-0 group-hover:opacity-100">
+      <Eye className="w-4 h-4" />
+    </button>
+  </div>
+);
+
+// Filter Button
+const FilterButton = ({ active, onClick, children }) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      "px-4 py-2 rounded-xl text-sm font-medium transition-all",
+      active 
+        ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary/25"
+        : "bg-white/60 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800"
+    )}
+  >
+    {children}
+  </button>
+);
 
 export default function EmployerAdvances() {
   const [advances, setAdvances] = useState([]);
@@ -20,7 +114,6 @@ export default function EmployerAdvances() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [dateRange, setDateRange] = useState('all');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,236 +145,186 @@ export default function EmployerAdvances() {
     return true;
   });
 
-  const getStatusBadge = (status) => {
-    switch (status) {
-      case 'disbursed':
-        return <Badge className="bg-emerald-100 text-emerald-700">Disbursed</Badge>;
-      case 'approved':
-        return <Badge className="bg-blue-100 text-blue-700">Approved</Badge>;
-      case 'pending':
-        return <Badge className="bg-amber-100 text-amber-700">Pending</Badge>;
-      case 'rejected':
-        return <Badge className="bg-red-100 text-red-700">Rejected</Badge>;
-      case 'repaid':
-        return <Badge className="bg-slate-100 text-slate-700">Repaid</Badge>;
-      default:
-        return <Badge className="bg-slate-100 text-slate-700">{status}</Badge>;
-    }
-  };
-
+  // Stats calculations
   const stats = {
     total: advances.length,
     totalAmount: advances.reduce((sum, a) => sum + (a.amount || 0), 0),
     disbursed: advances.filter(a => a.status === 'disbursed').length,
-    disbursedAmount: advances
-      .filter(a => a.status === 'disbursed')
-      .reduce((sum, a) => sum + (a.amount || 0), 0),
+    disbursedAmount: advances.filter(a => a.status === 'disbursed').reduce((sum, a) => sum + (a.amount || 0), 0),
     pending: advances.filter(a => a.status === 'pending').length,
-    pendingAmount: advances
-      .filter(a => a.status === 'pending')
-      .reduce((sum, a) => sum + (a.amount || 0), 0),
+    pendingAmount: advances.filter(a => a.status === 'pending').reduce((sum, a) => sum + (a.amount || 0), 0),
     avgFee: advances.length > 0 
       ? (advances.reduce((sum, a) => sum + (a.fee_percentage || 0), 0) / advances.length).toFixed(2)
       : 0
   };
 
   return (
-    <DashboardLayout role="employer">
-      <div className="space-y-6">
+    <EmployerPortalLayout employer={employer}>
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="font-heading text-2xl font-bold text-slate-900" data-testid="advances-title">Employee Advances</h1>
-            <p className="text-slate-500 mt-1">Track and monitor wage advance requests from your employees</p>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white" data-testid="advances-title">
+              Employee Advances
+            </h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">
+              Track and monitor wage advance requests from your employees
+            </p>
           </div>
-          <Button variant="outline" className="flex items-center gap-2" data-testid="export-advances-btn">
+          <Button 
+            variant="outline" 
+            className="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700"
+            data-testid="export-advances-btn"
+          >
             <Download className="w-4 h-4" />
             Export Report
           </Button>
         </div>
 
-        {/* Stats */}
+        {/* Stats Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-slate-200" data-testid="total-requests-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Total Requests</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{stats.total}</p>
-                  <p className="text-xs text-slate-400 mt-1">{formatCurrency(stats.totalAmount)} total</p>
-                </div>
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <CreditCard className="w-6 h-6 text-primary" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card className="border-slate-200" data-testid="disbursed-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Disbursed</p>
-                  <p className="text-2xl font-bold text-emerald-600 mt-1">{stats.disbursed}</p>
-                  <p className="text-xs text-emerald-600 mt-1">{formatCurrency(stats.disbursedAmount)}</p>
-                </div>
-                <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-emerald-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200" data-testid="pending-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Pending</p>
-                  <p className="text-2xl font-bold text-amber-600 mt-1">{stats.pending}</p>
-                  <p className="text-xs text-amber-600 mt-1">{formatCurrency(stats.pendingAmount)}</p>
-                </div>
-                <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-amber-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200" data-testid="avg-fee-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-slate-500">Avg. Fee Rate</p>
-                  <p className="text-2xl font-bold text-slate-900 mt-1">{stats.avgFee}%</p>
-                  <p className="text-xs text-slate-400 mt-1">Based on risk scores</p>
-                </div>
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-purple-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <MetricCard 
+            icon={CreditCard}
+            label="Total Requests"
+            value={stats.total}
+            subtext={formatCurrency(stats.totalAmount) + ' total'}
+            iconBg="bg-gradient-to-br from-primary/20 to-emerald-500/20"
+            iconColor="text-primary"
+          />
+          <MetricCard 
+            icon={CheckCircle2}
+            label="Disbursed"
+            value={stats.disbursed}
+            subtext={formatCurrency(stats.disbursedAmount)}
+            iconBg="bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/10"
+            iconColor="text-emerald-600"
+            valueColor="text-emerald-600"
+          />
+          <MetricCard 
+            icon={Clock}
+            label="Pending"
+            value={stats.pending}
+            subtext={formatCurrency(stats.pendingAmount)}
+            iconBg="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-500/20 dark:to-amber-500/10"
+            iconColor="text-amber-600"
+            valueColor="text-amber-600"
+          />
+          <MetricCard 
+            icon={TrendingUp}
+            label="Avg. Fee Rate"
+            value={stats.avgFee + '%'}
+            subtext="Based on risk scores"
+            iconBg="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-500/20 dark:to-purple-500/10"
+            iconColor="text-purple-600"
+          />
         </div>
 
-        {/* Filters */}
-        <Card className="border-slate-200">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <Input
-                  placeholder="Search by employee name or advance ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                  data-testid="search-advances"
-                />
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {['', 'pending', 'approved', 'disbursed', 'rejected'].map((status) => (
-                  <Button
-                    key={status}
-                    variant={statusFilter === status ? 'default' : 'outline'}
-                    onClick={() => setStatusFilter(status)}
-                    className={cn(statusFilter === status ? 'bg-primary' : '')}
-                    size="sm"
-                    data-testid={`filter-${status || 'all'}`}
-                  >
-                    {status ? status.charAt(0).toUpperCase() + status.slice(1) : 'All'}
-                  </Button>
-                ))}
-              </div>
+        {/* Search & Filters */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-4 border border-slate-200/50 dark:border-slate-700/30">
+          <div className="flex flex-col lg:flex-row gap-4">
+            {/* Search */}
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input
+                placeholder="Search by employee name or advance ID..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-12 bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 rounded-xl"
+                data-testid="search-advances"
+              />
             </div>
-          </CardContent>
-        </Card>
+            
+            {/* Filter Buttons */}
+            <div className="flex items-center gap-2 flex-wrap">
+              <FilterButton active={statusFilter === ''} onClick={() => setStatusFilter('')}>
+                All
+              </FilterButton>
+              <FilterButton active={statusFilter === 'pending'} onClick={() => setStatusFilter('pending')}>
+                Pending
+              </FilterButton>
+              <FilterButton active={statusFilter === 'approved'} onClick={() => setStatusFilter('approved')}>
+                Approved
+              </FilterButton>
+              <FilterButton active={statusFilter === 'disbursed'} onClick={() => setStatusFilter('disbursed')}>
+                Disbursed
+              </FilterButton>
+              <FilterButton active={statusFilter === 'rejected'} onClick={() => setStatusFilter('rejected')}>
+                Rejected
+              </FilterButton>
+            </div>
+          </div>
+        </div>
 
-        {/* Advances Table */}
-        <Card className="border-slate-200">
-          <CardContent className="p-0">
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        {/* Advances List */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/30 overflow-hidden">
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
+            </div>
+          ) : filteredAdvances.length === 0 ? (
+            <div className="text-center py-16 px-4">
+              <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <CreditCard className="w-8 h-8 text-slate-400" />
               </div>
-            ) : filteredAdvances.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <CreditCard className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p className="font-medium">No advances found</p>
-                <p className="text-sm mt-1">Advance requests from employees will appear here</p>
+              <h3 className="font-semibold text-slate-900 dark:text-white">No advances found</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+                {searchTerm || statusFilter 
+                  ? 'Try adjusting your search or filter criteria'
+                  : 'Advance requests from employees will appear here'}
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-200/50 dark:divide-slate-700/30">
+              {/* Header Row */}
+              <div className="hidden lg:flex items-center gap-4 px-4 py-3 bg-slate-50/50 dark:bg-slate-800/30 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <div className="w-11" /> {/* Avatar space */}
+                <div className="flex-1">Employee</div>
+                <div className="w-24 text-right hidden sm:block">Amount</div>
+                <div className="w-24 text-right hidden md:block">Net Payout</div>
+                <div className="w-24 hidden lg:block">Method</div>
+                <div className="w-24">Status</div>
+                <div className="w-32 text-right hidden xl:block">Date</div>
+                <div className="w-10" /> {/* Action space */}
               </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Fee</TableHead>
-                    <TableHead>Net Amount</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAdvances.map((advance) => (
-                    <TableRow key={advance.id} data-testid={`advance-row-${advance.id}`}>
-                      <TableCell>
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span className="text-primary font-semibold text-sm">
-                              {advance.employee_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'EM'}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="font-medium text-slate-900">{advance.employee_name}</p>
-                            <p className="text-xs text-slate-500">{advance.id?.slice(0, 8)}...</p>
-                          </div>
-                        </div>
-                      </TableCell>
-                      <TableCell className="font-semibold text-slate-900">{formatCurrency(advance.amount)}</TableCell>
-                      <TableCell>
-                        <span className="text-slate-600">{advance.fee_percentage}%</span>
-                        <span className="text-xs text-slate-400 block">{formatCurrency(advance.fee_amount)}</span>
-                      </TableCell>
-                      <TableCell className="font-medium text-primary">{formatCurrency(advance.net_amount)}</TableCell>
-                      <TableCell>
-                        <span className="capitalize text-sm">{advance.disbursement_method?.replace('_', ' ')}</span>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(advance.status)}</TableCell>
-                      <TableCell className="text-sm text-slate-500">{formatDateTime(advance.created_at)}</TableCell>
-                      <TableCell>
-                        <Button variant="ghost" size="sm" data-testid={`view-advance-${advance.id}`}>
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+              
+              {/* Advance Rows */}
+              {filteredAdvances.map((advance) => (
+                <AdvanceRow key={advance.id} advance={advance} />
+              ))}
+            </div>
+          )}
+        </div>
 
         {/* Info Card */}
-        <Card className="border-slate-200 bg-blue-50 border-blue-200">
-          <CardContent className="p-6">
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-blue-900">How Advances Work</h3>
-                <ul className="mt-2 space-y-1 text-sm text-blue-800">
-                  <li>Employees can request up to 50% of their earned wages</li>
-                  <li>A fee of 3.5% - 6.5% is charged based on risk scores</li>
-                  <li>Advances are automatically deducted from next payroll</li>
-                  <li>All disbursements are processed within 24 hours</li>
-                </ul>
-              </div>
+        <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+              <Zap className="w-6 h-6 text-blue-600" />
             </div>
-          </CardContent>
-        </Card>
+            <div>
+              <h3 className="font-semibold text-blue-900 dark:text-blue-200">How Advances Work</h3>
+              <ul className="mt-2 space-y-1.5 text-sm text-blue-800 dark:text-blue-300/80">
+                <li className="flex items-center gap-2">
+                  <ChevronRight className="w-4 h-4 text-blue-500" />
+                  Employees can request up to 50% of their earned wages
+                </li>
+                <li className="flex items-center gap-2">
+                  <ChevronRight className="w-4 h-4 text-blue-500" />
+                  A fee of 3.5% - 6.5% is charged based on risk scores
+                </li>
+                <li className="flex items-center gap-2">
+                  <ChevronRight className="w-4 h-4 text-blue-500" />
+                  Advances are automatically deducted from next payroll
+                </li>
+                <li className="flex items-center gap-2">
+                  <ChevronRight className="w-4 h-4 text-blue-500" />
+                  All disbursements are processed within 24 hours
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
-    </DashboardLayout>
+    </EmployerPortalLayout>
   );
 }
