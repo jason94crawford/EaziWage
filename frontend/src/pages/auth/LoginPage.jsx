@@ -9,6 +9,12 @@ import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
+// Create a fresh axios instance without interceptors for auth
+const authAxios = axios.create({
+  baseURL: API_URL,
+  headers: { 'Content-Type': 'application/json' }
+});
+
 export default function LoginPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
