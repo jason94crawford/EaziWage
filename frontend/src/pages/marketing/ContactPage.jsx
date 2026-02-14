@@ -23,8 +23,8 @@ const contactMethods = [
     icon: Phone,
     title: 'Call Us',
     description: 'Mon-Fri from 8am to 6pm EAT',
-    value: '+254 700 000 000',
-    href: 'tel:+254700000000',
+    value: '+254 72 315 4900',
+    href: 'tel:+254723154900',
     color: 'from-emerald-500 to-teal-600'
   },
   {
@@ -40,7 +40,7 @@ const contactMethods = [
     title: 'Visit Us',
     description: 'Come say hello at our office',
     value: 'Westlands, Nairobi',
-    href: '#location',
+    href: '#offices',
     color: 'from-primary to-emerald-500'
   },
 ];
@@ -51,7 +51,7 @@ const offices = [
     flag: '🇰🇪',
     city: 'Nairobi',
     address: 'Westlands Business Park, 4th Floor',
-    phone: '+254 700 000 000',
+    phone: '+254 72 315 4900',
     email: 'kenya@eaziwage.com',
     hours: '8:00 AM - 6:00 PM EAT'
   },
@@ -104,7 +104,6 @@ export default function ContactPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Simulate form submission
     setSubmitted(true);
     setTimeout(() => setSubmitted(false), 5000);
   };
@@ -125,10 +124,10 @@ export default function ContactPage() {
               <MessageSquare className="w-4 h-4" />
               Get in Touch
             </div>
-            <h1 className="font-heading text-5xl sm:text-6xl font-bold text-slate-900 dark:text-white mb-6">
+            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-6">
               We'd Love to <span className="text-gradient">Hear From You</span>
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
               Have questions about EaziWage? Want to register your company? 
               Our team is here to help you get started.
             </p>
@@ -137,23 +136,23 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Methods */}
-      <section className="py-16 bg-slate-50 dark:bg-slate-900">
+      <section className="py-12 sm:py-16 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {contactMethods.map((method, i) => (
               <a 
                 key={i}
                 href={method.href}
-                className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                className="bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
               >
-                <div className={`w-12 h-12 bg-gradient-to-br ${method.color} rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <method.icon className="w-6 h-6 text-white" />
+                <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br ${method.color} rounded-xl flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform`}>
+                  <method.icon className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white mb-1">{method.title}</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-3">{method.description}</p>
-                <span className="text-primary font-medium flex items-center gap-2">
+                <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-1">{method.title}</h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mb-2 sm:mb-3">{method.description}</p>
+                <span className="text-primary font-medium text-sm sm:text-base flex items-center gap-1 sm:gap-2">
                   {method.value}
-                  <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4 group-hover:translate-x-1 transition-transform" />
                 </span>
               </a>
             ))}
@@ -162,49 +161,49 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Form & Info */}
-      <section className="py-24 bg-white dark:bg-slate-950">
+      <section className="py-16 sm:py-24 bg-white dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
             {/* Form */}
             <div>
-              <h2 className="font-heading text-3xl font-bold text-slate-900 dark:text-white mb-6">
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6">
                 Send Us a Message
               </h2>
-              <p className="text-slate-600 dark:text-slate-400 mb-8">
+              <p className="text-slate-600 dark:text-slate-400 mb-6 sm:mb-8">
                 Fill out the form below and we'll get back to you within 24 hours.
               </p>
               
               {submitted ? (
-                <div className="bg-primary/10 dark:bg-primary/20 rounded-2xl p-8 text-center">
-                  <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Send className="w-8 h-8 text-white" />
+                <div className="bg-primary/10 dark:bg-primary/20 rounded-2xl p-6 sm:p-8 text-center">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Send className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
                   </div>
-                  <h3 className="font-heading text-xl font-bold text-slate-900 dark:text-white mb-2">Message Sent!</h3>
+                  <h3 className="font-heading text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-2">Message Sent!</h3>
                   <p className="text-slate-600 dark:text-slate-400">
                     Thank you for reaching out. We'll be in touch soon.
                   </p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-5 sm:space-y-6">
                   {/* Inquiry Type */}
                   <div>
                     <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 block">
                       What can we help you with?
                     </label>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2 sm:gap-3">
                       {inquiryTypes.map((type) => (
                         <button
                           key={type.value}
                           type="button"
                           onClick={() => setFormData({...formData, type: type.value})}
-                          className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
+                          className={`flex items-center gap-2 sm:gap-3 p-3 sm:p-4 rounded-xl border-2 transition-all ${
                             formData.type === type.value
                               ? 'border-primary bg-primary/5 dark:bg-primary/10'
                               : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                           }`}
                         >
-                          <type.icon className={`w-5 h-5 ${formData.type === type.value ? 'text-primary' : 'text-slate-400'}`} />
-                          <span className={`text-sm font-medium ${formData.type === type.value ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}>
+                          <type.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${formData.type === type.value ? 'text-primary' : 'text-slate-400'}`} />
+                          <span className={`text-xs sm:text-sm font-medium ${formData.type === type.value ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}>
                             {type.label}
                           </span>
                         </button>
@@ -221,7 +220,7 @@ export default function ContactPage() {
                         value={formData.name}
                         onChange={(e) => setFormData({...formData, name: e.target.value})}
                         placeholder="John Doe"
-                        className="h-12 rounded-xl"
+                        className="h-11 sm:h-12 rounded-xl"
                       />
                     </div>
                     <div>
@@ -232,7 +231,7 @@ export default function ContactPage() {
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         placeholder="john@company.com"
-                        className="h-12 rounded-xl"
+                        className="h-11 sm:h-12 rounded-xl"
                       />
                     </div>
                   </div>
@@ -244,8 +243,8 @@ export default function ContactPage() {
                       <Input 
                         value={formData.phone}
                         onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                        placeholder="+254 700 000 000"
-                        className="h-12 rounded-xl"
+                        placeholder="+254 72 315 4900"
+                        className="h-11 sm:h-12 rounded-xl"
                       />
                     </div>
                     <div>
@@ -254,7 +253,7 @@ export default function ContactPage() {
                         value={formData.company}
                         onChange={(e) => setFormData({...formData, company: e.target.value})}
                         placeholder="Acme Corporation"
-                        className="h-12 rounded-xl"
+                        className="h-11 sm:h-12 rounded-xl"
                       />
                     </div>
                   </div>
@@ -272,7 +271,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <Button type="submit" size="lg" className="w-full h-14 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white">
+                  <Button type="submit" size="lg" className="w-full h-12 sm:h-14 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white">
                     Send Message
                     <Send className="w-5 h-5 ml-2" />
                   </Button>
@@ -281,13 +280,13 @@ export default function ContactPage() {
             </div>
 
             {/* Additional Info */}
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* FAQ Shortcut */}
-              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700">
-                <h3 className="font-heading text-xl font-bold text-slate-900 dark:text-white mb-4">
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700">
+                <h3 className="font-heading text-lg sm:text-xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
                   Frequently Asked Questions
                 </h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-6">
+                <p className="text-slate-600 dark:text-slate-400 mb-5 sm:mb-6">
                   Find quick answers to common questions about EaziWage.
                 </p>
                 <Link to="/faq">
@@ -299,14 +298,14 @@ export default function ContactPage() {
               </div>
 
               {/* Business Hours */}
-              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center">
-                    <Clock className="w-6 h-6 text-primary" />
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700">
+                <div className="flex items-center gap-4 mb-5 sm:mb-6">
+                  <div className="w-11 h-11 sm:w-12 sm:h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center">
+                    <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                   </div>
                   <div>
-                    <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white">Business Hours</h3>
-                    <p className="text-sm text-slate-500">East Africa Time (EAT)</p>
+                    <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 dark:text-white">Business Hours</h3>
+                    <p className="text-xs sm:text-sm text-slate-500">East Africa Time (EAT)</p>
                   </div>
                 </div>
                 <div className="space-y-3">
@@ -323,7 +322,7 @@ export default function ContactPage() {
                     <span className="font-medium text-slate-500">Closed</span>
                   </div>
                 </div>
-                <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+                <div className="mt-5 sm:mt-6 pt-5 sm:pt-6 border-t border-slate-200 dark:border-slate-700">
                   <p className="text-sm text-slate-500 dark:text-slate-400">
                     <span className="text-primary font-medium">24/7 Support</span> available via live chat for urgent issues
                   </p>
@@ -331,8 +330,8 @@ export default function ContactPage() {
               </div>
 
               {/* Social Links */}
-              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-8 border border-slate-200 dark:border-slate-700">
-                <h3 className="font-heading text-lg font-bold text-slate-900 dark:text-white mb-4">
+              <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-6 sm:p-8 border border-slate-200 dark:border-slate-700">
+                <h3 className="font-heading text-base sm:text-lg font-bold text-slate-900 dark:text-white mb-4">
                   Connect With Us
                 </h3>
                 <div className="flex gap-3">
@@ -346,7 +345,7 @@ export default function ContactPage() {
                       key={i}
                       href={social.href}
                       aria-label={social.label}
-                      className="w-12 h-12 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:shadow-lg transition-all duration-300"
+                      className="w-11 h-11 sm:w-12 sm:h-12 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary hover:shadow-lg transition-all duration-300"
                     >
                       <social.icon className="w-5 h-5" />
                     </a>
@@ -359,50 +358,39 @@ export default function ContactPage() {
       </section>
 
       {/* Office Locations */}
-      <section className="py-24 bg-slate-900 dark:bg-slate-950">
+      <section id="offices" className="py-16 sm:py-24 bg-slate-900 dark:bg-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="font-heading text-4xl font-bold text-white mb-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white mb-4">
               Our <span className="text-gradient">Offices</span>
             </h2>
-            <p className="text-lg text-slate-400">
+            <p className="text-base sm:text-lg text-slate-400">
               Find us across East Africa
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {offices.map((office, i) => (
-              <div key={i} className="bg-slate-800 rounded-2xl p-6 border border-slate-700 hover:border-primary/30 transition-colors">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="text-4xl">{office.flag}</span>
+              <div key={i} className="bg-slate-800 rounded-2xl p-4 sm:p-6 border border-slate-700 hover:border-primary/30 transition-colors">
+                <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                  <span className="text-3xl sm:text-4xl">{office.flag}</span>
                   <div>
-                    <h3 className="font-heading text-lg font-bold text-white">{office.country}</h3>
-                    <p className="text-sm text-slate-400">{office.city}</p>
+                    <h3 className="font-heading text-base sm:text-lg font-bold text-white">{office.country}</h3>
+                    <p className="text-xs sm:text-sm text-slate-400">{office.city}</p>
                   </div>
                 </div>
-                <div className="space-y-3 text-sm">
+                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                   <p className="text-slate-300">{office.address}</p>
                   <p className="text-slate-400">
                     <span className="text-primary">{office.phone}</span>
                   </p>
                   <p className="text-slate-400">{office.email}</p>
                   <p className="text-slate-500 flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
+                    <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                     {office.hours}
                   </p>
                 </div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Map Placeholder */}
-      <section id="location" className="h-96 bg-slate-200 dark:bg-slate-800 relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="text-center">
-            <MapPin className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-            <p className="text-slate-500 dark:text-slate-400">Interactive Map</p>
-            <p className="text-sm text-slate-400 dark:text-slate-500">Westlands Business Park, Nairobi</p>
           </div>
         </div>
       </section>
