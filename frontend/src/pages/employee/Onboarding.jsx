@@ -316,8 +316,6 @@ export default function EmployeeOnboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [employers, setEmployers] = useState([]);
-  const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState(null);
   const [error, setError] = useState('');
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   
