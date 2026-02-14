@@ -9,72 +9,76 @@
 2.  **Access Control:** Role-based access for Employees, Employers, and Admins.
 3.  **Authentication:** JWT-based custom authentication.
 4.  **Core Functionality:**
-    *   **Employee:** Registration, KYC document submission, view earned wages, request advances, view transaction history.
+    *   **Employee:** Registration, KYC document submission, view earned wages, request advances, view transaction history. A multi-step onboarding flow after registration is also required.
     *   **Employer:** Company onboarding, employee management, payroll integration (conceptual), and a dashboard.
     *   **Admin:** Verification of employers/employees, review of risk scores, and management of disbursements.
 5.  **Risk Scoring:** An automated system to calculate a Credit Risk Score (CRS).
 6.  **Integrations:** Mock integrations for mobile money providers (M-PESA, MTN, Airtel).
 7.  **File Storage:** Use local file storage for KYC documents.
-8.  **Design:** The user is very specific about the UI/UX, requesting multiple redesigns to achieve a modern, content-rich, African-fintech aesthetic with a green color scheme and a dark/light theme toggle.
+8.  **Design:** The user is very specific about the UI/UX, requesting multiple redesigns to achieve a modern, content-rich, African-fintech aesthetic with a green color scheme and a dark/light theme toggle. The latest feedback requires the auth pages to match the home page's hero section, including its specific gradients and colors.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application with a FastAPI backend and a React frontend. The marketing website is highly polished, with multiple content pages (About, Partners, Blog), a consistent green/dark theme, and a professional map component. All legal policy pages have been populated with content from user-provided documents and redesigned with a sidebar layout to match the Terms of Service page. The main Employee Dashboard has been completely redesigned with a modern, dark aesthetic, and a test employee user has been created for verification purposes.
+A full-stack application with a FastAPI backend and a React frontend. The marketing website is highly polished with multiple content pages and a consistent green/dark theme. The core employee portal pages have been redesigned to a modern standard. The Login and Registration pages have been implemented and redesigned twice, but the user is still unsatisfied with the visual alignment to the main website. A significant bug preventing error messages from displaying on the login page has been fixed.
 
 **Last working item**:
-*   **Last item agent was working:** The agent was starting a new user request to redesign the Request Advance page and create other key employee-facing screens (Transaction History, Settings/Profile) to match the new, modern aesthetic of the Employee Dashboard. The agent had begun by analyzing the reference design screenshots provided by the user in a previous message.
+*   **Last item agent was working:** The agent was responding to user feedback that the recently redesigned Sign-In and Registration pages still do not match the website's visual identity. The user has provided new screenshots () highlighting the color, font, and gradient mismatches, specifically requesting that the auth pages align with the **home page hero section**. The user also introduced a new P1 task to implement a multi-step onboarding flow.
 *   **Status:** NOT STARTED
 *   **Agent Testing Done:** N
-*   **Which testing method agent to use?** After implementation, use the screenshot tool to visually verify the new pages by logging in with the employee credentials. Then, use the frontend testing agent to conduct a full regression test on the employee portal, ensuring all new components and interactive elements (like the advance request slider) function correctly.
+*   **Which testing method agent to use?** First, use the screenshot tool to visually verify the redesign of the Login and Registration pages against the home page hero section. After user approval, implement the onboarding flow and use the frontend testing agent to test the complete registration and onboarding sequence.
 *   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-There are no pending issues or bugs. All work is feature-driven based on user requests.
+*   **Issue 1:** Login and Registration pages are visually inconsistent with the website's home page hero section in terms of colors, font, text type, logo, and gradients. (Priority: P0 - HIGHEST)
+
+**Issues Detail:**
+*   **Issue 1:**
+    *   **Attempted fixes:** The agent has attempted to redesign these pages twice. The first attempt used a split-screen layout, which was rejected. The second attempt used a centered, dark-green background layout based on , which was also rejected for not matching the main website's hero section aesthetic.
+    *   **Next debug checklist:**
+        1.  Analyze the user-provided  files to understand the specific visual discrepancies.
+        2.  Thoroughly inspect the CSS of the hero section on  to extract the exact background colors, gradients, and font styles.
+        3.  Refactor the styling in  and  to perfectly replicate the home page hero section's visual theme. Pay close attention to the gradient effects.
+        4.  Ensure the new design is fully responsive and works in both light and dark modes.
+    *   **Why fix this issue and what will be achieved with the fix?** To finally achieve a cohesive and professional user experience that meets the user's explicit and repeated design requirements, ensuring a seamless brand identity from the home page to authentication.
+    *   **Status:** NOT STARTED
+    *   **Is recurring issue?** Y
+    *   **Should Test frontend/backend/both after fix?** Frontend
+    *   **Blocked on other issue:** None
 
 **In progress Task List**:
-*   **Task 1:** Redesign and Implement Core Employee Pages (P0 - HIGHEST)
-    *   **Where to resume:** The agent needs to start the implementation of the new employee-facing pages. The reference designs are the screenshots extracted from the  artifact. The steps are:
-        1.  Create/Update the  component to include the slider-based UI.
-        2.  Create/Update the  component, including filtering capabilities.
-        3.  Create/Update the  and  components.
-        4.  Ensure all new pages are integrated into the employee-side routing and navigation.
-    *   **What will be achieved with this?** The core functionality of the employee portal will be built out with a modern, consistent UI, as specified by the user's designs.
-    *   **Status:** NOT STARTED
-    *   **Should Test frontend/backend/both after fix?** Frontend
-    *   **Blocked on something:** No
+There are no tasks currently in progress.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks:**
-    *   **P1:** Implement KYC document upload functionality on the  page, connecting it to the backend.
+    *   **P1:** Implement a multi-step onboarding flow post-registration. This should be based on the informational content in the  screenshots (Welcome, Terms, KYC steps), but the visual design must align with the newly approved website theme.
+    *   **P1:** Implement KYC document upload functionality on the  page.
     *   **P1:** Build the UI and logic for the Admin KYC Review page ().
     *   **P2:** Implement the Risk Scoring calculator on the Admin Risk Scoring page ().
-    *   **P2:** Add scroll-to-top functionality when a user clicks a link in the footer (this was missed from a previous task batch).
+    *   **P2:** Add scroll-to-top functionality when a user clicks a link in the footer.
 *   **Future Tasks:**
     *   Redesign the Admin and Employer dashboards to match the new website aesthetic.
     *   Flesh out the Employer pages for employee management and payroll.
     *   Integrate with live Mobile Money APIs.
 
 **Completed work in this session**
-- **Marketing Site Content Completion:**
-    - Updated  with Our Mission, Our Vision, and Our Story sections.
-    - Rewrote  with aspirational content suitable for a pre-seed company.
-    - Adjusted font sizes in  for visual consistency.
-- **Legal Pages Overhaul:**
-    - Populated 5 legal policy pages (, , , , ) with official content from user-provided  files.
-    - Redesigned  to use a two-column layout with a sidebar table of contents, matching the  design.
-    - Removed Cookie Policy and Data Policy links from the footer as requested.
-- **Employee Dashboard Redesign:**
-    - Completely redesigned  to a modern, dark-themed UI based on user-provided screenshots.
-- **Testing & Verification:**
-    - Created a test employee account () with a known password for easier testing of the employee portal.
-    - Successfully ran the testing agent twice (, ) to verify all frontend changes.
+- **Auth Page Redesigns (Rejected):** Implemented two different designs for the Login and Registration pages, which were ultimately rejected by the user.
+- **Login Error Bug Fix (CRITICAL):**
+    - **Problem:** On failed login, error messages were not being displayed, and the page would mysteriously reload or reset.
+    - **Investigation:** The agent performed extensive debugging, discovering the page was fully reloading. This was traced back to an  interceptor in  that forced a redirect to  on any 401 error, creating a loop.
+    - **Solution:** Modified  to use a dedicated  instance *without* interceptors for the login API call. This isolated the login request from the global error handler and successfully resolved the issue, allowing error messages to be displayed correctly.
 
 **Earlier issues found/mentioned but not fixed**
-None.
+*   **Issue 1:** The scroll-to-top on footer link click feature has been requested multiple times but has been deprioritized and remains unimplemented.
+    *   **Debug checklist:** Add an  handler to the  components in  that calls .
+    *   **Why to solve this issue and what will be achieved with this?** It's a minor UX improvement that provides expected browser behavior.
+    *   **Should Test frontend/backend/both after fix:** Frontend
+    *   **Is recurring issue?** Y
 
 **Known issue recurrence from previous fork**
-N/A
+*   **Issue recurrence:** The user's dissatisfaction with the UI of the auth pages is a significant recurring issue. The agent has struggled to match the user's specific aesthetic expectations, leading to multiple rework cycles.
+*   **Recurrence count:** 2 in this session.
+*   **Status:** IN PROGRESS
 
 **Code Architecture**
 
@@ -85,6 +89,7 @@ N/A
 *   **Database:** MongoDB
 *   **Styling:** TailwindCSS
 *   **Authentication:** JSON Web Tokens (JWT)
+*   **API Client:** Axios (with global interceptors)
 
 **key DB schema**
 *   **users:** 
@@ -92,52 +97,58 @@ N/A
 *   **transactions:** 
 
 **changes in tech stack**
-None in this session.
+None.
 
 **All files of reference**
-*   **/app/frontend/src/pages/employee/EmployeeDashboard.jsx**: The primary style reference for the new employee pages.
-*   **/app/frontend/src/pages/marketing/LegalPolicyPage.jsx**: Recently redesigned, contains logic for rendering markdown-like content with a sidebar.
-*   **/app/frontend/src/components/layout/Footer.jsx**: Recently updated to remove policy links.
-*   The agent will need to create or modify files for the Request Advance, Transaction History, and Profile/Settings pages within .
+*   **Files to be modified for the next task:**
+    *   
+    *   
+*   **Style reference files:**
+    *    (Specifically the hero section)
+    *   User-uploaded  files showing the desired vs. actual look.
+*   **Key files from previous debug session:**
+    *    (Location of the problematic axios interceptor)
 
 **Areas that need refactoring**:
-*   The Admin and Employer dashboard pages are now visually inconsistent with the rest of the application and will require a full redesign in a future task.
+*    and  require a complete style overhaul to match the home page hero section.
+*   The Admin and Employer dashboard pages are visually inconsistent with the rest of the application and will require a full redesign in the future.
 
 **key api endpoints**
 *   
 *   
 *   
-*   
 
 **Critical Info for New Agent**
-*   Your immediate task is to build out the remaining employee portal screens (Request Advance, Transaction History, Profile/Settings) as requested by the user.
-*   All designs should match the aesthetic of the newly created  and the reference screenshots from the  artifact.
-*   Use the provided employee credentials to log in and test your changes. This is crucial as the employee routes are protected.
-*   After completing this task, propose the next steps from the Upcoming Tasks list, such as implementing the KYC document upload functionality.
+*   **Your highest priority (P0) is to redesign the Login and Registration pages for the third time.** The user is very specific: the design must perfectly match the **home page hero section's background, color gradients, fonts, and overall feel.** Carefully analyze the new  artifacts and  before coding. Do not repeat previous designs.
+*   **Be aware of the login bug history.** The previous agent spent significant time fixing an issue where error messages wouldn't display due to a page reload. The cause was a global axios interceptor in  redirecting on 401 errors. The fix was to use a *separate, interceptor-free axios instance* for the login call in . Do not revert this fix or use the global axios instance for login.
+*   **A new P1 task is to build a multi-step onboarding flow** after a user registers. Plan for this *after* the auth page redesign is approved by the user. Use the  files for the flow's informational content, but apply the new, approved visual styling.
 
 **documents and test reports created in this job**
-*    (updated)
 *   
-*   
+*    (and previous iterations)
+*   User-provided artifacts from this session:
+    *   
+    *   
+    *   
 
 **Last 10 User Messages and any pending HUMAN messages**
-*   **User (Latest):** Requested a redesign of the Request Advance page and the addition of other employee screens (Transaction History, Settings) based on the previously supplied screenshots. **STATUS: NOT STARTED.**
-*   **User:** Asked for the username and password for an employee login. **STATUS: RESOLVED.**
-*   **Agent:** Created and provided credentials for a test employee account.
-*   **User:** Requested the removal of two policy links, a redesign of all policy pages to match the Terms of Service page, and a complete redesign of the Employee Dashboard based on an attached zip file. **STATUS: COMPLETED.**
-*   **User:** Provided 5  files with policy content and asked for them to be added to the website. **STATUS: COMPLETED.**
-*   **User:** Provided the missing content for the About Us page. **STATUS: COMPLETED.**
+1.  **User (LATEST):** Rejects the latest auth page redesign. States the colors, font, text, and logo do not match the website's home page hero section and its gradients. Provides two  files to show the difference. Assigns a new P1 task to implement an onboarding flow using  screenshots for information, not color. **STATUS: NOT STARTED.**
+2.  **User:** Requests an update on the login/registration pages and provides the  file, asking for the background to align with the website's look. **STATUS: ADDRESSED (but rejected).**
+3.  **User:** Asks for confirmation on the plan to redesign the login/registration pages. **STATUS: ADDRESSED.**
+4.  **User:** Confirms that the login/registration page redesign is the priority and that the agent should be inspired by the website. **STATUS: ADDRESSED.**
 
 **Project Health Check:**
-*   **Broken:** Nothing is currently broken.
+*   **Broken:** Nothing is functionally broken.
 *   **Mocked:** Mobile money integrations, all payroll-related employer functionality.
+*   **User Dissatisfaction:** The user is highly dissatisfied with the UI of the authentication pages, which is a major blocker for progress.
 
 **3rd Party Integrations**
 *   
 *   
+*   
 
 **Testing status**
-*   **Testing agent used after significant changes:** YES (twice in this session, both passed)
+*   **Testing agent used after significant changes:** YES (The agent successfully used it to verify the fixed auth flow).
 *   **Troubleshoot agent used after agent stuck in loop:** NO
 *   **Test files created:** None
 *   **Known regressions:** None
@@ -149,4 +160,4 @@ None in this session.
 *   **Employee Password:** 
 
 **What agent forgot to execute**
-*   The agent did not implement the scroll-to-top on footer link click feature from the previous fork's handoff summary, as it was superseded by larger user requests. This should be re-prioritized as a minor P2 cleanup task.</analysis>
+*   The scroll-to-top on footer link click feature remains unimplemented due to being deprioritized by more critical UI/UX tasks.</analysis>
