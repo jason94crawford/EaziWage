@@ -576,21 +576,21 @@ const BiometricScanModal = ({ isOpen, onClose, onSuccess }) => {
   );
 };
 
-// Notifications Panel
+// Notifications Panel - Fixed for mobile responsiveness
 const NotificationsPanel = ({ isOpen, onClose, notifications }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-end pt-16 px-4">
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
-      <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center sm:justify-end">
+      <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-[calc(100%-2rem)] sm:w-full max-w-sm overflow-hidden mt-4 mx-4 sm:mt-16 sm:mr-4">
         <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
           <h3 className="font-bold text-slate-900 dark:text-white">Notifications</h3>
-          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600">
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
             <X className="w-5 h-5" />
           </button>
         </div>
-        <div className="max-h-80 overflow-y-auto">
+        <div className="max-h-[60vh] sm:max-h-80 overflow-y-auto">
           {notifications.length > 0 ? (
             notifications.map((notif, i) => (
               <div key={i} className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 last:border-0">
@@ -598,9 +598,9 @@ const NotificationsPanel = ({ isOpen, onClose, notifications }) => {
                   <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0", notif.type === 'success' ? 'bg-primary/10' : 'bg-blue-100 dark:bg-blue-500/20')}>
                     {notif.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Bell className="w-4 h-4 text-blue-600" />}
                   </div>
-                  <div>
+                  <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-900 dark:text-white">{notif.title}</p>
-                    <p className="text-xs text-slate-500">{notif.message}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 break-words">{notif.message}</p>
                     <p className="text-[10px] text-slate-400 mt-1">{notif.time}</p>
                   </div>
                 </div>
