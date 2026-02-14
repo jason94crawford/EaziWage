@@ -4,150 +4,158 @@
 1.  **Applications:** A unified web platform containing a public website, an Employer Application, an Employee Application, and an Admin Application.
 2.  **Access Control:** Role-based access for Employees, Employers, and Admins.
 3.  **Authentication:** JWT-based custom authentication, plus social logins (Google, Apple) and biometric options.
-4.  **Core Functionality:**
-    *   **Employee:** A multi-step registration and onboarding flow, including KYC document submission, viewing earned wages, requesting advances, and viewing transaction history.
-    *   **Employer:** Company onboarding, employee management, and a dashboard.
-    *   **Admin:** Verification of employers/employees, review of risk scores, and management of disbursements.
-5.  **Risk Scoring:** An automated system to calculate a Credit Risk Score (CRS).
-6.  **Integrations:** Mock integrations for mobile money providers; live integration for Google OAuth.
-7.  **File Storage:** Use local file storage for KYC documents.
-8.  **Design:** A modern, content-rich, African-fintech aesthetic with a green color scheme and a dark/light theme, consistent across all pages.
+4.  **Core Employee Functionality:** A multi-step registration and onboarding flow, KYC document submission, viewing earned wages, requesting advances, and managing their profile.
+5.  **Core Employer Functionality:** A comprehensive, multi-step onboarding and due diligence process to verify the company's identity, operational legitimacy, and financial health. This includes uploading numerous legal and financial documents and selecting a business sector.
+6.  **Admin Functionality:** Verification of employers/employees, review of risk scores, and management of disbursements.
+7.  **Design:** A modern, content-rich, African-fintech aesthetic with a green color scheme and a dark/light theme, consistent across all pages.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application with a FastAPI backend and a React frontend. The application features a polished marketing website, JWT and Google OAuth authentication, and a comprehensive, user-approved 7-step employee KYC onboarding flow.
-
-The onboarding process now includes mandatory document uploads (ID, proof of address, payslips), dynamic mobile money provider selection based on country, and a streamlined Employment Details step. Several user-requested business logic changes (e.g., making fields mandatory, updating marketing text) have been implemented. The application's design follows a modern glass-morphism aesthetic, which is established in the public-facing pages and the new onboarding flow.
+A full-stack application with a FastAPI backend and React frontend. The application features JWT and Google OAuth authentication, a complete 7-step employee KYC onboarding flow, and a fully redesigned employee-facing dashboard. The employee section includes a dashboard, advance requests, transaction history, and a feature-rich settings page with editable profile information, profile picture uploads, in-app content viewers for legal documents, biometric authentication setup, a change password modal, and functional notifications.
 
 **Last working item**:
-- **Last item agent was working:** The agent acknowledged a new user request to add an Employment Contract upload field to the onboarding flow and to completely redesign the main employee dashboard pages (, , , ) to match the new, mobile-first theme of the onboarding flow.
+- **Last item agent was working:** The agent acknowledged a new list of user feedback and requirements after completing the employee dashboard redesign. The user reported several minor UI/UX issues and requested the development of the entire Employer Onboarding portal.
 - **Status:** NOT STARTED
 - **Agent Testing Done:** N
-- **Which testing method agent to use?** Both. The contract upload requires frontend and backend work. The dashboard redesign is a major frontend task that would benefit from the frontend testing agent to ensure consistency and functionality across multiple pages.
+- **Which testing method agent to use?** Both. Frontend testing agent for the UI fixes and the new Employer portal. Backend testing agent for the employer onboarding API endpoints and logic.
 - **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
-- **Issue 1:** Add Employment Contract upload to onboarding and redesign the employee dashboard pages (Priority: P0 - HIGHEST)
-- **Issue 2:** Implement scroll-to-top on footer link click (Priority: P2)
+-   **Issue 1:** The logout button in the settings page is red and should match the app's green theme. (Priority: P0 - HIGHEST)
+-   **Issue 2:** The green gradient on the settings page icons does not match the gradient of the Get Started button on the website. (Priority: P0)
+-   **Issue 3:** The notifications panel does not populate correctly on mobile screen sizes. (Priority: P0)
+-   **Issue 4:** Change password functionality is not fully implemented on the backend. (Priority: P1)
+-   **Issue 5:** Contact Support modal is not functional. (Priority: P1)
+-   **Issue 6:** Help Centre content is not implemented. (Priority: P1)
+-   **Issue 7:** Terms and Privacy content is not implemented. (Priority: P1)
+-   **Issue 8:** Verify the scroll-to-top on footer link click fix with the user. (Priority: P2)
 
 **Issues Detail:**
-- **Issue 1:** Add Employment Contract upload & Redesign Employee Dashboard
-    - **Attempted fixes:** None. This is a new feature request.
-    - **Next debug checklist:**
-        1.  **Backend ():** Add an  field to the user model and create a new file upload endpoint () to handle the upload to the  directory.
-        2.  **Frontend ():** In step 6 (Employment Details), add a new file upload component for the Employment Contract and make it a required field in the  logic.
-        3.  **Frontend (Dashboard Redesign):** Identify the main layout and the individual page components for the employee dashboard (, , , ). Re-implement their UI using the established glass-morphism theme, reusing styles and components from the  for consistency.
-    - **Why fix this issue and what will be achieved with the fix?** This addresses a core business requirement (contract upload) and a critical UX need to create a visually unified application for the employee user.
-    - **Status:** NOT STARTED
-    - **Is recurring issue?** N
-    - **Should Test frontend/backend/both after fix?** Both
-    - **Blocked on other issue:** None
+-   **Issue 1-3 (UI Fixes):**
+    -   **Attempted fixes:** None. These are new issues reported by the user.
+    -   **Next debug checklist:**
+        1.  **Logout Button ():** Modify the TailwindCSS classes of the logout button to use the green color scheme.
+        2.  **Icon Gradients ():** Adjust the CSS gradient of the icons to match the one used in .
+        3.  **Mobile Notifications (, ):** Investigate the CSS for the notifications panel. It is likely a responsiveness issue (e.g., hidden on small screens, incorrect positioning). Adjust the classes to ensure it displays correctly on mobile.
+    -   **Why fix this issue and what will be achieved with the fix?** To achieve the polished and consistent UI/UX the user has repeatedly requested.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** Y (Part of the general UI dissatisfaction theme).
+    -   **Should Test frontend/backend/both after fix?** Frontend
 
-- **Issue 2:** Implement scroll-to-top on footer link click
-    - **Attempted fixes:** The previous agent performed a superficial check, saw a handler function in , and incorrectly assumed the feature was implemented. It was not tested or verified.
-    - **Next debug checklist:** Edit  and ensure the  function (which calls ) is correctly assigned to the  event of all  components.
-    - **Why fix this issue and what will be achieved with the fix?** A minor but frequently requested UX improvement for website navigation.
-    - **Status:** NOT STARTED
-    - **Is recurring issue?** Y
-    - **Should Test frontend/backend/both after fix?** Frontend
-    - **Blocked on other issue:** None
+-   **Issue 4-7 (Settings Page Functionality):**
+    -   **Attempted fixes:** The agent built the frontend modals and UI for these features, but the backend logic or content is missing.
+    -   **Next debug checklist:**
+        1.  **Change Password ():** Create a new endpoint (e.g., ) that validates the current password and updates it.
+        2.  **Contact Support ():** The modal is present but needs to be hooked up to a support system or display static contact info.
+        3.  **Help/Terms ():** The expandable sections are present but need to be populated with the actual FAQ and legal text.
+    -   **Why fix this issue and what will be achieved with the fix?** To make the settings page fully functional as requested.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both
+
+-   **Issue 8 (Footer Scroll):**
+    -   **Attempted fixes:** The agent implemented a fix and the testing agent verified it works.
+    -   **Next debug checklist:** Await user confirmation.
+    -   **Status:** USER VERIFICATION PENDING
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Frontend
+    -   **Blocked on other issue:** None
 
 **In progress Task List**:
-There are no tasks currently in progress.
+None. The previous tasks were completed, and the agent is about to start on the new list of issues and the employer portal.
 
 **Upcoming and Future Tasks**
 *   **Upcoming Tasks:**
+    *   **P0:** Build the Employer Onboarding Portal. This is a major new feature with a detailed, multi-step due diligence process. The UI should copy the look and feel of the Employee portal.
     *   **P1:** Build the UI and logic for the Admin KYC Review page ().
     *   **P2:** Implement the Risk Scoring calculator on the Admin Risk Scoring page ().
 *   **Future Tasks:**
-    *   Implement Biometric Face Scan functionality.
     *   Implement Apple Login functionality.
-    *   Flesh out the Employer pages for employee management and payroll.
+    *   Flesh out the post-onboarding Employer pages for employee management and payroll.
     *   Integrate with live Mobile Money APIs.
 
 **Completed work in this session**
-- **Comprehensive KYC Onboarding Flow (DONE):**
-    - Implemented a 7-step onboarding flow with UI for ID, address, tax, employment, and bank/wallet verification.
-    - Created backend endpoints for uploading all required KYC documents (uid=0(root) gid=0(root) groups=0(root), , ) with file type/size validation.
-- **User-Requested Logic Updates (DONE):**
-    - Made Proof of Address, Recent Payslips, Mobile Money, and Bank Account details mandatory in the onboarding flow.
-    - Implemented dynamic population of Mobile Money providers based on the user's selected Country of Work.
-    - Simplified the Employment Details step by removing employer selection fields, deferring this to admin assignment.
-    - Updated the marketing  to display M-PESA instead of Mobile Wallet for relevant countries.
-- **Bug Fix Verification (DONE):** Confirmed with the user that the critical Create Employee Account error was resolved.
+- **Complete Employee Dashboard Redesign:** Fully redesigned , , , and  with a consistent green gradient theme and a new mobile-first navigation layout.
+- **Enhanced Settings Page:** Implemented a feature-rich settings page including:
+    - Profile picture upload and editable personal information.
+    - A functional Biometric/Face ID Scan modal.
+    - In-app, scrollable viewers for Help Center, Terms, and Privacy.
+    - A functional Contact Support modal.
+    - A modal for changing passwords.
+    - A functional notifications panel accessible from the dashboard header.
+- **Bug Fixes:**
+    - Resolved the circular loop on the Request Advance page by showing a Verification in progress status.
+    - Fixed the text overlay issue on the dashboard's Available Earnings counter.
 
 **Earlier issues found/mentioned but not fixed**
-- **Issue 1:** The scroll-to-top on footer link click feature has been requested multiple times but remains unimplemented due to being deprioritized and incorrectly assessed as fixed in the last session.
-    - **Debug checklist:** Add an  handler to the  components in .
-    - **Why to solve this issue and what will be achieved with this?** It's a standard, expected UX improvement.
-    - **Should Test frontend/backend/both after fix:** Frontend
-    - **Is recurring issue?** Y
+None.
 
 **Known issue recurrence from previous fork**
-- **Issue recurrence in previous fork:** User dissatisfaction with the UI of the auth pages.
-- **Recurrence count:** 2
-- **Status:** RESOLVED. The user has approved the current glass-morphism design.
+- **Issue recurrence in previous fork:** User dissatisfaction with the application's UI. This is a recurring theme. The agent implements a design, and the user provides further specific feedback to refine it.
+- **Recurrence count:** 4
+- **Status:** IN PROGRESS. The agent is about to address the latest round of UI feedback.
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-*   **Backend:** FastAPI, File Handling ()
-*   **Frontend:** React, 
+*   **Backend:** FastAPI, Pydantic, File Handling ()
+*   **Frontend:** React, , State Management (useState, useEffect), TailwindCSS
 *   **Database:** MongoDB
-*   **Styling:** TailwindCSS
 *   **Authentication:** JSON Web Tokens (JWT), Emergent-managed Google OAuth
 *   **API Client:** Axios
 
 **key DB schema**
 *   **users:** 
+*   **employers:** (To be created) 
 
 **changes in tech stack**
-*   No new libraries were added, but the backend now heavily relies on the  library (a FastAPI dependency) for handling file uploads.
+*   None.
 
 **All files of reference**
-*   **/app/frontend/src/pages/employee/OnboardingPage.jsx**: Core file for the entire KYC flow. Contains the logic for the 7 steps, state management, and all UI components. Will need to be modified for the Employment Contract upload.
-*   **/app/backend/server.py**: Contains all backend logic, including Pydantic models for user data, file upload endpoints, and the main registration/KYC update routes.
-*   **/app/frontend/src/pages/marketing/LandingPage.jsx**: Updated for marketing text changes.
-*   **/app/frontend/src/constants/index.js**: New file created to hold shared constants like .
+*   **/app/frontend/src/pages/employee/Settings.jsx**: Needs UI fixes for the logout button and icon gradients, and backend integration for password changes.
+*   **/app/frontend/src/components/employee/EmployeePageLayout.jsx**: The notification panel logic/styling needs to be debugged for mobile here.
+*   **/app/frontend/src/pages/marketing/LandingPage.jsx**: The primary design reference for colors and gradients.
+*   **/app/backend/server.py**: Needs new models and endpoints for the Employer Onboarding flow.
+*   **/app/frontend/src/pages/employee/OnboardingPage.jsx**: Can be used as a template for the new multi-step Employer Onboarding UI.
 
 **Areas that need refactoring**:
-*   **Employee Dashboard Pages:** The user has explicitly stated that the employee dashboard pages (, , , ) are visually outdated. They must be redesigned to match the modern theme of the onboarding flow. This is now a high-priority task.
-*   **Admin/Employer Dashboards:** These pages remain visually inconsistent with the rest of the application and are technical debt for a future task.
+*   The notifications display logic in  or  needs to be refactored to be mobile-responsive.
 
 **key api endpoints**
 *   
 *   
-*   
-*   
-*   
+*    (to be created)
+*    (to be created)
 
 **Critical Info for New Agent**
-*   **Your highest priority (P0) is to implement the user's latest request.** This has two parts:
-    1.  Add an Employment Contract file upload to the Employment Details step of the onboarding flow.
-    2.  Completely redesign the employee dashboard pages (, , , ) to match the application's new glass-morphism aesthetic. This is a critical UI/UX task.
-*   **Maintain the approved visual style.** All new UI components must adhere to the existing design language established in .
-*   **Your second priority (P2) is to properly fix the recurring scroll-to-top on footer link click issue.** Do not assume it is fixed without verification.
+*   **Your highest priorities (P0) are the small UI fixes reported in the last user message.** Address the logout button color, icon gradients, and mobile notification panel immediately. This will help build user trust.
+*   **Your next major task is to build the Employer Onboarding portal.** This is a large, multi-step feature. The user has provided extremely detailed requirements for the data to be collected.
+*   **Follow the existing design patterns.** The user wants the Employer portal to have the same look, feel, requirements as the Employee interface. Use the recently redesigned employee pages as your direct reference.
+*   **Plan the employer portal carefully.** Start by defining the new MongoDB schema and FastAPI endpoints in  before building the frontend. This will be a complex, multi-part form.
+*   **Be mindful of the recurring UI feedback loop.** The user has a very specific aesthetic in mind. Proactively reference  for all design choices to minimize rework.
 
 **documents and test reports created in this job**
-*   
+*    (updated)
 *   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (LATEST):** Requested adding an Employment Contract upload to onboarding and a complete redesign of the employee dashboard pages to match the new theme. **STATUS: NOT STARTED.**
-2.  **Agent:** Confirmed completion of previous batch of user requests.
-3.  **User:** Provided a list of business logic changes: update Mobile Wallet to M-PESA, make Proof of Address and payment methods mandatory, and dynamically populate mobile money providers. **STATUS: COMPLETED.**
-4.  **Agent:** Confirmed completion of the Employment Details simplification.
-5.  **User:** Requested removing employer/code/department fields from onboarding and making payslips compulsory. **STATUS: COMPLETED.**
-6.  **Agent:** Finished the initial implementation of the comprehensive KYC feature.
-7.  **Agent:** Invoked the testing agent, which passed successfully.
-8.  **User:** Confirmed the Create Employee Account bug is resolved and approved using local storage for KYC documents. **STATUS: RESOLVED.**
+1.  **User (LATEST):** Provided a detailed list of UI fixes (red logout button, icon gradients, mobile notifications) and a comprehensive set of requirements for a new multi-step Employer Onboarding portal, including all required documents and a list of business sectors. **STATUS: NOT STARTED.**
+2.  **Agent:** Finished implementing the biometric scan feature and updated the PRD.
+3.  **User:** Clicked to test the biometric scan. **STATUS: ADDRESSED.**
+4.  **Agent:** Implemented the in-app, scrollable view for Terms & Privacy.
+5.  **User:** Clicked to test the Terms & Privacy section. **STATUS: ADDRESSED.**
+6.  **Agent:** Implemented a functional notifications panel on the dashboard.
+7.  **User:** Clicked to test the Change Password modal. **STATUS: ADDRESSED.**
+8.  **Agent:** Implemented the Change Password modal UI.
+9.  **User:** Clicked to test the Contact Support modal. **STATUS: ADDRESSED.**
+10. **Agent:** Implemented the in-app Contact Support modal.
 
 **Project Health Check:**
-*   **Broken:** No critical functionality is broken.
-*   **Mocked:** Mobile money API integrations, Apple Login, Face ID Login, and all employer-side payroll functionality.
-*   **User Dissatisfaction:** The user has explicitly pointed out that the employee dashboard's UI is outdated and inconsistent, which has now become the highest priority task.
+*   **Broken:** The notifications panel is not responsive and does not work on mobile.
+*   **Mocked:** Mobile money API integrations, Apple Login, and all employer-side payroll functionality. The Biometric Scan is a UI mock and does not perform a real scan.
+*   **User Dissatisfaction:** Moderate. The user is pleased with the recent feature additions but has a precise eye for UI details that are not yet perfect. The main source of potential dissatisfaction will be the time and accuracy required for the large employer portal build.
 
 **3rd Party Integrations**
 *   
@@ -156,7 +164,7 @@ There are no tasks currently in progress.
 *    (for Emergent-managed Google OAuth)
 
 **Testing status**
-- **Testing agent used after significant changes:** YES, for the initial KYC flow implementation.
+- **Testing agent used after significant changes:** YES. The agent successfully used it to validate the complete employee dashboard redesign. It will be critical for testing the upcoming employer portal.
 - **Troubleshoot agent used after agent stuck in loop:** NO
 - **Test files created:** None
 - **Known regressions:** None.
@@ -168,4 +176,4 @@ There are no tasks currently in progress.
 *   **Employee Password:** 
 
 **What agent forgot to execute**
-*   The agent failed to properly implement or verify the scroll-to-top on footer link click feature. It performed a superficial code check, incorrectly assumed it was fixed, and did not test it. This recurring low-priority task remains outstanding.</analysis>
+The agent implemented several new features on the settings page but did not fully complete the backend logic for all of them (e.g., Change Password) or populate them with content (Help Center, Terms). The notifications panel was built but not tested for mobile responsiveness, resulting in a bug.</analysis>
