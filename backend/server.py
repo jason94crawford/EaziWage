@@ -22,8 +22,10 @@ load_dotenv(ROOT_DIR / '.env')
 # Upload directory setup
 UPLOAD_DIR = ROOT_DIR / "uploads"
 KYC_UPLOAD_DIR = UPLOAD_DIR / "kyc"
+PROFILE_UPLOAD_DIR = UPLOAD_DIR / "profiles"
 UPLOAD_DIR.mkdir(exist_ok=True)
 KYC_UPLOAD_DIR.mkdir(exist_ok=True)
+PROFILE_UPLOAD_DIR.mkdir(exist_ok=True)
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
