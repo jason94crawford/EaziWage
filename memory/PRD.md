@@ -192,6 +192,7 @@ Both onboarding flows feature:
 - Policy Pages Update (Feb 2026): **100%** - Cookie/Data Policy removed from footer, all 5 policy pages now have sidebar TOC matching Terms of Service
 - Employee Portal Redesign (Feb 2026): **100%** - All 4 pages (Dashboard, Request Advance, Transactions, Settings) tested and passing with light/dark mode
 - Auth Pages Redesign V3 (Feb 2026): **100%** - Login and Register pages match hero section (gradient-mesh, bg-grid, text-gradient, glass-card, gradient logo and button)
+- Auth Pages V4 + Onboarding (Feb 2026): **100%** - 14 backend + 10 frontend tests passing. Centered logo, Employee/Employer toggle, Google OAuth (functional), Apple/FaceID (MOCKED placeholders), multi-step onboarding with terms validation
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
