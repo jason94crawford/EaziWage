@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Eye, EyeOff, Lock, Check, Sparkles, User, Mail, Building2, Search, X, Phone, AlertTriangle } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Lock, Check, Sparkles, User, Mail, Building2, Search, X, Phone, AlertTriangle, ChevronDown } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Alert, AlertDescription } from '../../components/ui/alert';
@@ -9,6 +9,14 @@ import { useTheme } from '../../lib/ThemeContext';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Supported countries with dialing codes
+const DIALING_CODES = [
+  { code: 'KE', name: 'Kenya', dialCode: '+254', flag: '🇰🇪' },
+  { code: 'TZ', name: 'Tanzania', dialCode: '+255', flag: '🇹🇿' },
+  { code: 'UG', name: 'Uganda', dialCode: '+256', flag: '🇺🇬' },
+  { code: 'RW', name: 'Rwanda', dialCode: '+250', flag: '🇷🇼' },
+];
 
 // Create a fresh axios instance without interceptors for auth
 const authAxios = axios.create({
@@ -30,6 +38,11 @@ export default function RegisterPage() {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Mobile number state
+  const [mobileNumber, setMobileNumber] = useState('');
+  const [selectedDialCode, setSelectedDialCode] = useState(DIALING_CODES[0]);
+  const [showDialCodeDropdown, setShowDialCodeDropdown] = useState(false);
   
   // Company search modal state
   const [showCompanySearch, setShowCompanySearch] = useState(false);
@@ -95,8 +108,15 @@ export default function RegisterPage() {
   };
 
   const handleSubmit = useCallback(async () => {
-    if (!fullName || !email || !password) {
+    if (!fullName || !email || !password || !mobileNumber) {
       setError('Please fill in all required fields');
+      return;
+    }
+
+    // Validate mobile number (at least 9 digits)
+    const cleanedNumber = mobileNumber.replace(/\D/g, '');
+    if (cleanedNumber.length < 9) {
+      setError('Please enter a valid mobile number');
       return;
     }
 
@@ -127,10 +147,12 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
+      const fullMobileNumber = `${selectedDialCode.dialCode}${mobileNumber.replace(/\D/g, '')}`;
       const payload = { 
         full_name: fullName, 
         email, 
-        phone: '',
+        phone: fullMobileNumber,
+        phone_country_code: selectedDialCode.code,
         password, 
         role: accountType,
         company_code: accountType === 'employee' ? companyCode : '',
@@ -162,7 +184,7 @@ export default function RegisterPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [fullName, email, companyCode, companyName, password, agreedToTerms, accountType, navigate, noCompanyFound, referralEmployerName, referralEmployerEmail, referralEmployerPhone]);
+  }, [fullName, email, companyCode, companyName, password, agreedToTerms, accountType, navigate, noCompanyFound, referralEmployerName, referralEmployerEmail, referralEmployerPhone, mobileNumber, selectedDialCode]);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
