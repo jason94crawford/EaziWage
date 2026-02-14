@@ -1,36 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight, Eye, EyeOff, Mail, Lock, AlertCircle, Wallet, Zap, Shield, ChevronRight } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { login } from '../../lib/auth';
-import { useTheme } from '../../lib/ThemeContext';
-import { toast } from 'sonner';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 export default function LoginPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  // const { theme } = useTheme();  // Disabled for debugging
 
-  const handleSubmit = async (e) => {
-    console.log('handleSubmit called');
-    if (e) e.preventDefault();
+  const handleSubmit = useCallback(async () => {
+    if (!email || !password) {
+      setError('Please enter email and password');
+      return;
+    }
+    
     setError('');
     setIsLoading(true);
 
     try {
-      console.log('Calling login with:', formData.email);
-      const result = await login(formData.email, formData.password);
-      console.log('Login result:', result);
-      setIsLoading(false);
+      const response = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (result.success) {
-        const user = result.user;
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('eaziwage_token', data.access_token);
+        localStorage.setItem('eaziwage_user', JSON.stringify(data.user));
+        
+        const user = data.user;
         switch (user.role) {
           case 'admin':
             navigate('/admin');
@@ -45,17 +55,18 @@ export default function LoginPage() {
             navigate('/');
         }
       } else {
-        const errorMessage = result.error || 'Login failed. Please check your credentials.';
-        console.log('Setting error:', errorMessage);
-        setError(errorMessage);
-        // toast.error(errorMessage);  // Temporarily disabled for debugging
+        setError(data.detail || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      console.error('handleSubmit error:', err);
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
       setIsLoading(false);
-      const errorMessage = 'An unexpected error occurred. Please try again.';
-      setError(errorMessage);
-      // toast.error(errorMessage);  // Temporarily disabled for debugging
+    }
+  }, [email, password, navigate]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
     }
   };
 
@@ -189,7 +200,7 @@ export default function LoginPage() {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} action="#" className="space-y-6">
+            <div className="space-y-6">
               <div>
                 <Label htmlFor="email" className="text-slate-700 dark:text-slate-300 font-medium">
                   Email address
@@ -201,9 +212,9 @@ export default function LoginPage() {
                     type="email"
                     placeholder="you@company.com"
                     className="pl-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     data-testid="login-email"
                   />
                 </div>
@@ -225,9 +236,9 @@ export default function LoginPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     className="pl-12 pr-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     data-testid="login-password"
                   />
                   <button
@@ -260,7 +271,7 @@ export default function LoginPage() {
                   </span>
                 )}
               </Button>
-            </form>
+            </div>
 
             <div className="relative my-8">
               <div className="absolute inset-0 flex items-center">
