@@ -166,6 +166,9 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 
 ## Notes
 - Marketing pages now have rich content, not minimalistic
-- Green theme (#16A34A) maintained consistently
-- Dark/Light mode toggle in navigation header
+- Green theme (#16A34A for marketing, #0df259 for employee portal) maintained consistently
+- Dark/Light mode toggle in navigation header and employee settings
 - ThemeProvider wraps entire app in index.js
+- Employee portal uses mobile-first design with bottom navigation
+- Dark mode colors: Background #102216, Cards #1A2C20
+- Light mode colors: Background #f5f8f6, Cards white
