@@ -11,7 +11,7 @@ import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { employeeApi, employerApi, utilityApi, kycApi } from '../../lib/api';
+import { employeeApi, employerApi, kycApi } from '../../lib/api';
 import { EMPLOYMENT_TYPES } from '../../lib/utils';
 import { toast } from 'sonner';
 import { useTheme } from '../../lib/ThemeContext';
