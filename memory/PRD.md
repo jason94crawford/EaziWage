@@ -61,15 +61,18 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 - ✅ **Sidebar Navigation (Desktop)** - Dashboard, Request Advance, Transaction History, Documents & KYC, Settings
 - ✅ **Mobile/Tablet Responsive** - Tested at 414px (iPhone XR) viewport
 
-### Authentication Pages (REDESIGNED - Feb 2026)
-Login and Registration pages completely redesigned with mobile-first centered layout matching the stitch screenshots:
+### Authentication Pages (REDESIGNED V3 - Feb 2026)
+Login and Registration pages completely redesigned to match the home page hero section aesthetic:
 
-- ✅ **Login Page** (/login) - Mobile-first centered design (max-w-md), dark green background (#102216), EaziWage branding header, "Welcome Back" headline, email/password inputs with icons, password visibility toggle, "Forgot Password?" link, bright green (#0df259) pill-shaped "Log In" button with glow shadow, "Log in with Face ID" option, "New to EaziWage? Create Account" footer link, bottom home indicator
-- ✅ **Registration Page** (/register) - Mobile-first centered design, "Access your wages, anytime" headline, form fields: Full Name, Work Email, Company Code (with "Find my code" helper), Password with visibility toggle, Terms & Privacy checkbox, "Create Account" button, "Bank-grade 256-bit encryption" security indicator, "Already have an account? Log in" footer
-- ✅ **Color Theme** - Dark mode: #102216 (background), #0df259 (primary green), #1a2e22 (input surface), matches website homepage
-- ✅ **Error Handling** - Custom axios instance (authAxios) without interceptors to prevent 401 redirect loops, proper error state display
-- ✅ **Form State Retention** - Form values preserved after failed submission
-- ✅ **Navigation** - Back arrow returns to homepage, bidirectional links between Login/Register
+- ✅ **Login Page** (/login) - Hero section styling with gradient-mesh background, bg-grid pattern overlay, blurred green orbs, gradient logo (from-primary to-emerald-600), "Sign In to Your Account" with text-gradient on "Account", glass-card form container with backdrop-blur, gradient "Sign In" button with arrow icon and btn-glow effect, theme toggle in header
+- ✅ **Registration Page** (/register) - Matching hero aesthetic, "Get Started with EaziWage" headline with text-gradient, "Join 50,000+ workers" badge, form fields with icons (User, Mail, Building2), "Bank-grade 256-bit encryption" security note
+- ✅ **Visual Elements Match Hero** - gradient-mesh, bg-grid, text-gradient, glass-card CSS classes from index.css
+- ✅ **Logo** - Gradient background (from-primary to-emerald-600) with shadow and hover glow effect
+- ✅ **Typography** - Plus Jakarta Sans for headings (font-heading class)
+- ✅ **Error Handling** - Custom axios instance (authAxios) without interceptors to prevent 401 redirect loops
+- ✅ **Form Validation** - Empty fields, password length, terms agreement
+- ✅ **Dark/Light Mode** - Theme toggle works, gradient backgrounds adapt to both modes
+- ✅ **Navigation** - Logo click returns to homepage, bidirectional links between Login/Register
 
 **Test Employee Account**: demo.employee@eaziwage.com / Employee@123
 
