@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
-  HelpCircle, Wallet, Info, ChevronDown,
+  HelpCircle, Wallet, Info, ChevronDown, Clock,
   Building2, Smartphone, CheckCircle2, Zap, ArrowRight
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
