@@ -18,7 +18,7 @@ export default function LoginPage() {
   const { theme } = useTheme();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setError('');
     setIsLoading(true);
 
