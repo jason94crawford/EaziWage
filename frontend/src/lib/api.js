@@ -72,8 +72,13 @@ export const advanceApi = {
 // KYC APIs
 export const kycApi = {
   uploadDocument: (data) => api.post('/kyc/documents', data),
+  uploadFile: (formData) => api.post('/kyc/upload', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
   listDocuments: (params) => api.get('/kyc/documents', { params }),
   reviewDocument: (id, status, notes) => api.patch(`/kyc/documents/${id}/review`, null, { params: { status, notes } }),
+  getKycStatus: () => api.get('/employees/me/kyc-status'),
+  updateKycStep: (step) => api.patch('/employees/me/kyc-step', null, { params: { step } }),
 };
 
 // Risk Score APIs
