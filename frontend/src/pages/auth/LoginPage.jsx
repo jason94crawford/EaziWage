@@ -7,6 +7,7 @@ import { Label } from '../../components/ui/label';
 import { Alert, AlertDescription } from '../../components/ui/alert';
 import { login } from '../../lib/auth';
 import { useTheme } from '../../lib/ThemeContext';
+import { toast } from 'sonner';
 
 export default function LoginPage() {
   const navigate = useNavigate();
