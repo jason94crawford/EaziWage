@@ -290,8 +290,8 @@ export default function EmployerAdvances() {
         {/* Info Card */}
         <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-              <Zap className="w-6 h-6 text-blue-600" />
+            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+              <Zap className="w-6 h-6 text-white" />
             </div>
             <div>
               <h3 className="font-semibold text-blue-900 dark:text-blue-200">How Advances Work</h3>
