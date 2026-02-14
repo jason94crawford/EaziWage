@@ -29,6 +29,7 @@ import EmployeeOnboarding from "./pages/employee/Onboarding";
 import RequestAdvance from "./pages/employee/RequestAdvance";
 import EmployeeTransactions from "./pages/employee/Transactions";
 import EmployeeKYC from "./pages/employee/KYC";
+import EmployeeSettings from "./pages/employee/Settings";
 
 // Employer Pages
 import EmployerDashboard from "./pages/employer/Dashboard";
@@ -141,7 +142,12 @@ function App() {
           } />
           <Route path="/employee/profile" element={
             <ProtectedRoute allowedRoles={['employee']}>
-              <PlaceholderPage title="Profile" description="Manage your profile settings" />
+              <EmployeeSettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/employee/settings" element={
+            <ProtectedRoute allowedRoles={['employee']}>
+              <EmployeeSettings />
             </ProtectedRoute>
           } />
 
