@@ -67,6 +67,7 @@ export const userApi = {
   uploadProfilePicture: (formData) => api.post('/users/me/profile-picture', formData, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
+  changePassword: (data) => api.post('/users/me/change-password', data),
 };
 
 // Advance APIs
