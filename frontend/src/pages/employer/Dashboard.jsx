@@ -101,12 +101,12 @@ const MainStatsCard = ({ stats, employer }) => {
   );
 };
 
-// Metric Card with Gradient
-const MetricCard = ({ icon: Icon, label, value, subtext, trend, trendUp, iconBg, iconColor }) => (
+// Metric Card with solid green icon
+const MetricCard = ({ icon: Icon, label, value, subtext, trend, trendUp }) => (
   <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/50 dark:border-slate-700/30 hover:shadow-lg transition-all duration-300 group">
     <div className="flex items-start justify-between mb-3">
-      <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", iconBg)}>
-        <Icon className={cn("w-6 h-6", iconColor)} />
+      <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+        <Icon className="w-6 h-6 text-white" />
       </div>
       {trend && (
         <div className={cn(
