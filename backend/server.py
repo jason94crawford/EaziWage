@@ -47,6 +47,7 @@ class UserBase(BaseModel):
     phone: str
     full_name: str
     role: str
+    phone_country_code: Optional[str] = None
 
 class UserCreate(UserBase):
     password: str
