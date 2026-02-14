@@ -496,8 +496,9 @@ export default function EmployeeOnboarding() {
         return true; // Can skip
       }
       case 5: {
-        // Employment - job title, type, salary, and at least one payslip required
-        return formData.job_title && formData.employment_type && formData.monthly_salary && uploadedFiles.payslip_1;
+        // Employment - job title, type, salary, at least one payslip, and employment contract required
+        return formData.job_title && formData.employment_type && formData.monthly_salary && 
+               uploadedFiles.payslip_1 && uploadedFiles.employment_contract;
       }
       case 6: {
         // Payment - need mobile money AND bank account (both mandatory)
