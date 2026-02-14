@@ -48,14 +48,14 @@ export default function LoginPage() {
         const errorMessage = result.error || 'Login failed. Please check your credentials.';
         console.log('Setting error:', errorMessage);
         setError(errorMessage);
-        toast.error(errorMessage);
+        // toast.error(errorMessage);  // Temporarily disabled for debugging
       }
     } catch (err) {
       console.error('handleSubmit error:', err);
       setIsLoading(false);
       const errorMessage = 'An unexpected error occurred. Please try again.';
       setError(errorMessage);
-      toast.error(errorMessage);
+      // toast.error(errorMessage);  // Temporarily disabled for debugging
     }
   };
 
