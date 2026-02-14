@@ -290,7 +290,20 @@ export default function EmployeeOnboarding() {
       toast.success('Profile created successfully!');
       navigate('/employee');
     } catch (err) {
-      setError(err.response?.data?.detail || 'Failed to create profile');
+      let errorMessage = 'Failed to create profile';
+      
+      const detail = err.response?.data?.detail;
+      if (detail) {
+        if (typeof detail === 'string') {
+          errorMessage = detail;
+        } else if (Array.isArray(detail)) {
+          errorMessage = detail.map(e => e.msg || e.message || JSON.stringify(e)).join(', ');
+        } else if (typeof detail === 'object' && detail.msg) {
+          errorMessage = detail.msg;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
