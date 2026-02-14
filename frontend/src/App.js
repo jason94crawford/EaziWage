@@ -17,6 +17,7 @@ import BlogPage from "./pages/marketing/BlogPage";
 import PrivacyPolicyPage from "./pages/marketing/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/marketing/TermsOfServicePage";
 import CalculatorPage from "./pages/marketing/CalculatorPage";
+import LegalPolicyPage from "./pages/marketing/LegalPolicyPage";
 
 // Auth Pages
 import LoginPage from "./pages/auth/LoginPage";
@@ -99,6 +100,14 @@ function App() {
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsOfServicePage />} />
           <Route path="/calculator" element={<CalculatorPage />} />
+          
+          {/* Legal Policy Routes */}
+          <Route path="/data-policy" element={<LegalPolicyPage />} />
+          <Route path="/abc-policy" element={<LegalPolicyPage />} />
+          <Route path="/code-of-ethics" element={<LegalPolicyPage />} />
+          <Route path="/gifts-policy" element={<LegalPolicyPage />} />
+          <Route path="/aml-cft-policy" element={<LegalPolicyPage />} />
+          <Route path="/whistleblowing-policy" element={<LegalPolicyPage />} />
 
           {/* Auth Routes */}
           <Route path="/login" element={<LoginPage />} />
