@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Users, Search, Download, Plus, Filter, TrendingUp, UserCheck, Clock,
   ChevronRight, MoreHorizontal, Eye, Settings, CreditCard, AlertCircle,
-  CheckCircle2, XCircle, Percent, Calendar, Building2, Mail, Phone
+  CheckCircle2, XCircle, Percent, Calendar, Building2, Mail, Phone, Globe
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -17,6 +17,7 @@ import { EmployerPortalLayout } from '../../components/employer/EmployerLayout';
 import { employeeApi, employerApi, dashboardApi } from '../../lib/api';
 import { formatCurrency, cn } from '../../lib/utils';
 import { toast } from 'sonner';
+import { GradientIconBox, GradientAvatar, currencies, countries } from '../../components/employer/SharedComponents';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
