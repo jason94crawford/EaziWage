@@ -271,22 +271,8 @@ export default function PartnersPage() {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 sm:gap-6">
             {currentPartners.map((partner, i) => (
               <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 text-center border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-all group">
-                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${partner.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4 p-2 sm:p-3 overflow-hidden`}>
-                  <img 
-                    src={partner.logo} 
-                    alt={`${partner.name} logo`}
-                    className="w-full h-full object-contain"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'flex';
-                    }}
-                  />
-                  <span 
-                    className="text-xl sm:text-2xl font-bold text-primary hidden items-center justify-center"
-                    style={{ display: 'none' }}
-                  >
-                    {partner.name.charAt(0)}
-                  </span>
+                <div className={`w-16 h-16 sm:w-20 sm:h-20 ${partner.bgColor} rounded-2xl flex items-center justify-center mx-auto mb-3 sm:mb-4`}>
+                  <span className="text-white font-bold text-lg sm:text-xl">{partner.initial}</span>
                 </div>
                 <h3 className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white">{partner.name}</h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">{partner.type}</p>
