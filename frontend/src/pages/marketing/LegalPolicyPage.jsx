@@ -184,35 +184,51 @@ const policies = {
   'aml-cft-policy': {
     title: 'AML & CFT Policy',
     icon: AlertTriangle,
-    lastUpdated: 'December 2025',
+    lastUpdated: 'October 2025',
     content: [
       {
-        heading: '1. Introduction',
-        text: 'EaziWage is committed to preventing money laundering and terrorist financing. This policy outlines our approach to Anti-Money Laundering (AML) and Combating the Financing of Terrorism (CFT) in compliance with the Proceeds of Crime and Anti-Money Laundering Act of Kenya and international standards.'
+        heading: '1. Policy Statement',
+        text: 'EaziWage Holdings Limited ("the Firm") and its associated companies (the "Group") are fully committed to preventing the misuse of its operations, products, and services for money laundering, terrorist financing, or other financial crimes. The Firm maintains a zero-tolerance stance against financial crime and shall comply with: Proceeds of Crime and Anti-Money Laundering Act (POCAMLA), No. 9 of 2009; Proceeds of Crime and Anti-Money Laundering Regulations of 2013; Prevention of Terrorism Act of 2012; Guidelines issued by the Financial Reporting Centre (FRC); and CBK Prudential Guidelines on Anti-Money Laundering (CBK/PG/08).'
       },
       {
-        heading: '2. Risk Assessment',
-        text: 'We conduct regular risk assessments to identify and evaluate money laundering and terrorist financing risks. Our services are designed with appropriate controls to mitigate these risks.'
+        heading: '2. Definition of Money Laundering and Terrorism Financing',
+        text: 'Money Laundering (Section 3, POCAMLA): the process of concealing, disguising, converting, transferring, or dealing with the proceeds of crime to make them appear legitimate. Terrorism Financing: providing or collecting funds with the intention that they be used for terrorist acts. Money laundering typically involves three stages: Placement (introducing illicit funds), Layering (concealing origin through complex transactions), and Integration (reintroducing laundered funds into the economy).'
       },
       {
-        heading: '3. Know Your Customer (KYC)',
-        text: 'We verify the identity of all customers before providing services. This includes: collecting and verifying identification documents, understanding the nature and purpose of the business relationship, and ongoing monitoring of customer activity.'
+        heading: '3. Customer Due Diligence (CDD)',
+        text: 'Before establishing any business relationship, the Firm shall: Identify and verify the customer\'s identity using reliable documents (National ID, Passport, Certificate of Incorporation, KRA Pin Certificate); Obtain information on the purpose and intended nature of the relationship; Identify and verify the beneficial owner; Assess the risk profile and/or credit risk of the customer.'
       },
       {
-        heading: '4. Transaction Monitoring',
-        text: 'We monitor all transactions for suspicious activity. Our systems are designed to detect unusual patterns, large transactions, and other indicators of potential money laundering or terrorist financing.'
+        heading: '4. Enhanced Due Diligence (EDD)',
+        text: 'Enhanced due diligence shall be applied to: High-risk customers (e.g., politically exposed persons (PEPs), foreign clients, complex structures); High-value or unusual transactions; Transactions involving jurisdictions with inadequate AML/CFT controls. EDD measures may include obtaining senior management approval, verifying sources of funds, and closer ongoing monitoring.'
       },
       {
-        heading: '5. Suspicious Activity Reporting',
-        text: 'Any suspicious transactions or activities are reported to the Financial Reporting Centre (FRC) as required by law. Employees are trained to recognize and escalate suspicious activity.'
+        heading: '5. Ongoing Monitoring',
+        text: 'Monitor transactions to ensure consistency with the customer\'s profile and expected behaviour. Scrutinize complex, unusual, or large transactions with no apparent lawful purpose. Escalate any inconsistencies to the Chief Executive Officer for further investigation.'
       },
       {
         heading: '6. Record Keeping',
-        text: 'We maintain records of all customer identification information and transaction data for a minimum of seven years as required by law.'
+        text: 'In compliance with Regulation 25 of the POCAMLA Regulations of 2013, the Firm shall maintain: All CDD records and transaction documentation for at least seven (7) years after the end of the business relationship; STRs, CTRs, and internal reports securely for the same duration; Electronic or physical records that are easily retrievable and protected from unauthorized access.'
       },
       {
-        heading: '7. Training',
-        text: 'All relevant employees receive regular AML/CFT training appropriate to their roles and responsibilities.'
+        heading: '7. Reporting Obligations',
+        text: 'Suspicious Transaction Reports: Employees must promptly report any suspicion of money laundering or terrorism financing to the Chief Executive Officer, who will file an STR with the FRC within prescribed timelines. It is a criminal offence under POCAMLA to fail to report suspicious activity. Cash Transaction Reports: The Firm shall submit CTRs to the FRC for all cash transactions exceeding KES 1,000,000 or its foreign currency equivalent. Prohibition on Tipping-Off: No employee shall disclose that an STR has been made or may be made. Breach constitutes an offence under Section 48 of POCAMLA.'
+      },
+      {
+        heading: '8. Risk Assessment',
+        text: 'The Firm shall conduct an AML/CFT risk assessment annually considering: Customer risk (nature of customer, occupation, beneficial ownership); Product/service risk (ease of misuse for laundering); Geographic risk (jurisdictions with weak AML/CFT frameworks); Delivery channel risk (e.g., mobile or digital payments). Greater resources and controls will be allocated to higher-risk areas.'
+      },
+      {
+        heading: '9. Training and Awareness',
+        text: 'The Firm shall provide mandatory AML/CFT training for all employees upon joining and annually thereafter. Specialized training shall be provided to management, compliance teams, and front-line staff. Training topics include red-flag indicators, customer due diligence, recordkeeping, and reporting procedures.'
+      },
+      {
+        heading: '10. Penalties',
+        text: 'Violations of POCAMLA or this Policy may result in: Disciplinary action (including termination); Personal criminal liability (fines up to KES 5 million and/or imprisonment for up to 14 years); Corporate fines or sanctions; Reporting to regulatory or law enforcement agencies.'
+      },
+      {
+        heading: '11. Contact',
+        text: 'For inquiries: info@eaziwage.com or +254 72 315 4900.'
       }
     ]
   },
