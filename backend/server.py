@@ -127,6 +127,14 @@ class EmployeeCreate(BaseModel):
     mobile_money_provider: Optional[str] = None
     mobile_money_number: Optional[str] = None
     country: str  # Country of Work
+    # New KYC fields
+    tax_id: Optional[str] = None  # TIN number
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
+    city: Optional[str] = None
+    postal_code: Optional[str] = None
+    department: Optional[str] = None
+    start_date: Optional[str] = None  # Employment start date
 
 class EmployeeResponse(BaseModel):
     id: str
@@ -149,12 +157,30 @@ class EmployeeResponse(BaseModel):
     status: str = "pending"
     risk_score: Optional[float] = None
     kyc_status: str = "pending"
+    kyc_step: int = 0  # Current onboarding step
     earned_wages: float = 0
     advance_limit: float = 0
     created_at: str
     full_name: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
+    # New KYC fields
+    tax_id: Optional[str] = None
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
+    city: Optional[str] = None
+    postal_code: Optional[str] = None
+    department: Optional[str] = None
+    start_date: Optional[str] = None
+    # KYC document paths
+    id_document_front: Optional[str] = None
+    id_document_back: Optional[str] = None
+    address_proof: Optional[str] = None
+    tax_certificate: Optional[str] = None
+    payslip_1: Optional[str] = None
+    payslip_2: Optional[str] = None
+    bank_statement: Optional[str] = None
+    selfie: Optional[str] = None
 
 # Advance Request Models
 class AdvanceCreate(BaseModel):
