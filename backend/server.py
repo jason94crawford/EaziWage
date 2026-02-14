@@ -397,6 +397,93 @@ async def get_me(user: dict = Depends(get_current_user)):
         is_verified=user.get("is_verified", False)
     )
 
+# Google OAuth Callback
+class GoogleAuthCallback(BaseModel):
+    session_id: str
+    role: str = "employee"
+
+class GoogleAuthResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserResponse
+    is_new_user: bool
+
+@api_router.post("/auth/google/callback", response_model=GoogleAuthResponse)
+async def google_auth_callback(data: GoogleAuthCallback):
+    import httpx
+    
+    try:
+        # Get user data from Emergent Auth
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": data.session_id}
+            )
+            if response.status_code != 200:
+                raise HTTPException(status_code=401, detail="Invalid session")
+            
+            auth_data = response.json()
+    except Exception as e:
+        logger.error(f"Google auth error: {e}")
+        raise HTTPException(status_code=401, detail="Authentication failed")
+    
+    email = auth_data.get("email")
+    name = auth_data.get("name", "")
+    picture = auth_data.get("picture", "")
+    
+    # Check if user exists
+    existing_user = await db.users.find_one({"email": email}, {"_id": 0})
+    is_new_user = False
+    
+    if existing_user:
+        # Existing user - update if needed
+        user_id = existing_user["id"]
+        user_role = existing_user["role"]
+        
+        # Update picture if changed
+        if picture and existing_user.get("picture") != picture:
+            await db.users.update_one(
+                {"id": user_id},
+                {"$set": {"picture": picture}}
+            )
+    else:
+        # New user - create account
+        is_new_user = True
+        user_id = str(uuid.uuid4())
+        user_role = data.role if data.role in ["employee", "employer"] else "employee"
+        
+        user_doc = {
+            "id": user_id,
+            "email": email,
+            "phone": "",
+            "full_name": name,
+            "role": user_role,
+            "picture": picture,
+            "password_hash": "",  # No password for OAuth users
+            "auth_provider": "google",
+            "is_verified": True,  # Google accounts are pre-verified
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(user_doc)
+        existing_user = user_doc
+    
+    # Create token
+    token = create_token(user_id, user_role)
+    
+    return GoogleAuthResponse(
+        access_token=token,
+        user=UserResponse(
+            id=user_id,
+            email=email,
+            phone=existing_user.get("phone", ""),
+            full_name=existing_user.get("full_name", name),
+            role=user_role,
+            created_at=existing_user.get("created_at", datetime.now(timezone.utc).isoformat()),
+            is_verified=True
+        ),
+        is_new_user=is_new_user
+    )
+
 # ======================== EMPLOYER ENDPOINTS ========================
 
 @api_router.post("/employers", response_model=EmployerResponse)
