@@ -95,6 +95,100 @@ class EmployerCreate(BaseModel):
     contact_email: EmailStr
     contact_phone: str
 
+# Enhanced Employer Onboarding Models
+class BeneficialOwner(BaseModel):
+    full_name: str
+    id_number: str
+    ownership_percentage: float
+    nationality: str
+    is_pep: bool = False  # Politically Exposed Person
+
+class EmployerOnboardingCreate(BaseModel):
+    # Step 1: Company Basic Info
+    company_name: str
+    registration_number: str
+    date_of_incorporation: Optional[str] = None
+    country: str
+    
+    # Step 2: Business Address
+    physical_address: str
+    city: str
+    postal_code: Optional[str] = None
+    county_region: Optional[str] = None
+    
+    # Step 3: Tax & Legal
+    tax_id: str
+    vat_number: Optional[str] = None
+    
+    # Step 4: Beneficial Ownership
+    beneficial_owners: Optional[List[Dict[str, Any]]] = None
+    
+    # Step 5: Business Operations
+    industry: str
+    sector: str
+    business_description: Optional[str] = None
+    years_in_operation: Optional[int] = None
+    employee_count: int
+    
+    # Step 6: Financial Info
+    annual_revenue_range: Optional[str] = None
+    payroll_cycle: str
+    monthly_payroll_amount: Optional[float] = None
+    bank_name: Optional[str] = None
+    bank_account_number: Optional[str] = None
+    
+    # Step 7: Contact Info
+    contact_person: str
+    contact_email: EmailStr
+    contact_phone: str
+    contact_position: Optional[str] = None
+    
+    # Document paths (optional - can skip)
+    certificate_of_incorporation: Optional[str] = None
+    business_registration: Optional[str] = None
+    tax_compliance_certificate: Optional[str] = None
+    cr12_document: Optional[str] = None  # Company directors/shareholders
+    kra_pin_certificate: Optional[str] = None
+    business_permit: Optional[str] = None
+    audited_financials: Optional[str] = None
+    bank_statement: Optional[str] = None
+    proof_of_address: Optional[str] = None
+
+class EmployerOnboardingResponse(BaseModel):
+    id: str
+    user_id: str
+    company_name: str
+    registration_number: str
+    date_of_incorporation: Optional[str] = None
+    country: str
+    physical_address: str
+    city: str
+    postal_code: Optional[str] = None
+    county_region: Optional[str] = None
+    tax_id: str
+    vat_number: Optional[str] = None
+    beneficial_owners: Optional[List[Dict[str, Any]]] = None
+    industry: str
+    sector: str
+    business_description: Optional[str] = None
+    years_in_operation: Optional[int] = None
+    employee_count: int
+    annual_revenue_range: Optional[str] = None
+    payroll_cycle: str
+    monthly_payroll_amount: Optional[float] = None
+    bank_name: Optional[str] = None
+    bank_account_number: Optional[str] = None
+    contact_person: str
+    contact_email: str
+    contact_phone: str
+    contact_position: Optional[str] = None
+    status: str  # pending, under_review, approved, rejected
+    kyc_status: str  # pending, in_progress, complete, approved, rejected
+    risk_score: Optional[float] = None
+    onboarding_step: int = 0
+    created_at: str
+    documents: Optional[Dict[str, str]] = None
+
 class EmployerResponse(BaseModel):
     id: str
     user_id: str
