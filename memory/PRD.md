@@ -12,12 +12,21 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Biometric Face ID (MOCKED - UI simulation only)
 - Role-based access: Employee, Employer, Admin ✅
 
-### Employee Features ✅
+### Employee Features ✅ **REDESIGNED Feb 14, 2026**
 - **7-Step KYC Onboarding Flow** ✅
-- **Employee Dashboard** ✅
-- **Request Advance Page** ✅
-- **Transaction History** ✅
-- **Profile & Settings** ✅
+- **Employee Dashboard** ✅ **DARK THEME**
+- **Request Advance Page** ✅ **DARK THEME**
+- **Transaction History** ✅ **DARK THEME**
+- **Profile & Settings** ✅ **DARK THEME**
+
+**New Employee Portal Dark Theme (Feb 14, 2026):**
+- Dark navy background (#0f0f1a)
+- Card backgrounds (#1a1a2e)
+- Vibrant neon green accent (#0df259)
+- Solid green icon buttons with white icons
+- Bottom navigation with green active indicator
+- Premium fintech aesthetic with subtle grid patterns
+- Dark mode is now the default (no theme toggle)
 
 ### Employer Features ✅ COMPLETE (Feb 14, 2026)
 - **8-Step Comprehensive Onboarding Portal** ✅
