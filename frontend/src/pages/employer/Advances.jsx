@@ -115,6 +115,9 @@ export default function EmployerAdvances() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [countryFilter, setCountryFilter] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState('KES');
+  const [dateRange, setDateRange] = useState({ from: '', to: '' });
 
   useEffect(() => {
     const fetchData = async () => {
