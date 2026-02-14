@@ -378,6 +378,7 @@ export default function EmployerOnboarding() {
         years_in_operation: parseInt(formData.years_in_operation) || 0,
         monthly_payroll_amount: parseFloat(formData.monthly_payroll_amount) || 0,
         beneficial_owners: beneficialOwners.filter(o => o.full_name),
+        countries_of_operation: countriesOfOperation,
         ...docUrls
       });
       
