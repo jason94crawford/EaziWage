@@ -220,10 +220,12 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Fixed text overlay issue on Available Earnings
   - Green gradient theme matching main website
   - Dark slate bottom navigation
+  - **Functional Notifications bell with panel**
 - ✅ **Request Advance Page Redesign**
   - Circular progress amount selector
   - Quick amount buttons
   - Transaction summary with fees
+  - **"Verification in Progress" state (not loop to complete verification)**
 - ✅ **Transactions Page Redesign**
   - Filter pills (All, Pending, Completed, Failed)
   - Stats cards for monthly totals
@@ -233,6 +235,13 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Editable address fields
   - Payment methods display
   - KYC Documents summary section
+  - **All icons now green with white (consistent design)**
+  - **Change Password modal (functional)**
+  - **Biometric Face Scan modal (integrated)**
+  - **Help Center - In-app expandable FAQs**
+  - **Contact Support - In-app modal with phone/email/WhatsApp**
+  - **Terms & Privacy - In-app scrollable content**
+  - **Removed Language selection**
 - ✅ **New Backend Endpoints**
   - GET /api/users/me/full-profile
   - PUT /api/users/me/settings
