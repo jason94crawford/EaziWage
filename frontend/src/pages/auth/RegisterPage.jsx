@@ -152,6 +152,7 @@ export default function RegisterPage() {
 
     try {
       const fullMobileNumber = `${selectedDialCode.dialCode}${mobileNumber.replace(/\D/g, '')}`;
+      const fullReferralPhone = noCompanyFound ? `${referralPhoneDialCode.dialCode}${referralEmployerPhone.replace(/\D/g, '')}` : '';
       const payload = { 
         full_name: fullName, 
         email, 
@@ -165,7 +166,7 @@ export default function RegisterPage() {
         employer_referral: noCompanyFound ? {
           employer_name: referralEmployerName,
           employer_email: referralEmployerEmail,
-          employer_phone: referralEmployerPhone
+          employer_phone: fullReferralPhone
         } : null
       };
       
