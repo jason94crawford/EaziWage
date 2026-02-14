@@ -369,11 +369,9 @@ export default function EmployeeOnboarding() {
     const fetchData = async () => {
       try {
         const [employersRes, countriesRes] = await Promise.all([
-          employerApi.list({ status: 'approved' }),
-          utilityApi.getCountries()
+          employerApi.list({ status: 'approved' })
         ]);
         setEmployers(employersRes.data);
-        setCountries(countriesRes.data);
       } catch (err) {
         console.error('Failed to fetch data:', err);
       }
