@@ -237,7 +237,8 @@ export default function LoginPage() {
               </div>
 
               <Button 
-                type="submit" 
+                type="button"
+                onClick={handleSubmit}
                 className="w-full h-12 rounded-xl bg-primary text-black font-bold text-base hover:bg-primary/90 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
                 disabled={isLoading}
                 data-testid="login-submit-btn"
