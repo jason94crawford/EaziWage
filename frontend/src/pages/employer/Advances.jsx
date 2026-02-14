@@ -62,13 +62,13 @@ const AdvanceRow = ({ advance, currency }) => (
     
     {/* Amount */}
     <div className="text-right hidden sm:block">
-      <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(advance.amount)}</p>
+      <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(advance.amount, currency)}</p>
       <p className="text-xs text-slate-500 dark:text-slate-400">Fee: {advance.fee_percentage}%</p>
     </div>
     
     {/* Net Amount */}
     <div className="text-right hidden md:block">
-      <p className="font-bold text-primary">{formatCurrency(advance.net_amount)}</p>
+      <p className="font-bold text-primary">{formatCurrency(advance.net_amount, currency)}</p>
       <p className="text-xs text-slate-500 dark:text-slate-400">Net payout</p>
     </div>
     
