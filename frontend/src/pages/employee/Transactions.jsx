@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, TrendingUp, CheckCircle2, Clock, AlertCircle,
-  Building2, Wallet as WalletIcon, Home, History, User, Download
+  Building2, Wallet as WalletIcon, Home, History, User, Download,
+  Filter, Smartphone, ArrowUpRight, ArrowDownLeft, Calendar
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { transactionApi, advanceApi } from '../../lib/api';
@@ -14,27 +15,27 @@ const BottomNav = ({ active }) => {
   const navigate = useNavigate();
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/employee' },
-    { id: 'wallet', icon: WalletIcon, label: 'Wallet', path: '/employee/advances' },
+    { id: 'wallet', icon: WalletIcon, label: 'Advance', path: '/employee/advances' },
     { id: 'history', icon: History, label: 'History', path: '/employee/transactions' },
-    { id: 'profile', icon: User, label: 'Profile', path: '/employee/kyc' },
+    { id: 'profile', icon: User, label: 'Profile', path: '/employee/settings' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#15231b] border-t border-slate-200 dark:border-white/5 z-50 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-white/5 z-50 md:hidden">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center justify-center gap-1 w-full h-full transition-colors",
+              "flex flex-col items-center justify-center gap-1 w-full h-full transition-all",
               active === item.id 
                 ? "text-primary" 
                 : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
             )}
             data-testid={`nav-${item.id}`}
           >
-            <item.icon className="w-5 h-5" />
+            <item.icon className={cn("w-5 h-5", active === item.id && "scale-110")} />
             <span className="text-[10px] font-medium">{item.label}</span>
           </button>
         ))}
@@ -92,11 +93,14 @@ export default function EmployeeTransactions() {
     return true;
   });
 
-  // Calculate stats for current month
+  // Calculate stats
   const currentMonth = new Date().getMonth();
   const monthlyTotal = advances
     .filter(a => new Date(a.created_at).getMonth() === currentMonth && (a.status === 'disbursed' || a.status === 'completed'))
     .reduce((sum, a) => sum + a.amount, 0);
+  
+  const totalTransactions = advances.filter(a => a.status === 'disbursed' || a.status === 'completed').length;
+  const pendingCount = advances.filter(a => a.status === 'pending' || a.status === 'approved').length;
 
   const getStatusConfig = (status) => {
     switch (status) {
@@ -105,10 +109,10 @@ export default function EmployeeTransactions() {
         return {
           icon: CheckCircle2,
           label: 'Completed',
-          iconBg: 'bg-primary/20',
-          iconColor: 'text-primary',
-          textColor: 'text-primary',
-          amountColor: 'text-primary'
+          iconBg: 'bg-green-100 dark:bg-green-500/20',
+          iconColor: 'text-green-600 dark:text-green-400',
+          textColor: 'text-green-600 dark:text-green-400',
+          badgeBg: 'bg-green-100 dark:bg-green-500/20',
         };
       case 'pending':
         return {
@@ -116,8 +120,8 @@ export default function EmployeeTransactions() {
           label: 'Processing',
           iconBg: 'bg-orange-100 dark:bg-orange-500/20',
           iconColor: 'text-orange-600 dark:text-orange-400',
-          textColor: 'text-slate-500 dark:text-slate-400',
-          amountColor: 'text-slate-900 dark:text-white',
+          textColor: 'text-orange-600 dark:text-orange-400',
+          badgeBg: 'bg-orange-100 dark:bg-orange-500/20',
           showPulse: true
         };
       case 'approved':
@@ -126,8 +130,8 @@ export default function EmployeeTransactions() {
           label: 'Approved',
           iconBg: 'bg-blue-100 dark:bg-blue-500/20',
           iconColor: 'text-blue-600 dark:text-blue-400',
-          textColor: 'text-blue-500',
-          amountColor: 'text-slate-900 dark:text-white'
+          textColor: 'text-blue-600 dark:text-blue-400',
+          badgeBg: 'bg-blue-100 dark:bg-blue-500/20',
         };
       case 'rejected':
         return {
@@ -135,8 +139,8 @@ export default function EmployeeTransactions() {
           label: 'Failed',
           iconBg: 'bg-red-100 dark:bg-red-500/10',
           iconColor: 'text-red-600 dark:text-red-400',
-          textColor: 'text-red-500 dark:text-red-400',
-          amountColor: 'text-slate-400 dark:text-slate-500 line-through'
+          textColor: 'text-red-600 dark:text-red-400',
+          badgeBg: 'bg-red-100 dark:bg-red-500/20',
         };
       default:
         return {
@@ -144,8 +148,8 @@ export default function EmployeeTransactions() {
           label: status,
           iconBg: 'bg-slate-100 dark:bg-slate-700',
           iconColor: 'text-slate-600 dark:text-slate-400',
-          textColor: 'text-slate-500',
-          amountColor: 'text-slate-900 dark:text-white'
+          textColor: 'text-slate-600 dark:text-slate-400',
+          badgeBg: 'bg-slate-100 dark:bg-slate-700',
         };
     }
   };
@@ -165,93 +169,115 @@ export default function EmployeeTransactions() {
   };
 
   const filters = [
-    { id: 'all', label: 'All' },
-    { id: 'pending', label: 'Pending' },
-    { id: 'completed', label: 'Completed' },
-    { id: 'failed', label: 'Failed' },
+    { id: 'all', label: 'All', count: allItems.length },
+    { id: 'pending', label: 'Pending', count: allItems.filter(i => i.status === 'pending' || i.status === 'approved').length },
+    { id: 'completed', label: 'Completed', count: allItems.filter(i => i.status === 'disbursed' || i.status === 'completed').length },
+    { id: 'failed', label: 'Failed', count: allItems.filter(i => i.status === 'rejected').length },
   ];
 
   return (
-    <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] text-slate-900 dark:text-white pb-24 md:pb-8">
-      <div className="relative flex flex-col min-h-screen w-full max-w-md mx-auto border-x border-slate-200 dark:border-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white pb-24 md:pb-8">
+      {/* Background decorations */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px]" />
+      </div>
+
+      <div className="relative flex flex-col min-h-screen w-full max-w-md mx-auto z-10">
         {/* Header */}
-        <header className="sticky top-0 z-20 flex items-center justify-between bg-[#f5f8f6]/95 dark:bg-[#102216]/95 backdrop-blur-sm px-4 py-4">
+        <header className="sticky top-0 z-20 flex items-center justify-between bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl px-4 py-4 border-b border-slate-200/50 dark:border-white/5">
           <button 
             onClick={() => navigate('/employee')}
-            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
             data-testid="back-btn"
           >
             <ArrowLeft className="w-6 h-6" />
           </button>
-          <h1 className="text-lg font-bold tracking-tight flex-1 text-center pr-10">Request History</h1>
+          <h1 className="text-lg font-bold tracking-tight flex-1 text-center pr-10">Transaction History</h1>
         </header>
 
-        <main className="flex flex-col gap-6 px-4 pb-8">
-          {/* Summary Stats Card */}
-          <section>
-            <div className="flex flex-col gap-1 rounded-xl bg-white dark:bg-[#1c2e24] p-6 shadow-sm border border-slate-200 dark:border-transparent">
-              <div className="flex items-center justify-between">
-                <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
-                  Total Withdrawn ({new Date().toLocaleDateString('en-US', { month: 'short' })})
-                </p>
-                <TrendingUp className="w-6 h-6 text-primary" />
+        <main className="flex flex-col gap-6 px-4 py-6">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-slate-200/50 dark:border-white/10">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-4 h-4 text-primary" />
+                </div>
               </div>
-              <p className="text-slate-900 dark:text-white tracking-tight text-3xl font-bold mt-2" data-testid="monthly-total">
-                {formatCurrency(monthlyTotal)}
-              </p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Updates in real-time</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">This Month</p>
+              <p className="text-xl font-bold" data-testid="monthly-total">{formatCurrency(monthlyTotal)}</p>
             </div>
-          </section>
+            <div className="bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-slate-200/50 dark:border-white/10">
+              <div className="flex items-center gap-2 mb-2">
+                <div className="w-8 h-8 bg-blue-500/10 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-4 h-4 text-blue-500" />
+                </div>
+              </div>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-1">Transactions</p>
+              <p className="text-xl font-bold">{totalTransactions}</p>
+            </div>
+          </div>
 
           {/* Filters */}
-          <section className="w-full overflow-hidden">
-            <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4">
+          <div className="w-full overflow-hidden">
+            <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar -mx-4 px-4">
               {filters.map((f) => (
                 <button
                   key={f.id}
                   onClick={() => setFilter(f.id)}
                   className={cn(
-                    "flex h-9 min-w-[60px] shrink-0 items-center justify-center rounded-lg px-4 transition-transform active:scale-95",
+                    "flex items-center gap-2 h-10 min-w-fit shrink-0 px-4 rounded-xl transition-all",
                     filter === f.id
-                      ? "bg-primary shadow-sm"
-                      : "bg-white dark:bg-[#1c2e24] border border-slate-200 dark:border-slate-700/50"
+                      ? "bg-primary text-white shadow-lg shadow-primary/30"
+                      : "bg-white/70 dark:bg-white/5 backdrop-blur-sm border border-slate-200/50 dark:border-white/10 text-slate-600 dark:text-slate-300"
                   )}
                   data-testid={`filter-${f.id}`}
                 >
-                  <span className={cn(
-                    "text-sm font-medium",
-                    filter === f.id ? "text-black" : "text-slate-600 dark:text-slate-300"
-                  )}>
-                    {f.label}
-                  </span>
+                  <span className="text-sm font-semibold">{f.label}</span>
+                  {f.count > 0 && (
+                    <span className={cn(
+                      "text-xs font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center",
+                      filter === f.id 
+                        ? "bg-white/20 text-white" 
+                        : "bg-slate-200 dark:bg-white/10 text-slate-600 dark:text-slate-300"
+                    )}>
+                      {f.count}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>
-          </section>
+          </div>
 
           {/* Transaction List */}
-          <section className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between px-1">
+              <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                 Recent Activity
               </h3>
-              <button className="text-primary text-sm font-medium flex items-center gap-1" data-testid="export-btn">
+              <button className="text-primary text-sm font-semibold flex items-center gap-1 hover:underline" data-testid="export-btn">
                 <Download className="w-4 h-4" />
-                Export CSV
+                Export
               </button>
             </div>
 
             {loading ? (
               <div className="flex items-center justify-center py-16">
-                <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+                <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
               </div>
             ) : filteredItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center">
-                <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mb-4">
-                  <History className="w-8 h-8 text-slate-400" />
+                <div className="w-20 h-20 bg-slate-100 dark:bg-white/5 rounded-2xl flex items-center justify-center mb-4">
+                  <History className="w-10 h-10 text-slate-400" />
                 </div>
-                <p className="text-slate-600 dark:text-slate-400 font-medium">No transactions found</p>
+                <p className="text-slate-600 dark:text-slate-400 font-semibold">No transactions found</p>
                 <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">Your transaction history will appear here</p>
+                <Link to="/employee/advances" className="mt-4">
+                  <Button className="bg-primary text-white font-semibold">
+                    Request Your First Advance
+                  </Button>
+                </Link>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
@@ -262,45 +288,57 @@ export default function EmployeeTransactions() {
                   return (
                     <div
                       key={item.id}
-                      className="group flex cursor-pointer flex-col gap-4 rounded-xl bg-white dark:bg-[#1c2e24] p-4 shadow-sm border border-slate-200 dark:border-transparent active:bg-slate-50 dark:active:bg-[#23382d] transition-colors"
+                      className="group bg-white/70 dark:bg-white/5 backdrop-blur-sm rounded-2xl p-4 border border-slate-200/50 dark:border-white/10 hover:shadow-lg transition-all"
                       data-testid={`transaction-${item.id}`}
                     >
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-start gap-4">
-                          <div className={cn(
-                            "flex w-12 h-12 shrink-0 items-center justify-center rounded-full",
-                            config.iconBg
-                          )}>
-                            {item.method === 'mobile_money' ? (
-                              <WalletIcon className={cn("w-6 h-6", config.iconColor)} />
-                            ) : (
-                              <Building2 className={cn("w-6 h-6", config.iconColor)} />
+                      <div className="flex items-center gap-4">
+                        {/* Icon */}
+                        <div className={cn(
+                          "w-12 h-12 rounded-xl flex items-center justify-center shrink-0",
+                          item.method === 'mobile_money' 
+                            ? "bg-green-100 dark:bg-green-500/20" 
+                            : "bg-blue-100 dark:bg-blue-500/20"
+                        )}>
+                          {item.method === 'mobile_money' ? (
+                            <Smartphone className="w-6 h-6 text-green-600 dark:text-green-400" />
+                          ) : (
+                            <Building2 className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                          )}
+                        </div>
+                        
+                        {/* Details */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-semibold text-slate-900 dark:text-white">
+                              Wage Advance
+                            </p>
+                            {config.showPulse && (
+                              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
                             )}
                           </div>
-                          <div className="flex flex-col">
-                            <p className="text-slate-900 dark:text-white text-base font-semibold">
-                              {formatDate(item.created_at)}
-                            </p>
-                            <div className="flex items-center gap-1.5 mt-1">
-                              {config.showPulse && (
-                                <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
-                              )}
-                              {item.status === 'disbursed' || item.status === 'completed' ? (
-                                <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
-                              ) : null}
-                              <p className={cn("text-sm font-medium", config.textColor)}>
-                                {config.label}
-                              </p>
-                            </div>
-                            <p className="text-slate-400 dark:text-slate-500 text-xs mt-1 font-medium">
-                              To: {item.description}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className={cn("text-lg font-bold", config.amountColor)}>
-                            +{formatCurrency(item.amount)}
+                          <p className="text-sm text-slate-500 dark:text-slate-400">
+                            {formatDate(item.created_at)}
                           </p>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+                            To: {item.description}
+                          </p>
+                        </div>
+                        
+                        {/* Amount & Status */}
+                        <div className="text-right shrink-0">
+                          <p className={cn(
+                            "text-lg font-bold mb-1",
+                            item.status === 'rejected' ? "text-slate-400 line-through" : "text-slate-900 dark:text-white"
+                          )}>
+                            {formatCurrency(item.amount)}
+                          </p>
+                          <span className={cn(
+                            "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold",
+                            config.badgeBg, config.textColor
+                          )}>
+                            <StatusIcon className="w-3 h-3" />
+                            {config.label}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -308,11 +346,8 @@ export default function EmployeeTransactions() {
                 })}
               </div>
             )}
-          </section>
+          </div>
         </main>
-
-        {/* Bottom padding */}
-        <div className="h-8 w-full bg-transparent" />
       </div>
 
       {/* Bottom Navigation */}
