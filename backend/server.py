@@ -129,6 +129,7 @@ class EmployerOnboardingCreate(BaseModel):
     business_description: Optional[str] = None
     years_in_operation: Optional[int] = None
     employee_count: int
+    countries_of_operation: Optional[List[str]] = None  # Multi-select: KE, UG, TZ, RW
     
     # Step 6: Financial Info
     annual_revenue_range: Optional[str] = None
@@ -153,6 +154,8 @@ class EmployerOnboardingCreate(BaseModel):
     audited_financials: Optional[str] = None
     bank_statement: Optional[str] = None
     proof_of_address: Optional[str] = None
+    proof_of_bank_account: Optional[str] = None  # Bank confirmation letter
+    employment_contract_template: Optional[str] = None  # Standard employment contract
 
 class EmployerOnboardingResponse(BaseModel):
     id: str
