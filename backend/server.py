@@ -1877,6 +1877,356 @@ async def get_full_user_profile(user: dict = Depends(get_current_user)):
     
     return result
 
+# ======================== EMPLOYER SETTINGS ENDPOINTS ========================
+
+class EmployerAddressUpdate(BaseModel):
+    physical_address: Optional[str] = None
+    city: Optional[str] = None
+    postal_code: Optional[str] = None
+    county_region: Optional[str] = None
+    country: Optional[str] = None
+
+@api_router.put("/employers/me/address")
+async def update_employer_address(
+    data: EmployerAddressUpdate,
+    user: dict = Depends(require_role(UserRole.EMPLOYER))
+):
+    """Update employer's address details"""
+    update_data = {}
+    if data.physical_address is not None:
+        update_data["physical_address"] = data.physical_address
+        update_data["address"] = data.physical_address
+    if data.city is not None:
+        update_data["city"] = data.city
+    if data.postal_code is not None:
+        update_data["postal_code"] = data.postal_code
+    if data.county_region is not None:
+        update_data["county_region"] = data.county_region
+    if data.country is not None:
+        update_data["country"] = data.country
+    
+    if update_data:
+        result = await db.employers.update_one(
+            {"user_id": user["id"]},
+            {"$set": update_data}
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    return {"message": "Address updated successfully"}
+
+class BankChangeRequest(BaseModel):
+    new_bank_name: str
+    new_bank_account_number: str
+    reason: str
+
+@api_router.post("/employers/me/bank-change-request")
+async def request_bank_change(
+    data: BankChangeRequest,
+    user: dict = Depends(require_role(UserRole.EMPLOYER))
+):
+    """Request a bank account change (requires approval)"""
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    request_id = str(uuid.uuid4())
+    request_doc = {
+        "id": request_id,
+        "employer_id": employer["id"],
+        "user_id": user["id"],
+        "type": "bank_change",
+        "current_bank_name": employer.get("bank_name"),
+        "current_bank_account": employer.get("bank_account_number"),
+        "new_bank_name": data.new_bank_name,
+        "new_bank_account_number": data.new_bank_account_number,
+        "reason": data.reason,
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.change_requests.insert_one(request_doc)
+    
+    return {"message": "Bank change request submitted for approval", "request_id": request_id}
+
+# Per-Employee EWA Settings
+class EmployeeEWASettings(BaseModel):
+    max_advance_percentage: Optional[float] = None  # Override employer default
+    min_advance_amount: Optional[float] = None
+    max_advance_amount: Optional[float] = None
+    cooldown_period: Optional[int] = None  # Days
+    ewa_enabled: bool = True
+
+@api_router.put("/employees/{employee_id}/ewa-settings")
+async def update_employee_ewa_settings(
+    employee_id: str,
+    data: EmployeeEWASettings,
+    user: dict = Depends(require_role(UserRole.EMPLOYER))
+):
+    """Update EWA settings for a specific employee"""
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    # Verify employee belongs to this employer
+    employee = await db.employees.find_one({"id": employee_id, "employer_id": employer["id"]}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    ewa_settings = {
+        "max_advance_percentage": data.max_advance_percentage,
+        "min_advance_amount": data.min_advance_amount,
+        "max_advance_amount": data.max_advance_amount,
+        "cooldown_period": data.cooldown_period,
+        "ewa_enabled": data.ewa_enabled
+    }
+    
+    await db.employees.update_one(
+        {"id": employee_id},
+        {"$set": {"ewa_settings": ewa_settings}}
+    )
+    
+    return {"message": "Employee EWA settings updated"}
+
+@api_router.get("/employees/{employee_id}/ewa-settings")
+async def get_employee_ewa_settings(
+    employee_id: str,
+    user: dict = Depends(require_role(UserRole.EMPLOYER))
+):
+    """Get EWA settings for a specific employee"""
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    employee = await db.employees.find_one({"id": employee_id, "employer_id": employer["id"]}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    return employee.get("ewa_settings", {
+        "max_advance_percentage": None,
+        "min_advance_amount": None,
+        "max_advance_amount": None,
+        "cooldown_period": None,
+        "ewa_enabled": True
+    })
+
+# ======================== SEED DATA ENDPOINT ========================
+
+@api_router.post("/seed/demo-employees")
+async def seed_demo_employees(user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    """Seed 60 demo employees with varying parameters for the employer"""
+    import random
+    
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    # Check if already seeded
+    existing = await db.employees.count_documents({"employer_id": employer["id"]})
+    if existing >= 50:
+        return {"message": f"Already have {existing} employees", "count": existing}
+    
+    # Sample data for realistic employees
+    first_names = ["John", "Jane", "David", "Sarah", "Michael", "Emily", "James", "Grace", "Peter", "Mary",
+                   "Daniel", "Ruth", "Joseph", "Faith", "Samuel", "Esther", "Brian", "Agnes", "Kevin", "Florence",
+                   "Dennis", "Mercy", "Patrick", "Joyce", "George", "Catherine", "Collins", "Lucy", "Victor", "Ann"]
+    last_names = ["Mwangi", "Ochieng", "Wanjiku", "Kamau", "Otieno", "Njeri", "Kimani", "Achieng", "Omondi", "Wambui",
+                  "Kibet", "Akinyi", "Mutua", "Chebet", "Nyambura", "Kiprop", "Muthoni", "Rotich", "Kariuki", "Kosgei"]
+    departments = ["Sales", "Marketing", "Engineering", "Operations", "Finance", "HR", "Customer Support", "Product", "Legal", "Admin"]
+    job_titles = ["Manager", "Senior Specialist", "Specialist", "Associate", "Assistant", "Coordinator", "Analyst", "Engineer", "Executive", "Officer"]
+    employment_types = ["full-time", "full-time", "full-time", "full-time", "part-time", "contract"]
+    kyc_statuses = ["approved", "approved", "approved", "approved", "pending", "submitted", "rejected"]
+    statuses = ["approved", "approved", "approved", "approved", "pending", "pending"]
+    
+    employees_created = []
+    
+    for i in range(60):
+        first_name = random.choice(first_names)
+        last_name = random.choice(last_names)
+        full_name = f"{first_name} {last_name}"
+        department = random.choice(departments)
+        job_title = f"{random.choice(job_titles)} - {department}"
+        
+        # Varying salaries based on seniority
+        base_salary = random.randint(30000, 150000)
+        
+        # Varying start dates (1-5 years ago)
+        days_ago = random.randint(30, 1825)  # 1 month to 5 years
+        start_date = (datetime.now(timezone.utc) - timedelta(days=days_ago)).strftime("%Y-%m-%d")
+        
+        # Calculate tenure in months
+        tenure_months = days_ago // 30
+        
+        # Earned wages based on days worked this month
+        days_worked = random.randint(10, 25)
+        daily_rate = base_salary / 30
+        earned_wages = daily_rate * days_worked
+        
+        # Random KYC and status
+        kyc_status = random.choice(kyc_statuses)
+        status = random.choice(statuses)
+        
+        # Per-employee EWA settings (some have custom, some use defaults)
+        ewa_settings = None
+        if random.random() < 0.3:  # 30% have custom settings
+            ewa_settings = {
+                "max_advance_percentage": random.choice([30, 40, 50, 60]),
+                "min_advance_amount": random.choice([500, 1000, 2000]),
+                "max_advance_amount": random.choice([20000, 30000, 50000]),
+                "cooldown_period": random.choice([3, 5, 7, 14]),
+                "ewa_enabled": random.random() > 0.1  # 90% enabled
+            }
+        
+        employee_id = str(uuid.uuid4())
+        user_id = str(uuid.uuid4())
+        employee_code = f"EMP-{str(i+1).zfill(4)}"
+        email = f"{first_name.lower()}.{last_name.lower()}{i}@testcorp.com"
+        
+        # Create user
+        await db.users.insert_one({
+            "id": user_id,
+            "email": email,
+            "phone": f"+2547{random.randint(10000000, 99999999)}",
+            "full_name": full_name,
+            "role": "employee",
+            "password_hash": hash_password("Employee@123"),
+            "is_verified": kyc_status == "approved",
+            "created_at": (datetime.now(timezone.utc) - timedelta(days=days_ago)).isoformat()
+        })
+        
+        # Create employee
+        employee_doc = {
+            "id": employee_id,
+            "user_id": user_id,
+            "employer_id": employer["id"],
+            "employee_code": employee_code,
+            "national_id": f"ID{random.randint(10000000, 99999999)}",
+            "date_of_birth": f"{random.randint(1975, 2000)}-{random.randint(1,12):02d}-{random.randint(1,28):02d}",
+            "employment_type": random.choice(employment_types),
+            "job_title": job_title,
+            "department": department,
+            "monthly_salary": base_salary,
+            "country": "KE",
+            "start_date": start_date,
+            "tenure_months": tenure_months,
+            "status": status,
+            "kyc_status": kyc_status,
+            "kyc_step": 7 if kyc_status == "approved" else random.randint(0, 6),
+            "earned_wages": earned_wages if status == "approved" else 0,
+            "advance_limit": earned_wages * 0.5 if status == "approved" else 0,
+            "risk_score": round(random.uniform(2.5, 5.0), 2) if kyc_status == "approved" else None,
+            "ewa_settings": ewa_settings,
+            "created_at": (datetime.now(timezone.utc) - timedelta(days=days_ago)).isoformat(),
+            "mobile_money_provider": random.choice(["M-PESA", "Airtel Money"]),
+            "mobile_money_number": f"+2547{random.randint(10000000, 99999999)}",
+        }
+        await db.employees.insert_one(employee_doc)
+        
+        employees_created.append(employee_id)
+        
+        # Create some advances for approved employees
+        if status == "approved" and kyc_status == "approved" and random.random() < 0.5:
+            advance_count = random.randint(1, 5)
+            for _ in range(advance_count):
+                advance_id = str(uuid.uuid4())
+                advance_amount = random.randint(1000, int(earned_wages * 0.4))
+                fee_percentage = round(random.uniform(3.5, 6.5), 2)
+                fee_amount = advance_amount * (fee_percentage / 100)
+                advance_status = random.choice(["disbursed", "disbursed", "disbursed", "approved", "pending", "repaid"])
+                
+                days_ago_advance = random.randint(1, min(days_ago, 90))
+                
+                await db.advances.insert_one({
+                    "id": advance_id,
+                    "employee_id": employee_id,
+                    "employee_name": full_name,
+                    "employer_id": employer["id"],
+                    "employer_name": employer.get("company_name"),
+                    "amount": advance_amount,
+                    "fee_percentage": fee_percentage,
+                    "fee_amount": fee_amount,
+                    "net_amount": advance_amount - fee_amount,
+                    "disbursement_method": random.choice(["mobile_money", "bank_transfer"]),
+                    "disbursement_details": {"provider": "M-PESA"},
+                    "status": advance_status,
+                    "created_at": (datetime.now(timezone.utc) - timedelta(days=days_ago_advance)).isoformat()
+                })
+    
+    return {"message": f"Created {len(employees_created)} demo employees with advances", "count": len(employees_created)}
+
+# Enhanced Dashboard with retention metrics
+@api_router.get("/dashboard/employer/extended")
+async def get_employer_dashboard_extended(user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    """Get extended employer dashboard with retention metrics"""
+    employer = await db.employers.find_one({"user_id": user["id"]}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer profile not found")
+    
+    employees = await db.employees.find({"employer_id": employer["id"]}, {"_id": 0}).to_list(1000)
+    advances = await db.advances.find({"employer_id": employer["id"]}, {"_id": 0}).to_list(10000)
+    
+    # Basic stats
+    total_employees = len(employees)
+    active_employees = len([e for e in employees if e.get("status") == "approved"])
+    pending_employees = len([e for e in employees if e.get("status") == "pending"])
+    
+    # KYC stats
+    kyc_approved = len([e for e in employees if e.get("kyc_status") == "approved"])
+    kyc_pending = len([e for e in employees if e.get("kyc_status") in ["pending", "submitted"]])
+    kyc_rejected = len([e for e in employees if e.get("kyc_status") == "rejected"])
+    kyc_completion_rate = round((kyc_approved / total_employees * 100), 1) if total_employees > 0 else 0
+    
+    # Tenure/Retention stats
+    tenures = [e.get("tenure_months", 0) for e in employees if e.get("tenure_months")]
+    avg_tenure = round(sum(tenures) / len(tenures), 1) if tenures else 0
+    
+    # Calculate retention rate (employees with > 12 months tenure)
+    long_tenure = len([t for t in tenures if t >= 12])
+    retention_rate = round((long_tenure / total_employees * 100), 1) if total_employees > 0 else 0
+    
+    # New hires (last 30 days)
+    thirty_days_ago = datetime.now(timezone.utc) - timedelta(days=30)
+    new_hires = len([e for e in employees if e.get("created_at") and datetime.fromisoformat(e["created_at"].replace('Z', '+00:00')) > thirty_days_ago])
+    
+    # Department breakdown
+    department_counts = {}
+    for e in employees:
+        dept = e.get("department", "Unassigned")
+        department_counts[dept] = department_counts.get(dept, 0) + 1
+    
+    # Salary stats
+    salaries = [e.get("monthly_salary", 0) for e in employees if e.get("monthly_salary")]
+    avg_salary = round(sum(salaries) / len(salaries)) if salaries else 0
+    total_payroll = sum(salaries)
+    
+    # Advance stats
+    total_disbursed = sum(a.get("amount", 0) for a in advances if a.get("status") in ["approved", "disbursed"])
+    pending_advances = len([a for a in advances if a.get("status") == "pending"])
+    
+    # EWA utilization
+    employees_with_advances = len(set(a.get("employee_id") for a in advances))
+    ewa_utilization_rate = round((employees_with_advances / active_employees * 100), 1) if active_employees > 0 else 0
+    
+    return {
+        "total_employees": total_employees,
+        "active_employees": active_employees,
+        "pending_employees": pending_employees,
+        "kyc_approved": kyc_approved,
+        "kyc_pending": kyc_pending,
+        "kyc_rejected": kyc_rejected,
+        "kyc_completion_rate": kyc_completion_rate,
+        "avg_tenure_months": avg_tenure,
+        "retention_rate": retention_rate,
+        "new_hires_30_days": new_hires,
+        "department_breakdown": department_counts,
+        "avg_salary": avg_salary,
+        "total_monthly_payroll": total_payroll,
+        "total_advances_disbursed": total_disbursed,
+        "pending_advances": pending_advances,
+        "ewa_utilization_rate": ewa_utilization_rate,
+        "employees_with_advances": employees_with_advances,
+        "risk_score": employer.get("risk_score")
+    }
+
 @api_router.get("/")
 async def root():
     return {"message": "EaziWage API v1.0", "status": "running"}
