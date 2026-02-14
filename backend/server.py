@@ -684,6 +684,222 @@ async def update_employer_status(employer_id: str, status: str, user: dict = Dep
         raise HTTPException(status_code=404, detail="Employer not found")
     return {"message": "Status updated"}
 
+# ======================== EMPLOYER ONBOARDING ENDPOINTS ========================
+
+# Business sectors for employer onboarding
+BUSINESS_SECTORS = [
+    {"code": "agriculture", "name": "Agriculture & Farming", "category": "Primary"},
+    {"code": "mining", "name": "Mining & Quarrying", "category": "Primary"},
+    {"code": "manufacturing", "name": "Manufacturing", "category": "Secondary"},
+    {"code": "construction", "name": "Construction", "category": "Secondary"},
+    {"code": "utilities", "name": "Utilities (Water, Electricity, Gas)", "category": "Secondary"},
+    {"code": "wholesale_retail", "name": "Wholesale & Retail Trade", "category": "Tertiary"},
+    {"code": "hospitality", "name": "Hospitality & Tourism", "category": "Tertiary"},
+    {"code": "transport_logistics", "name": "Transport & Logistics", "category": "Tertiary"},
+    {"code": "ict", "name": "ICT & Telecommunications", "category": "Tertiary"},
+    {"code": "financial_services", "name": "Financial Services & Insurance", "category": "Tertiary"},
+    {"code": "real_estate", "name": "Real Estate", "category": "Tertiary"},
+    {"code": "professional_services", "name": "Professional Services (Legal, Accounting)", "category": "Tertiary"},
+    {"code": "education", "name": "Education & Training", "category": "Tertiary"},
+    {"code": "healthcare", "name": "Healthcare & Pharmaceuticals", "category": "Tertiary"},
+    {"code": "media_entertainment", "name": "Media & Entertainment", "category": "Tertiary"},
+    {"code": "ngo", "name": "NGO & Non-Profit", "category": "Tertiary"},
+    {"code": "government", "name": "Government & Public Sector", "category": "Tertiary"},
+    {"code": "security", "name": "Security Services", "category": "Tertiary"},
+    {"code": "other", "name": "Other", "category": "Other"},
+]
+
+@api_router.get("/employers/onboarding/sectors")
+async def get_business_sectors():
+    """Get list of business sectors for employer onboarding"""
+    return BUSINESS_SECTORS
+
+@api_router.post("/employers/onboarding", response_model=EmployerOnboardingResponse)
+async def create_employer_onboarding(data: EmployerOnboardingCreate, user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    """Create or update employer onboarding profile with comprehensive due diligence data"""
+    # Check if employer profile already exists
+    existing = await db.employers.find_one({"user_id": user["id"]})
+    if existing:
+        raise HTTPException(status_code=400, detail="Employer profile already exists. Use update endpoint.")
+    
+    employer_id = str(uuid.uuid4())
+    
+    # Prepare documents dict from uploaded document paths
+    documents = {}
+    doc_fields = [
+        'certificate_of_incorporation', 'business_registration', 'tax_compliance_certificate',
+        'cr12_document', 'kra_pin_certificate', 'business_permit', 'audited_financials',
+        'bank_statement', 'proof_of_address'
+    ]
+    for field in doc_fields:
+        value = getattr(data, field, None)
+        if value:
+            documents[field] = value
+    
+    employer_doc = {
+        "id": employer_id,
+        "user_id": user["id"],
+        "company_name": data.company_name,
+        "registration_number": data.registration_number,
+        "date_of_incorporation": data.date_of_incorporation,
+        "country": data.country,
+        "physical_address": data.physical_address,
+        "city": data.city,
+        "postal_code": data.postal_code,
+        "county_region": data.county_region,
+        "tax_id": data.tax_id,
+        "vat_number": data.vat_number,
+        "beneficial_owners": data.beneficial_owners or [],
+        "industry": data.industry,
+        "sector": data.sector,
+        "business_description": data.business_description,
+        "years_in_operation": data.years_in_operation,
+        "employee_count": data.employee_count,
+        "annual_revenue_range": data.annual_revenue_range,
+        "payroll_cycle": data.payroll_cycle,
+        "monthly_payroll_amount": data.monthly_payroll_amount,
+        "bank_name": data.bank_name,
+        "bank_account_number": data.bank_account_number,
+        "contact_person": data.contact_person,
+        "contact_email": data.contact_email,
+        "contact_phone": data.contact_phone,
+        "contact_position": data.contact_position,
+        "status": "pending",
+        "kyc_status": "pending",
+        "risk_score": None,
+        "onboarding_step": 7,  # Completed all steps
+        "documents": documents,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        # Legacy fields for compatibility
+        "address": data.physical_address,
+    }
+    
+    await db.employers.insert_one(employer_doc)
+    
+    # Return response
+    result = {k: v for k, v in employer_doc.items() if k != "_id"}
+    return EmployerOnboardingResponse(**result)
+
+@api_router.put("/employers/onboarding")
+async def update_employer_onboarding(data: EmployerOnboardingCreate, user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    """Update employer onboarding profile"""
+    existing = await db.employers.find_one({"user_id": user["id"]})
+    if not existing:
+        raise HTTPException(status_code=404, detail="Employer profile not found. Create one first.")
+    
+    # Prepare documents dict
+    documents = existing.get("documents", {})
+    doc_fields = [
+        'certificate_of_incorporation', 'business_registration', 'tax_compliance_certificate',
+        'cr12_document', 'kra_pin_certificate', 'business_permit', 'audited_financials',
+        'bank_statement', 'proof_of_address'
+    ]
+    for field in doc_fields:
+        value = getattr(data, field, None)
+        if value:
+            documents[field] = value
+    
+    update_data = {
+        "company_name": data.company_name,
+        "registration_number": data.registration_number,
+        "date_of_incorporation": data.date_of_incorporation,
+        "country": data.country,
+        "physical_address": data.physical_address,
+        "city": data.city,
+        "postal_code": data.postal_code,
+        "county_region": data.county_region,
+        "tax_id": data.tax_id,
+        "vat_number": data.vat_number,
+        "beneficial_owners": data.beneficial_owners or [],
+        "industry": data.industry,
+        "sector": data.sector,
+        "business_description": data.business_description,
+        "years_in_operation": data.years_in_operation,
+        "employee_count": data.employee_count,
+        "annual_revenue_range": data.annual_revenue_range,
+        "payroll_cycle": data.payroll_cycle,
+        "monthly_payroll_amount": data.monthly_payroll_amount,
+        "bank_name": data.bank_name,
+        "bank_account_number": data.bank_account_number,
+        "contact_person": data.contact_person,
+        "contact_email": data.contact_email,
+        "contact_phone": data.contact_phone,
+        "contact_position": data.contact_position,
+        "documents": documents,
+        "address": data.physical_address,
+    }
+    
+    await db.employers.update_one(
+        {"user_id": user["id"]},
+        {"$set": update_data}
+    )
+    
+    return {"message": "Employer profile updated successfully"}
+
+@api_router.patch("/employers/onboarding/step")
+async def update_employer_onboarding_step(step: int, user: dict = Depends(require_role(UserRole.EMPLOYER))):
+    """Update employer onboarding step for progress tracking"""
+    result = await db.employers.update_one(
+        {"user_id": user["id"]},
+        {"$set": {"onboarding_step": step}}
+    )
+    if result.matched_count == 0:
+        # Create a minimal employer record to track progress
+        await db.employers.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": user["id"],
+            "onboarding_step": step,
+            "status": "onboarding",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    return {"message": "Step updated", "step": step}
+
+@api_router.post("/employers/onboarding/document")
+async def upload_employer_document(
+    document_type: str = Form(...),
+    file: UploadFile = File(...),
+    user: dict = Depends(require_role(UserRole.EMPLOYER))
+):
+    """Upload employer onboarding document"""
+    # Validate document type
+    valid_types = [
+        'certificate_of_incorporation', 'business_registration', 'tax_compliance_certificate',
+        'cr12_document', 'kra_pin_certificate', 'business_permit', 'audited_financials',
+        'bank_statement', 'proof_of_address'
+    ]
+    if document_type not in valid_types:
+        raise HTTPException(status_code=400, detail=f"Invalid document type. Must be one of: {', '.join(valid_types)}")
+    
+    # Create employer documents directory
+    employer_doc_dir = UPLOAD_DIR / "employer_docs"
+    employer_doc_dir.mkdir(exist_ok=True)
+    
+    # Generate unique filename
+    file_extension = Path(file.filename).suffix.lower()
+    if file_extension not in ['.pdf', '.jpg', '.jpeg', '.png', '.webp']:
+        raise HTTPException(status_code=400, detail="Invalid file type. Allowed: PDF, JPG, PNG, WebP")
+    
+    unique_filename = f"{user['id']}_{document_type}_{uuid.uuid4().hex[:8]}{file_extension}"
+    file_path = employer_doc_dir / unique_filename
+    
+    # Save file
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    
+    document_url = f"/uploads/employer_docs/{unique_filename}"
+    
+    # Update employer record with document path
+    await db.employers.update_one(
+        {"user_id": user["id"]},
+        {"$set": {f"documents.{document_type}": document_url}}
+    )
+    
+    return {
+        "document_type": document_type,
+        "document_url": document_url,
+        "filename": file.filename
+    }
+
 # ======================== EMPLOYEE ENDPOINTS ========================
 
 @api_router.post("/employees", response_model=EmployeeResponse)
