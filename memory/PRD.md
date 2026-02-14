@@ -30,17 +30,41 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Step 7: Financial Info - Revenue, payroll, bank + financial docs + **Proof of Bank Account**
   - Step 8: Contact Person - Primary contact details
 
-- **Employer Portal (Post-Onboarding)** ✅ NEW
-  - **Dashboard** - Stats cards, quick actions, company status, verification alert
-  - **Employees Page** - View, search, filter employees with KYC status
-  - **Payroll Page** - Upload monthly payroll data
-  - **Advances Page** ✅ NEW - Track employee advance requests with filters
-  - **Reports Page** ✅ NEW - Analytics, disbursement breakdown, employee stats, downloadable reports
-  - **Settings Page** ✅ NEW - 4 tabs:
-    - Company: Company info, payroll cycle, primary contact
-    - EWA Settings: Max advance %, min/max amounts, access period, cooldown
-    - Notifications: Email toggles for alerts and reports
-    - Security: Password change, 2FA, login activity, API access
+- **Employer Portal (Post-Onboarding)** ✅ **REDESIGNED - Feb 14, 2026**
+  - **New EmployerPortalLayout** with glass-morphism sidebar
+  - **Dark/Light theme toggle** across all pages
+  - **Mobile responsive** with collapsible sidebar
+  
+  - **Dashboard** ✅ REDESIGNED
+    - Animated circular progress indicator for employees
+    - 4 metric cards with trend indicators (+/-%)
+    - Quick Actions section (4 hover cards)
+    - Company Status section
+    - Risk Assessment visualization
+    - Verification Alert banner
+    
+  - **Advances Page** ✅ REDESIGNED
+    - 4 stats cards (Total Requests, Disbursed, Pending, Avg Fee Rate)
+    - Search input with filter buttons (All, Pending, Approved, Disbursed, Rejected)
+    - Modern advance row items with avatars
+    - Export Report functionality
+    - "How Advances Work" info card
+    
+  - **Reports Page** ✅ REDESIGNED
+    - Period selector dropdown
+    - 4 metric cards with trend percentages
+    - Donut chart for disbursement breakdown
+    - Employee breakdown with progress bars
+    - Monthly summary section
+    - 4 downloadable report types
+    - Company risk score visualization
+    
+  - **Settings Page** ✅ REDESIGNED
+    - Tab navigation (Company, EWA Settings, Notifications, Security)
+    - Company tab: Company info, payroll cycle, contact details, verification status
+    - EWA Settings tab: Max advance slider, min/max amounts, access period, cooldown
+    - Notifications tab: 4 toggle switches
+    - Security tab: Password change, 2FA, login activity, API access
 
 ### Admin Features (Partially Implemented)
 - Admin dashboard ✅
@@ -79,11 +103,34 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - TailwindCSS styling
 - Shadcn/UI components
 - Mobile-first responsive design
+- ThemeContext for dark/light mode
+
+### Component Architecture
+```
+/app/frontend/src/
+├── components/
+│   ├── employer/
+│   │   └── EmployerLayout.jsx    # NEW - Glass-morphism sidebar layout
+│   ├── employee/
+│   │   └── EmployeeLayout.jsx    # Employee-specific layout
+│   └── ui/                       # Shadcn components
+├── pages/
+│   ├── employer/
+│   │   ├── Dashboard.jsx         # REDESIGNED
+│   │   ├── Advances.jsx          # REDESIGNED
+│   │   ├── Reports.jsx           # REDESIGNED
+│   │   └── Settings.jsx          # REDESIGNED
+│   └── employee/
+│       └── ...
+└── lib/
+    └── ThemeContext.jsx          # Theme management
+```
 
 ## Design System
 - Primary: `#0df259` (Emerald Green)
 - Gradient: `bg-gradient-to-r from-primary to-emerald-600`
 - Glass-morphism: `backdrop-blur-xl` with semi-transparent backgrounds
+- Dark mode: Full support via ThemeContext
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
@@ -107,10 +154,18 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - ✅ Countries of Operation multi-select in Employer Onboarding
 - ✅ Employment Contract Template upload
 - ✅ Proof of Bank Account upload
-- ✅ **EMPLOYER PORTAL BUILD-OUT:**
-  - ✅ Advances Page (track employee advances with stats and filters)
-  - ✅ Reports Page (analytics, disbursement breakdown, employee stats)
-  - ✅ Settings Page (Company, EWA Settings, Notifications, Security tabs)
+- ✅ Initial Employer Portal build (Dashboard, Advances, Reports, Settings)
+
+### Session 5 - Feb 14, 2026 (Current)
+- ✅ **COMPLETE EMPLOYER PORTAL REDESIGN**
+  - New EmployerLayout component with glass-morphism sidebar
+  - Dashboard with animated counters and trend metrics
+  - Advances page with modern filters and search
+  - Reports page with donut charts and analytics
+  - Settings page with tabbed navigation
+  - Dark/Light theme toggle across all pages
+  - Mobile responsive with collapsible sidebar
+  - 100% test pass rate (backend + frontend)
 
 ## Pending Tasks
 
@@ -138,7 +193,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Biometric Face Scan (UI present, simulated)
 - EWA Settings save functionality (frontend works, backend not integrated)
 - Report download functionality (buttons present, not functional)
-- Change percentages in Reports page (hardcoded placeholders)
+- Change percentages in Dashboard/Reports (hardcoded placeholders)
 
 ---
 Last Updated: February 14, 2026
