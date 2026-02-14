@@ -924,6 +924,144 @@ async def review_kyc_document(doc_id: str, status: str, notes: str = "", user: d
         raise HTTPException(status_code=404, detail="Document not found")
     return {"message": "Document reviewed"}
 
+# File Upload endpoint for KYC documents
+@api_router.post("/kyc/upload")
+async def upload_kyc_file(
+    file: UploadFile = File(...),
+    document_type: str = Form(...),
+    document_number: Optional[str] = Form(None),
+    user: dict = Depends(get_current_user)
+):
+    """Upload a KYC document file"""
+    # Validate file type
+    allowed_types = ["image/jpeg", "image/png", "image/webp", "application/pdf"]
+    if file.content_type not in allowed_types:
+        raise HTTPException(status_code=400, detail="Invalid file type. Only JPEG, PNG, WebP, and PDF are allowed.")
+    
+    # Validate file size (max 5MB)
+    file_size = 0
+    content = await file.read()
+    file_size = len(content)
+    if file_size > 5 * 1024 * 1024:
+        raise HTTPException(status_code=400, detail="File size must be less than 5MB")
+    
+    # Generate unique filename
+    file_ext = Path(file.filename).suffix if file.filename else ".jpg"
+    unique_filename = f"{user['id']}_{document_type}_{uuid.uuid4().hex[:8]}{file_ext}"
+    file_path = KYC_UPLOAD_DIR / unique_filename
+    
+    # Save file
+    with open(file_path, "wb") as f:
+        f.write(content)
+    
+    # Create document record
+    doc_id = str(uuid.uuid4())
+    doc_url = f"/api/kyc/files/{unique_filename}"
+    doc = {
+        "id": doc_id,
+        "user_id": user["id"],
+        "document_type": document_type,
+        "document_url": doc_url,
+        "document_number": document_number,
+        "file_name": file.filename,
+        "file_size": file_size,
+        "content_type": file.content_type,
+        "status": "pending",
+        "reviewer_notes": None,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "reviewed_at": None
+    }
+    await db.kyc_documents.insert_one(doc)
+    
+    # Update employee's document path
+    if user["role"] == UserRole.EMPLOYEE:
+        update_field = None
+        if document_type == "id_front":
+            update_field = "id_document_front"
+        elif document_type == "id_back":
+            update_field = "id_document_back"
+        elif document_type == "address_proof":
+            update_field = "address_proof"
+        elif document_type == "tax_certificate":
+            update_field = "tax_certificate"
+        elif document_type == "payslip_1":
+            update_field = "payslip_1"
+        elif document_type == "payslip_2":
+            update_field = "payslip_2"
+        elif document_type == "bank_statement":
+            update_field = "bank_statement"
+        elif document_type == "selfie":
+            update_field = "selfie"
+        
+        if update_field:
+            await db.employees.update_one(
+                {"user_id": user["id"]},
+                {"$set": {update_field: doc_url, "kyc_status": "submitted"}}
+            )
+    
+    return {
+        "id": doc_id,
+        "document_type": document_type,
+        "document_url": doc_url,
+        "file_name": file.filename,
+        "file_size": file_size,
+        "status": "pending"
+    }
+
+# Serve uploaded KYC files
+@api_router.get("/kyc/files/{filename}")
+async def get_kyc_file(filename: str, user: dict = Depends(get_current_user)):
+    """Serve a KYC document file"""
+    file_path = KYC_UPLOAD_DIR / filename
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # For admin, allow access to any file
+    # For users, verify they own the file
+    if user["role"] != UserRole.ADMIN:
+        if not filename.startswith(user["id"]):
+            raise HTTPException(status_code=403, detail="Access denied")
+    
+    from fastapi.responses import FileResponse
+    return FileResponse(file_path)
+
+# Update employee KYC step
+@api_router.patch("/employees/me/kyc-step")
+async def update_employee_kyc_step(step: int, user: dict = Depends(require_role(UserRole.EMPLOYEE))):
+    """Update the current KYC onboarding step for tracking progress"""
+    result = await db.employees.update_one(
+        {"user_id": user["id"]},
+        {"$set": {"kyc_step": step}}
+    )
+    if result.modified_count == 0:
+        # Employee profile might not exist yet, which is fine
+        pass
+    return {"message": "KYC step updated", "step": step}
+
+# Get employee KYC status with documents
+@api_router.get("/employees/me/kyc-status")
+async def get_employee_kyc_status(user: dict = Depends(require_role(UserRole.EMPLOYEE))):
+    """Get comprehensive KYC status for the employee"""
+    employee = await db.employees.find_one({"user_id": user["id"]}, {"_id": 0})
+    documents = await db.kyc_documents.find({"user_id": user["id"]}, {"_id": 0}).to_list(100)
+    
+    # Check which documents are uploaded and approved
+    doc_status = {}
+    for doc in documents:
+        doc_status[doc["document_type"]] = {
+            "status": doc["status"],
+            "uploaded_at": doc["created_at"],
+            "document_url": doc["document_url"]
+        }
+    
+    return {
+        "kyc_status": employee.get("kyc_status", "pending") if employee else "not_started",
+        "kyc_step": employee.get("kyc_step", 0) if employee else 0,
+        "documents": doc_status,
+        "has_employee_profile": employee is not None
+    }
+
 # ======================== RISK SCORING ENDPOINTS ========================
 
 @api_router.post("/risk-scores/employer/{employer_id}")
