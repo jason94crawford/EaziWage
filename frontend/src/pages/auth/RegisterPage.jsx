@@ -1,38 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, Building2, UserCircle, Wallet, CheckCircle2, Sparkles, Globe } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, Building2, UserCircle, CheckCircle2, Sparkles, Globe } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { register } from '../../lib/auth';
 import { cn } from '../../lib/utils';
-import { useTheme } from '../../lib/ThemeContext';
+import axios from 'axios';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Create a fresh axios instance without interceptors for auth
+const authAxios = axios.create({
+  baseURL: API_URL,
+  headers: { 'Content-Type': 'application/json' }
+});
 
 export default function RegisterPage() {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    phone: '',
-    password: '',
-    role: 'employee',
-  });
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('employee');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { theme } = useTheme();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = useCallback(async () => {
+    if (!fullName || !email || !phone || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters');
+      return;
+    }
+    
     setError('');
     setIsLoading(true);
 
-    const result = await register(formData);
-    setIsLoading(false);
+    try {
+      const response = await authAxios.post('/api/auth/register', { 
+        full_name: fullName, 
+        email, 
+        phone, 
+        password, 
+        role 
+      });
+      const data = response.data;
 
-    if (result.success) {
-      const user = result.user;
+      localStorage.setItem('eaziwage_token', data.access_token);
+      localStorage.setItem('eaziwage_user', JSON.stringify(data.user));
+      
+      const user = data.user;
       switch (user.role) {
         case 'employer':
           navigate('/employer/onboarding');
@@ -43,8 +65,18 @@ export default function RegisterPage() {
         default:
           navigate('/');
       }
-    } else {
-      setError(result.error);
+    } catch (err) {
+      console.error('Registration error:', err);
+      const errorMessage = err.response?.data?.detail || 'Registration failed. Please try again.';
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [fullName, email, phone, password, role, navigate]);
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleSubmit();
     }
   };
 
@@ -188,33 +220,33 @@ export default function RegisterPage() {
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-5">
               {/* Role Selection */}
               <div>
                 <Label className="text-slate-700 dark:text-slate-300 font-medium mb-3 block">
                   I am an
                 </Label>
                 <div className="grid grid-cols-2 gap-3">
-                  {roles.map((role) => {
-                    const Icon = role.icon;
-                    const isSelected = formData.role === role.value;
+                  {roles.map((r) => {
+                    const Icon = r.icon;
+                    const isSelected = role === r.value;
                     return (
                       <button
-                        key={role.value}
+                        key={r.value}
                         type="button"
-                        onClick={() => setFormData({ ...formData, role: role.value })}
+                        onClick={() => setRole(r.value)}
                         className={cn(
                           "relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 overflow-hidden group",
                           isSelected
                             ? "border-primary bg-primary/5 dark:bg-primary/10"
                             : "border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 bg-slate-50 dark:bg-[#102216]"
                         )}
-                        data-testid={`role-${role.value}`}
+                        data-testid={`role-${r.value}`}
                       >
                         {/* Gradient overlay on hover/select */}
                         <div className={cn(
                           "absolute inset-0 opacity-0 transition-opacity duration-300 bg-gradient-to-br",
-                          role.color,
+                          r.color,
                           isSelected ? "opacity-5" : "group-hover:opacity-[0.02]"
                         )} />
                         
@@ -232,9 +264,9 @@ export default function RegisterPage() {
                         <span className={cn(
                           "relative z-10 font-semibold transition-colors",
                           isSelected ? "text-primary" : "text-slate-700 dark:text-slate-300"
-                        )}>{role.label}</span>
+                        )}>{r.label}</span>
                         <span className="relative z-10 text-xs text-slate-500 dark:text-slate-400 mt-1 text-center leading-tight">
-                          {role.description}
+                          {r.description}
                         </span>
                         
                         {/* Selected indicator */}
@@ -260,9 +292,9 @@ export default function RegisterPage() {
                     type="text"
                     placeholder="John Doe"
                     className="pl-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={formData.full_name}
-                    onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                    required
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     data-testid="register-name"
                   />
                 </div>
@@ -279,9 +311,9 @@ export default function RegisterPage() {
                     type="email"
                     placeholder="you@company.com"
                     className="pl-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     data-testid="register-email"
                   />
                 </div>
@@ -298,9 +330,9 @@ export default function RegisterPage() {
                     type="tel"
                     placeholder="+254 700 000 000"
                     className="pl-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    required
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     data-testid="register-phone"
                   />
                 </div>
@@ -317,10 +349,9 @@ export default function RegisterPage() {
                     type={showPassword ? 'text' : 'password'}
                     placeholder="Create a strong password"
                     className="pl-12 pr-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
-                    minLength={8}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onKeyPress={handleKeyPress}
                     data-testid="register-password"
                   />
                   <button
@@ -338,7 +369,8 @@ export default function RegisterPage() {
               </div>
 
               <Button 
-                type="submit" 
+                type="button"
+                onClick={handleSubmit}
                 className="w-full h-12 rounded-xl bg-primary text-black font-bold text-base hover:bg-primary/90 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
                 disabled={isLoading}
                 data-testid="register-submit-btn"
@@ -355,7 +387,7 @@ export default function RegisterPage() {
                   </span>
                 )}
               </Button>
-            </form>
+            </div>
 
             <p className="text-center mt-6 text-slate-500 dark:text-slate-400">
               Already have an account?{' '}
