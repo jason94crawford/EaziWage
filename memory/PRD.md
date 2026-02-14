@@ -135,10 +135,13 @@ Both onboarding flows feature:
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
+- **Employee**: demo.employee@eaziwage.com / Employee@123
 
 ## Prioritized Backlog
 
 ### P0 (Critical for Production)
+- [x] ~~Registration mobile number field with dialing code selector~~ (COMPLETED - Feb 2026)
+- [x] ~~Employee onboarding: Centered logo, inline Terms/Privacy, ID type selector~~ (COMPLETED - Feb 2026)
 - [ ] Real mobile money API integration (M-PESA Daraja, MTN MoMo)
 - [ ] Cloud file storage for KYC (AWS S3 or similar)
 - [ ] Email notifications (SendGrid/Resend)
