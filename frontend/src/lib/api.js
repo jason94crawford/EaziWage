@@ -47,6 +47,14 @@ export const employerApi = {
   list: (params) => api.get('/employers', { params }),
   get: (id) => api.get(`/employers/${id}`),
   updateStatus: (id, status) => api.patch(`/employers/${id}/status`, null, { params: { status } }),
+  // Enhanced Onboarding APIs
+  getSectors: () => api.get('/employers/onboarding/sectors'),
+  createOnboarding: (data) => api.post('/employers/onboarding', data),
+  updateOnboarding: (data) => api.put('/employers/onboarding', data),
+  updateOnboardingStep: (step) => api.patch('/employers/onboarding/step', null, { params: { step } }),
+  uploadDocument: (formData) => api.post('/employers/onboarding/document', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 };
 
 // Employee APIs
