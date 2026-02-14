@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EaziWage - Country Selection</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#0df259",
+              "background-light": "#f5f8f6",
+              "background-dark": "#102216",
+              "surface-dark": "#1b271f",
+              "surface-light": "#ffffff",
+              "text-secondary-dark": "#9cbaa6",
+              "text-secondary-light": "#5f6e65",
+            },
+            fontFamily: {
+              "display": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        /* Custom scrollbar for country list if needed */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display min-h-screen flex flex-col antialiased selection:bg-primary selection:text-black">
+<!-- Top Navigation -->
+<header class="flex items-center justify-between p-4 sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+<button aria-label="Go back" class="flex items-center justify-center size-10 rounded-full hover:bg-gray-200 dark:hover:bg-surface-dark transition-colors text-black dark:text-white">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h2 class="text-black dark:text-white text-base font-semibold tracking-tight">Onboarding</h2>
+<div class="size-10"></div> <!-- Spacer for alignment -->
+</header>
+<!-- Progress Indicators -->
+<div class="px-6 pb-6 pt-2">
+<div class="flex w-full items-center gap-2">
+<div class="h-1.5 flex-1 rounded-full bg-primary shadow-[0_0_10px_rgba(13,242,89,0.3)]"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-surface-dark"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-surface-dark"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-200 dark:bg-surface-dark"></div>
+</div>
+<div class="flex justify-between mt-2 text-xs font-medium text-text-secondary-light dark:text-text-secondary-dark">
+<span>Step 1 of 4</span>
+<span>Region</span>
+</div>
+</div>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col px-6 pb-24">
+<!-- Headlines -->
+<div class="mb-8">
+<h1 class="text-3xl font-bold text-black dark:text-white tracking-tight mb-3">Where are you based?</h1>
+<p class="text-text-secondary-light dark:text-text-secondary-dark text-base leading-relaxed">
+                We need to know where you live to set up the correct tax and banking details for your wage access.
+            </p>
+</div>
+<!-- Form Section -->
+<div class="flex flex-col gap-6">
+<!-- Country Selector -->
+<div class="relative group">
+<label class="block text-sm font-medium text-black dark:text-white mb-2" for="country">Country of Residence</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark pointer-events-none">public</span>
+<select class="block w-full rounded-xl border-gray-300 dark:border-[#3b5443] bg-surface-light dark:bg-surface-dark text-black dark:text-white pl-12 pr-10 py-4 shadow-sm focus:border-primary focus:ring-primary focus:ring-1 transition-all appearance-none cursor-pointer text-base" id="country">
+<option disabled="" selected="" value="">Select your country</option>
+<option value="us">United States</option>
+<option value="uk">United Kingdom</option>
+<option value="ca">Canada</option>
+<option value="au">Australia</option>
+<option value="de">Germany</option>
+<option value="fr">France</option>
+<option value="ng">Nigeria</option>
+<option value="ke">Kenya</option>
+<option value="za">South Africa</option>
+</select>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-text-secondary-light dark:text-text-secondary-dark material-symbols-outlined">expand_more</span>
+</div>
+</div>
+<!-- Currency Selector (Auto-filled style) -->
+<div class="relative">
+<div class="flex justify-between items-center mb-2">
+<label class="block text-sm font-medium text-black dark:text-white" for="currency">Primary Currency</label>
+<span class="text-xs text-primary font-medium cursor-pointer hover:underline">Change</span>
+</div>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-text-secondary-light dark:text-text-secondary-dark pointer-events-none">payments</span>
+<input class="block w-full rounded-xl border-gray-300 dark:border-[#3b5443] bg-gray-50 dark:bg-surface-dark/50 text-gray-500 dark:text-gray-400 pl-12 pr-4 py-4 shadow-sm focus:border-primary focus:ring-primary focus:ring-1 transition-all text-base cursor-not-allowed" id="currency" readonly="" type="text" value="USD - United States Dollar"/>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-green-500 text-xl">check_circle</span>
+</div>
+<p class="mt-2 text-xs text-text-secondary-light dark:text-text-secondary-dark flex items-start gap-1">
+<span class="material-symbols-outlined text-sm shrink-0 mt-0.5">info</span>
+                    This currency will be used for all wage calculations and withdrawals.
+                </p>
+</div>
+<!-- Info Card -->
+<div class="mt-4 p-4 rounded-xl bg-blue-50 dark:bg-[#1b271f] border border-blue-100 dark:border-[#3b5443] flex gap-3 items-start">
+<span class="material-symbols-outlined text-blue-600 dark:text-primary mt-0.5 shrink-0">verified_user</span>
+<div>
+<h4 class="text-sm font-semibold text-blue-900 dark:text-white mb-1">Local Compliance</h4>
+<p class="text-xs text-blue-700 dark:text-text-secondary-dark leading-relaxed">
+                        EaziWage operates in full compliance with local financial regulations. Your region determines the specific KYC documents required in the next step.
+                    </p>
+</div>
+</div>
+</div>
+<!-- Spacer to push content up on larger screens -->
+<div class="flex-grow"></div>
+</main>
+<!-- Bottom Fixed Action Area -->
+<div class="fixed bottom-0 left-0 right-0 bg-background-light dark:bg-background-dark p-6 border-t border-gray-200 dark:border-[#1b271f] z-20">
+<div class="max-w-md mx-auto w-full">
+<button class="w-full bg-primary hover:bg-[#0be050] text-black font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/20 transform active:scale-[0.98] transition-all flex items-center justify-center gap-2 group">
+<span>Continue</span>
+<span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<p class="text-center text-xs text-text-secondary-light dark:text-text-secondary-dark mt-4">
+                By continuing, you agree to our <a class="underline hover:text-primary transition-colors" href="#">Terms of Service</a>.
+            </p>
+</div>
+</div>
+<!-- Optional: Decorative background elements for "Modern" feel -->
+<div class="fixed top-20 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
+<div class="fixed bottom-20 left-0 w-48 h-48 bg-blue-500/5 rounded-full blur-3xl pointer-events-none -z-10"></div>
+</body></html>

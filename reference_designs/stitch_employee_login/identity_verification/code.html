@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EaziWage - Identity Verification</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#182f22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        .scan-corner {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-color: #0df259;
+            border-style: solid;
+            border-width: 0;
+        }
+        .scan-corner-tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; border-top-left-radius: 12px; }
+        .scan-corner-tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; border-top-right-radius: 12px; }
+        .scan-corner-bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; border-bottom-left-radius: 12px; }
+        .scan-corner-br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; border-bottom-right-radius: 12px; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased selection:bg-primary selection:text-background-dark">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Top App Bar -->
+<div class="flex items-center px-4 pt-6 pb-2 justify-between">
+<button class="flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors text-slate-900 dark:text-white">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back</span>
+</button>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Identity Verification</h2>
+<div class="size-10"></div> <!-- Spacer for centering -->
+</div>
+<!-- Progress Indicators -->
+<div class="flex w-full flex-col items-center justify-center gap-2 py-4 px-6">
+<div class="flex w-full justify-between gap-2">
+<div class="h-1 flex-1 rounded-full bg-primary"></div>
+<div class="h-1 flex-1 rounded-full bg-primary"></div>
+<div class="h-1 flex-1 rounded-full bg-primary"></div>
+<div class="h-1 flex-1 rounded-full bg-slate-300 dark:bg-surface-dark"></div>
+<div class="h-1 flex-1 rounded-full bg-slate-300 dark:bg-surface-dark"></div>
+</div>
+<span class="text-xs font-medium text-slate-500 dark:text-slate-400">Step 3 of 5</span>
+</div>
+<!-- Main Content Scroll Area -->
+<div class="flex-1 overflow-y-auto px-4 pb-24">
+<!-- Headline -->
+<h1 class="text-slate-900 dark:text-white text-[28px] font-bold leading-tight pt-2 pb-2">
+                Scan your ID
+            </h1>
+<!-- Body Text -->
+<p class="text-slate-600 dark:text-slate-300 text-sm font-normal leading-relaxed pb-6">
+                To secure your EaziWage account and access your salary, please scan a valid government-issued ID.
+            </p>
+<!-- Segmented Buttons -->
+<div class="flex p-1 mb-6 bg-slate-200 dark:bg-surface-dark rounded-xl">
+<label class="flex-1 cursor-pointer">
+<input checked="" class="peer sr-only" name="doc_type" type="radio" value="national_id"/>
+<div class="flex h-10 items-center justify-center rounded-lg text-sm font-medium transition-all text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-primary peer-checked:text-slate-900 dark:peer-checked:text-background-dark peer-checked:shadow-sm">
+                        National ID
+                    </div>
+</label>
+<label class="flex-1 cursor-pointer">
+<input class="peer sr-only" name="doc_type" type="radio" value="passport"/>
+<div class="flex h-10 items-center justify-center rounded-lg text-sm font-medium transition-all text-slate-500 dark:text-slate-400 peer-checked:bg-white dark:peer-checked:bg-primary peer-checked:text-slate-900 dark:peer-checked:text-background-dark peer-checked:shadow-sm">
+                        Passport
+                    </div>
+</label>
+</div>
+<!-- Scanner Area -->
+<div class="relative w-full aspect-[1.586/1] mb-6 group cursor-pointer">
+<!-- Placeholder background for camera feed -->
+<div class="absolute inset-0 rounded-xl overflow-hidden bg-slate-900 flex items-center justify-center">
+<img alt="Blurred abstract background representing camera view" class="opacity-30 w-full h-full object-cover grayscale" data-alt="Blurred abstract background representing camera view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-cBeSzkIxbsD7xQe1hugJBOE_J0mIooWkN676n8CboEWjXHhA0IdX0E3RuRtKWslPYb4DCeHUs7X_sSmDe7zjfwW58lb-b--mNpmfHX3hl5uU2MiQI2F3tny0ZB-c4xG8c_ywFewBvr_MSIi1TqdaQewxDEu333yWh499jwPbZrAoVIHkj9zKS438RQnT9DclcArMIfqQLUwC6h4su2mOgPAiM8yxOvWAw0zyudZKy2zdY3oCJEOZyUFvcgsIssbqurt5bNKwDBAy"/>
+<!-- Guidance Icon -->
+<div class="absolute flex flex-col items-center gap-3">
+<span class="material-symbols-outlined text-white/50 text-5xl">id_card</span>
+<span class="text-white/70 text-sm font-medium">Front of card</span>
+</div>
+</div>
+<!-- Overlay Frame -->
+<div class="absolute inset-4 pointer-events-none">
+<div class="relative w-full h-full">
+<div class="scan-corner scan-corner-tl"></div>
+<div class="scan-corner scan-corner-tr"></div>
+<div class="scan-corner scan-corner-bl"></div>
+<div class="scan-corner scan-corner-br"></div>
+</div>
+</div>
+<!-- Shutter Button Overlay (Visual only) -->
+<div class="absolute bottom-4 right-4 bg-black/50 p-2 rounded-full backdrop-blur-md">
+<span class="material-symbols-outlined text-white text-xl">cameraswitch</span>
+</div>
+</div>
+<!-- Instructions / Requirements -->
+<div class="bg-slate-100 dark:bg-surface-dark rounded-xl p-4 mb-6">
+<h3 class="text-slate-900 dark:text-white text-sm font-bold mb-3">Make sure the following are clearly visible:</h3>
+<div class="grid grid-cols-2 gap-y-3 gap-x-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span class="text-xs text-slate-600 dark:text-slate-300">Full Name</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span class="text-xs text-slate-600 dark:text-slate-300">Date of Birth</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span class="text-xs text-slate-600 dark:text-slate-300">ID Number</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span class="text-xs text-slate-600 dark:text-slate-300">Expiry Date</span>
+</div>
+</div>
+</div>
+<!-- Privacy Note -->
+<div class="flex items-center justify-center gap-2 mb-4 opacity-70">
+<span class="material-symbols-outlined text-slate-500 dark:text-slate-400 text-sm">lock</span>
+<p class="text-[10px] text-slate-500 dark:text-slate-400">Your data is encrypted and securely stored.</p>
+</div>
+</div>
+<!-- Sticky Bottom Actions -->
+<div class="absolute bottom-0 w-full bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-white/5 p-4 pb-8 flex flex-col gap-3 backdrop-blur-lg bg-opacity-95 dark:bg-opacity-95">
+<button class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 transition-transform active:scale-[0.98]">
+<span class="material-symbols-outlined text-background-dark">photo_camera</span>
+<span class="text-background-dark text-base font-bold">Take Photo</span>
+</button>
+<button class="flex w-full items-center justify-center gap-2 rounded-xl border border-slate-300 dark:border-white/10 px-6 py-3 transition-colors hover:bg-slate-100 dark:hover:bg-white/5">
+<span class="text-slate-700 dark:text-white text-sm font-medium">Upload from Gallery</span>
+</button>
+<div class="flex items-center justify-center gap-2 pt-2">
+<span class="text-[10px] text-slate-400 uppercase tracking-wider">Next Step: Liveness Check</span>
+</div>
+</div>
+</div>
+</body></html>

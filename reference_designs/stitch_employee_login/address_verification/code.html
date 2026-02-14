@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Address Verification - EaziWage</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "primary-hover": "#0bc94a",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "card-dark": "#162e1e",
+                        "card-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-white antialiased transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl">
+<!-- Top App Bar -->
+<header class="flex items-center justify-between p-4 pb-2 bg-background-light dark:bg-background-dark sticky top-0 z-10">
+<button class="flex items-center justify-center size-10 rounded-full hover:bg-gray-200 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-gray-900 dark:text-white" style="font-size: 24px;">arrow_back</span>
+</button>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">Address Verification</h2>
+</header>
+<!-- Progress Indicators -->
+<div class="flex w-full flex-row items-center justify-center gap-2 py-4 px-6 bg-background-light dark:bg-background-dark">
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-primary"></div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-300 dark:bg-white/20">
+<div class="h-full w-1/2 bg-primary rounded-l-full"></div>
+</div>
+<div class="h-1.5 flex-1 rounded-full bg-gray-300 dark:bg-white/20"></div>
+</div>
+<!-- Main Content Scroll Area -->
+<div class="flex-1 overflow-y-auto px-4 pb-24">
+<!-- Headline -->
+<div class="pt-2 pb-2">
+<h1 class="text-[28px] font-bold leading-tight text-left">Verify Address</h1>
+</div>
+<!-- Body Text -->
+<div class="pb-6">
+<p class="text-gray-600 dark:text-gray-300 text-base font-normal leading-normal">
+                    To keep your account secure and comply with global regulations, we need proof of where you live.
+                </p>
+</div>
+<!-- Guidelines Card -->
+<div class="bg-card-light dark:bg-card-dark rounded-xl p-5 shadow-sm border border-gray-200 dark:border-white/5 mb-6">
+<h3 class="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">Acceptable Documents</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5" style="font-size: 20px;">check_circle</span>
+<span class="text-sm font-medium">Utility Bill (Gas, Water, Electric)</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5" style="font-size: 20px;">check_circle</span>
+<span class="text-sm font-medium">Bank Statement</span>
+</li>
+<li class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary mt-0.5" style="font-size: 20px;">check_circle</span>
+<span class="text-sm font-medium">Lease Agreement</span>
+</li>
+<li class="flex items-start gap-3 mt-4 pt-3 border-t border-gray-100 dark:border-white/10 text-amber-500 dark:text-amber-400">
+<span class="material-symbols-outlined mt-0.5" style="font-size: 20px;">warning</span>
+<span class="text-sm font-medium">Document must be dated within the last 3 months.</span>
+</li>
+</ul>
+</div>
+<!-- Upload Area -->
+<div class="relative group cursor-pointer">
+<input accept=".jpg,.png,.pdf" class="absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer" type="file"/>
+<div class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-white/5 group-hover:bg-gray-100 dark:group-hover:bg-white/10 group-hover:border-primary transition-all duration-200">
+<div class="flex items-center justify-center size-14 rounded-full bg-primary/10 mb-3">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">cloud_upload</span>
+</div>
+<p class="text-base font-semibold text-gray-900 dark:text-white mb-1">Tap to upload document</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">JPG, PNG or PDF. Max 10MB</p>
+</div>
+</div>
+<!-- Alternative Camera Option -->
+<div class="mt-4 flex items-center justify-center">
+<button class="flex items-center gap-2 text-primary font-medium py-2 px-4 rounded-lg hover:bg-primary/10 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 20px;">photo_camera</span>
+<span>Or take a photo</span>
+</button>
+</div>
+</div>
+<!-- Sticky Footer -->
+<div class="absolute bottom-0 left-0 w-full bg-background-light dark:bg-background-dark/95 backdrop-blur-sm border-t border-gray-200 dark:border-white/5 p-4 pb-8 z-20">
+<div class="flex flex-col gap-4">
+<button class="w-full h-12 bg-primary hover:bg-primary-hover text-background-dark font-bold text-base rounded-full flex items-center justify-center shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98]">
+                    Verify Document
+                </button>
+<button class="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors text-center">
+                    Having trouble uploading?
+                </button>
+</div>
+</div>
+</div>
+</body></html>

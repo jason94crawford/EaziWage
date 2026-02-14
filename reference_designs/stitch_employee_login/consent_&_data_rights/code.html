@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Consent &amp; Data Rights - EaziWage</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#1A2C20",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        /* Toggle Switch Animation */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #0df259;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #0df259;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden font-display max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark">
+<!-- Header -->
+<header class="flex items-center p-4 pb-2 justify-between sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+<button class="text-neutral-900 dark:text-white flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-neutral-200 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined" style="font-size: 24px;">arrow_back_ios_new</span>
+</button>
+<h2 class="text-neutral-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Onboarding</h2>
+</header>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-2 px-6 pb-2">
+<div class="flex gap-6 justify-between">
+<p class="text-neutral-600 dark:text-gray-400 text-xs font-medium uppercase tracking-wider">Step 3 of 5</p>
+<p class="text-primary text-xs font-bold">60% Complete</p>
+</div>
+<div class="rounded-full bg-neutral-200 dark:bg-white/10 h-1.5 overflow-hidden">
+<div class="h-full rounded-full bg-primary" style="width: 60%;"></div>
+</div>
+</div>
+<main class="flex-1 flex flex-col px-4 pb-32">
+<!-- Hero / Intro -->
+<div class="flex flex-col items-center pt-6 pb-6 text-center">
+<div class="size-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary" style="font-size: 32px;">shield_lock</span>
+</div>
+<h1 class="text-neutral-900 dark:text-white text-[28px] font-bold leading-tight mb-2">Permissions &amp; Consent</h1>
+<p class="text-neutral-600 dark:text-gray-400 text-base font-normal leading-relaxed px-2">
+                    To provide you with early access to your wages, EaziWage needs your permission to secure and process your data.
+                </p>
+</div>
+<!-- Consent Cards -->
+<div class="flex flex-col gap-4">
+<!-- Card 1: Payroll -->
+<div class="group relative flex flex-col gap-3 p-4 rounded-xl bg-white dark:bg-surface-dark border border-neutral-200 dark:border-white/5 shadow-sm">
+<div class="flex items-start justify-between gap-4">
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-neutral-500 dark:text-gray-400 mt-1">account_balance_wallet</span>
+<div>
+<h3 class="text-neutral-900 dark:text-white font-semibold text-sm">Payroll Integration</h3>
+<p class="text-neutral-500 dark:text-gray-400 text-xs mt-1 leading-normal">
+                                    Allow access to salary and attendance data to calculate your earnable limit in real-time.
+                                </p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none shrink-0">
+<input checked="" class="peer sr-only" id="toggle1" name="toggle" type="checkbox"/>
+<label class="block overflow-hidden h-7 rounded-full bg-neutral-200 dark:bg-white/10 cursor-pointer transition-colors peer-checked:bg-primary" for="toggle1"></label>
+<span class="absolute top-1 left-1 bg-white w-5 h-5 rounded-full transition-transform transform peer-checked:translate-x-5 shadow-sm"></span>
+</div>
+</div>
+</div>
+<!-- Card 2: Risk -->
+<div class="group relative flex flex-col gap-3 p-4 rounded-xl bg-white dark:bg-surface-dark border border-neutral-200 dark:border-white/5 shadow-sm">
+<div class="flex items-start justify-between gap-4">
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-neutral-500 dark:text-gray-400 mt-1">analytics</span>
+<div>
+<h3 class="text-neutral-900 dark:text-white font-semibold text-sm">Risk Assessment</h3>
+<p class="text-neutral-500 dark:text-gray-400 text-xs mt-1 leading-normal">
+                                    Consent to a soft credit check to verify eligibility. This <span class="text-primary font-medium">will not</span> affect your credit score.
+                                </p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none shrink-0">
+<input class="peer sr-only" id="toggle2" name="toggle" type="checkbox"/>
+<label class="block overflow-hidden h-7 rounded-full bg-neutral-200 dark:bg-white/10 cursor-pointer transition-colors peer-checked:bg-primary" for="toggle2"></label>
+<span class="absolute top-1 left-1 bg-white w-5 h-5 rounded-full transition-transform transform peer-checked:translate-x-5 shadow-sm"></span>
+</div>
+</div>
+</div>
+<!-- Card 3: Repayment -->
+<div class="group relative flex flex-col gap-3 p-4 rounded-xl bg-white dark:bg-surface-dark border border-neutral-200 dark:border-white/5 shadow-sm">
+<div class="flex items-start justify-between gap-4">
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-neutral-500 dark:text-gray-400 mt-1">sync_alt</span>
+<div>
+<h3 class="text-neutral-900 dark:text-white font-semibold text-sm">Automatic Repayment</h3>
+<p class="text-neutral-500 dark:text-gray-400 text-xs mt-1 leading-normal">
+                                    Authorize the automatic deduction of any advanced amounts from your next scheduled paycheck.
+                                </p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none shrink-0">
+<input checked="" class="peer sr-only" id="toggle3" name="toggle" type="checkbox"/>
+<label class="block overflow-hidden h-7 rounded-full bg-neutral-200 dark:bg-white/10 cursor-pointer transition-colors peer-checked:bg-primary" for="toggle3"></label>
+<span class="absolute top-1 left-1 bg-white w-5 h-5 rounded-full transition-transform transform peer-checked:translate-x-5 shadow-sm"></span>
+</div>
+</div>
+</div>
+<!-- Card 4: Compliance -->
+<div class="group relative flex flex-col gap-3 p-4 rounded-xl bg-white dark:bg-surface-dark border border-neutral-200 dark:border-white/5 shadow-sm">
+<div class="flex items-start justify-between gap-4">
+<div class="flex gap-3 items-start">
+<span class="material-symbols-outlined text-neutral-500 dark:text-gray-400 mt-1">verified_user</span>
+<div>
+<h3 class="text-neutral-900 dark:text-white font-semibold text-sm">Compliance Reporting</h3>
+<p class="text-neutral-500 dark:text-gray-400 text-xs mt-1 leading-normal">
+                                    Agree to mandatory AML (Anti-Money Laundering) and KYC (Know Your Customer) reporting standards.
+                                </p>
+</div>
+</div>
+<div class="relative inline-block w-12 mr-2 align-middle select-none shrink-0">
+<input checked="" class="peer sr-only" id="toggle4" name="toggle" type="checkbox"/>
+<label class="block overflow-hidden h-7 rounded-full bg-neutral-200 dark:bg-white/10 cursor-pointer transition-colors peer-checked:bg-primary" for="toggle4"></label>
+<span class="absolute top-1 left-1 bg-white w-5 h-5 rounded-full transition-transform transform peer-checked:translate-x-5 shadow-sm"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Master Acceptance / Legal -->
+<div class="mt-6 flex flex-col gap-3 px-1">
+<div class="flex items-center gap-3">
+<div class="flex items-center h-5">
+<input aria-describedby="terms-description" class="w-5 h-5 border border-neutral-300 rounded bg-neutral-50 focus:ring-3 focus:ring-primary/30 dark:bg-white/10 dark:border-white/20 dark:focus:ring-primary/50 text-primary accent-primary" id="terms" type="checkbox"/>
+</div>
+<div class="text-sm">
+<label class="font-medium text-neutral-900 dark:text-white" for="terms">I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.</label>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Footer Action -->
+<div class="fixed bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-background-light via-background-light to-transparent dark:from-background-dark dark:via-background-dark dark:to-transparent z-20 max-w-md mx-auto">
+<div class="flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-[#0be052] active:scale-[0.98] transition-all text-background-dark font-bold text-base py-4 rounded-xl shadow-[0_0_20px_rgba(13,242,89,0.3)] flex items-center justify-center gap-2">
+                    I Agree &amp; Continue
+                    <span class="material-symbols-outlined text-xl">arrow_forward</span>
+</button>
+<div class="flex justify-center items-center gap-2 text-neutral-400 dark:text-neutral-500 text-[10px] pb-2">
+<span class="material-symbols-outlined text-xs">lock</span>
+<span>Your data is encrypted with 256-bit SSL security</span>
+</div>
+</div>
+</div>
+</div>
+</body></html>

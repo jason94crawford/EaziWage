@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EaziWage Onboarding</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#1a3322",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar hide for cleaner mobile look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white transition-colors duration-200">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden font-display pb-24">
+<!-- TopAppBar -->
+<header class="sticky top-0 z-10 flex items-center bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md p-4 justify-between border-b border-transparent dark:border-white/5">
+<div class="flex items-center gap-2">
+<!-- Logo Mark -->
+<div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark font-bold text-xl">account_balance_wallet</span>
+</div>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">EaziWage</h2>
+</div>
+<div class="flex items-center justify-end">
+<button class="text-slate-500 dark:text-[#9cbaa6] text-sm font-medium hover:text-primary transition-colors">Log In</button>
+</div>
+</header>
+<!-- Main Content Scroll Area -->
+<main class="flex-1 flex flex-col items-center w-full max-w-md mx-auto">
+<!-- HeaderImage / Hero Graphic -->
+<div class="@container w-full px-6 pt-8 pb-4">
+<div class="relative w-full aspect-[4/3] flex flex-col justify-center items-center overflow-hidden rounded-2xl bg-gradient-to-b from-surface-dark/50 to-transparent border border-white/5">
+<!-- Glow Effect -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-primary/20 rounded-full blur-3xl"></div>
+<div class="relative z-10 w-48 h-48 bg-contain bg-center bg-no-repeat drop-shadow-2xl" data-alt="3D illustration of a secure digital shield and wallet glowing green" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBXx3dz1AraDNMeIbnE_uQoAvCTkTf5T0kSk7CyqlJTReTYUof0apSyN1UPrrPf6126ge9AeI0sOnhhP9hlgVIVY29zQ7CvMf8CUjrVoZjmw9nIqPaF-0giRqNa215FAVWvNAkNXa8iOIa1_rOMZfgq1PTybCSrvwTX5zvfveVZsWUp4WM_fZageHr6XpUIlyHFNsQm1zSvdjtNqgeJ59j27y2ORMwtp7aTO3tfRO5Fs45A2eyKgyFSiEG4hTdHa6_BtbGkRIDL2vb9");'>
+</div>
+</div>
+</div>
+<!-- HeadlineText -->
+<div class="w-full px-6 text-center">
+<h1 class="text-slate-900 dark:text-white tracking-tight text-[32px] font-bold leading-[1.1] pb-3">
+                    Your Salary, <br/><span class="text-primary">On Your Terms</span>
+</h1>
+</div>
+<!-- BodyText -->
+<div class="w-full px-6 text-center">
+<p class="text-slate-600 dark:text-gray-400 text-base font-normal leading-relaxed">
+                    Welcome to EaziWage. To protect your earnings and ensure instant access, we need to verify your identity. It only takes 2 minutes.
+                </p>
+</div>
+<!-- DescriptionList / Feature List -->
+<div class="w-full p-6 mt-2">
+<div class="flex flex-col gap-5">
+<!-- Feature 1 -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/5 shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-2xl">verified_user</span>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-tight mb-1">Bank-grade Security</p>
+<p class="text-slate-500 dark:text-gray-400 text-sm font-normal leading-normal">Your data is protected with 256-bit encryption</p>
+</div>
+</div>
+<!-- Feature 2 -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/5 shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-2xl">badge</span>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-tight mb-1">Quick Identity Verification</p>
+<p class="text-slate-500 dark:text-gray-400 text-sm font-normal leading-normal">Simple ID scan to verify it's really you</p>
+</div>
+</div>
+<!-- Feature 3 -->
+<div class="flex items-start gap-4 p-4 rounded-xl bg-white dark:bg-surface-dark border border-slate-200 dark:border-white/5 shadow-sm">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 text-primary">
+<span class="material-symbols-outlined text-2xl">bolt</span>
+</div>
+<div>
+<p class="text-slate-900 dark:text-white text-base font-semibold leading-tight mb-1">Instant Transfer Access</p>
+<p class="text-slate-500 dark:text-gray-400 text-sm font-normal leading-normal">Get your salary in your account immediately</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Privacy Badge -->
+<div class="flex items-center justify-center gap-2 py-2 px-4 bg-surface-dark/50 rounded-full border border-white/5 mb-6">
+<span class="material-symbols-outlined text-xs text-[#9cbaa6]">lock</span>
+<span class="text-[#9cbaa6] text-xs font-medium uppercase tracking-wider">Data Encrypted &amp; Private</span>
+</div>
+</main>
+<!-- Bottom Action Area (Fixed) -->
+<div class="fixed bottom-0 left-0 w-full bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-lg border-t border-slate-200 dark:border-white/10 p-4 pb-8 z-50">
+<div class="max-w-md mx-auto flex flex-col gap-3">
+<button class="w-full bg-primary hover:bg-green-400 active:scale-[0.98] transition-all text-background-dark font-bold text-lg h-14 rounded-lg shadow-[0_0_20px_rgba(13,242,89,0.3)] flex items-center justify-center gap-2 group">
+                    Begin Onboarding
+                    <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<p class="text-center text-[10px] text-slate-400 dark:text-gray-500">
+                    By continuing, you agree to our <a class="underline hover:text-primary" href="#">Terms of Service</a> &amp; <a class="underline hover:text-primary" href="#">Privacy Policy</a>.
+                </p>
+</div>
+</div>
+</div>
+</body></html>

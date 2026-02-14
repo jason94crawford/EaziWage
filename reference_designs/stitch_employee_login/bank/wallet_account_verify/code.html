@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EaziWage - Verify Account</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#1a2e22",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles to refine the look */
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-x-hidden font-display">
+<!-- Top AppBar -->
+<div class="flex items-center px-4 py-4 justify-between sticky top-0 z-10 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-sm">
+<button class="text-neutral-900 dark:text-white flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-neutral-200 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-2xl">arrow_back</span>
+</button>
+<h2 class="text-neutral-900 dark:text-white text-lg font-bold leading-tight tracking-tight">Verify Account</h2>
+<div class="size-10"></div> <!-- Spacer for visual balance -->
+</div>
+<!-- Main Content Scrollable Area -->
+<div class="flex-1 flex flex-col px-4 pb-8 max-w-lg mx-auto w-full">
+<!-- Headline -->
+<div class="pt-4 pb-2">
+<h1 class="text-neutral-900 dark:text-white tracking-tight text-3xl font-bold leading-tight mb-2">Verify Ownership</h1>
+<p class="text-neutral-600 dark:text-neutral-400 text-base font-normal leading-relaxed">
+                To prevent fraud, we need to ensure this account belongs to you.
+            </p>
+</div>
+<!-- Account Summary Card -->
+<div class="py-4">
+<div class="flex flex-col gap-4 rounded-2xl bg-surface-light dark:bg-surface-dark p-4 shadow-sm border border-neutral-200 dark:border-neutral-800">
+<div class="flex items-start justify-between gap-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-neutral-100 dark:bg-white/5 flex items-center justify-center border border-neutral-200 dark:border-white/10">
+<span class="material-symbols-outlined text-neutral-900 dark:text-white">account_balance</span>
+</div>
+<div class="flex flex-col">
+<p class="text-neutral-900 dark:text-white text-base font-bold leading-tight">Chase Bank Checking</p>
+<p class="text-neutral-500 dark:text-neutral-400 text-sm font-normal leading-normal">•••• 4582</p>
+</div>
+</div>
+<span class="inline-flex items-center gap-1 rounded-full bg-orange-100 dark:bg-orange-500/10 px-2.5 py-1 text-xs font-semibold text-orange-700 dark:text-orange-400">
+<span class="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse"></span>
+                        Pending
+                    </span>
+</div>
+<!-- Visual Card Representation -->
+<div class="w-full h-32 bg-cover bg-center rounded-xl relative overflow-hidden group" data-alt="Abstract dark green geometric pattern representing secure finance" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuACLuV4DIjyznPCxiBeOySL7CUWoRPRu97RUKrx2KF0IPLTTL_N9ami1hiNArBOFhukkxrYIV6v6sTKrBlfbUDVF72Y1FxOO4Kx3yzJ9dDTB_kQZPnRvyUQSIZSXVQpywHM-4mX_aEjxHRh23doAX4HxriKQQ2yPt1qrySihPdPF3L3caFsI_DoHLYFSOuzt5GxvPeZ3yXF4sPIVXVC23QMUA5QkZvSPmfeS7-5l4ap1T-g5ri_gHZg4lCj2HRCk2I6FTIkuj0nKmKs");'>
+<div class="absolute inset-0 bg-black/40 dark:bg-black/60"></div>
+<div class="absolute bottom-3 left-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-white/80 text-lg">lock</span>
+<span class="text-white/90 text-xs font-medium tracking-wider">SECURE LINK</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Method Selection (Segmented Buttons) -->
+<div class="py-2">
+<div class="flex h-12 w-full items-center justify-center rounded-xl bg-neutral-200 dark:bg-surface-dark p-1">
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 transition-all duration-200 text-neutral-600 dark:text-neutral-400 hover:text-neutral-900 dark:hover:text-white">
+<span class="text-sm font-semibold truncate">Instant Link</span>
+<input class="invisible w-0" name="verification_method" type="radio" value="Instant Link"/>
+</label>
+<label class="flex cursor-pointer h-full grow items-center justify-center rounded-lg px-2 bg-white dark:bg-[#2A4031] shadow-sm text-neutral-900 dark:text-white transition-all duration-200">
+<span class="text-sm font-semibold truncate">Micro-deposit</span>
+<input checked="" class="invisible w-0" name="verification_method" type="radio" value="Micro-deposit"/>
+</label>
+</div>
+</div>
+<!-- Instructions for Micro-deposit -->
+<div class="py-4">
+<p class="text-neutral-600 dark:text-neutral-300 text-sm leading-relaxed">
+                We've sent two small deposits (less than $1.00) to your account ending in <strong class="text-neutral-900 dark:text-white">4582</strong>. Please enter the amounts below to verify.
+            </p>
+</div>
+<!-- Input Fields -->
+<div class="grid grid-cols-2 gap-4 mb-6">
+<div class="flex flex-col gap-2">
+<label class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Deposit 1</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="text-neutral-400 font-medium">$</span>
+</div>
+<input class="block w-full rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-surface-dark py-3.5 pl-7 pr-3 text-neutral-900 dark:text-white placeholder-neutral-400 focus:border-primary focus:ring-primary focus:ring-1 sm:text-lg font-semibold shadow-sm transition-all outline-none" inputmode="decimal" placeholder="0.00" step="0.01" type="number"/>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="text-xs font-semibold text-neutral-500 dark:text-neutral-400 uppercase tracking-wider">Deposit 2</label>
+<div class="relative group">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="text-neutral-400 font-medium">$</span>
+</div>
+<input class="block w-full rounded-xl border-neutral-300 dark:border-neutral-700 bg-white dark:bg-surface-dark py-3.5 pl-7 pr-3 text-neutral-900 dark:text-white placeholder-neutral-400 focus:border-primary focus:ring-primary focus:ring-1 sm:text-lg font-semibold shadow-sm transition-all outline-none" inputmode="decimal" placeholder="0.00" step="0.01" type="number"/>
+</div>
+</div>
+</div>
+<!-- Spacer to push content up on larger screens or just separation -->
+<div class="flex-1 min-h-[20px]"></div>
+<!-- Bottom Actions -->
+<div class="flex flex-col gap-4 mt-auto">
+<!-- Verify Button -->
+<button class="relative w-full overflow-hidden rounded-xl bg-primary px-4 py-4 text-center transition-transform active:scale-[0.98] hover:brightness-105">
+<span class="relative z-10 text-base font-bold text-background-dark">Verify Account</span>
+<div class="absolute inset-0 bg-white/20 opacity-0 hover:opacity-100 transition-opacity"></div>
+</button>
+<!-- Secondary/Help Link -->
+<button class="w-full text-center py-2">
+<span class="text-sm font-medium text-neutral-500 dark:text-neutral-400 hover:text-primary dark:hover:text-primary transition-colors">Didn't receive a deposit?</span>
+</button>
+<!-- Trust Indicators -->
+<div class="flex items-center justify-center gap-2 mt-2 opacity-60">
+<span class="material-symbols-outlined text-neutral-500 dark:text-neutral-400 text-sm">lock</span>
+<span class="text-xs font-medium text-neutral-500 dark:text-neutral-400">256-bit Encryption • Bank Grade Security</span>
+</div>
+<div class="text-center mt-1">
+<p class="text-[10px] text-neutral-400 dark:text-neutral-600 leading-tight">
+                    EaziWage only transfers funds to accounts owned directly by the employee. By verifying, you agree to our Terms of Service.
+                </p>
+</div>
+</div>
+</div>
+</div>
+</body></html>

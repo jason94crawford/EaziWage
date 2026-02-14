@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EaziWage - Disbursement Method</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #102216; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #28392e; 
+            border-radius: 4px;
+        }
+        
+        /* Hide default radio/checkbox appearance */
+        input[type="radio"], input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display antialiased">
+<div class="relative flex h-full min-h-screen w-full flex-col overflow-hidden max-w-md mx-auto shadow-2xl bg-background-light dark:bg-background-dark text-slate-900 dark:text-white border-x border-[#28392e]">
+<!-- Top App Bar -->
+<header class="flex items-center px-4 pt-12 pb-2 justify-between sticky top-0 z-10 bg-background-light dark:bg-background-dark/95 backdrop-blur-sm">
+<button class="text-slate-900 dark:text-white flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[24px]">arrow_back_ios_new</span>
+</button>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12">Select Method</h2>
+</header>
+<main class="flex-1 flex flex-col px-4 pb-24">
+<!-- Headline -->
+<div class="pt-4 pb-6">
+<h2 class="text-slate-900 dark:text-white tracking-tight text-[28px] font-bold leading-tight">Where should we send the funds?</h2>
+<p class="text-slate-500 dark:text-gray-400 mt-2 text-sm">Choose a secure destination for your earnings.</p>
+</div>
+<!-- Method Selection Group -->
+<div class="space-y-3" role="radiogroup">
+<!-- Mobile Money Option (Active State Example) -->
+<label class="relative flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all border-2 border-primary bg-white dark:bg-[#1b271f] shadow-lg shadow-primary/5">
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-lg bg-primary/20 text-primary shrink-0 size-12">
+<span class="material-symbols-outlined text-[24px]">phonelink_ring</span>
+</div>
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white text-base font-semibold leading-normal">Mobile Money</span>
+<span class="text-slate-500 dark:text-[#9cbaa6] text-sm font-normal">Funds arrive instantly</span>
+</div>
+</div>
+<div class="shrink-0 relative">
+<input checked="" class="peer h-6 w-6 rounded-full border-2 border-[#3b5443] checked:border-primary checked:bg-primary transition-all" name="payment_method" type="radio" value="mobile"/>
+<span class="material-symbols-outlined absolute inset-0 text-background-dark text-[16px] pointer-events-none opacity-0 peer-checked:opacity-100 flex items-center justify-center font-bold">check</span>
+</div>
+</label>
+<!-- Bank Transfer Option (Inactive State Example) -->
+<label class="relative flex items-center justify-between p-4 rounded-xl cursor-pointer transition-all border border-gray-200 dark:border-[#28392e] bg-white dark:bg-[#151f18] hover:bg-gray-50 dark:hover:bg-[#1b271f]">
+<div class="flex items-center gap-4">
+<div class="flex items-center justify-center rounded-lg bg-gray-100 dark:bg-[#28392e] text-slate-500 dark:text-white shrink-0 size-12">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+</div>
+<div class="flex flex-col">
+<span class="text-slate-900 dark:text-white text-base font-semibold leading-normal">Bank Transfer</span>
+<span class="text-slate-500 dark:text-[#9cbaa6] text-sm font-normal">Takes up to 24 hours</span>
+</div>
+</div>
+<div class="shrink-0 relative">
+<input class="peer h-6 w-6 rounded-full border-2 border-gray-300 dark:border-[#3b5443] checked:border-primary checked:bg-primary transition-all" name="payment_method" type="radio" value="bank"/>
+<span class="material-symbols-outlined absolute inset-0 text-background-dark text-[16px] pointer-events-none opacity-0 peer-checked:opacity-100 flex items-center justify-center font-bold">check</span>
+</div>
+</label>
+</div>
+<!-- Conditional Inputs Area -->
+<div class="mt-8 space-y-5">
+<div class="flex items-center justify-between">
+<h3 class="text-slate-900 dark:text-white text-lg font-bold">Details</h3>
+<div class="flex items-center gap-1 text-xs text-primary/80">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+<span>Encrypted</span>
+</div>
+</div>
+<!-- Input: Phone Number -->
+<div class="group">
+<label class="block text-slate-500 dark:text-[#9cbaa6] text-sm font-medium mb-2 pl-1">Mobile Number</label>
+<div class="relative flex items-center">
+<span class="absolute left-4 text-slate-400 dark:text-[#5a7a65] material-symbols-outlined">call</span>
+<input class="w-full h-14 pl-12 pr-4 bg-gray-50 dark:bg-[#1b271f] border border-gray-200 dark:border-[#3b5443] rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-[#5a7a65] focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="+254 7XX XXX XXX" type="tel" value="+254 712 345 678"/>
+</div>
+</div>
+<!-- Input: Provider Select -->
+<div class="group relative">
+<label class="block text-slate-500 dark:text-[#9cbaa6] text-sm font-medium mb-2 pl-1">Select Provider</label>
+<div class="relative">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#5a7a65] material-symbols-outlined z-10 pointer-events-none">sim_card</span>
+<select class="appearance-none w-full h-14 pl-12 pr-10 bg-gray-50 dark:bg-[#1b271f] border border-gray-200 dark:border-[#3b5443] rounded-xl text-slate-900 dark:text-white focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all cursor-pointer">
+<option selected="" value="mpesa">M-Pesa</option>
+<option value="airtel">Airtel Money</option>
+<option value="tkash">T-Kash</option>
+</select>
+<span class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 dark:text-[#5a7a65] material-symbols-outlined pointer-events-none">expand_more</span>
+</div>
+</div>
+<!-- Save for later -->
+<div class="flex items-center justify-between pt-2">
+<label class="text-slate-700 dark:text-gray-300 text-sm font-medium cursor-pointer select-none" for="save-method">Save this method for future</label>
+<div class="relative inline-block w-12 mr-2 align-middle select-none transition duration-200 ease-in">
+<input class="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 border-gray-200 dark:border-[#3b5443] appearance-none cursor-pointer checked:right-0 checked:border-primary transition-all duration-200 ease-in-out right-6 top-0" id="save-method" name="save-method" type="checkbox"/>
+<label class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-200 dark:bg-[#28392e] cursor-pointer checked:bg-primary/20" for="save-method"></label>
+</div>
+</div>
+</div>
+</main>
+<!-- Sticky Bottom Action -->
+<div class="sticky bottom-0 w-full p-4 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-t border-gray-200 dark:border-[#28392e]">
+<button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold text-lg h-14 rounded-xl flex items-center justify-center gap-2 transition-transform active:scale-[0.98]">
+<span>Confirm Withdrawal</span>
+<span class="material-symbols-outlined text-[20px] font-bold">arrow_forward</span>
+</button>
+</div>
+</div>
+<style>
+        /* Custom toggle switch styles for Tailwind integration */
+        .toggle-checkbox:checked {
+            right: 0;
+            border-color: #0df259;
+        }
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: rgba(13, 242, 89, 0.2);
+        }
+    </style>
+</body></html>

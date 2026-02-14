@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EaziWage Dashboard</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#1A2C20",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.375rem", 
+                        "lg": "0.75rem", 
+                        "xl": "1rem", 
+                        "2xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar hiding for cleaner mobile look */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased selection:bg-primary selection:text-background-dark pb-24">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-20 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md border-b border-black/5 dark:border-white/5">
+<div class="flex items-center p-4 justify-between max-w-lg mx-auto w-full">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 ring-2 ring-primary/20" data-alt="Portrait of a smiling young employee" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAy4WGcJ_OeTQxLfNNkGi44wyGDnw8UU2TemGzT6ZoNtEd7ASLaUTK47zOsXFmoIVaJyZGv_db6FSu4S4N9BS5I8q82ePZdVLW4qrDuvjQmC9fwu6ZDDfbUqUiGQye3GSyZXiW5ktq5ljnU72iFobsDjBtESWMve9Vgiqqy5mqwd-ZiJM9iqJIncFSucuRFGvsFlpT2OfIkNv-XKgv42a1i_q-fdbZdgOezJ3wOrZs7RqGTJPDyF2aNKpvS1Fhqi6O9rGHQyoWBHnV");'>
+</div>
+<div class="absolute bottom-0 right-0 size-3 bg-primary rounded-full border-2 border-background-light dark:border-background-dark"></div>
+</div>
+<div>
+<p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Good Morning,</p>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight">Alex Johnson</h2>
+</div>
+</div>
+<button class="flex items-center justify-center rounded-full size-10 hover:bg-black/5 dark:hover:bg-white/10 transition-colors relative">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
+<span class="absolute top-2.5 right-2.5 size-2 bg-red-500 rounded-full"></span>
+</button>
+</div>
+</header>
+<main class="flex flex-col gap-6 max-w-lg mx-auto w-full px-4 pt-6">
+<!-- Hero Balance Card -->
+<div class="relative overflow-hidden rounded-2xl bg-surface-light dark:bg-surface-dark shadow-sm ring-1 ring-black/5 dark:ring-white/5">
+<!-- Decorative Background Element -->
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+<div class="relative p-6 flex flex-col items-center text-center z-10">
+<p class="text-slate-500 dark:text-[#9cbaa6] text-sm font-medium tracking-wide uppercase mb-2">Available to Withdraw</p>
+<div class="flex items-baseline gap-1 mb-1">
+<span class="text-4xl sm:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">$345.00</span>
+</div>
+<p class="text-xs text-slate-400 dark:text-slate-500 mb-6">Instant transfer to your linked account</p>
+<div class="w-full grid grid-cols-2 gap-3 mb-6">
+<div class="bg-background-light dark:bg-background-dark/50 rounded-xl p-3 flex flex-col items-center justify-center border border-black/5 dark:border-white/5">
+<span class="text-xs text-slate-500 mb-1">Fee</span>
+<span class="font-bold text-slate-900 dark:text-white">$2.50</span>
+</div>
+<div class="bg-background-light dark:bg-background-dark/50 rounded-xl p-3 flex flex-col items-center justify-center border border-black/5 dark:border-white/5">
+<span class="text-xs text-slate-500 mb-1">Arrives</span>
+<span class="font-bold text-slate-900 dark:text-white">Instantly</span>
+</div>
+</div>
+<button class="w-full flex items-center justify-center gap-2 rounded-xl h-14 bg-primary text-background-dark text-base font-bold shadow-[0_0_20px_rgba(13,242,89,0.3)] hover:shadow-[0_0_25px_rgba(13,242,89,0.5)] transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">payments</span>
+                    Request Withdrawal
+                </button>
+</div>
+</div>
+<!-- Salary Breakdown / Progress -->
+<section>
+<div class="flex items-center justify-between mb-3 px-1">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Salary Breakdown</h3>
+<span class="text-xs font-medium text-primary bg-primary/10 px-2 py-1 rounded-full">Oct 1 - Oct 30</span>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-5 rounded-2xl shadow-sm ring-1 ring-black/5 dark:ring-white/5">
+<!-- Main Progress Bar -->
+<div class="flex justify-between items-end mb-2">
+<span class="text-sm font-medium text-slate-500 dark:text-[#9cbaa6]">Earned so far</span>
+<span class="text-lg font-bold text-slate-900 dark:text-white">$2,080</span>
+</div>
+<div class="relative h-4 w-full bg-background-light dark:bg-background-dark rounded-full overflow-hidden mb-4">
+<!-- Base Track -->
+<div class="absolute top-0 left-0 h-full bg-slate-200 dark:bg-white/10 w-full"></div>
+<!-- Earned Segment -->
+<div class="absolute top-0 left-0 h-full bg-primary transition-all duration-1000 ease-out z-20" style="width: 65%;"></div>
+<!-- Withdrawn Marker (Overlay on Earned) -->
+<div class="absolute top-0 left-0 h-full bg-white/30 z-30 border-r border-black/20" style="width: 15%;"></div>
+</div>
+<!-- Legend / Details -->
+<div class="grid grid-cols-3 gap-2">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-white/30 ring-1 ring-slate-400 dark:ring-0"></div> <!-- Simulating the withdrawn color overlay -->
+<p class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Withdrawn</p>
+</div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">$480</p>
+</div>
+<div class="flex flex-col gap-1 border-l border-slate-200 dark:border-white/10 pl-3">
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-primary"></div>
+<p class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Available</p>
+</div>
+<p class="text-sm font-semibold text-primary">$1,600</p>
+</div>
+<div class="flex flex-col gap-1 border-l border-slate-200 dark:border-white/10 pl-3">
+<div class="flex items-center gap-1.5">
+<div class="size-2 rounded-full bg-slate-200 dark:bg-white/10"></div>
+<p class="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Remaining</p>
+</div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">$1,120</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Stats Grid -->
+<section class="grid grid-cols-2 gap-3">
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-2xl flex flex-col justify-between h-32 shadow-sm ring-1 ring-black/5 dark:ring-white/5 group relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 text-slate-100 dark:text-white/5">
+<span class="material-symbols-outlined text-[80px]">calendar_month</span>
+</div>
+<div class="flex items-start justify-between relative z-10">
+<div class="p-2 bg-blue-500/10 rounded-lg text-blue-500">
+<span class="material-symbols-outlined text-xl">event</span>
+</div>
+</div>
+<div class="relative z-10">
+<p class="text-sm text-slate-500 dark:text-[#9cbaa6] mb-0.5">Next Payday</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">Oct 30th</p>
+</div>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark p-4 rounded-2xl flex flex-col justify-between h-32 shadow-sm ring-1 ring-black/5 dark:ring-white/5 group relative overflow-hidden">
+<div class="absolute -right-4 -bottom-4 text-slate-100 dark:text-white/5">
+<span class="material-symbols-outlined text-[80px]">trending_up</span>
+</div>
+<div class="flex items-start justify-between relative z-10">
+<div class="p-2 bg-primary/10 rounded-lg text-primary">
+<span class="material-symbols-outlined text-xl">account_balance</span>
+</div>
+</div>
+<div class="relative z-10">
+<p class="text-sm text-slate-500 dark:text-[#9cbaa6] mb-0.5">Projected Salary</p>
+<p class="text-xl font-bold text-slate-900 dark:text-white">$3,200</p>
+</div>
+</div>
+</section>
+<!-- Recent Activity Header -->
+<section>
+<div class="flex items-center justify-between mb-3 px-1">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Recent Activity</h3>
+<button class="text-sm font-medium text-primary">See All</button>
+</div>
+<div class="bg-surface-light dark:bg-surface-dark rounded-2xl overflow-hidden ring-1 ring-black/5 dark:ring-white/5 shadow-sm">
+<!-- Activity Item 1 -->
+<div class="p-4 flex items-center justify-between border-b border-slate-100 dark:border-white/5 hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 shrink-0">
+<span class="material-symbols-outlined text-lg">arrow_outward</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">Early Withdrawal</p>
+<p class="text-xs text-slate-500">Today, 9:41 AM</p>
+</div>
+</div>
+<span class="text-sm font-bold text-slate-900 dark:text-white">-$150.00</span>
+</div>
+<!-- Activity Item 2 -->
+<div class="p-4 flex items-center justify-between hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-lg">work</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-slate-900 dark:text-white">Shift Completed</p>
+<p class="text-xs text-slate-500">Yesterday, 5:00 PM</p>
+</div>
+</div>
+<span class="text-sm font-bold text-primary">+$128.00</span>
+</div>
+</div>
+</section>
+<div class="h-8"></div> <!-- Spacer for bottom nav -->
+</main>
+<!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 bg-surface-light dark:bg-[#15231b] border-t border-black/5 dark:border-white/5 pb-safe z-50">
+<div class="flex items-center justify-around h-16 max-w-lg mx-auto">
+<a class="flex flex-col items-center justify-center gap-1 w-full h-full text-primary" href="#">
+<span class="material-symbols-outlined fill-current">home</span>
+<span class="text-[10px] font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-[10px] font-medium">Wallet</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-[10px] font-medium">History</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 w-full h-full text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="text-[10px] font-medium">Profile</span>
+</a>
+</div>
+<!-- iOS Home Indicator Spacing -->
+<div class="h-6 w-full bg-surface-light dark:bg-[#15231b]"></div>
+</nav>
+</body></html>

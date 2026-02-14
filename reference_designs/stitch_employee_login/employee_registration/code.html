@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>EaziWage Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df259",
+                        "background-light": "#f5f8f6",
+                        "background-dark": "#102216",
+                        "surface-dark": "#1A2E22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased">
+<!-- Mobile Container -->
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto">
+<!-- Top App Bar -->
+<div class="flex items-center p-4 pb-2 justify-between">
+<button class="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-slate-900 dark:text-white">arrow_back</span>
+</button>
+<h2 class="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-10">EaziWage</h2>
+</div>
+<!-- Headline & Description -->
+<div class="px-4 pt-4 pb-2 text-center">
+<h1 class="text-slate-900 dark:text-white tracking-tight text-[28px] font-bold leading-tight mb-2">
+                Access your wages, anytime.
+            </h1>
+<p class="text-slate-600 dark:text-gray-400 text-base font-normal leading-normal">
+                Sign up to link your employment profile.
+            </p>
+</div>
+<!-- Registration Form -->
+<div class="flex flex-col gap-5 px-4 py-6 w-full">
+<!-- Full Name -->
+<label class="flex flex-col w-full">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-normal pb-2">Full Name</p>
+<input class="form-input flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-primary focus:ring-1 focus:ring-primary h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 px-4 text-base font-normal leading-normal transition-all" placeholder="e.g. Jane Doe" type="text"/>
+</label>
+<!-- Work Email -->
+<label class="flex flex-col w-full">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-normal pb-2">Work Email</p>
+<input class="form-input flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-primary focus:ring-1 focus:ring-primary h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 px-4 text-base font-normal leading-normal transition-all" placeholder="name@company.com" type="email"/>
+</label>
+<!-- Company Code -->
+<label class="flex flex-col w-full">
+<div class="flex justify-between items-baseline pb-2">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-normal">Company Code</p>
+<span class="text-xs text-primary cursor-pointer hover:underline">Find my code</span>
+</div>
+<input class="form-input flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-primary focus:ring-1 focus:ring-primary h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 px-4 text-base font-normal leading-normal transition-all uppercase tracking-wide" placeholder="e.g. EZ-8842" type="text"/>
+<p class="text-slate-500 dark:text-gray-500 text-xs pt-1.5">Ask your HR manager if you are unsure.</p>
+</label>
+<!-- Password -->
+<label class="flex flex-col w-full relative">
+<p class="text-slate-900 dark:text-white text-sm font-medium leading-normal pb-2">Password</p>
+<div class="relative">
+<input class="form-input flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-primary focus:ring-1 focus:ring-primary h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 pl-4 pr-12 text-base font-normal leading-normal transition-all" placeholder="Create a secure password" type="password"/>
+<button class="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+</label>
+<!-- Terms & Conditions -->
+<div class="flex items-start gap-3 py-2">
+<div class="relative flex items-center">
+<input class="peer h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 dark:border-white/20 bg-white dark:bg-white/5 checked:border-primary checked:bg-primary transition-all hover:border-primary" id="terms" type="checkbox"/>
+<span class="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-black opacity-0 peer-checked:opacity-100">
+<span class="material-symbols-outlined text-[16px] font-bold">check</span>
+</span>
+</div>
+<label class="text-sm text-slate-600 dark:text-gray-400 leading-snug cursor-pointer select-none" for="terms">
+                    I agree to the <a class="text-primary hover:underline" href="#">Terms of Service</a> and <a class="text-primary hover:underline" href="#">Privacy Policy</a>.
+                </label>
+</div>
+<!-- Action Button -->
+<button class="w-full h-14 rounded-xl bg-primary text-background-dark font-bold text-lg shadow-lg shadow-primary/20 hover:bg-[#0be050] hover:shadow-primary/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2">
+                Create Account
+            </button>
+<!-- Security Note -->
+<div class="flex items-center justify-center gap-1.5 pt-2 opacity-60">
+<span class="material-symbols-outlined text-[16px] text-slate-500 dark:text-gray-400">lock</span>
+<span class="text-xs font-medium text-slate-500 dark:text-gray-400">Bank-grade 256-bit encryption</span>
+</div>
+</div>
+<!-- Footer Link -->
+<div class="mt-auto pb-8 pt-4 text-center">
+<p class="text-slate-600 dark:text-gray-400 text-sm">
+                Already have an account? <a class="text-primary font-semibold hover:underline" href="#">Log in</a>
+</p>
+</div>
+</div>
+</body></html>
