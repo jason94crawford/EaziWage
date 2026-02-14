@@ -527,6 +527,3 @@ export default function EmployerSettings() {
     </DashboardLayout>
   );
 }
-
-// Import BarChart3 that was missing
-import { BarChart3 } from 'lucide-react';
