@@ -21,26 +21,31 @@ export default function LoginPage() {
     setError('');
     setIsLoading(true);
 
-    const result = await login(formData.email, formData.password);
-    setIsLoading(false);
+    try {
+      const result = await login(formData.email, formData.password);
+      setIsLoading(false);
 
-    if (result.success) {
-      const user = result.user;
-      switch (user.role) {
-        case 'admin':
-          navigate('/admin');
-          break;
-        case 'employer':
-          navigate('/employer');
-          break;
-        case 'employee':
-          navigate('/employee');
-          break;
-        default:
-          navigate('/');
+      if (result.success) {
+        const user = result.user;
+        switch (user.role) {
+          case 'admin':
+            navigate('/admin');
+            break;
+          case 'employer':
+            navigate('/employer');
+            break;
+          case 'employee':
+            navigate('/employee');
+            break;
+          default:
+            navigate('/');
+        }
+      } else {
+        setError(result.error || 'Login failed. Please check your credentials.');
       }
-    } else {
-      setError(result.error);
+    } catch (err) {
+      setIsLoading(false);
+      setError('An unexpected error occurred. Please try again.');
     }
   };
 
