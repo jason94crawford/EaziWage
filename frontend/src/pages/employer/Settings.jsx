@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { 
   Settings as SettingsIcon, Building2, Users, CreditCard, Bell,
   Shield, Clock, Save, AlertCircle, CheckCircle2, Info,
-  Percent, Calendar, Wallet, Lock, Mail, BarChart3, ChevronRight
+  Percent, Calendar, Wallet, Lock, Mail, BarChart3, ChevronRight,
+  FileText, HelpCircle, Eye, Download, Upload, ExternalLink,
+  MessageSquare, Phone, MapPin, Globe
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -17,22 +19,22 @@ import { employerApi } from '../../lib/api';
 import { toast } from 'sonner';
 import { cn } from '../../lib/utils';
 
-// Tab Button
+// Tab Button with solid green icon
 const TabButton = ({ active, onClick, icon: Icon, label }) => (
   <button
     onClick={onClick}
     className={cn(
       "flex items-center gap-3 px-4 py-3 rounded-xl transition-all w-full",
       active 
-        ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary/25"
+        ? "bg-primary text-white shadow-lg shadow-primary/25"
         : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50"
     )}
   >
     <div className={cn(
       "w-9 h-9 rounded-xl flex items-center justify-center",
-      active ? "bg-white/20" : "bg-slate-100 dark:bg-slate-800"
+      active ? "bg-white/20" : "bg-primary"
     )}>
-      <Icon className={cn("w-5 h-5", active ? "text-white" : "text-slate-500")} />
+      <Icon className="w-5 h-5 text-white" />
     </div>
     <span className="font-medium">{label}</span>
     {active && <ChevronRight className="w-4 h-4 ml-auto" />}
@@ -40,27 +42,32 @@ const TabButton = ({ active, onClick, icon: Icon, label }) => (
 );
 
 // Settings Section Card
-const SettingsCard = ({ icon: Icon, title, description, children }) => (
+const SettingsCard = ({ icon: Icon, title, description, children, locked = false }) => (
   <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30">
     <div className="flex items-center gap-3 mb-6">
-      <div className="w-10 h-10 bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-xl flex items-center justify-center">
-        <Icon className="w-5 h-5 text-primary" />
+      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+        <Icon className="w-5 h-5 text-white" />
       </div>
-      <div>
+      <div className="flex-1">
         <h3 className="font-semibold text-slate-900 dark:text-white">{title}</h3>
         {description && <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>}
       </div>
+      {locked && (
+        <span className="flex items-center gap-1 text-xs font-medium text-amber-600 bg-amber-100 dark:bg-amber-500/20 px-2 py-1 rounded-full">
+          <Lock className="w-3 h-3" /> Requires Approval
+        </span>
+      )}
     </div>
     {children}
   </div>
 );
 
-// Toggle Item
+// Toggle Item with solid green icon
 const ToggleItem = ({ icon: Icon, label, description, checked, onToggle }) => (
   <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
     <div className="flex items-center gap-4">
-      <div className="w-10 h-10 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center shadow-sm">
-        <Icon className="w-5 h-5 text-primary" />
+      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-sm">
+        <Icon className="w-5 h-5 text-white" />
       </div>
       <div>
         <p className="font-medium text-slate-900 dark:text-white">{label}</p>
@@ -71,12 +78,66 @@ const ToggleItem = ({ icon: Icon, label, description, checked, onToggle }) => (
   </div>
 );
 
+// Document Item for KYC
+const DocumentItem = ({ icon: Icon, label, fileName, status, onView, onReupload }) => (
+  <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
+    <div className="flex items-center gap-4">
+      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+        <Icon className="w-5 h-5 text-white" />
+      </div>
+      <div>
+        <p className="font-medium text-slate-900 dark:text-white">{label}</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">{fileName || 'Not uploaded'}</p>
+      </div>
+    </div>
+    <div className="flex items-center gap-2">
+      <span className={cn(
+        "px-2 py-1 rounded-full text-xs font-medium",
+        status === 'approved' ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300" :
+        status === 'pending' ? "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300" :
+        "bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+      )}>
+        {status || 'Not uploaded'}
+      </span>
+      {fileName && (
+        <Button variant="ghost" size="sm" onClick={onView}>
+          <Eye className="w-4 h-4" />
+        </Button>
+      )}
+      <Button variant="ghost" size="sm" onClick={onReupload}>
+        <Upload className="w-4 h-4" />
+      </Button>
+    </div>
+  </div>
+);
+
+// FAQ Accordion Item
+const FAQItem = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border-b border-slate-200/50 dark:border-slate-700/30 last:border-0">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between py-4 text-left"
+      >
+        <span className="font-medium text-slate-900 dark:text-white">{question}</span>
+        <ChevronRight className={cn("w-5 h-5 text-slate-400 transition-transform", isOpen && "rotate-90")} />
+      </button>
+      {isOpen && (
+        <div className="pb-4 text-slate-600 dark:text-slate-400 text-sm">
+          {answer}
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Security Action Item
 const SecurityItem = ({ icon: Icon, label, description, actionLabel, onClick }) => (
   <div className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
     <div className="flex items-center gap-4">
-      <div className="w-10 h-10 bg-white dark:bg-slate-700 rounded-xl flex items-center justify-center shadow-sm">
-        <Icon className="w-5 h-5 text-primary" />
+      <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-sm">
+        <Icon className="w-5 h-5 text-white" />
       </div>
       <div>
         <p className="font-medium text-slate-900 dark:text-white">{label}</p>
@@ -109,7 +170,13 @@ export default function EmployerSettings() {
     contactPerson: '',
     contactEmail: '',
     contactPhone: '',
-    payrollCycle: 'monthly'
+    payrollCycle: 'monthly',
+    // Address fields
+    physicalAddress: '',
+    city: '',
+    postalCode: '',
+    countyRegion: '',
+    country: 'KE'
   });
 
   useEffect(() => {
@@ -123,7 +190,12 @@ export default function EmployerSettings() {
           contactPerson: res.data.contact_person || '',
           contactEmail: res.data.contact_email || '',
           contactPhone: res.data.contact_phone || '',
-          payrollCycle: res.data.payroll_cycle || 'monthly'
+          payrollCycle: res.data.payroll_cycle || 'monthly',
+          physicalAddress: res.data.physical_address || '',
+          city: res.data.city || '',
+          postalCode: res.data.postal_code || '',
+          countyRegion: res.data.county_region || '',
+          country: res.data.country || 'KE'
         }));
       } catch (err) {
         console.error('Failed to fetch employer data:', err);
@@ -146,11 +218,45 @@ export default function EmployerSettings() {
     }
   };
 
+  const handleBankChangeRequest = () => {
+    toast.info('Bank change request submitted. Our team will contact you within 24 hours.');
+  };
+
   const tabs = [
     { id: 'company', label: 'Company', icon: Building2 },
+    { id: 'kyc', label: 'KYC & Documents', icon: FileText },
     { id: 'ewa', label: 'EWA Settings', icon: CreditCard },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'security', label: 'Security', icon: Shield }
+    { id: 'help', label: 'Help Centre', icon: HelpCircle },
+    { id: 'terms', label: 'Terms & Privacy', icon: Shield },
+    { id: 'security', label: 'Security', icon: Lock }
+  ];
+
+  const faqItems = [
+    { 
+      question: "How do I add new employees to EaziWage?", 
+      answer: "Navigate to the Employees page and click 'Add Employee'. You can add employees individually or upload a CSV file for bulk import. Each employee will receive an invitation to complete their KYC process."
+    },
+    { 
+      question: "What documents are required for employer verification?", 
+      answer: "You need: Certificate of Incorporation, KRA PIN Certificate, CR12 Document (Company Directors), Business Permit, and Proof of Bank Account. Audited Financials are recommended for better risk scoring."
+    },
+    { 
+      question: "How is the advance fee calculated?", 
+      answer: "The fee ranges from 3.5% to 6.5% based on your company's risk score. Better documentation, verified payroll integration, and good repayment history result in lower fees."
+    },
+    { 
+      question: "Can I set different advance limits for different employees?", 
+      answer: "Yes! Go to Employees > Click on an employee > EWA Settings. You can customize max advance percentage, amount limits, and cooldown periods per employee."
+    },
+    { 
+      question: "How do payroll deductions work?", 
+      answer: "Advances are automatically deducted from the next payroll cycle. You'll receive a reconciliation report before each payday showing total deductions to process."
+    },
+    { 
+      question: "What happens if an employee leaves the company?", 
+      answer: "Any outstanding advances become due immediately. The final settlement will include the deduction. Contact support for cases where the final salary doesn't cover the advance."
+    }
   ];
 
   if (loading) {
@@ -173,7 +279,7 @@ export default function EmployerSettings() {
             <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your company settings and EWA program configuration</p>
           </div>
           <Button 
-            className="bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary/25 hover:shadow-xl transition-shadow"
+            className="bg-primary text-white shadow-lg shadow-primary/25 hover:shadow-xl transition-shadow"
             onClick={handleSave}
             disabled={saving}
             data-testid="save-settings-btn"
@@ -229,6 +335,70 @@ export default function EmployerSettings() {
                           <SelectItem value="monthly">Monthly</SelectItem>
                         </SelectContent>
                       </Select>
+                    </div>
+                  </div>
+                </SettingsCard>
+
+                {/* Address Section */}
+                <SettingsCard icon={MapPin} title="Business Address" description="Update your company's physical address">
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-slate-700 dark:text-slate-300">Physical Address</Label>
+                      <Input
+                        value={settings.physicalAddress}
+                        onChange={(e) => setSettings(prev => ({ ...prev, physicalAddress: e.target.value }))}
+                        placeholder="Street address, building name"
+                        className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700"
+                        data-testid="physical-address-input"
+                      />
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">City</Label>
+                        <Input
+                          value={settings.city}
+                          onChange={(e) => setSettings(prev => ({ ...prev, city: e.target.value }))}
+                          placeholder="Nairobi"
+                          className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700"
+                          data-testid="city-input"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Postal Code</Label>
+                        <Input
+                          value={settings.postalCode}
+                          onChange={(e) => setSettings(prev => ({ ...prev, postalCode: e.target.value }))}
+                          placeholder="00100"
+                          className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700"
+                          data-testid="postal-code-input"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">County/Region</Label>
+                        <Input
+                          value={settings.countyRegion}
+                          onChange={(e) => setSettings(prev => ({ ...prev, countyRegion: e.target.value }))}
+                          placeholder="Nairobi County"
+                          className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700"
+                          data-testid="county-input"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Country</Label>
+                        <Select value={settings.country} onValueChange={(v) => setSettings(prev => ({ ...prev, country: v }))}>
+                          <SelectTrigger className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700">
+                            <SelectValue placeholder="Select country" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="KE">Kenya</SelectItem>
+                            <SelectItem value="UG">Uganda</SelectItem>
+                            <SelectItem value="TZ">Tanzania</SelectItem>
+                            <SelectItem value="RW">Rwanda</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
                   </div>
                 </SettingsCard>
@@ -304,6 +474,135 @@ export default function EmployerSettings() {
               </>
             )}
 
+            {/* KYC & Documents Tab */}
+            {activeTab === 'kyc' && (
+              <>
+                <SettingsCard icon={FileText} title="Company Documents" description="View and manage your uploaded KYC documents">
+                  <div className="space-y-3">
+                    <DocumentItem 
+                      icon={FileText} 
+                      label="Certificate of Incorporation" 
+                      fileName={employer?.documents?.certificate_of_incorporation ? "Uploaded" : null}
+                      status={employer?.documents?.certificate_of_incorporation ? "approved" : null}
+                    />
+                    <DocumentItem 
+                      icon={FileText} 
+                      label="KRA PIN Certificate" 
+                      fileName={employer?.documents?.kra_pin_certificate ? "Uploaded" : null}
+                      status={employer?.documents?.kra_pin_certificate ? "approved" : null}
+                    />
+                    <DocumentItem 
+                      icon={FileText} 
+                      label="CR12 Document" 
+                      fileName={employer?.documents?.cr12_document ? "Uploaded" : null}
+                      status={employer?.documents?.cr12_document ? "pending" : null}
+                    />
+                    <DocumentItem 
+                      icon={FileText} 
+                      label="Business Permit" 
+                      fileName={employer?.documents?.business_permit ? "Uploaded" : null}
+                      status={employer?.documents?.business_permit ? "approved" : null}
+                    />
+                    <DocumentItem 
+                      icon={FileText} 
+                      label="Audited Financials" 
+                      fileName={employer?.documents?.audited_financials ? "Uploaded" : null}
+                      status={employer?.documents?.audited_financials ? "pending" : null}
+                    />
+                    <DocumentItem 
+                      icon={FileText} 
+                      label="Employment Contract Template" 
+                      fileName={employer?.documents?.employment_contract_template ? "Uploaded" : null}
+                      status={employer?.documents?.employment_contract_template ? "approved" : null}
+                    />
+                  </div>
+                </SettingsCard>
+
+                <SettingsCard icon={Wallet} title="Bank Account Details" description="Your linked bank account for settlements" locked>
+                  <div className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Bank Name</Label>
+                        <Input
+                          value={employer?.bank_name || ''}
+                          disabled
+                          className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Account Number</Label>
+                        <Input
+                          value={employer?.bank_account_number ? `****${employer.bank_account_number.slice(-4)}` : ''}
+                          disabled
+                          className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        />
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-4 p-4 bg-amber-50 dark:bg-amber-500/10 rounded-xl border border-amber-200 dark:border-amber-500/20">
+                      <AlertCircle className="w-5 h-5 text-amber-600 shrink-0" />
+                      <div className="flex-1">
+                        <p className="text-sm text-amber-800 dark:text-amber-200">
+                          Bank account changes require approval from EaziWage for security purposes.
+                        </p>
+                      </div>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={handleBankChangeRequest}
+                        className="border-amber-300 text-amber-700 hover:bg-amber-100"
+                      >
+                        Request Change
+                      </Button>
+                    </div>
+                  </div>
+                </SettingsCard>
+
+                <SettingsCard icon={Building2} title="Business Information" description="Edit your company details">
+                  <div className="space-y-4">
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Registration Number</Label>
+                        <Input
+                          value={employer?.registration_number || ''}
+                          disabled
+                          className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Tax ID (KRA PIN)</Label>
+                        <Input
+                          value={employer?.tax_id || ''}
+                          disabled
+                          className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        />
+                      </div>
+                    </div>
+                    <div className="grid sm:grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Industry</Label>
+                        <Input
+                          value={employer?.industry?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || ''}
+                          disabled
+                          className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-slate-700 dark:text-slate-300">Sector</Label>
+                        <Input
+                          value={employer?.sector?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || ''}
+                          disabled
+                          className="bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+                        />
+                      </div>
+                    </div>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                      To update registration details, please contact support.
+                    </p>
+                  </div>
+                </SettingsCard>
+              </>
+            )}
+
             {/* EWA Settings Tab */}
             {activeTab === 'ewa' && (
               <>
@@ -364,7 +663,7 @@ export default function EmployerSettings() {
                             value={settings.advanceAccessDays[0].toString()}
                             onValueChange={(v) => setSettings(prev => ({ ...prev, advanceAccessDays: [parseInt(v), prev.advanceAccessDays[1]] }))}
                           >
-                            <SelectTrigger className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700" data-testid="access-from-select">
+                            <SelectTrigger className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -380,7 +679,7 @@ export default function EmployerSettings() {
                             value={settings.advanceAccessDays[1].toString()}
                             onValueChange={(v) => setSettings(prev => ({ ...prev, advanceAccessDays: [prev.advanceAccessDays[0], parseInt(v)] }))}
                           >
-                            <SelectTrigger className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700" data-testid="access-to-select">
+                            <SelectTrigger className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
@@ -414,17 +713,15 @@ export default function EmployerSettings() {
                   </div>
                 </SettingsCard>
 
-                {/* Info Banner */}
-                <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 rounded-2xl p-6 border border-amber-500/20">
+                <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 rounded-2xl p-6 border border-blue-500/20">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-                      <Info className="w-6 h-6 text-amber-600" />
+                    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+                      <Users className="w-6 h-6 text-white" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-amber-900 dark:text-amber-200">EWA Configuration Note</h3>
-                      <p className="text-sm text-amber-800 dark:text-amber-300/80 mt-1">
-                        Changes to advance limits and access periods will apply to all employees. 
-                        Existing pending advance requests will not be affected.
+                      <h3 className="font-semibold text-blue-900 dark:text-blue-200">Per-Employee Settings</h3>
+                      <p className="text-sm text-blue-800 dark:text-blue-300/80 mt-1">
+                        You can override these default settings for individual employees. Go to Employees {'>'} Select Employee {'>'} EWA Settings to customize limits per employee.
                       </p>
                     </div>
                   </div>
@@ -441,31 +738,172 @@ export default function EmployerSettings() {
                     label="Email Notifications"
                     description="Receive important updates via email"
                     checked={settings.emailNotifications}
-                    onToggle={(v) => setSettings(prev => ({ ...prev, emailNotifications: v }))}
+                    onToggle={(v) => {
+                      setSettings(prev => ({ ...prev, emailNotifications: v }));
+                      toast.success(v ? 'Email notifications enabled' : 'Email notifications disabled');
+                    }}
                   />
                   <ToggleItem 
                     icon={CreditCard}
                     label="Advance Alerts"
                     description="Get notified when employees request advances"
                     checked={settings.advanceAlerts}
-                    onToggle={(v) => setSettings(prev => ({ ...prev, advanceAlerts: v }))}
+                    onToggle={(v) => {
+                      setSettings(prev => ({ ...prev, advanceAlerts: v }));
+                      toast.success(v ? 'Advance alerts enabled' : 'Advance alerts disabled');
+                    }}
                   />
                   <ToggleItem 
                     icon={Calendar}
                     label="Payroll Reminders"
                     description="Reminders to upload monthly payroll data"
                     checked={settings.payrollReminders}
-                    onToggle={(v) => setSettings(prev => ({ ...prev, payrollReminders: v }))}
+                    onToggle={(v) => {
+                      setSettings(prev => ({ ...prev, payrollReminders: v }));
+                      toast.success(v ? 'Payroll reminders enabled' : 'Payroll reminders disabled');
+                    }}
                   />
                   <ToggleItem 
                     icon={BarChart3}
                     label="Weekly Reports"
                     description="Receive weekly summary reports via email"
                     checked={settings.weeklyReports}
-                    onToggle={(v) => setSettings(prev => ({ ...prev, weeklyReports: v }))}
+                    onToggle={(v) => {
+                      setSettings(prev => ({ ...prev, weeklyReports: v }));
+                      toast.success(v ? 'Weekly reports enabled' : 'Weekly reports disabled');
+                    }}
                   />
                 </div>
               </SettingsCard>
+            )}
+
+            {/* Help Centre Tab */}
+            {activeTab === 'help' && (
+              <>
+                <SettingsCard icon={HelpCircle} title="Frequently Asked Questions" description="Quick answers to common questions">
+                  <div className="divide-y divide-slate-200/50 dark:divide-slate-700/30">
+                    {faqItems.map((item, index) => (
+                      <FAQItem key={index} question={item.question} answer={item.answer} />
+                    ))}
+                  </div>
+                </SettingsCard>
+
+                <SettingsCard icon={MessageSquare} title="Contact Support" description="Get in touch with our team">
+                  <div className="grid sm:grid-cols-2 gap-4">
+                    <div className="p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                          <Mail className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-white">Email Support</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">support@eaziwage.com</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-white">Phone Support</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">+254 700 123 456</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </SettingsCard>
+
+                <SettingsCard icon={Globe} title="Resources" description="Helpful documentation and guides">
+                  <div className="space-y-3">
+                    <a href="#" className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-white">Employer Guide</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">Complete setup and usage guide</p>
+                        </div>
+                      </div>
+                      <ExternalLink className="w-5 h-5 text-slate-400" />
+                    </a>
+                    <a href="#" className="flex items-center justify-between p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+                          <FileText className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-900 dark:text-white">API Documentation</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400">For payroll integration</p>
+                        </div>
+                      </div>
+                      <ExternalLink className="w-5 h-5 text-slate-400" />
+                    </a>
+                  </div>
+                </SettingsCard>
+              </>
+            )}
+
+            {/* Terms & Privacy Tab */}
+            {activeTab === 'terms' && (
+              <>
+                <SettingsCard icon={FileText} title="Terms of Service" description="Your agreement with EaziWage">
+                  <div className="prose prose-slate dark:prose-invert max-w-none text-sm">
+                    <p className="text-slate-600 dark:text-slate-400">
+                      By using EaziWage services, you agree to our Terms of Service which govern the relationship between your company and EaziWage Ltd. The full terms are available below.
+                    </p>
+                    <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl max-h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">1. Service Agreement</h4>
+                      <p>EaziWage provides earned wage access services to employers and their employees. By registering, you agree to facilitate wage advances to your employees through our platform.</p>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mt-4 mb-2">2. Employer Obligations</h4>
+                      <p>As an employer, you agree to: (a) Provide accurate payroll data; (b) Deduct advances from employee salaries; (c) Maintain employee consent records; (d) Comply with local labor laws.</p>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mt-4 mb-2">3. Fees and Charges</h4>
+                      <p>Fees are calculated based on risk assessment and disclosed to employees before each advance. Employers are not charged for the service.</p>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mt-4 mb-2">4. Termination</h4>
+                      <p>Either party may terminate with 30 days notice. Outstanding advances must be settled before termination.</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <Button variant="outline" className="flex-1">
+                      <Download className="w-4 h-4 mr-2" /> Download PDF
+                    </Button>
+                  </div>
+                </SettingsCard>
+
+                <SettingsCard icon={Shield} title="Privacy Policy" description="How we handle your data">
+                  <div className="prose prose-slate dark:prose-invert max-w-none text-sm">
+                    <p className="text-slate-600 dark:text-slate-400">
+                      EaziWage is committed to protecting your privacy and the privacy of your employees. Our Privacy Policy outlines how we collect, use, and protect data.
+                    </p>
+                    <div className="mt-4 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl max-h-48 overflow-y-auto text-xs text-slate-500 dark:text-slate-400">
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mb-2">Data We Collect</h4>
+                      <p>Company registration details, employee information (name, ID, salary), bank account details, transaction history.</p>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mt-4 mb-2">How We Use Data</h4>
+                      <p>To provide wage access services, verify identities, calculate risk scores, process payments, and comply with regulations.</p>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mt-4 mb-2">Data Protection</h4>
+                      <p>All data is encrypted at rest and in transit. We comply with Kenya's Data Protection Act 2019 and international standards.</p>
+                      <h4 className="font-semibold text-slate-700 dark:text-slate-300 mt-4 mb-2">Data Sharing</h4>
+                      <p>We do not sell data. Data may be shared with: payment processors, regulatory authorities (as required), and service providers under contract.</p>
+                    </div>
+                  </div>
+                  <div className="mt-4 flex gap-2">
+                    <Button variant="outline" className="flex-1">
+                      <Download className="w-4 h-4 mr-2" /> Download PDF
+                    </Button>
+                  </div>
+                </SettingsCard>
+
+                <SettingsCard icon={Lock} title="Data Processing Agreement" description="For GDPR compliance">
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    As a data controller for your employees' information, you may require a Data Processing Agreement (DPA). Contact our legal team to request a signed DPA.
+                  </p>
+                  <Button variant="outline" className="mt-4">
+                    Request DPA
+                  </Button>
+                </SettingsCard>
+              </>
             )}
 
             {/* Security Tab */}
@@ -502,7 +940,7 @@ export default function EmployerSettings() {
                         />
                       </div>
                     </div>
-                    <Button className="bg-gradient-to-r from-primary to-emerald-600 text-white" data-testid="update-password-btn">
+                    <Button className="bg-primary text-white" data-testid="update-password-btn">
                       Update Password
                     </Button>
                   </div>
