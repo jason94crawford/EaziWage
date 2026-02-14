@@ -90,14 +90,14 @@ const ProgressItem = ({ label, value, total, color }) => {
   );
 };
 
-// Report Download Card
+// Report Download Card with solid green icon
 const ReportCard = ({ icon: Icon, title, description, onClick }) => (
   <div 
     onClick={onClick}
     className="flex items-center gap-4 p-4 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-all cursor-pointer group"
   >
-    <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-      <Icon className="w-6 h-6 text-primary" />
+    <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+      <Icon className="w-6 h-6 text-white" />
     </div>
     <div className="flex-1">
       <p className="font-semibold text-slate-900 dark:text-white">{title}</p>
