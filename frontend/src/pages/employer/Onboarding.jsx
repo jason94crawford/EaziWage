@@ -911,6 +911,66 @@ export default function EmployerOnboarding() {
                   </Select>
                 </div>
               </div>
+
+              {/* Countries of Operation - Multi-select */}
+              <div className="flex flex-col gap-2">
+                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                  Countries of Operation *
+                </Label>
+                <div className="p-3 bg-white dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    {countriesOfOperation.length > 0 ? (
+                      countriesOfOperation.map((code) => {
+                        const country = COUNTRIES.find(c => c.code === code);
+                        return (
+                          <span
+                            key={code}
+                            className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary/10 text-primary rounded-full text-sm font-medium"
+                          >
+                            {country?.name}
+                            <button
+                              type="button"
+                              onClick={() => setCountriesOfOperation(prev => prev.filter(c => c !== code))}
+                              className="hover:bg-primary/20 rounded-full p-0.5"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </span>
+                        );
+                      })
+                    ) : (
+                      <span className="text-sm text-slate-400">No countries selected</span>
+                    )}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {COUNTRIES.map((country) => (
+                      <label
+                        key={country.code}
+                        className={`flex items-center gap-2 p-2 rounded-lg cursor-pointer transition-all ${
+                          countriesOfOperation.includes(country.code)
+                            ? 'bg-primary/10 border border-primary/30'
+                            : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 border border-transparent'
+                        }`}
+                        data-testid={`country-${country.code.toLowerCase()}`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={countriesOfOperation.includes(country.code)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setCountriesOfOperation(prev => [...prev, country.code]);
+                            } else {
+                              setCountriesOfOperation(prev => prev.filter(c => c !== country.code));
+                            }
+                          }}
+                          className="h-4 w-4 rounded border-slate-300 text-primary focus:ring-primary"
+                        />
+                        <span className="text-sm text-slate-700 dark:text-slate-300">{country.name}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </div>
               
               <div className="flex flex-col gap-2">
                 <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
@@ -970,6 +1030,15 @@ export default function EmployerOnboarding() {
                   uploadedFile={uploadedFiles.business_permit}
                   uploading={uploadingFile === 'business_permit'}
                   testId="upload-permit"
+                  optional
+                />
+                <FileUploader
+                  label="Employment Contract Template"
+                  description="Standard employment contract used for employees"
+                  onUpload={(file) => handleFileUpload(file, 'employment_contract_template')}
+                  uploadedFile={uploadedFiles.employment_contract_template}
+                  uploading={uploadingFile === 'employment_contract_template'}
+                  testId="upload-contract"
                   optional
                 />
               </div>
