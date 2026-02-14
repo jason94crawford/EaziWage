@@ -337,7 +337,15 @@ export default function EmployeeOnboarding() {
     switch (currentStep) {
       case 0: return true; // Welcome
       case 1: return agreedToTerms; // Terms
-      case 2: return formData.national_id && formData.date_of_birth && formData.country; // Personal
+      case 2: {
+        // Personal Info validation
+        const hasIdNumber = formData.national_id;
+        const hasDob = formData.date_of_birth;
+        const hasCountryOfWork = formData.country;
+        // If passport, nationality is required
+        const hasNationality = idType === 'passport' ? formData.nationality : true;
+        return hasIdNumber && hasDob && hasCountryOfWork && hasNationality;
+      }
       case 3: return formData.employer_id && formData.employee_code && formData.job_title && formData.employment_type && formData.monthly_salary; // Employment
       case 4: return formData.mobile_money_provider && formData.mobile_money_number; // Payment
       default: return false;
