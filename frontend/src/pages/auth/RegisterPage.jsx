@@ -416,6 +416,68 @@ export default function RegisterPage() {
                   </div>
                 </div>
 
+                {/* Mobile Number with Dialing Code */}
+                <div className="flex flex-col gap-2">
+                  <label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                    {accountType === 'employer' ? 'Business Mobile Number' : 'Mobile Number'}
+                  </label>
+                  <div className="flex gap-2">
+                    {/* Dialing Code Selector */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => setShowDialCodeDropdown(!showDialCodeDropdown)}
+                        className="h-14 px-3 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 flex items-center gap-2 transition-colors min-w-[110px]"
+                        data-testid="dialing-code-selector"
+                      >
+                        <span className="text-lg">{selectedDialCode.flag}</span>
+                        <span className="text-slate-900 dark:text-white text-sm font-medium">{selectedDialCode.dialCode}</span>
+                        <ChevronDown className="w-4 h-4 text-slate-400 ml-auto" />
+                      </button>
+                      
+                      {showDialCodeDropdown && (
+                        <div className="absolute top-full left-0 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-50 overflow-hidden">
+                          {DIALING_CODES.map((country) => (
+                            <button
+                              key={country.code}
+                              type="button"
+                              onClick={() => {
+                                setSelectedDialCode(country);
+                                setShowDialCodeDropdown(false);
+                              }}
+                              className={`w-full px-3 py-2.5 flex items-center gap-2 hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors text-left ${
+                                selectedDialCode.code === country.code ? 'bg-primary/5 dark:bg-primary/10' : ''
+                              }`}
+                              data-testid={`dialing-code-${country.code}`}
+                            >
+                              <span className="text-lg">{country.flag}</span>
+                              <span className="text-slate-900 dark:text-white text-sm">{country.name}</span>
+                              <span className="text-slate-500 text-sm ml-auto">{country.dialCode}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Mobile Number Input */}
+                    <div className="relative flex-1">
+                      <Input
+                        type="tel"
+                        placeholder="700 000 000"
+                        className="h-14 pl-4 pr-12 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                        value={mobileNumber}
+                        onChange={(e) => setMobileNumber(e.target.value)}
+                        onKeyPress={handleKeyPress}
+                        data-testid="register-mobile"
+                      />
+                      <Phone className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    </div>
+                  </div>
+                  <p className="text-slate-500 dark:text-slate-400 text-xs ml-1">
+                    Enter your number without the country code
+                  </p>
+                </div>
+
                 {/* Company Code (Employee) or Company Name (Employer) */}
                 {accountType === 'employee' ? (
                   <>
