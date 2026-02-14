@@ -34,9 +34,10 @@ export default function LoginPage() {
         body: JSON.stringify({ email, password }),
       });
 
+      const text = await response.text();
       let data;
       try {
-        data = await response.json();
+        data = text ? JSON.parse(text) : {};
       } catch (parseError) {
         data = { detail: 'Server error. Please try again.' };
       }
