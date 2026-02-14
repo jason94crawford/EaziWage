@@ -1428,6 +1428,10 @@ class UserSettingsUpdate(BaseModel):
     phone: Optional[str] = None
     phone_country_code: Optional[str] = None
 
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str
+
 class EmployeeSettingsUpdate(BaseModel):
     address_line1: Optional[str] = None
     address_line2: Optional[str] = None
