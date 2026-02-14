@@ -1,20 +1,183 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { 
-  Users, TrendingUp, Clock, ArrowRight, CreditCard, 
-  Building2, Upload, BarChart3, AlertCircle, CheckCircle2
+  Users, TrendingUp, Clock, ArrowRight, CreditCard, Building2, Upload, 
+  BarChart3, AlertCircle, CheckCircle2, ArrowUpRight, ChevronRight,
+  Wallet, Zap, Calendar, DollarSign, Activity, PieChart
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { DashboardLayout } from '../../components/layout/DashboardLayout';
+import { EmployerPortalLayout } from '../../components/employer/EmployerLayout';
 import { dashboardApi, employerApi } from '../../lib/api';
-import { formatCurrency, getRiskRatingColor, getRiskRatingLabel, cn } from '../../lib/utils';
+import { formatCurrency, cn } from '../../lib/utils';
+
+// Animated Counter Component
+const AnimatedCounter = ({ value, prefix = '', suffix = '' }) => {
+  const [displayValue, setDisplayValue] = useState(0);
+  const animationRef = useRef(null);
+  
+  useEffect(() => {
+    const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+    const startTime = performance.now();
+    const duration = 1200;
+    
+    const animate = (currentTime) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const easeOut = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(numValue * easeOut));
+      if (progress < 1) animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
+    return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
+  }, [value]);
+  
+  return <span>{prefix}{displayValue.toLocaleString()}{suffix}</span>;
+};
+
+// Main Stats Card
+const MainStatsCard = ({ stats, employer }) => {
+  const totalEmployees = stats?.total_employees || 0;
+  const activeEmployees = stats?.active_employees || 0;
+  const percentage = totalEmployees > 0 ? Math.round((activeEmployees / totalEmployees) * 100) : 0;
+  const circumference = 2 * Math.PI * 44;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+
+  return (
+    <div className="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl rounded-3xl p-6 shadow-xl border border-slate-200/50 dark:border-slate-700/30">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h2 className="text-sm font-semibold text-slate-500 dark:text-slate-400">Company Overview</h2>
+          <p className="text-xl font-bold text-slate-900 dark:text-white mt-1">{employer?.company_name}</p>
+        </div>
+        <div className={cn(
+          "px-3 py-1.5 rounded-full text-xs font-semibold",
+          employer?.status === 'approved' 
+            ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+            : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300"
+        )}>
+          {employer?.status === 'approved' ? 'Verified' : 'Pending'}
+        </div>
+      </div>
+
+      {/* Circular Progress */}
+      <div className="relative w-40 h-40 mx-auto mb-6">
+        <div className="absolute inset-2 rounded-full bg-primary/10 blur-xl" />
+        <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="44" fill="none" stroke="currentColor" strokeWidth="6" 
+            className="text-slate-200 dark:text-slate-800/60" />
+          <circle cx="50" cy="50" r="44" fill="none" stroke="url(#employerGradient)" strokeWidth="6" 
+            strokeLinecap="round" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset}
+            className="transition-all duration-1000 ease-out" />
+          <defs>
+            <linearGradient id="employerGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#0df259" />
+              <stop offset="100%" stopColor="#10b981" />
+            </linearGradient>
+          </defs>
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-3xl font-bold text-slate-900 dark:text-white">
+            <AnimatedCounter value={totalEmployees} />
+          </span>
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Total Employees</span>
+        </div>
+      </div>
+
+      {/* Quick Stats Row */}
+      <div className="flex items-center justify-center gap-8">
+        <div className="text-center">
+          <span className="text-2xl font-bold text-primary">{activeEmployees}</span>
+          <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1">Active</span>
+        </div>
+        <div className="w-px h-10 bg-slate-200 dark:bg-slate-700" />
+        <div className="text-center">
+          <span className="text-2xl font-bold text-slate-900 dark:text-white">{percentage}%</span>
+          <span className="block text-xs text-slate-500 dark:text-slate-400 mt-1">Utilization</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Metric Card with Gradient
+const MetricCard = ({ icon: Icon, label, value, subtext, trend, trendUp, iconBg, iconColor }) => (
+  <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/50 dark:border-slate-700/30 hover:shadow-lg transition-all duration-300 group">
+    <div className="flex items-start justify-between mb-3">
+      <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", iconBg)}>
+        <Icon className={cn("w-6 h-6", iconColor)} />
+      </div>
+      {trend && (
+        <div className={cn(
+          "flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full",
+          trendUp ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-600" : "bg-red-100 dark:bg-red-500/20 text-red-600"
+        )}>
+          <ArrowUpRight className={cn("w-3 h-3", !trendUp && "rotate-180")} />
+          {trend}
+        </div>
+      )}
+    </div>
+    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{label}</p>
+    <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{value}</p>
+    {subtext && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{subtext}</p>}
+  </div>
+);
+
+// Quick Action Card
+const QuickActionCard = ({ icon: Icon, title, description, href, gradient }) => (
+  <Link to={href} className="block group">
+    <div className={cn(
+      "relative overflow-hidden rounded-2xl p-5 border transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
+      "bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/30"
+    )}>
+      {/* Gradient Background on Hover */}
+      <div className={cn(
+        "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
+        gradient
+      )} />
+      
+      <div className="relative z-10">
+        <div className="w-14 h-14 bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-7 h-7 text-primary" />
+        </div>
+        <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{title}</h3>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{description}</p>
+        <ChevronRight className="w-5 h-5 text-slate-400 group-hover:text-primary group-hover:translate-x-1 transition-all mt-3" />
+      </div>
+    </div>
+  </Link>
+);
+
+// Status Item
+const StatusItem = ({ icon: Icon, label, value, status }) => (
+  <div className="flex items-center gap-4 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
+    <div className={cn(
+      "w-10 h-10 rounded-xl flex items-center justify-center",
+      status === 'success' ? 'bg-emerald-100 dark:bg-emerald-500/20' : 
+      status === 'warning' ? 'bg-amber-100 dark:bg-amber-500/20' : 
+      'bg-slate-100 dark:bg-slate-800'
+    )}>
+      <Icon className={cn(
+        "w-5 h-5",
+        status === 'success' ? 'text-emerald-600' : 
+        status === 'warning' ? 'text-amber-600' : 
+        'text-slate-500'
+      )} />
+    </div>
+    <div className="flex-1">
+      <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
+      <p className="font-semibold text-slate-900 dark:text-white">{value}</p>
+    </div>
+  </div>
+);
 
 export default function EmployerDashboard() {
   const [stats, setStats] = useState(null);
   const [employer, setEmployer] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,211 +203,227 @@ export default function EmployerDashboard() {
 
   if (loading) {
     return (
-      <DashboardLayout role="employer">
-        <div className="flex items-center justify-center h-64">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <EmployerPortalLayout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="w-14 h-14 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
         </div>
-      </DashboardLayout>
+      </EmployerPortalLayout>
     );
   }
 
   if (error === 'profile_not_found') {
     return (
-      <DashboardLayout role="employer">
-        <div className="max-w-2xl mx-auto py-16 text-center">
-          <div className="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <Building2 className="w-10 h-10 text-amber-600" />
+      <EmployerPortalLayout>
+        <div className="max-w-lg mx-auto py-16 text-center">
+          <div className="w-24 h-24 bg-gradient-to-br from-primary/20 to-emerald-500/20 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+            <Building2 className="w-12 h-12 text-primary" />
           </div>
-          <h1 className="font-heading text-2xl font-bold text-slate-900 mb-4">Complete Your Company Profile</h1>
-          <p className="text-slate-600 mb-8">
-            Set up your company profile to start offering EaziWage to your employees.
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">Complete Your Company Profile</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-8 max-w-md mx-auto">
+            Set up your company profile to start offering EaziWage to your employees and unlock all features.
           </p>
           <Link to="/employer/onboarding">
-            <Button className="bg-primary text-white hover:bg-primary/90" data-testid="complete-profile-btn">
-              Complete Setup
-              <ArrowRight className="w-4 h-4 ml-2" />
+            <Button className="h-12 px-8 bg-gradient-to-r from-primary to-emerald-600 text-white font-semibold rounded-xl shadow-lg shadow-primary/25 hover:shadow-xl transition-shadow" data-testid="complete-profile-btn">
+              Complete Setup <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
         </div>
-      </DashboardLayout>
+      </EmployerPortalLayout>
     );
   }
 
   const isPending = employer?.status === 'pending';
 
   return (
-    <DashboardLayout role="employer">
-      <div className="space-y-6">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="font-heading text-2xl font-bold text-slate-900">Dashboard</h1>
-            <p className="text-slate-500 mt-1">{employer?.company_name}</p>
-          </div>
-          <Link to="/employer/payroll">
-            <Button className="bg-primary text-white hover:bg-primary/90" data-testid="upload-payroll-btn">
-              <Upload className="w-4 h-4 mr-2" />
-              Upload Payroll
-            </Button>
-          </Link>
-        </div>
-
+    <EmployerPortalLayout employer={employer}>
+      <div className="max-w-7xl mx-auto space-y-6">
         {/* Verification Alert */}
         {isPending && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-4" data-testid="verification-alert">
-            <AlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
+          <div className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 dark:from-amber-500/20 dark:to-orange-500/20 backdrop-blur-sm rounded-2xl p-4 flex items-center gap-4 border border-amber-500/20" data-testid="verification-alert">
+            <div className="w-12 h-12 bg-white dark:bg-slate-800 rounded-xl flex items-center justify-center shrink-0 shadow-sm">
+              <AlertCircle className="w-6 h-6 text-amber-600" />
+            </div>
             <div className="flex-1">
-              <h3 className="font-medium text-amber-900">Verification in Progress</h3>
-              <p className="text-sm text-amber-700 mt-1">
-                Your company profile is being reviewed. This usually takes 1-2 business days. 
-                You can start adding employees while we verify your account.
+              <h3 className="font-semibold text-amber-900 dark:text-amber-200">Verification in Progress</h3>
+              <p className="text-sm text-amber-700 dark:text-amber-300/80 mt-0.5">
+                Your company profile is being reviewed. This usually takes 1-2 business days.
               </p>
             </div>
+            <Button variant="outline" className="hidden sm:flex border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:text-amber-300">
+              View Status
+            </Button>
           </div>
         )}
 
-        {/* Stats Cards */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border-slate-200" data-testid="total-employees-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Users className="w-5 h-5 text-primary" />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">{stats?.total_employees || 0}</p>
-              <p className="text-sm text-slate-500 mt-1">Total Employees</p>
-              <p className="text-xs text-green-600 mt-2">{stats?.active_employees || 0} active</p>
-            </CardContent>
-          </Card>
+        {/* Top Section - Main Stats + Metrics */}
+        <div className="grid lg:grid-cols-3 gap-6">
+          {/* Main Stats Card */}
+          <MainStatsCard stats={stats} employer={employer} />
 
-          <Card className="border-slate-200" data-testid="total-advances-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                  <CreditCard className="w-5 h-5 text-blue-600" />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats?.total_advances_disbursed || 0)}</p>
-              <p className="text-sm text-slate-500 mt-1">Total Advances</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200" data-testid="pending-advances-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-amber-600" />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">{stats?.pending_advances || 0}</p>
-              <p className="text-sm text-slate-500 mt-1">Pending Advances</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border-slate-200" data-testid="monthly-payroll-card">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-green-600" />
-                </div>
-              </div>
-              <p className="text-2xl font-bold text-slate-900">{formatCurrency(stats?.monthly_payroll || 0)}</p>
-              <p className="text-sm text-slate-500 mt-1">Monthly Payroll</p>
-            </CardContent>
-          </Card>
+          {/* Metrics Grid */}
+          <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
+            <MetricCard 
+              icon={DollarSign}
+              label="Total Advances"
+              value={formatCurrency(stats?.total_advances_disbursed || 0)}
+              subtext="All time disbursements"
+              trend="+12.5%"
+              trendUp={true}
+              iconBg="bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/10"
+              iconColor="text-emerald-600"
+            />
+            <MetricCard 
+              icon={Clock}
+              label="Pending Advances"
+              value={stats?.pending_advances || 0}
+              subtext="Awaiting processing"
+              iconBg="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-500/20 dark:to-amber-500/10"
+              iconColor="text-amber-600"
+            />
+            <MetricCard 
+              icon={Wallet}
+              label="Monthly Payroll"
+              value={formatCurrency(stats?.monthly_payroll || 0)}
+              subtext="This month's total"
+              trend="+8.2%"
+              trendUp={true}
+              iconBg="bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-500/20 dark:to-blue-500/10"
+              iconColor="text-blue-600"
+            />
+            <MetricCard 
+              icon={Activity}
+              label="Avg. Advance"
+              value={formatCurrency(stats?.avg_advance_amount || 5000)}
+              subtext="Per employee"
+              trend="-2.1%"
+              trendUp={false}
+              iconBg="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-500/20 dark:to-purple-500/10"
+              iconColor="text-purple-600"
+            />
+          </div>
         </div>
 
-        {/* Quick Actions & Risk Score */}
-        <div className="grid lg:grid-cols-3 gap-6">
-          {/* Quick Actions */}
-          <Card className="border-slate-200 lg:col-span-2">
-            <CardHeader>
-              <CardTitle className="text-lg">Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <Link to="/employer/employees" className="block">
-                  <div className="p-4 border border-slate-200 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer" data-testid="quick-manage-employees">
-                    <Users className="w-8 h-8 text-primary mb-3" />
-                    <h3 className="font-medium text-slate-900">Manage Employees</h3>
-                    <p className="text-sm text-slate-500 mt-1">Add, edit, or view employee profiles</p>
-                  </div>
-                </Link>
-                <Link to="/employer/payroll" className="block">
-                  <div className="p-4 border border-slate-200 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer" data-testid="quick-upload-payroll">
-                    <Upload className="w-8 h-8 text-primary mb-3" />
-                    <h3 className="font-medium text-slate-900">Upload Payroll</h3>
-                    <p className="text-sm text-slate-500 mt-1">Update employee earnings data</p>
-                  </div>
-                </Link>
-                <Link to="/employer/advances" className="block">
-                  <div className="p-4 border border-slate-200 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer" data-testid="quick-view-advances">
-                    <CreditCard className="w-8 h-8 text-primary mb-3" />
-                    <h3 className="font-medium text-slate-900">View Advances</h3>
-                    <p className="text-sm text-slate-500 mt-1">Track employee wage advances</p>
-                  </div>
-                </Link>
-                <Link to="/employer/reports" className="block">
-                  <div className="p-4 border border-slate-200 rounded-xl hover:border-primary hover:bg-primary/5 transition-all duration-200 cursor-pointer" data-testid="quick-view-reports">
-                    <BarChart3 className="w-8 h-8 text-primary mb-3" />
-                    <h3 className="font-medium text-slate-900">Reports</h3>
-                    <p className="text-sm text-slate-500 mt-1">Analytics and insights</p>
-                  </div>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Quick Actions */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30">
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white">Quick Actions</h2>
+            <Link to="/employer/payroll" className="text-sm font-medium text-primary flex items-center gap-1 hover:gap-2 transition-all">
+              Upload Payroll <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <QuickActionCard 
+              icon={Users}
+              title="Manage Employees"
+              description="Add, edit, or view profiles"
+              href="/employer/employees"
+              gradient="bg-gradient-to-br from-primary/5 to-emerald-500/5"
+            />
+            <QuickActionCard 
+              icon={Upload}
+              title="Upload Payroll"
+              description="Update earnings data"
+              href="/employer/payroll"
+              gradient="bg-gradient-to-br from-blue-500/5 to-indigo-500/5"
+            />
+            <QuickActionCard 
+              icon={CreditCard}
+              title="View Advances"
+              description="Track wage advances"
+              href="/employer/advances"
+              gradient="bg-gradient-to-br from-amber-500/5 to-orange-500/5"
+            />
+            <QuickActionCard 
+              icon={BarChart3}
+              title="Reports"
+              description="Analytics and insights"
+              href="/employer/reports"
+              gradient="bg-gradient-to-br from-purple-500/5 to-pink-500/5"
+            />
+          </div>
+        </div>
 
+        {/* Bottom Section - Company Status + Risk */}
+        <div className="grid lg:grid-cols-2 gap-6">
           {/* Company Status */}
-          <Card className="border-slate-200">
-            <CardHeader>
-              <CardTitle className="text-lg">Company Status</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="flex items-center gap-3">
-                <div className={cn(
-                  "w-10 h-10 rounded-full flex items-center justify-center",
-                  employer?.status === 'approved' ? 'bg-green-100' : 'bg-amber-100'
-                )}>
-                  {employer?.status === 'approved' ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  ) : (
-                    <Clock className="w-5 h-5 text-amber-600" />
-                  )}
-                </div>
-                <div>
-                  <p className="text-sm text-slate-500">Verification Status</p>
-                  <p className="font-medium text-slate-900 capitalize">{employer?.status || 'Pending'}</p>
-                </div>
-              </div>
-              
-              {stats?.risk_score && (
-                <div>
-                  <p className="text-sm text-slate-500 mb-2">Risk Score</p>
-                  <div className={cn(
-                    "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border",
-                    getRiskRatingColor(employer?.risk_rating)
-                  )}>
-                    <span className="font-bold text-lg">{stats.risk_score.toFixed(2)}</span>
-                    <span className="text-sm">{getRiskRatingLabel(employer?.risk_rating)}</span>
-                  </div>
-                </div>
-              )}
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30">
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-5">Company Status</h2>
+            <div className="space-y-3">
+              <StatusItem 
+                icon={CheckCircle2}
+                label="Verification Status"
+                value={employer?.status === 'approved' ? 'Fully Verified' : 'Under Review'}
+                status={employer?.status === 'approved' ? 'success' : 'warning'}
+              />
+              <StatusItem 
+                icon={Building2}
+                label="Industry"
+                value={employer?.industry?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || 'Not Set'}
+                status="default"
+              />
+              <StatusItem 
+                icon={Calendar}
+                label="Payroll Cycle"
+                value={employer?.payroll_cycle?.charAt(0).toUpperCase() + employer?.payroll_cycle?.slice(1) || 'Monthly'}
+                status="default"
+              />
+            </div>
+          </div>
 
+          {/* Risk Score */}
+          <div className="bg-gradient-to-br from-primary/5 to-emerald-500/5 dark:from-primary/10 dark:to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-primary/10 dark:border-primary/20">
+            <div className="flex items-start justify-between mb-5">
               <div>
-                <p className="text-sm text-slate-500">Industry</p>
-                <p className="font-medium text-slate-900 capitalize">{employer?.industry?.replace('_', ' ')}</p>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Risk Assessment</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Your company's risk profile</p>
               </div>
-
-              <div>
-                <p className="text-sm text-slate-500">Payroll Cycle</p>
-                <p className="font-medium text-slate-900 capitalize">{employer?.payroll_cycle}</p>
+              <div className={cn(
+                "px-4 py-2 rounded-xl font-semibold text-sm",
+                (stats?.risk_score || 0) >= 4 ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' :
+                (stats?.risk_score || 0) >= 3 ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300' :
+                (stats?.risk_score || 0) >= 2.6 ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300' :
+                'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300'
+              )}>
+                {(stats?.risk_score || 0) >= 4 ? 'Low Risk' :
+                 (stats?.risk_score || 0) >= 3 ? 'Medium Risk' :
+                 (stats?.risk_score || 0) >= 2.6 ? 'High Risk' : 'Very High Risk'}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+            
+            <div className="flex items-center gap-6">
+              <div className="relative w-24 h-24">
+                <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="8" 
+                    className="text-white/50 dark:text-slate-700/50" />
+                  <circle cx="50" cy="50" r="40" fill="none" stroke="url(#riskGradient)" strokeWidth="8" 
+                    strokeLinecap="round" strokeDasharray={2 * Math.PI * 40} 
+                    strokeDashoffset={2 * Math.PI * 40 * (1 - ((stats?.risk_score || 0) / 5))}
+                    className="transition-all duration-1000" />
+                  <defs>
+                    <linearGradient id="riskGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                      <stop offset="0%" stopColor="#0df259" />
+                      <stop offset="100%" stopColor="#10b981" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <span className="text-2xl font-bold text-slate-900 dark:text-white">
+                    {(stats?.risk_score || 0).toFixed(1)}
+                  </span>
+                </div>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm text-slate-600 dark:text-slate-300">
+                  Your risk score determines the fee rates applied to employee advances. A lower risk score means better rates for your employees.
+                </p>
+                <Link to="/employer/reports" className="inline-flex items-center gap-1 text-sm font-medium text-primary mt-3 hover:gap-2 transition-all">
+                  View Details <ChevronRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-    </DashboardLayout>
+    </EmployerPortalLayout>
   );
 }
