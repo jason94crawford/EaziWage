@@ -1011,6 +1011,8 @@ async def upload_kyc_file(
             update_field = "bank_statement"
         elif document_type == "selfie":
             update_field = "selfie"
+        elif document_type == "employment_contract":
+            update_field = "employment_contract"
         
         if update_field:
             await db.employees.update_one(
