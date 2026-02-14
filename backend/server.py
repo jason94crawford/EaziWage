@@ -1464,6 +1464,34 @@ async def update_user_settings(
     
     return {"message": "Settings updated successfully"}
 
+@api_router.post("/users/me/change-password")
+async def change_password(
+    data: ChangePasswordRequest,
+    user: dict = Depends(get_current_user)
+):
+    """Change the current user's password"""
+    # Get the full user with password hash
+    user_doc = await db.users.find_one({"id": user["id"]})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Verify current password
+    if not verify_password(data.current_password, user_doc.get("password_hash", "")):
+        raise HTTPException(status_code=400, detail="Current password is incorrect")
+    
+    # Validate new password
+    if len(data.new_password) < 8:
+        raise HTTPException(status_code=400, detail="Password must be at least 8 characters")
+    
+    # Update password
+    new_hash = hash_password(data.new_password)
+    await db.users.update_one(
+        {"id": user["id"]},
+        {"$set": {"password_hash": new_hash}}
+    )
+    
+    return {"message": "Password changed successfully"}
+
 @api_router.put("/employees/me/settings")
 async def update_employee_settings(
     data: EmployeeSettingsUpdate,
