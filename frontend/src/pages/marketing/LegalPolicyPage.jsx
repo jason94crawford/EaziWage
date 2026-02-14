@@ -235,35 +235,47 @@ const policies = {
   'whistleblowing-policy': {
     title: 'Whistleblowing Policy',
     icon: Bell,
-    lastUpdated: 'December 2025',
+    lastUpdated: 'October 2025',
     content: [
       {
-        heading: '1. Purpose',
-        text: 'This policy encourages and protects individuals who report suspected wrongdoing in good faith. We are committed to maintaining the highest standards of ethics and compliance.'
+        heading: '1. Policy Statement',
+        text: 'EaziWage Holdings Limited ("the Firm") and its associated entities (the "Group") is committed to the highest standards of ethics, integrity, and lawful conduct. We encourage employees and all other "associated persons" (directors, officers, contractors, consultants, suppliers, agents, and interns) to speak up about suspected wrongdoing without fear of retaliation. This Policy aligns with applicable Kenyan laws, including the Bribery Act, No. 47 of 2016, Anti-Corruption and Economic Crimes Act of 2003 (ACECA), Proceeds of Crime and Anti-Money Laundering Act of 2009 (POCAMLA), the Employment Act of 2007, and the Data Protection Act, 2019.'
       },
       {
-        heading: '2. What to Report',
-        text: 'You should report any genuine concerns about: fraud, theft, or financial irregularities; bribery or corruption; violations of laws or regulations; health and safety violations; environmental damage; discrimination or harassment; and any other unethical conduct.'
+        heading: '2. Purpose & Scope',
+        text: 'Purpose: Provide safe, confidential channels to raise concerns about suspected misconduct and ensure timely, fair, and compliant handling of reports. Concerns may relate to: Bribery, corruption, fraud, theft, embezzlement or facilitation payments; AML/CFT violations, sanctions breaches, suspicious transactions; Breaches of law/regulation, serious policy breaches; Data protection/privacy violations, cyber incidents; Health & safety risks, environmental harm; Gross negligence or concealment of wrongdoing.'
       },
       {
-        heading: '3. How to Report',
-        text: 'Reports can be made through: your direct supervisor or manager, the Compliance Officer, our confidential whistleblowing hotline, or email to ethics@eaziwage.com. Anonymous reports are accepted.'
+        heading: '3. Legal Framework',
+        text: 'Bribery Act of 2016 – duty on private entities to have prevention procedures. ACECA of 2003 – establishes and empowers EACC to receive/investigate corruption complaints. POCAMLA of 2009 – criminalises money laundering; prohibits "tipping-off". Employment Act of 2007 – protects employees from unfair dismissal/discrimination for good-faith reports. Data Protection Act of 2019 – requires lawful, secure handling of personal data in whistleblowing processes. Pending: Whistleblower Protection Bill, 2023/2024.'
       },
       {
-        heading: '4. Confidentiality',
-        text: 'All reports will be treated confidentially to the extent possible. The identity of the whistleblower will only be disclosed if necessary for investigation or legal reasons.'
+        heading: '4. Reporting Channels',
+        text: 'Whistleblowers may choose any channel (including anonymous where feasible): Internal Line Manager (unless implicated); Chief Executive Officer (primary intake for financial crime/bribery/data issues); Dedicated reporting mailbox: whistleblow@eaziwage.com (Mr. Jason Crawford, CEO). External (Public-Interest/Corruption): EACC official reporting channels (web, hotline, walk-in). Whistleblowers may also report to FRC for AML matters or law enforcement as permitted by law.'
       },
       {
-        heading: '5. Non-Retaliation',
-        text: 'EaziWage prohibits any form of retaliation against individuals who make good-faith reports. Anyone who engages in retaliation will be subject to disciplinary action.'
+        heading: '5. Confidentiality & Data Protection',
+        text: 'The Firm will protect the identity of whistleblowers and persons named in reports to the fullest extent allowed by law. Disclosures are shared strictly on a need-to-know basis. Anonymous reports will be assessed and investigated to the extent practicable. All records (intake forms, evidence, investigation notes, outcomes) are classified confidential, stored securely with access logs, and handled in compliance with the Data Protection Act of 2019.'
       },
       {
-        heading: '6. Investigation',
-        text: 'All reports will be promptly and thoroughly investigated by appropriate personnel. Reporters will be informed of the outcome where appropriate.'
+        heading: '6. Non-Retaliation & Good-Faith Protection',
+        text: 'Zero tolerance for retaliation against any person who raises a concern in good faith or participates in an investigation — even if the concern is not substantiated. Allegations made maliciously or with knowing falsity may result in disciplinary action. Managers must proactively prevent detrimental treatment (workplace reprisal, blacklisting, contract penalties) and must escalate suspected retaliation immediately to Compliance/HR.'
       },
       {
-        heading: '7. Protection',
-        text: 'Whistleblowers who report in good faith are protected under the Witness Protection Act and other applicable laws. We will take all reasonable steps to protect reporters from harm.'
+        heading: '7. Investigation Process',
+        text: 'Acknowledge receipt (within 5 business days where contact details available). Triage (within 10 business days): assess scope, risks, urgency, and potential conflicts; ring-fence evidence. Assign investigator or team; if senior leadership is implicated, appoint an independent investigator. Investigate: gather facts, interview relevant parties, review records/systems; maintain chain of custody. Conclude with written report (facts, analysis, findings, remediation, disciplinary/contractual action). Feedback to whistleblower (where contactable). Escalate/Report to authorities where required (e.g., EACC for corruption; FRC for STR/CTR).'
+      },
+      {
+        heading: '8. Roles & Responsibilities',
+        text: 'Board/Senior Management: Set the tone; approve policy; ensure resources; receive periodic whistleblowing metrics. CEO: Overall accountability; ensures impartial investigations; authorises external reporting. Managers: Encourage speaking up; maintain confidentiality; prevent retaliation; escalate promptly. All Employees/Associated Persons: Read, understand, and comply with this Policy; report concerns promptly; cooperate with investigations.'
+      },
+      {
+        heading: '9. Record-Keeping & Retention',
+        text: 'Maintain whistleblowing registers, case files, evidence logs, decisions, and remediation records securely. Retention: five (5) years from case closure (or longer if required by law, litigation hold, or related AML retention rules). Access limited to designated Compliance/Legal/HR personnel.'
+      },
+      {
+        heading: '10. Contact',
+        text: 'Whistleblowing Channel: whistleblow@eaziwage.com. General inquiries: info@eaziwage.com or +254 72 315 4900.'
       }
     ]
   }
