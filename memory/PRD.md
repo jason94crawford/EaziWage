@@ -270,7 +270,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Mobile Money APIs (M-PESA, Airtel Money, MTN Mobile Money)
 - Bank Transfer APIs
 - Apple Login
-- Face ID Login
+- Biometric Face Scan (UI present, simulated verification)
 
 ## Third-Party Integrations
 - `emergentintegrations` - Google OAuth
