@@ -295,7 +295,7 @@ export default function PartnersPage() {
             </div>
             <div className="bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-3xl p-6 sm:p-8 lg:p-12">
               <div className="space-y-4 sm:space-y-6">
-                {testimonials.map((t, i) => (
+                {aspirationalQuotes.map((t, i) => (
                   <div key={i} className="bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-6 shadow-lg border border-slate-200 dark:border-slate-700">
                     <div className="flex gap-1 mb-3 sm:mb-4">
                       {[...Array(5)].map((_, j) => (
