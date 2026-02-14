@@ -1161,6 +1161,15 @@ export default function EmployerOnboarding() {
                   testId="upload-bank-stmt"
                   optional
                 />
+                <FileUploader
+                  label="Proof of Bank Account"
+                  description="Bank confirmation letter or account opening document"
+                  onUpload={(file) => handleFileUpload(file, 'proof_of_bank_account')}
+                  uploadedFile={uploadedFiles.proof_of_bank_account}
+                  uploading={uploadingFile === 'proof_of_bank_account'}
+                  testId="upload-bank-proof"
+                  optional
+                />
               </div>
             </div>
           </div>
