@@ -58,9 +58,9 @@ const features = [
   {
     icon: Target,
     title: 'Smart Limits',
-    description: 'Responsible access with built-in safeguards. Access up to 50% of earned wages to maintain financial balance.',
+    description: 'Responsible access with built-in safeguards. Access up to 60% of earned wages to maintain financial balance.',
     gradient: 'from-teal-600 to-primary',
-    stats: 'Up to 50%'
+    stats: 'Up to 60%'
   },
 ];
 
