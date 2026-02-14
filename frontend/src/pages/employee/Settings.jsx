@@ -4,10 +4,11 @@ import {
   ArrowLeft, Building2, CalendarDays, Lock, Fingerprint,
   Bell, Globe, HelpCircle, MessageCircle, Scale, LogOut,
   ChevronRight, CheckCircle2, FolderOpen, ClipboardList,
-  Home, History, User, Wallet, Sun, Moon
+  Home, History, User, Wallet, Sun, Moon, Shield, CreditCard,
+  Smartphone, Edit3, Mail, Phone
 } from 'lucide-react';
 import { employeeApi } from '../../lib/api';
-import { cn } from '../../lib/utils';
+import { formatCurrency, cn } from '../../lib/utils';
 import { useTheme } from '../../lib/ThemeContext';
 
 // Bottom Navigation Component
@@ -15,27 +16,27 @@ const BottomNav = ({ active }) => {
   const navigate = useNavigate();
   const navItems = [
     { id: 'home', icon: Home, label: 'Home', path: '/employee' },
-    { id: 'wallet', icon: Wallet, label: 'Wallet', path: '/employee/advances' },
+    { id: 'wallet', icon: Wallet, label: 'Advance', path: '/employee/advances' },
     { id: 'history', icon: History, label: 'History', path: '/employee/transactions' },
-    { id: 'profile', icon: User, label: 'Profile', path: '/employee/kyc' },
+    { id: 'profile', icon: User, label: 'Profile', path: '/employee/settings' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-[#15231b] border-t border-slate-200 dark:border-white/5 z-50 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200/50 dark:border-white/5 z-50 md:hidden">
       <div className="flex items-center justify-around h-16 max-w-lg mx-auto">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => navigate(item.path)}
             className={cn(
-              "flex flex-col items-center justify-center gap-1 w-full h-full transition-colors",
+              "flex flex-col items-center justify-center gap-1 w-full h-full transition-all",
               active === item.id 
                 ? "text-primary" 
                 : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
             )}
             data-testid={`nav-${item.id}`}
           >
-            <item.icon className="w-5 h-5" />
+            <item.icon className={cn("w-5 h-5", active === item.id && "scale-110")} />
             <span className="text-[10px] font-medium">{item.label}</span>
           </button>
         ))}
@@ -46,42 +47,38 @@ const BottomNav = ({ active }) => {
 
 // Toggle Switch Component
 const ToggleSwitch = ({ checked, onChange, id }) => (
-  <div className="relative inline-block w-12 align-middle select-none transition duration-200 ease-in">
-    <input
-      type="checkbox"
-      id={id}
-      checked={checked}
-      onChange={onChange}
-      className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer transition-all duration-300"
-      style={{
-        right: checked ? '0' : '24px',
-        borderColor: checked ? '#0df259' : '#d1d5db'
-      }}
-    />
-    <label
-      htmlFor={id}
+  <button
+    id={id}
+    onClick={onChange}
+    className={cn(
+      "relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300",
+      checked ? "bg-primary" : "bg-slate-300 dark:bg-slate-700"
+    )}
+    data-testid={`toggle-${id}`}
+  >
+    <span
       className={cn(
-        "toggle-label block overflow-hidden h-6 rounded-full cursor-pointer transition-colors duration-300",
-        checked ? "bg-primary" : "bg-slate-300 dark:bg-slate-700"
+        "inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform duration-300",
+        checked ? "translate-x-[22px]" : "translate-x-0.5"
       )}
     />
-  </div>
+  </button>
 );
 
 // Settings List Item Component
-const SettingsItem = ({ icon: Icon, title, subtitle, onClick, rightContent, showChevron = true }) => (
+const SettingsItem = ({ icon: Icon, title, subtitle, onClick, rightContent, showChevron = true, iconBg = "bg-primary/10", iconColor = "text-primary" }) => (
   <button
     onClick={onClick}
-    className="group flex items-center gap-4 bg-white dark:bg-[#152b1d]/50 px-5 py-4 w-full active:bg-slate-100 dark:active:bg-[#152b1d] transition-colors text-left"
+    className="group flex items-center gap-4 bg-white/70 dark:bg-white/5 backdrop-blur-sm px-4 py-4 w-full hover:bg-white dark:hover:bg-white/10 transition-all text-left rounded-xl border border-slate-200/50 dark:border-white/10"
     data-testid={`settings-${title.toLowerCase().replace(/\s+/g, '-')}`}
   >
-    <div className="flex items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 shrink-0 w-10 h-10 text-primary">
-      <Icon className="w-5 h-5" />
+    <div className={cn("flex items-center justify-center rounded-xl shrink-0 w-10 h-10", iconBg)}>
+      <Icon className={cn("w-5 h-5", iconColor)} />
     </div>
-    <div className="flex flex-col items-start flex-1">
-      <p className="text-base font-medium leading-none text-slate-900 dark:text-white">{title}</p>
+    <div className="flex flex-col items-start flex-1 min-w-0">
+      <p className="text-sm font-semibold text-slate-900 dark:text-white">{title}</p>
       {subtitle && (
-        <p className="text-slate-500 dark:text-[#9cbaa6] text-sm mt-1.5 flex items-center gap-1">
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1 truncate max-w-full">
           {subtitle}
         </p>
       )}
@@ -92,9 +89,9 @@ const SettingsItem = ({ icon: Icon, title, subtitle, onClick, rightContent, show
 
 // Settings Section Component
 const SettingsSection = ({ title, children }) => (
-  <div className="mt-8 first:mt-4">
-    <h3 className="text-[#9cbaa6] text-xs font-bold tracking-wider px-6 pb-2 uppercase">{title}</h3>
-    <div className="flex flex-col gap-[1px]">
+  <div className="space-y-2">
+    <h3 className="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase px-1 mb-3">{title}</h3>
+    <div className="space-y-2">
       {children}
     </div>
   </div>
@@ -105,6 +102,7 @@ export default function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
   const [employee, setEmployee] = useState(null);
   const [loading, setLoading] = useState(true);
+  const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
   
   // Toggle states
   const [biometricEnabled, setBiometricEnabled] = useState(false);
@@ -132,96 +130,144 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-950 dark:to-slate-900 flex items-center justify-center">
+        <div className="w-14 h-14 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] text-slate-900 dark:text-white pb-24 md:pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white pb-24 md:pb-8">
+      {/* Background decorations */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/5 rounded-full blur-[150px]" />
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/5 rounded-full blur-[100px]" />
+      </div>
+
       {/* Mobile Container */}
-      <div className="w-full max-w-md mx-auto flex flex-col min-h-screen relative shadow-2xl">
+      <div className="w-full max-w-md mx-auto flex flex-col min-h-screen relative z-10">
         {/* Top App Bar */}
-        <header className="sticky top-0 z-50 bg-[#f5f8f6]/95 dark:bg-[#102216]/95 backdrop-blur-md border-b border-slate-200 dark:border-white/5">
+        <header className="sticky top-0 z-50 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-white/5">
           <div className="flex items-center px-4 py-3 justify-between">
             <button 
               onClick={() => navigate('/employee')}
-              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
               data-testid="back-btn"
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
-            <h2 className="text-lg font-bold tracking-tight flex-1 text-center pr-10">Settings</h2>
+            <h2 className="text-lg font-bold tracking-tight flex-1 text-center pr-10">Profile & Settings</h2>
           </div>
         </header>
 
         {/* Scrollable Content */}
-        <main className="flex-1 flex flex-col pb-8">
-          {/* Profile Header */}
-          <div className="px-5 py-6">
-            <div className="flex items-center gap-5">
+        <main className="flex-1 flex flex-col p-4 space-y-6">
+          {/* Profile Card */}
+          <div className="bg-white/70 dark:bg-white/5 backdrop-blur-xl rounded-2xl p-6 border border-slate-200/50 dark:border-white/10">
+            <div className="flex items-center gap-4">
               <div className="relative shrink-0">
-                <div 
-                  className="h-20 w-20 rounded-full bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center ring-2 ring-primary/20"
-                >
+                <div className="h-20 w-20 rounded-2xl bg-gradient-to-br from-primary to-emerald-600 flex items-center justify-center ring-4 ring-primary/20">
                   <span className="text-white font-bold text-2xl">
-                    {employee?.full_name?.[0] || 'U'}
+                    {employee?.full_name?.[0] || user?.full_name?.[0] || 'U'}
                   </span>
                 </div>
-                <div className="absolute bottom-0 right-0 bg-[#102216] rounded-full p-1 border border-[#152b1d]">
-                  <div className="bg-primary h-3 w-3 rounded-full border-2 border-[#102216]" />
+                <div className="absolute -bottom-1 -right-1 bg-white dark:bg-slate-900 rounded-full p-1 border border-slate-200 dark:border-slate-700">
+                  <div className="bg-primary h-3 w-3 rounded-full" />
                 </div>
               </div>
-              <div className="flex flex-col justify-center">
-                <h1 className="text-xl font-bold leading-tight">{employee?.full_name || 'User'}</h1>
-                <p className="text-[#9cbaa6] text-sm font-medium mt-0.5">
-                  {employee?.employer_name || 'Employee'} | ID: #{employee?.id?.slice(-4) || '0000'}
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl font-bold truncate">{employee?.full_name || user?.full_name || 'User'}</h1>
+                <p className="text-slate-500 dark:text-slate-400 text-sm truncate">
+                  {employee?.employer_name || 'Employee'}
                 </p>
-                <Link 
-                  to="/employee/kyc"
-                  className="text-primary text-sm font-semibold mt-2 flex items-center gap-1 hover:underline"
-                  data-testid="edit-profile-btn"
-                >
-                  Edit Profile
-                </Link>
+                <div className="flex items-center gap-2 mt-2">
+                  <span className={cn(
+                    "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold",
+                    employee?.kyc_status === 'approved' 
+                      ? "bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400"
+                      : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-400"
+                  )}>
+                    {employee?.kyc_status === 'approved' ? (
+                      <><CheckCircle2 className="w-3 h-3" /> Verified</>
+                    ) : (
+                      <><Shield className="w-3 h-3" /> Pending</>
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Contact Info */}
+            <div className="mt-4 pt-4 border-t border-slate-200/50 dark:border-white/10 space-y-2">
+              <div className="flex items-center gap-3 text-sm">
+                <Mail className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-600 dark:text-slate-300 truncate">{user?.email || 'Not set'}</span>
+              </div>
+              <div className="flex items-center gap-3 text-sm">
+                <Phone className="w-4 h-4 text-slate-400" />
+                <span className="text-slate-600 dark:text-slate-300">{user?.phone || employee?.mobile_money_number || 'Not set'}</span>
               </div>
             </div>
           </div>
 
-          <hr className="border-t border-slate-200 dark:border-white/5 mb-2 mx-5" />
-
-          {/* Finance Section */}
-          <SettingsSection title="Finance">
+          {/* Account Section */}
+          <SettingsSection title="Account">
             <SettingsItem
-              icon={Building2}
-              title="Bank Account"
-              subtitle={
-                <>
-                  <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
-                  {employee?.bank_name || 'Not set'} •••• {employee?.bank_account?.slice(-4) || '----'}
-                </>
-              }
+              icon={FolderOpen}
+              title="KYC & Documents"
+              subtitle={employee?.kyc_status === 'approved' ? 'All documents verified' : 'Complete verification'}
+              onClick={() => navigate('/employee/kyc')}
+              iconBg="bg-blue-100 dark:bg-blue-500/20"
+              iconColor="text-blue-600 dark:text-blue-400"
             />
             <SettingsItem
-              icon={CalendarDays}
-              title="Salary Cycle"
-              subtitle="Monthly • 25th"
+              icon={Building2}
+              title="Employment Details"
+              subtitle={employee?.job_title || 'Not set'}
+              iconBg="bg-purple-100 dark:bg-purple-500/20"
+              iconColor="text-purple-600 dark:text-purple-400"
             />
           </SettingsSection>
 
-          {/* Compliance Section */}
-          <SettingsSection title="Compliance">
+          {/* Payment Methods */}
+          <SettingsSection title="Payment Methods">
             <SettingsItem
-              icon={FolderOpen}
-              title="KYC & Onboarding"
-              subtitle={employee?.kyc_status === 'approved' ? 'Verified Documents' : 'Pending Verification'}
-              onClick={() => navigate('/employee/kyc')}
+              icon={Smartphone}
+              title="Mobile Money"
+              subtitle={
+                employee?.mobile_money_provider && employee?.mobile_money_number
+                  ? `${employee.mobile_money_provider} · ${employee.mobile_money_number}`
+                  : 'Not configured'
+              }
+              rightContent={
+                employee?.mobile_money_provider && (
+                  <span className="text-xs bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 px-2 py-1 rounded-full font-medium flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Active
+                  </span>
+                )
+              }
+              showChevron={false}
+              iconBg="bg-green-100 dark:bg-green-500/20"
+              iconColor="text-green-600 dark:text-green-400"
             />
             <SettingsItem
-              icon={ClipboardList}
-              title="Audit Log"
-              subtitle="Record of changes"
+              icon={CreditCard}
+              title="Bank Account"
+              subtitle={
+                employee?.bank_name && employee?.bank_account
+                  ? `${employee.bank_name} · ••••${employee.bank_account?.slice(-4)}`
+                  : 'Not configured'
+              }
+              rightContent={
+                employee?.bank_name && (
+                  <span className="text-xs bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 px-2 py-1 rounded-full font-medium flex items-center gap-1">
+                    <CheckCircle2 className="w-3 h-3" /> Active
+                  </span>
+                )
+              }
+              showChevron={false}
+              iconBg="bg-blue-100 dark:bg-blue-500/20"
+              iconColor="text-blue-600 dark:text-blue-400"
             />
           </SettingsSection>
 
@@ -230,17 +276,20 @@ export default function SettingsPage() {
             <SettingsItem
               icon={Lock}
               title="Change Password"
+              subtitle="Update your password"
+              iconBg="bg-red-100 dark:bg-red-500/20"
+              iconColor="text-red-600 dark:text-red-400"
             />
-            <div className="flex items-center gap-4 bg-white dark:bg-[#152b1d]/50 px-5 py-4 w-full">
-              <div className="flex items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 shrink-0 w-10 h-10 text-primary">
-                <Fingerprint className="w-5 h-5" />
+            <div className="flex items-center gap-4 bg-white/70 dark:bg-white/5 backdrop-blur-sm px-4 py-4 rounded-xl border border-slate-200/50 dark:border-white/10">
+              <div className="flex items-center justify-center rounded-xl bg-orange-100 dark:bg-orange-500/20 shrink-0 w-10 h-10">
+                <Fingerprint className="w-5 h-5 text-orange-600 dark:text-orange-400" />
               </div>
               <div className="flex flex-col items-start flex-1">
-                <p className="text-base font-medium leading-none text-slate-900 dark:text-white">Biometric Login</p>
-                <p className="text-[#9cbaa6] text-sm mt-1.5">FaceID / TouchID</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">Biometric Login</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Face ID / Touch ID</p>
               </div>
               <ToggleSwitch
-                id="biometric-toggle"
+                id="biometric"
                 checked={biometricEnabled}
                 onChange={() => setBiometricEnabled(!biometricEnabled)}
               />
@@ -249,15 +298,16 @@ export default function SettingsPage() {
 
           {/* Preferences Section */}
           <SettingsSection title="Preferences">
-            <div className="flex items-center gap-4 bg-white dark:bg-[#152b1d]/50 px-5 py-4 w-full">
-              <div className="flex items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 shrink-0 w-10 h-10 text-primary">
-                <Bell className="w-5 h-5" />
+            <div className="flex items-center gap-4 bg-white/70 dark:bg-white/5 backdrop-blur-sm px-4 py-4 rounded-xl border border-slate-200/50 dark:border-white/10">
+              <div className="flex items-center justify-center rounded-xl bg-yellow-100 dark:bg-yellow-500/20 shrink-0 w-10 h-10">
+                <Bell className="w-5 h-5 text-yellow-600 dark:text-yellow-400" />
               </div>
               <div className="flex flex-col items-start flex-1">
-                <p className="text-base font-medium leading-none text-slate-900 dark:text-white">Push Notifications</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">Push Notifications</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">Transaction alerts & updates</p>
               </div>
               <ToggleSwitch
-                id="notif-toggle"
+                id="notifications"
                 checked={notificationsEnabled}
                 onChange={() => setNotificationsEnabled(!notificationsEnabled)}
               />
@@ -266,31 +316,25 @@ export default function SettingsPage() {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="group flex items-center gap-4 bg-white dark:bg-[#152b1d]/50 px-5 py-4 w-full active:bg-slate-100 dark:active:bg-[#152b1d] transition-colors text-left"
+              className="group flex items-center gap-4 bg-white/70 dark:bg-white/5 backdrop-blur-sm px-4 py-4 w-full hover:bg-white dark:hover:bg-white/10 transition-all text-left rounded-xl border border-slate-200/50 dark:border-white/10"
               data-testid="theme-toggle"
             >
-              <div className="flex items-center justify-center rounded-xl bg-primary/10 dark:bg-primary/20 shrink-0 w-10 h-10 text-primary">
-                {theme === 'dark' ? <Moon className="w-5 h-5" /> : <Sun className="w-5 h-5" />}
+              <div className="flex items-center justify-center rounded-xl bg-slate-100 dark:bg-slate-700 shrink-0 w-10 h-10">
+                {theme === 'dark' ? <Moon className="w-5 h-5 text-slate-600 dark:text-slate-300" /> : <Sun className="w-5 h-5 text-slate-600" />}
               </div>
               <div className="flex flex-col items-start flex-1">
-                <p className="text-base font-medium leading-none text-slate-900 dark:text-white">Appearance</p>
+                <p className="text-sm font-semibold text-slate-900 dark:text-white">Appearance</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{theme} mode</p>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[#9cbaa6] text-sm capitalize">{theme} Mode</span>
-                <ChevronRight className="w-5 h-5 text-slate-400" />
-              </div>
+              <ChevronRight className="w-5 h-5 text-slate-400" />
             </button>
 
             <SettingsItem
               icon={Globe}
               title="Language"
-              rightContent={
-                <div className="flex items-center gap-2">
-                  <span className="text-[#9cbaa6] text-sm">English (US)</span>
-                  <ChevronRight className="w-5 h-5 text-slate-400" />
-                </div>
-              }
-              showChevron={false}
+              subtitle="English (US)"
+              iconBg="bg-indigo-100 dark:bg-indigo-500/20"
+              iconColor="text-indigo-600 dark:text-indigo-400"
             />
           </SettingsSection>
 
@@ -299,44 +343,44 @@ export default function SettingsPage() {
             <SettingsItem
               icon={HelpCircle}
               title="Help Center"
+              subtitle="FAQs and guides"
+              iconBg="bg-teal-100 dark:bg-teal-500/20"
+              iconColor="text-teal-600 dark:text-teal-400"
             />
             <SettingsItem
               icon={MessageCircle}
               title="Contact Support"
+              subtitle="Get help from our team"
+              iconBg="bg-cyan-100 dark:bg-cyan-500/20"
+              iconColor="text-cyan-600 dark:text-cyan-400"
             />
             <SettingsItem
               icon={Scale}
               title="Terms & Privacy"
+              subtitle="Legal information"
               onClick={() => navigate('/terms')}
+              iconBg="bg-slate-100 dark:bg-slate-700"
+              iconColor="text-slate-600 dark:text-slate-400"
             />
           </SettingsSection>
 
-          {/* Footer Actions */}
-          <div className="mt-10 px-5 mb-8">
+          {/* Logout */}
+          <div className="pt-4 pb-8">
             <button
               onClick={handleLogout}
-              className="w-full py-3 rounded-lg border border-red-500/30 text-red-500 font-semibold bg-red-500/5 hover:bg-red-500/10 active:scale-[0.98] transition-all"
+              className="w-full py-4 rounded-xl border border-red-200 dark:border-red-500/20 text-red-500 font-semibold bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 active:scale-[0.98] transition-all flex items-center justify-center gap-2"
               data-testid="logout-btn"
             >
+              <LogOut className="w-5 h-5" />
               Log Out
             </button>
-            <p className="text-center text-xs text-slate-500 mt-6">Version 1.0.0 • EaziWage</p>
+            <p className="text-center text-xs text-slate-400 dark:text-slate-500 mt-6">Version 1.0.0 · EaziWage</p>
           </div>
         </main>
       </div>
 
       {/* Bottom Navigation */}
       <BottomNav active="profile" />
-
-      {/* Toggle Switch Styles */}
-      <style>{`
-        .toggle-checkbox:checked {
-          right: 0;
-        }
-        .toggle-checkbox {
-          right: 24px;
-        }
-      `}</style>
     </div>
   );
 }
