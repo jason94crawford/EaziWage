@@ -61,6 +61,15 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 - ✅ **Sidebar Navigation (Desktop)** - Dashboard, Request Advance, Transaction History, Documents & KYC, Settings
 - ✅ **Mobile/Tablet Responsive** - Tested at 414px (iPhone XR) viewport
 
+### Authentication Pages (REDESIGNED - Feb 2026)
+Login and Registration pages completely redesigned to match website theme:
+
+- ✅ **Login Page** (/login) - Split-screen layout: dark branding panel (left) with EaziWage logo, "Access Your Earned Wages Instantly" headline, feature pills (Instant Transfers, Bank-Grade Security, Zero Interest), mock phone UI showing KES 24,500 balance, bottom stats (50K+ users, $2B+ disbursed, <3s transfer); clean form card (right) with error handling, password visibility toggle
+- ✅ **Registration Page** (/register) - Split-screen layout: dark branding panel with "Start Your Financial Freedom Journey Today" headline, benefits list, country flags (🇰🇪🇺🇬🇹🇿🇷🇼), Mary Wanjiku testimonial; form card with Employee/Employer role selection cards, full name/email/phone/password fields, validation
+- ✅ **Error Handling** - Custom axios instance (authAxios) without interceptors to avoid 401 redirect loops, proper error state display for invalid credentials
+- ✅ **Form State Retention** - Form values preserved after failed submission
+- ✅ **Navigation** - Bidirectional links between Login and Register pages
+
 **Test Employee Account**: demo.employee@eaziwage.com / Employee@123
 
 ### Backend (FastAPI + MongoDB)
