@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { 
   User, MapPin, Building2, Calendar, ArrowRight, ArrowLeft,
   Phone, Briefcase, Wallet, CreditCard, Check, Sparkles,
-  Shield, FileText, AlertCircle, ChevronRight
+  Shield, FileText, AlertCircle, ChevronRight, ChevronDown, Globe
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -16,6 +16,205 @@ import { toast } from 'sonner';
 import { useTheme } from '../../lib/ThemeContext';
 import { Sun, Moon } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+// Countries of Work (East African region only)
+const COUNTRIES_OF_WORK = [
+  { code: 'KE', name: 'Kenya' },
+  { code: 'UG', name: 'Uganda' },
+  { code: 'TZ', name: 'Tanzania' },
+  { code: 'RW', name: 'Rwanda' },
+];
+
+// Full list of countries for nationality
+const ALL_COUNTRIES = [
+  { code: 'AF', name: 'Afghanistan' }, { code: 'AL', name: 'Albania' }, { code: 'DZ', name: 'Algeria' },
+  { code: 'AD', name: 'Andorra' }, { code: 'AO', name: 'Angola' }, { code: 'AG', name: 'Antigua and Barbuda' },
+  { code: 'AR', name: 'Argentina' }, { code: 'AM', name: 'Armenia' }, { code: 'AU', name: 'Australia' },
+  { code: 'AT', name: 'Austria' }, { code: 'AZ', name: 'Azerbaijan' }, { code: 'BS', name: 'Bahamas' },
+  { code: 'BH', name: 'Bahrain' }, { code: 'BD', name: 'Bangladesh' }, { code: 'BB', name: 'Barbados' },
+  { code: 'BY', name: 'Belarus' }, { code: 'BE', name: 'Belgium' }, { code: 'BZ', name: 'Belize' },
+  { code: 'BJ', name: 'Benin' }, { code: 'BT', name: 'Bhutan' }, { code: 'BO', name: 'Bolivia' },
+  { code: 'BA', name: 'Bosnia and Herzegovina' }, { code: 'BW', name: 'Botswana' }, { code: 'BR', name: 'Brazil' },
+  { code: 'BN', name: 'Brunei' }, { code: 'BG', name: 'Bulgaria' }, { code: 'BF', name: 'Burkina Faso' },
+  { code: 'BI', name: 'Burundi' }, { code: 'CV', name: 'Cabo Verde' }, { code: 'KH', name: 'Cambodia' },
+  { code: 'CM', name: 'Cameroon' }, { code: 'CA', name: 'Canada' }, { code: 'CF', name: 'Central African Republic' },
+  { code: 'TD', name: 'Chad' }, { code: 'CL', name: 'Chile' }, { code: 'CN', name: 'China' },
+  { code: 'CO', name: 'Colombia' }, { code: 'KM', name: 'Comoros' }, { code: 'CG', name: 'Congo' },
+  { code: 'CD', name: 'Congo (DRC)' }, { code: 'CR', name: 'Costa Rica' }, { code: 'CI', name: "Côte d'Ivoire" },
+  { code: 'HR', name: 'Croatia' }, { code: 'CU', name: 'Cuba' }, { code: 'CY', name: 'Cyprus' },
+  { code: 'CZ', name: 'Czech Republic' }, { code: 'DK', name: 'Denmark' }, { code: 'DJ', name: 'Djibouti' },
+  { code: 'DM', name: 'Dominica' }, { code: 'DO', name: 'Dominican Republic' }, { code: 'EC', name: 'Ecuador' },
+  { code: 'EG', name: 'Egypt' }, { code: 'SV', name: 'El Salvador' }, { code: 'GQ', name: 'Equatorial Guinea' },
+  { code: 'ER', name: 'Eritrea' }, { code: 'EE', name: 'Estonia' }, { code: 'SZ', name: 'Eswatini' },
+  { code: 'ET', name: 'Ethiopia' }, { code: 'FJ', name: 'Fiji' }, { code: 'FI', name: 'Finland' },
+  { code: 'FR', name: 'France' }, { code: 'GA', name: 'Gabon' }, { code: 'GM', name: 'Gambia' },
+  { code: 'GE', name: 'Georgia' }, { code: 'DE', name: 'Germany' }, { code: 'GH', name: 'Ghana' },
+  { code: 'GR', name: 'Greece' }, { code: 'GD', name: 'Grenada' }, { code: 'GT', name: 'Guatemala' },
+  { code: 'GN', name: 'Guinea' }, { code: 'GW', name: 'Guinea-Bissau' }, { code: 'GY', name: 'Guyana' },
+  { code: 'HT', name: 'Haiti' }, { code: 'HN', name: 'Honduras' }, { code: 'HU', name: 'Hungary' },
+  { code: 'IS', name: 'Iceland' }, { code: 'IN', name: 'India' }, { code: 'ID', name: 'Indonesia' },
+  { code: 'IR', name: 'Iran' }, { code: 'IQ', name: 'Iraq' }, { code: 'IE', name: 'Ireland' },
+  { code: 'IL', name: 'Israel' }, { code: 'IT', name: 'Italy' }, { code: 'JM', name: 'Jamaica' },
+  { code: 'JP', name: 'Japan' }, { code: 'JO', name: 'Jordan' }, { code: 'KZ', name: 'Kazakhstan' },
+  { code: 'KE', name: 'Kenya' }, { code: 'KI', name: 'Kiribati' }, { code: 'KP', name: 'North Korea' },
+  { code: 'KR', name: 'South Korea' }, { code: 'KW', name: 'Kuwait' }, { code: 'KG', name: 'Kyrgyzstan' },
+  { code: 'LA', name: 'Laos' }, { code: 'LV', name: 'Latvia' }, { code: 'LB', name: 'Lebanon' },
+  { code: 'LS', name: 'Lesotho' }, { code: 'LR', name: 'Liberia' }, { code: 'LY', name: 'Libya' },
+  { code: 'LI', name: 'Liechtenstein' }, { code: 'LT', name: 'Lithuania' }, { code: 'LU', name: 'Luxembourg' },
+  { code: 'MG', name: 'Madagascar' }, { code: 'MW', name: 'Malawi' }, { code: 'MY', name: 'Malaysia' },
+  { code: 'MV', name: 'Maldives' }, { code: 'ML', name: 'Mali' }, { code: 'MT', name: 'Malta' },
+  { code: 'MH', name: 'Marshall Islands' }, { code: 'MR', name: 'Mauritania' }, { code: 'MU', name: 'Mauritius' },
+  { code: 'MX', name: 'Mexico' }, { code: 'FM', name: 'Micronesia' }, { code: 'MD', name: 'Moldova' },
+  { code: 'MC', name: 'Monaco' }, { code: 'MN', name: 'Mongolia' }, { code: 'ME', name: 'Montenegro' },
+  { code: 'MA', name: 'Morocco' }, { code: 'MZ', name: 'Mozambique' }, { code: 'MM', name: 'Myanmar' },
+  { code: 'NA', name: 'Namibia' }, { code: 'NR', name: 'Nauru' }, { code: 'NP', name: 'Nepal' },
+  { code: 'NL', name: 'Netherlands' }, { code: 'NZ', name: 'New Zealand' }, { code: 'NI', name: 'Nicaragua' },
+  { code: 'NE', name: 'Niger' }, { code: 'NG', name: 'Nigeria' }, { code: 'MK', name: 'North Macedonia' },
+  { code: 'NO', name: 'Norway' }, { code: 'OM', name: 'Oman' }, { code: 'PK', name: 'Pakistan' },
+  { code: 'PW', name: 'Palau' }, { code: 'PS', name: 'Palestine' }, { code: 'PA', name: 'Panama' },
+  { code: 'PG', name: 'Papua New Guinea' }, { code: 'PY', name: 'Paraguay' }, { code: 'PE', name: 'Peru' },
+  { code: 'PH', name: 'Philippines' }, { code: 'PL', name: 'Poland' }, { code: 'PT', name: 'Portugal' },
+  { code: 'QA', name: 'Qatar' }, { code: 'RO', name: 'Romania' }, { code: 'RU', name: 'Russia' },
+  { code: 'RW', name: 'Rwanda' }, { code: 'KN', name: 'Saint Kitts and Nevis' }, { code: 'LC', name: 'Saint Lucia' },
+  { code: 'VC', name: 'Saint Vincent and the Grenadines' }, { code: 'WS', name: 'Samoa' }, { code: 'SM', name: 'San Marino' },
+  { code: 'ST', name: 'Sao Tome and Principe' }, { code: 'SA', name: 'Saudi Arabia' }, { code: 'SN', name: 'Senegal' },
+  { code: 'RS', name: 'Serbia' }, { code: 'SC', name: 'Seychelles' }, { code: 'SL', name: 'Sierra Leone' },
+  { code: 'SG', name: 'Singapore' }, { code: 'SK', name: 'Slovakia' }, { code: 'SI', name: 'Slovenia' },
+  { code: 'SB', name: 'Solomon Islands' }, { code: 'SO', name: 'Somalia' }, { code: 'ZA', name: 'South Africa' },
+  { code: 'SS', name: 'South Sudan' }, { code: 'ES', name: 'Spain' }, { code: 'LK', name: 'Sri Lanka' },
+  { code: 'SD', name: 'Sudan' }, { code: 'SR', name: 'Suriname' }, { code: 'SE', name: 'Sweden' },
+  { code: 'CH', name: 'Switzerland' }, { code: 'SY', name: 'Syria' }, { code: 'TW', name: 'Taiwan' },
+  { code: 'TJ', name: 'Tajikistan' }, { code: 'TZ', name: 'Tanzania' }, { code: 'TH', name: 'Thailand' },
+  { code: 'TL', name: 'Timor-Leste' }, { code: 'TG', name: 'Togo' }, { code: 'TO', name: 'Tonga' },
+  { code: 'TT', name: 'Trinidad and Tobago' }, { code: 'TN', name: 'Tunisia' }, { code: 'TR', name: 'Turkey' },
+  { code: 'TM', name: 'Turkmenistan' }, { code: 'TV', name: 'Tuvalu' }, { code: 'UG', name: 'Uganda' },
+  { code: 'UA', name: 'Ukraine' }, { code: 'AE', name: 'United Arab Emirates' }, { code: 'GB', name: 'United Kingdom' },
+  { code: 'US', name: 'United States' }, { code: 'UY', name: 'Uruguay' }, { code: 'UZ', name: 'Uzbekistan' },
+  { code: 'VU', name: 'Vanuatu' }, { code: 'VA', name: 'Vatican City' }, { code: 'VE', name: 'Venezuela' },
+  { code: 'VN', name: 'Vietnam' }, { code: 'YE', name: 'Yemen' }, { code: 'ZM', name: 'Zambia' },
+  { code: 'ZW', name: 'Zimbabwe' },
+];
+
+// Terms of Service content
+const TERMS_CONTENT = `Last Updated: October 2025
+
+1. ACCEPTANCE OF TERMS
+By accessing and using EaziWage's earned wage access services, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service.
+
+2. ELIGIBILITY
+To use our services, you must:
+• Be at least 18 years of age
+• Be a current employee of a registered EaziWage employer partner
+• Have a valid bank account or mobile money account
+• Provide accurate and complete registration information
+
+3. SERVICE DESCRIPTION
+EaziWage provides earned wage access services that allow eligible employees to access a portion of their already-earned wages before their regular payday. Key features include:
+• Real-time tracking of earned wages
+• Instant transfers to mobile money or bank accounts
+• Transparent fee structure with no hidden charges
+• 24/7 access through our mobile and web platforms
+
+4. FEES AND CHARGES
+• A small processing fee applies to each advance request
+• Fee rates are calculated based on risk assessment (3.5% - 6%)
+• All fees are clearly displayed before you confirm any transaction
+• No interest charges, late fees, or penalty fees apply
+
+5. USER RESPONSIBILITIES
+You agree to:
+• Provide accurate information during registration
+• Keep your login credentials secure
+• Use the service only for personal financial needs
+• Not share your account with others
+• Report any unauthorized access immediately
+
+6. REPAYMENT
+• Advance amounts are automatically deducted from your next paycheck
+• Your employer facilitates the repayment process
+• No manual repayment action is required from you
+
+7. DATA PROTECTION
+We are committed to protecting your personal information in accordance with applicable data protection laws. Please refer to our Privacy Policy for detailed information about how we collect, use, and protect your data.
+
+8. LIMITATION OF LIABILITY
+EaziWage shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising from your use of the service.
+
+9. TERMINATION
+Either party may terminate this agreement at any time. Upon termination, any outstanding advance amounts must be repaid.
+
+10. GOVERNING LAW
+These terms shall be governed by the laws of the Republic of Kenya, with jurisdiction in the courts of Nairobi.
+
+For questions, contact: support@eaziwage.com`;
+
+// Privacy Policy content
+const PRIVACY_CONTENT = `Last Updated: October 2025
+
+1. INTRODUCTION
+EaziWage ("we," "us," or "our") respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, disclose, and safeguard your information.
+
+2. INFORMATION WE COLLECT
+
+Personal Information:
+• Full name and contact details (email, phone number, address)
+• National identification number or passport details
+• Date of birth
+• Employment information (employer, job title, salary)
+• Bank account and mobile money details
+
+Usage Information:
+• Device information and IP address
+• App usage patterns and preferences
+• Transaction history
+
+3. HOW WE USE YOUR INFORMATION
+We use your information to:
+• Verify your identity and eligibility for our services
+• Process advance requests and disbursements
+• Calculate risk scores and determine advance limits
+• Communicate with you about your account and transactions
+• Improve our services and develop new features
+• Comply with legal and regulatory requirements
+• Prevent fraud and ensure platform security
+
+4. DATA SHARING
+We may share your information with:
+• Your employer (limited employment verification data only)
+• Mobile money providers and banks for disbursements
+• Regulatory authorities when required by law
+• Service providers who assist in operating our platform
+
+We DO NOT sell your personal data to third parties.
+
+5. DATA SECURITY
+We implement industry-standard security measures including:
+• 256-bit SSL encryption for all data transmissions
+• Secure data centers with physical access controls
+• Regular security audits and penetration testing
+• Employee access controls and training
+
+6. DATA RETENTION
+We retain your personal data for as long as necessary to provide our services and comply with legal obligations. Upon account closure, we retain certain data for up to 7 years as required by financial regulations.
+
+7. YOUR RIGHTS
+You have the right to:
+• Access your personal data
+• Correct inaccurate information
+• Request deletion of your data (subject to legal requirements)
+• Object to certain processing activities
+• Data portability
+
+8. COOKIES AND TRACKING
+We use cookies and similar technologies to improve your experience. You can manage cookie preferences through your browser settings.
+
+9. CHANGES TO THIS POLICY
+We may update this Privacy Policy periodically. We will notify you of significant changes through the app or email.
+
+10. CONTACT US
+For privacy-related inquiries:
+Email: privacy@eaziwage.com
+Address: EaziWage Ltd, Westlands, Nairobi, Kenya`;
 
 const STEPS = [
   { id: 'welcome', title: 'Welcome', icon: Sparkles },
