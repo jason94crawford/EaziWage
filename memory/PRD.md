@@ -29,14 +29,14 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 
 - ✅ **Landing Page** (/) - Hero section with phone mockup, animated stats, features, testimonials, countries, CTAs
 - ✅ **Africa Map Component** - Professional animated map using react-simple-maps library showing full African continent with Kenya, Uganda, Tanzania, Rwanda highlighted in green with pulsing city markers (Nairobi, Kampala, Dar es Salaam, Kigali)
-- ✅ **About Page** (/about) - Company story, mission, values, team, timeline, investors
+- ✅ **About Page** (/about) - Mission (To empower employees and employers...), Vision (To be Africa's most trusted workplace finance partner...), Our Story (EaziWage was born from a simple truth...), company values, founders quotes, journey timeline
 - ✅ **How It Works** (/how-it-works) - 4-step process with sleek infographics, benefits, FAQ, video section
 - ✅ **For Employers** (/employers) - Benefits, features, process, testimonials
 - ✅ **For Employees** (/employees) - Benefits, use cases, testimonials, FAQs
 - ✅ **Pricing Page** (/pricing) - Simple fee structure: 3.5%-6% + $0.80 processing, comparison table
 - ✅ **Calculator Page** (/calculator) - Interactive wage access calculator with country selection
 - ✅ **Contact Page** (/contact) - Contact form, 4 office locations (Kenya, Uganda, Tanzania, Rwanda), no interactive map
-- ✅ **Partners Page** (/partners) - Partner types, 8 partner logos (Safaricom, KCB, Equity, MTN, Twiga, Jumia, Glovo, Bolt), integration steps
+- ✅ **Partners Page** (/partners) - Pre-seed aspirational positioning, "Building the Partner Ecosystem" section with target partner types (Mobile Money Providers, Banking Institutions, Payroll Platforms, Enterprise Employers), no fictional partner logos
 - ✅ **FAQ Page** (/faq) - Searchable FAQs with 6 categories
 - ✅ **Blog Page** (/blog) - Featured CEO article by Jason Crawford "The Future of Earned Wage Access in Africa: 2026 Trends", 6 external article links from real sources (AfriDigest, WeeTracker, EBNet, Unipesa, Fintech Futures)
 - ✅ **Privacy Policy** (/privacy) - Full legal content with TOC sidebar
@@ -47,7 +47,7 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 - ✅ **Navigation Updated** - About Us, How it Works, For Employers, For Employees, Pricing, Calculator
 - ✅ **M-PESA → Mobile Wallet** - All references changed to generic "Mobile Wallet"
 - ✅ **Clean Hero Sections** - Clear section breaks with proper backgrounds
-- ✅ **Footer Legal Section** - 8 policy links with scroll-to-top behavior
+- ✅ **Footer Legal Section** - 8 policy links with scroll-to-top behavior, Legal & Compliance heading font size matches Product heading
 - ✅ **Mobile/Tablet Responsive** - Tested at 375px and 768px viewports
 
 ### Backend (FastAPI + MongoDB)
