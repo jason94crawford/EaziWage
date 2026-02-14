@@ -340,7 +340,7 @@ export default function EmployerAdvances() {
               
               {/* Advance Rows */}
               {filteredAdvances.map((advance) => (
-                <AdvanceRow key={advance.id} advance={advance} />
+                <AdvanceRow key={advance.id} advance={advance} currency={selectedCurrency} />
               ))}
             </div>
           )}
@@ -349,9 +349,7 @@ export default function EmployerAdvances() {
         {/* Info Card */}
         <div className="bg-gradient-to-r from-blue-500/10 to-indigo-500/10 dark:from-blue-500/20 dark:to-indigo-500/20 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/20">
           <div className="flex items-start gap-4">
-            <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center shrink-0 shadow-sm">
-              <Zap className="w-6 h-6 text-white" />
-            </div>
+            <GradientIconBox icon={Zap} size="md" />
             <div>
               <h3 className="font-semibold text-blue-900 dark:text-blue-200">How Advances Work</h3>
               <ul className="mt-2 space-y-1.5 text-sm text-blue-800 dark:text-blue-300/80">
