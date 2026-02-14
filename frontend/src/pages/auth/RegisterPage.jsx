@@ -189,7 +189,7 @@ export default function RegisterPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [fullName, email, companyCode, companyName, password, agreedToTerms, accountType, navigate, noCompanyFound, referralEmployerName, referralEmployerEmail, referralEmployerPhone, mobileNumber, selectedDialCode]);
+  }, [fullName, email, companyCode, companyName, password, agreedToTerms, accountType, navigate, noCompanyFound, referralEmployerName, referralEmployerEmail, referralEmployerPhone, mobileNumber, selectedDialCode, referralPhoneDialCode]);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
