@@ -344,6 +344,7 @@ async def register(user_data: UserCreate):
         "id": user_id,
         "email": user_data.email,
         "phone": user_data.phone,
+        "phone_country_code": user_data.phone_country_code,
         "full_name": user_data.full_name,
         "role": user_data.role,
         "password_hash": hash_password(user_data.password),
