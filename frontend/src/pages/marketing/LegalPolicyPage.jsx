@@ -6,37 +6,53 @@ import { Footer } from '../../components/layout/Footer';
 
 const policies = {
   'data-policy': {
-    title: 'Data Policy',
+    title: 'Data Privacy & Protection Policy',
     icon: Shield,
-    lastUpdated: 'December 2025',
+    lastUpdated: 'October 2025',
     content: [
       {
-        heading: '1. Introduction',
-        text: 'EaziWage is committed to protecting the privacy and security of your personal data. This Data Policy explains how we collect, use, store, and protect your information in compliance with the Kenya Data Protection Act, 2019, and other applicable East African data protection regulations.'
+        heading: '1. Purpose and Scope',
+        text: 'This Policy sets out how EaziWage Holdings Limited ("EaziWage", the "Firm", "we/us/our") and its associated entities (the "Group") collects, uses, discloses, transfers, stores, and protects personal data when providing earned-wage access and related services. It applies to employees/end-users, employer clients/HR & payroll admins, prospective users, our own staff, and vendors and other "associated persons". We are a data controller when we determine the purpose and means of processing (e.g., onboarding, KYC, credit/disbursement rails). We will register with the Office of the Data Protection Commissioner (ODPC) as required under the Data Protection Act No. 24 of 2019.'
       },
       {
-        heading: '2. Data Collection',
-        text: 'We collect personal information necessary to provide our earned wage access services, including: identification documents for KYC verification, employment details, bank account and mobile money information, transaction history, and device information for security purposes.'
+        heading: '2. Legal & Regulatory Framework',
+        text: 'We comply with: Data Protection Act of 2019 (No. 24 of 2019), Data Protection (General) Regulations of 2021, Data Protection (Registration of Data Controllers and Data Processors) Regulations of 2021, and ODPC Guidance including DPIA guidance and data-sharing code drafts. Where applicable, sectoral obligations (e.g., CBK rules via regulated partners) and AML/CFT obligations will also apply.'
       },
       {
-        heading: '3. Data Processing',
-        text: 'Your data is processed solely for the purposes of: verifying your identity and employment, calculating your earned wages, processing advance requests, preventing fraud and ensuring security, and complying with legal and regulatory requirements.'
+        heading: '3. What Data We Collect',
+        text: 'A. Identification & contact: Full name, national ID/passport no., KRA PIN (where relevant), mobile number, email, address. B. Employment & payroll: Employer name, staff ID, department, employment status, salary band, net/gross pay, pay cycle, leave/attendance. C. Financial/payment: Employee bank or mobile-money details, employer funding/settlement accounts, transaction identifiers, timestamps, amounts, fees. D. Technical & app usage: Device identifiers, IP, app telemetry, cookies/SDK events. E. Verification/KYC artifacts: Documents/photos strictly for verification. F. Support & comms: Tickets, call recordings (where lawful), consents, preferences. G. Special categories (sensitive personal data): We minimise collection of any sensitive data and apply heightened safeguards when unavoidable.'
       },
       {
-        heading: '4. Data Storage',
-        text: 'All personal data is stored in secure, encrypted databases located in certified data centers. We retain your information only for as long as necessary to provide our services and comply with legal obligations.'
+        heading: '4. Lawful Bases for Processing',
+        text: 'We rely on: Contract performance – to provide the EWA service; Legal obligation – to meet financial-crime, tax, employment, or data-protection obligations; Legitimate interests – to run, secure, and improve our platform; Consent – for specific optional features (e.g., marketing, certain analytics, or where consent is required for cross-border transfers of sensitive personal data).'
       },
       {
-        heading: '5. Data Sharing',
-        text: 'We do not sell your personal data. We may share information with: your employer (aggregated usage data only), mobile money providers and banks for transactions, regulatory authorities when legally required, and service providers who help us operate our platform (under strict confidentiality agreements).'
+        heading: '5. Purpose Limitation & Data Minimisation',
+        text: 'We collect only what is necessary for: verifying identity and employment; calculating earned-wage eligibility; disbursing funds; reconciliation, settlement, audit, and AML; customer support; product improvement & security; and legal and regulatory compliance. We do not use data for unrelated purposes without a compatible lawful basis.'
       },
       {
-        heading: '6. Your Rights',
-        text: 'You have the right to: access your personal data, request correction of inaccurate data, request deletion of your data (subject to legal requirements), withdraw consent at any time, and lodge a complaint with the Office of the Data Protection Commissioner.'
+        heading: '6. Data Subject Rights',
+        text: 'Under Kenyan law, you have the right to: be informed, access, rectify/correct, object/restrict, data portability (where technically feasible), and erasure (subject to legal/contractual limits). Requests are handled within statutory timelines.'
       },
       {
-        heading: '7. Contact',
-        text: 'For data-related inquiries, contact our Data Protection Officer at dpo@eaziwage.com.'
+        heading: '7. Data Sharing & Processors',
+        text: 'We may share data strictly on a need-to-know basis with: Payment partners and banks/investors for pay-outs and settlement; Employers (limited reports necessary to operate EWA); Regulated financial-crime partners (e.g., sanctions screening/KYC); Vendors/IT processors (hosting, SMS/OTP, support tools) under written DPAs; Authorities/regulators when required by law. We prohibit "onward sharing" by third parties without our written authorisation.'
+      },
+      {
+        heading: '8. International (Cross-Border) Transfers',
+        text: 'Personal data may be transferred outside Kenya only under the DPA and General Regulations, including: Adequacy or appropriate safeguards (e.g., SCCs/BCRs) demonstrated to ODPC; Necessity exceptions defined in law; and Consent for transfers of sensitive personal data where required.'
+      },
+      {
+        heading: '9. Security Safeguards',
+        text: 'We implement technical and organisational measures proportionate to risk, including: encryption in transit/at rest; network segmentation; device attestation; secrets management; role-based access and least privilege; secure SDLC; vendor security due diligence; continuous monitoring; and incident response with evidenced runbooks.'
+      },
+      {
+        heading: '10. Breach Notification',
+        text: 'If a personal-data breach occurs, we will assess impact and notify the ODPC within 72 hours of becoming aware where the breach meets notification thresholds, and notify affected data subjects without undue delay.'
+      },
+      {
+        heading: '11. Contact',
+        text: 'Data Protection Officer/Privacy Office: EaziWage Holdings Limited. Email: privacy@eaziwage.com. If you believe your data has been mishandled, contact us first. You may also complain to the Office of the Data Protection Commissioner (ODPC).'
       }
     ]
   },
