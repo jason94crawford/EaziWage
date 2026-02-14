@@ -158,7 +158,11 @@ All employee-facing pages redesigned with modern mobile-first design and light/d
 - Backend: 95% (previous test iteration)
 - UI/Content Update (Feb 2026): **100%** - About page Mission/Vision/Our Story, Footer Legal & Compliance font size, Partners page pre-seed positioning
 - Policy Pages Update (Feb 2026): **100%** - Cookie/Data Policy removed from footer, all 5 policy pages now have sidebar TOC matching Terms of Service
-- Employee Dashboard Redesign: **Implemented** - Dark theme with green accents, new layout matches reference screenshots
+- Employee Portal Redesign (Feb 2026): **100%** - All 4 pages (Dashboard, Request Advance, Transactions, Settings) tested and passing with light/dark mode
+
+## Test Credentials
+- **Admin**: superadmin@eaziwage.com / Admin@12345
+- **Employee**: demo.employee@eaziwage.com / Employee@123
 
 ## Notes
 - Marketing pages now have rich content, not minimalistic
