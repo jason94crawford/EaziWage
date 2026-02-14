@@ -85,7 +85,7 @@ const EmployeeRow = ({ employee, onViewDetails, onEditEWA, currency }) => (
     
     {/* Salary */}
     <div className="text-right hidden sm:block">
-      <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(employee.monthly_salary)}</p>
+      <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(employee.monthly_salary, currency)}</p>
       <p className="text-xs text-slate-500 dark:text-slate-400">Monthly</p>
     </div>
     
