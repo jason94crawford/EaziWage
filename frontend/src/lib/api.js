@@ -57,6 +57,16 @@ export const employeeApi = {
   get: (id) => api.get(`/employees/${id}`),
   updateStatus: (id, status) => api.patch(`/employees/${id}/status`, null, { params: { status } }),
   updateKycStatus: (id, kycStatus) => api.patch(`/employees/${id}/kyc-status`, null, { params: { kyc_status: kycStatus } }),
+  updateSettings: (data) => api.put('/employees/me/settings', data),
+};
+
+// User APIs
+export const userApi = {
+  getFullProfile: () => api.get('/users/me/full-profile'),
+  updateSettings: (data) => api.put('/users/me/settings', data),
+  uploadProfilePicture: (formData) => api.post('/users/me/profile-picture', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  }),
 };
 
 // Advance APIs
