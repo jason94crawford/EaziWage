@@ -869,7 +869,7 @@ async def upload_employer_document(
     valid_types = [
         'certificate_of_incorporation', 'business_registration', 'tax_compliance_certificate',
         'cr12_document', 'kra_pin_certificate', 'business_permit', 'audited_financials',
-        'bank_statement', 'proof_of_address'
+        'bank_statement', 'proof_of_address', 'proof_of_bank_account', 'employment_contract_template'
     ]
     if document_type not in valid_types:
         raise HTTPException(status_code=400, detail=f"Invalid document type. Must be one of: {', '.join(valid_types)}")
