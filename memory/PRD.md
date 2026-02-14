@@ -9,7 +9,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - JWT-based custom authentication ✅
 - Google OAuth integration (Emergent-managed) ✅
 - Apple Login (MOCKED - Not implemented)
-- Biometric Face ID (MOCKED - Not implemented)
+- Biometric Face ID (MOCKED - UI simulation only)
 - Role-based access: Employee, Employer, Admin ✅
 
 ### Employee Features
@@ -18,16 +18,16 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Step 2: Terms & Conditions
   - Step 3: ID Verification (National ID/Passport upload)
   - Step 4: Address Verification (Proof of address upload)
-  - Step 5: Employment Details (Job info, payslips, **Employment Contract upload**)
+  - Step 5: Employment Details (Job info, payslips, Employment Contract upload)
   - Step 6: Payment Setup (Mobile Money & Bank Account)
   - Step 7: Review & Submit
 
 - **Employee Dashboard** ✅ (Redesigned v3 - Feb 2026)
-  - **SpeedDialCounter**: Animated circular progress showing available amount
-  - **Stats Grid**: Earned This Month, Next Payday, Total Withdrawn, Employer
-  - **Account Status**: Shows Account and KYC verification status
-  - **Recent Activity**: Shows latest transactions
-  - **Bottom Navigation**: Dark slate design with green gradient accents
+  - SpeedDialCounter: Animated circular progress showing available amount
+  - Stats Grid: Earned This Month, Next Payday, Total Withdrawn, Employer
+  - Account Status: Shows Account and KYC verification status
+  - Recent Activity: Shows latest transactions
+  - Bottom Navigation: Dark slate design with green gradient accents
   - Green gradient theme consistent with main website
 
 - **Request Advance Page** ✅ (Redesigned v3 - Feb 2026)
@@ -43,15 +43,20 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Transaction list with status indicators
   - Export button for data export
 
-- **Profile & Settings** ✅ (Redesigned v3 - Feb 2026)
-  - **Profile Picture Upload**: Camera button to upload/change photo
-  - **Editable Personal Info**: Full Name, Email, Phone with inline editing
-  - **Editable Address**: Address Line 1, City, Postal Code
-  - **Payment Methods**: M-PESA and Bank Account with Active badges
-  - **KYC Documents Summary**: Shows status of all uploaded documents
-  - Security settings (password, biometric toggle)
-  - Preferences (notifications, theme, language)
-  - Support section
+- **Profile & Settings** ✅ (Redesigned v4 - Feb 2026)
+  - Profile Picture Upload: Camera button to upload/change photo
+  - Editable Personal Info: Full Name, Email, Phone with inline editing
+  - Editable Address: Address Line 1, City, Postal Code
+  - Payment Methods: M-PESA and Bank Account with Active badges
+  - KYC Documents Summary: Shows status of all uploaded documents
+  - **Security settings**:
+    - Change Password - FUNCTIONAL with backend API ✅
+    - Biometric toggle (MOCKED UI)
+  - Preferences (notifications, theme)
+  - Support section with expandable FAQs
+  - **All icons use gradient matching "Get Started" button** ✅
+  - **Logout button uses green gradient** ✅
+  - **Mobile notifications panel - RESPONSIVE** ✅
 
 ### Employer Features (Partially Implemented)
 - Company onboarding ✅
@@ -94,7 +99,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   full_name: String,
   phone: String,
   phone_country_code: String,
-  profile_picture_url: String, // NEW - Profile picture path
+  profile_picture_url: String,
   is_verified: Boolean,
   created_at: String
 }
@@ -119,7 +124,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   mobile_money_provider: String,
   mobile_money_number: String,
   
-  // Address (NEW - Editable)
+  // Address
   address_line1: String,
   address_line2: String,
   city: String,
@@ -152,10 +157,11 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - `POST /api/auth/login` - User login
 - `POST /api/auth/google/callback` - Google OAuth callback
 
-### User Settings (NEW)
+### User Settings
 - `GET /api/users/me/full-profile` - Get complete user profile with employee data and KYC documents
 - `PUT /api/users/me/settings` - Update user settings (full_name, phone)
 - `POST /api/users/me/profile-picture` - Upload profile picture
+- `POST /api/users/me/change-password` - Change user password ✅ NEW
 
 ### Employee
 - `GET /api/employees/me` - Get employee profile
@@ -164,7 +170,6 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 ### KYC Document Upload
 - `POST /api/kyc/upload` - Upload KYC document
-  - Supported types: `id_front`, `id_back`, `address_proof`, `tax_certificate`, `payslip_1`, `payslip_2`, `bank_statement`, `selfie`, `employment_contract`
 
 ### Dashboard
 - `GET /api/dashboard/employee` - Employee dashboard stats
@@ -184,20 +189,13 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 ### Green Gradient Theme
 - Gradient backgrounds: `from-primary via-emerald-500 to-teal-500`
-- Gradient mesh backgrounds with subtle green glows
-- Button gradients: `from-primary to-emerald-600`
-- Icon backgrounds: `bg-primary/10` with `text-primary`
+- Button gradients: `bg-gradient-to-r from-primary to-emerald-600`
+- Icon backgrounds: `bg-gradient-to-r from-primary to-emerald-600` with `shadow-lg shadow-primary/25`
 
 ### Glass-morphism Theme
 - Backdrop blur: `backdrop-blur-xl`
 - Semi-transparent backgrounds: `bg-white/60`, `bg-slate-900/60`
 - Border styling: `border-slate-200/50`, `border-slate-700/30`
-- Shadow effects: `shadow-lg`, `shadow-primary/25`
-
-### Typography
-- Headings: Bold, large sizes with Plus Jakarta Sans
-- Body: Inter font, medium weights, readable sizes
-- Mobile-first sizing with `sm:` and `lg:` breakpoints
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
@@ -215,40 +213,26 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 ### Session 2 - Dashboard Redesign v3 (Feb 14, 2026)
 - ✅ Employment Contract upload field added to onboarding
-- ✅ **Complete Employee Dashboard Redesign**
-  - SpeedDialCounter with animated circular progress
-  - Fixed text overlay issue on Available Earnings
-  - Green gradient theme matching main website
-  - Dark slate bottom navigation
-  - **Functional Notifications bell with panel**
-- ✅ **Request Advance Page Redesign**
-  - Circular progress amount selector
-  - Quick amount buttons
-  - Transaction summary with fees
-  - **"Verification in Progress" state (not loop to complete verification)**
-- ✅ **Transactions Page Redesign**
-  - Filter pills (All, Pending, Completed, Failed)
-  - Stats cards for monthly totals
-- ✅ **Settings Page Complete Overhaul**
-  - Profile picture upload functionality
-  - Editable personal information fields
-  - Editable address fields
-  - Payment methods display
-  - KYC Documents summary section
-  - **All icons now green with white (consistent design)**
-  - **Change Password modal (functional)**
-  - **Biometric Face Scan modal (integrated)**
-  - **Help Center - In-app expandable FAQs**
-  - **Contact Support - In-app modal with phone/email/WhatsApp**
-  - **Terms & Privacy - In-app scrollable content**
-  - **Removed Language selection**
-- ✅ **New Backend Endpoints**
-  - GET /api/users/me/full-profile
-  - PUT /api/users/me/settings
-  - PUT /api/employees/me/settings
-  - POST /api/users/me/profile-picture
+- ✅ Complete Employee Dashboard Redesign
+- ✅ Request Advance Page Redesign
+- ✅ Transactions Page Redesign
+- ✅ Settings Page Complete Overhaul
+
+### Session 3 - P0/P1 Fixes (Feb 15, 2026)
+- ✅ **P0 Fix #1**: Logout button changed from red to green gradient
+- ✅ **P0 Fix #2**: All settings icons now use gradient matching "Get Started" button (`bg-gradient-to-r from-primary to-emerald-600`)
+- ✅ **P0 Fix #3**: Mobile notifications panel - responsive and properly positioned
+- ✅ **P1 Fix**: Change Password API endpoint implemented and integrated
 
 ## Pending Tasks
+
+### P0 - Critical (Upcoming)
+- Build Employer Onboarding Portal (multi-step due diligence process)
+  - Company registration documents
+  - Beneficial ownership verification
+  - Operational & financial documents upload
+  - Business sector selection
+  - Allow skipping optional documents
 
 ### P1 - High Priority
 - Admin KYC Review page UI
@@ -259,7 +243,6 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Payroll integration
 
 ### Future/Backlog
-- Biometric Face Scan functionality
 - Apple Login integration
 - Live Mobile Money API integration
 - Live Bank Transfer API integration
@@ -279,4 +262,4 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - `axios` - API client
 
 ---
-Last Updated: February 14, 2026
+Last Updated: February 15, 2026
