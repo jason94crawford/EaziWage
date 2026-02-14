@@ -255,16 +255,12 @@ export default function EmployerDashboard() {
               subtext="All time disbursements"
               trend="+12.5%"
               trendUp={true}
-              iconBg="bg-gradient-to-br from-emerald-100 to-emerald-50 dark:from-emerald-500/20 dark:to-emerald-500/10"
-              iconColor="text-emerald-600"
             />
             <MetricCard 
               icon={Clock}
               label="Pending Advances"
               value={stats?.pending_advances || 0}
               subtext="Awaiting processing"
-              iconBg="bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-500/20 dark:to-amber-500/10"
-              iconColor="text-amber-600"
             />
             <MetricCard 
               icon={Wallet}
@@ -273,8 +269,6 @@ export default function EmployerDashboard() {
               subtext="This month's total"
               trend="+8.2%"
               trendUp={true}
-              iconBg="bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-500/20 dark:to-blue-500/10"
-              iconColor="text-blue-600"
             />
             <MetricCard 
               icon={Activity}
@@ -283,8 +277,6 @@ export default function EmployerDashboard() {
               subtext="Per employee"
               trend="-2.1%"
               trendUp={false}
-              iconBg="bg-gradient-to-br from-purple-100 to-purple-50 dark:from-purple-500/20 dark:to-purple-500/10"
-              iconColor="text-purple-600"
             />
           </div>
         </div>
@@ -303,21 +295,18 @@ export default function EmployerDashboard() {
               title="Manage Employees"
               description="Add, edit, or view profiles"
               href="/employer/employees"
-              gradient="bg-gradient-to-br from-primary/5 to-emerald-500/5"
             />
             <QuickActionCard 
               icon={Upload}
               title="Upload Payroll"
               description="Update earnings data"
               href="/employer/payroll"
-              gradient="bg-gradient-to-br from-blue-500/5 to-indigo-500/5"
             />
             <QuickActionCard 
               icon={CreditCard}
               title="View Advances"
               description="Track wage advances"
               href="/employer/advances"
-              gradient="bg-gradient-to-br from-amber-500/5 to-orange-500/5"
             />
             <QuickActionCard 
               icon={BarChart3}
