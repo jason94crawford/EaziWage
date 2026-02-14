@@ -13,12 +13,12 @@ import { EmployerPortalLayout } from '../../components/employer/EmployerLayout';
 import { dashboardApi, advanceApi, employeeApi, employerApi } from '../../lib/api';
 import { formatCurrency, cn } from '../../lib/utils';
 
-// Metric Card with Trend
-const MetricCard = ({ title, value, change, changeType, icon: Icon, iconBg, iconColor }) => (
+// Metric Card with Trend - solid green icon
+const MetricCard = ({ title, value, change, changeType, icon: Icon }) => (
   <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/50 dark:border-slate-700/30 hover:shadow-lg transition-all">
     <div className="flex items-start justify-between mb-4">
-      <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center", iconBg)}>
-        <Icon className={cn("w-6 h-6", iconColor)} />
+      <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+        <Icon className="w-6 h-6 text-white" />
       </div>
       {change && (
         <div className={cn(
