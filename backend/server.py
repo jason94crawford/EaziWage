@@ -181,6 +181,7 @@ class EmployeeResponse(BaseModel):
     payslip_2: Optional[str] = None
     bank_statement: Optional[str] = None
     selfie: Optional[str] = None
+    employment_contract: Optional[str] = None
 
 # Advance Request Models
 class AdvanceCreate(BaseModel):
