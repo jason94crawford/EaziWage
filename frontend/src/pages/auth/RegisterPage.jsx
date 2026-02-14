@@ -48,7 +48,7 @@ export default function RegisterPage() {
   useEffect(() => {
     const fetchEmployers = async () => {
       try {
-        const response = await authAxios.get('/api/employers?status=approved');
+        const response = await authAxios.get('/api/employers/public/approved');
         setEmployers(response.data || []);
       } catch (err) {
         console.error('Failed to fetch employers:', err);
