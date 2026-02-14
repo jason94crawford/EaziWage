@@ -41,7 +41,7 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 - ✅ **Blog Page** (/blog) - Featured CEO article by Jason Crawford "The Future of Earned Wage Access in Africa: 2026 Trends", 6 external article links from real sources (AfriDigest, WeeTracker, EBNet, Unipesa, Fintech Futures)
 - ✅ **Privacy Policy** (/privacy) - Full legal content with TOC sidebar
 - ✅ **Terms of Service** (/terms) - Full legal content with TOC sidebar
-- ✅ **Legal Policy Pages** - Data Policy, ABC Policy, Code of Ethics, Gifts Policy, AML & CFT Policy, Whistleblowing Policy
+- ✅ **Legal Policy Pages** - Data Privacy & Protection Policy, ABC Policy, Code of Ethics, Gifts/Hospitality/Entertainment Policy, AML & CFT Policy, Whistleblowing Policy (all updated with official policy document content from October 2025)
 - ✅ **Dark/Light Theme Toggle** - Working across all pages
 - ✅ **Consistent Green Theme** - Primary color #16A34A maintained (no blue/yellow/red)
 - ✅ **Navigation Updated** - About Us, How it Works, For Employers, For Employees, Pricing, Calculator
