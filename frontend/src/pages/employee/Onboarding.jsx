@@ -1047,6 +1047,10 @@ export default function EmployeeOnboarding() {
         );
 
       case 6: // Payment (Bank/Wallet Verification)
+        // Get mobile money providers based on country of work selected in Address step
+        const selectedWorkCountry = COUNTRIES_OF_WORK.find(c => c.code === formData.country);
+        const mobileMoneyProviders = selectedWorkCountry?.providers || [];
+        
         return (
           <div className="py-6">
             <div className="text-center mb-8">
@@ -1057,16 +1061,16 @@ export default function EmployeeOnboarding() {
                 Payment Details
               </h2>
               <p className="text-slate-600 dark:text-slate-300">
-                How would you like to receive your advances?
+                Where should we send your wage advances?
               </p>
             </div>
             
             <div className="space-y-6 max-w-md mx-auto">
-              {/* Mobile Money */}
+              {/* Mobile Money - Required */}
               <div className="p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20">
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
                   <Phone className="w-5 h-5 text-primary" />
-                  Mobile Money (Recommended)
+                  Mobile Money *
                 </h3>
                 <div className="space-y-4">
                   <div className="flex flex-col gap-2">
@@ -1076,17 +1080,22 @@ export default function EmployeeOnboarding() {
                     <Select 
                       value={formData.mobile_money_provider} 
                       onValueChange={(v) => updateField('mobile_money_provider', v)}
-                      disabled={!selectedCountry}
+                      disabled={!formData.country}
                     >
                       <SelectTrigger className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700" data-testid="onboarding-mobile-provider">
-                        <SelectValue placeholder={selectedCountry ? "Select provider" : "Select country first (Step 3)"} />
+                        <SelectValue placeholder={formData.country ? "Select provider" : "Complete Address step first"} />
                       </SelectTrigger>
                       <SelectContent>
-                        {selectedCountry?.mobile_money?.map((p) => (
+                        {mobileMoneyProviders.map((p) => (
                           <SelectItem key={p} value={p}>{p}</SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
+                    {formData.country && (
+                      <p className="text-xs text-slate-500 dark:text-slate-400 ml-1">
+                        Available providers for {selectedWorkCountry?.name}
+                      </p>
+                    )}
                   </div>
                   
                   <div className="flex flex-col gap-2">
@@ -1095,7 +1104,7 @@ export default function EmployeeOnboarding() {
                     </Label>
                     <Input
                       type="tel"
-                      placeholder="+254 700 000 000"
+                      placeholder={formData.country === 'KE' ? '+254 7XX XXX XXX' : formData.country === 'UG' ? '+256 7XX XXX XXX' : formData.country === 'TZ' ? '+255 7XX XXX XXX' : formData.country === 'RW' ? '+250 7XX XXX XXX' : '+XXX XXX XXX XXX'}
                       value={formData.mobile_money_number}
                       onChange={(e) => updateField('mobile_money_number', e.target.value)}
                       className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700"
@@ -1105,16 +1114,16 @@ export default function EmployeeOnboarding() {
                 </div>
               </div>
               
-              {/* Bank Account */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
+              {/* Bank Account - Required */}
+              <div className="p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20">
                 <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  <Landmark className="w-5 h-5 text-slate-500" />
-                  Bank Account (Optional)
+                  <Landmark className="w-5 h-5 text-primary" />
+                  Bank Account *
                 </h3>
                 <div className="space-y-4">
                   <div className="flex flex-col gap-2">
                     <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                      Bank Name
+                      Bank Name *
                     </Label>
                     <Input
                       placeholder="e.g. Kenya Commercial Bank"
@@ -1127,7 +1136,7 @@ export default function EmployeeOnboarding() {
                   
                   <div className="flex flex-col gap-2">
                     <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                      Account Number
+                      Account Number *
                     </Label>
                     <Input
                       placeholder="e.g. 1234567890"
@@ -1138,14 +1147,15 @@ export default function EmployeeOnboarding() {
                     />
                   </div>
 
-                  {/* Bank Statement Upload */}
+                  {/* Bank Statement Upload - Required */}
                   <FileUploader
-                    label="Bank Statement (Optional)"
+                    label="Bank Statement *"
                     description="Last 3 months statement"
                     onUpload={(file) => handleFileUpload(file, 'bank_statement')}
                     uploadedFile={uploadedFiles.bank_statement}
                     uploading={uploadingFile === 'bank_statement'}
                     testId="upload-bank-statement"
+                    required
                   />
                 </div>
               </div>
