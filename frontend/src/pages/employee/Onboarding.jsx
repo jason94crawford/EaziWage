@@ -336,6 +336,7 @@ export default function EmployeeOnboarding() {
     payslip_1: null,
     payslip_2: null,
     bank_statement: null,
+    employment_contract: null,
   });
   
   const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
