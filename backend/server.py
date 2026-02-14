@@ -596,18 +596,27 @@ async def create_employee(data: EmployeeCreate, user: dict = Depends(require_rol
     if existing:
         raise HTTPException(status_code=400, detail="Employee profile already exists")
     
-    # Verify employer exists
-    employer = await db.employers.find_one({"id": data.employer_id}, {"_id": 0})
-    if not employer:
-        raise HTTPException(status_code=404, detail="Employer not found")
+    # Employer is optional - will be auto-assigned later by admin
+    employer = None
+    employer_name = None
+    if data.employer_id:
+        employer = await db.employers.find_one({"id": data.employer_id}, {"_id": 0})
+        if employer:
+            employer_name = employer.get("company_name")
     
     employee_id = str(uuid.uuid4())
     advance_limit = data.monthly_salary * 0.5  # 50% of salary
+    
+    # Auto-generate employee code if not provided
+    employee_code = data.employee_code
+    if not employee_code:
+        employee_code = f"EMP-{uuid.uuid4().hex[:8].upper()}"
     
     employee_doc = {
         "id": employee_id,
         "user_id": user["id"],
         **data.model_dump(),
+        "employee_code": employee_code,  # Override with auto-generated if needed
         "status": "pending",
         "risk_score": None,
         "risk_factors": {},
@@ -630,7 +639,7 @@ async def create_employee(data: EmployeeCreate, user: dict = Depends(require_rol
     
     return EmployeeResponse(
         **{k: v for k, v in employee_doc.items() if k != "_id"},
-        employer_name=employer.get("company_name")
+        employer_name=employer_name
     )
 
 @api_router.get("/employees/me", response_model=EmployeeResponse)
