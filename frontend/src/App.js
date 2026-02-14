@@ -37,6 +37,9 @@ import EmployerDashboard from "./pages/employer/Dashboard";
 import EmployerOnboarding from "./pages/employer/Onboarding";
 import EmployerEmployees from "./pages/employer/Employees";
 import EmployerPayroll from "./pages/employer/Payroll";
+import EmployerAdvances from "./pages/employer/Advances";
+import EmployerReports from "./pages/employer/Reports";
+import EmployerSettings from "./pages/employer/Settings";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
