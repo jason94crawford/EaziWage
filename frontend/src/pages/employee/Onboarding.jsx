@@ -485,18 +485,72 @@ export default function EmployeeOnboarding() {
             </div>
             
             <div className="space-y-4 max-w-md mx-auto">
+              {/* ID Type Selector */}
               <div className="flex flex-col gap-2">
                 <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                  National ID Number *
+                  Identification Type *
+                </Label>
+                <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800/50 rounded-xl">
+                  <button
+                    type="button"
+                    onClick={() => handleIdTypeChange('national_id')}
+                    className={`py-3 px-4 rounded-lg text-sm font-semibold transition-all ${
+                      idType === 'national_id'
+                        ? 'bg-white dark:bg-slate-700 text-primary shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                    data-testid="id-type-national"
+                  >
+                    National ID
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleIdTypeChange('passport')}
+                    className={`py-3 px-4 rounded-lg text-sm font-semibold transition-all ${
+                      idType === 'passport'
+                        ? 'bg-white dark:bg-slate-700 text-primary shadow-sm'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    }`}
+                    data-testid="id-type-passport"
+                  >
+                    Passport
+                  </button>
+                </div>
+              </div>
+
+              {/* ID Number Field */}
+              <div className="flex flex-col gap-2">
+                <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
+                  {idType === 'passport' ? 'Passport Number *' : 'National ID Number *'}
                 </Label>
                 <Input
-                  placeholder="e.g. 12345678"
+                  placeholder={idType === 'passport' ? 'e.g. AB1234567' : 'e.g. 12345678'}
                   value={formData.national_id}
                   onChange={(e) => updateField('national_id', e.target.value)}
                   className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20"
                   data-testid="onboarding-national-id"
                 />
               </div>
+
+              {/* Country of Nationality (Only for Passport) */}
+              {idType === 'passport' && (
+                <div className="flex flex-col gap-2">
+                  <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1 flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-primary" />
+                    Country of Nationality *
+                  </Label>
+                  <Select value={formData.nationality} onValueChange={(v) => updateField('nationality', v)}>
+                    <SelectTrigger className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700" data-testid="onboarding-nationality">
+                      <SelectValue placeholder="Select your nationality" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-[300px]">
+                      {ALL_COUNTRIES.map((c) => (
+                        <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
               
               <div className="flex flex-col gap-2">
                 <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
@@ -513,18 +567,21 @@ export default function EmployeeOnboarding() {
               
               <div className="flex flex-col gap-2">
                 <Label className="text-slate-700 dark:text-slate-200 text-sm font-medium ml-1">
-                  Country *
+                  Country of Work *
                 </Label>
                 <Select value={formData.country} onValueChange={(v) => updateField('country', v)}>
                   <SelectTrigger className="h-14 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700" data-testid="onboarding-country">
-                    <SelectValue placeholder="Select your country" />
+                    <SelectValue placeholder="Select your country of work" />
                   </SelectTrigger>
                   <SelectContent>
-                    {countries.map((c) => (
+                    {COUNTRIES_OF_WORK.map((c) => (
                       <SelectItem key={c.code} value={c.code}>{c.name}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                <p className="text-slate-500 dark:text-slate-400 text-xs ml-1">
+                  EaziWage is currently available in Kenya, Uganda, Tanzania, and Rwanda
+                </p>
               </div>
             </div>
           </div>
