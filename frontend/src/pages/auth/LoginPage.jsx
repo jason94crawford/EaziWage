@@ -33,7 +33,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
+      const response = await authAxios.post('/api/auth/login', { email, password });
       const data = response.data;
 
       localStorage.setItem('eaziwage_token', data.access_token);
