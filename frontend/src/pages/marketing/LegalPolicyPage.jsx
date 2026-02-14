@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Shield, FileText, Scale, Gift, AlertTriangle, Bell } from 'lucide-react';
 import { MarketingNav } from '../../components/layout/MarketingNav';
 import { Footer } from '../../components/layout/Footer';
@@ -210,7 +210,8 @@ const policies = {
 };
 
 export default function LegalPolicyPage() {
-  const { policyType } = useParams();
+  const location = useLocation();
+  const policyType = location.pathname.replace('/', '');
   const policy = policies[policyType];
 
   useEffect(() => {
