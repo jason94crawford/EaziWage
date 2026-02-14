@@ -847,11 +847,11 @@ export default function EmployeeOnboarding() {
                 </div>
               </div>
 
-              {/* Address Proof Upload */}
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700 space-y-3">
+              {/* Address Proof Upload - Required */}
+              <div className="p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 space-y-3">
                 <h4 className="font-medium text-slate-900 dark:text-white flex items-center gap-2">
                   <FileText className="w-4 h-4 text-primary" />
-                  Proof of Address (Recommended)
+                  Proof of Address *
                 </h4>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
                   Upload a utility bill, bank statement, or lease agreement (less than 3 months old)
@@ -863,6 +863,7 @@ export default function EmployeeOnboarding() {
                   uploadedFile={uploadedFiles.address_proof}
                   uploading={uploadingFile === 'address_proof'}
                   testId="upload-address-proof"
+                  required
                 />
               </div>
             </div>
