@@ -1,11 +1,10 @@
 import React, { useState, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { ArrowRight, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, Building2, UserCircle, CheckCircle2, Sparkles, Globe } from 'lucide-react';
+import { ArrowLeft, Eye, EyeOff, Lock, Check, Shield } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
 import { Alert, AlertDescription } from '../../components/ui/alert';
-import { cn } from '../../lib/utils';
+import { AlertCircle } from 'lucide-react';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
@@ -20,21 +19,26 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [companyCode, setCompanyCode] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('employee');
   const [showPassword, setShowPassword] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = useCallback(async () => {
-    if (!fullName || !email || !phone || !password) {
-      setError('Please fill in all fields');
+    if (!fullName || !email || !password) {
+      setError('Please fill in all required fields');
       return;
     }
 
     if (password.length < 8) {
       setError('Password must be at least 8 characters');
+      return;
+    }
+
+    if (!agreedToTerms) {
+      setError('Please agree to the Terms of Service and Privacy Policy');
       return;
     }
     
@@ -45,26 +49,18 @@ export default function RegisterPage() {
       const response = await authAxios.post('/api/auth/register', { 
         full_name: fullName, 
         email, 
-        phone, 
+        phone: '', // Optional field
         password, 
-        role 
+        role: 'employee',
+        company_code: companyCode
       });
       const data = response.data;
 
       localStorage.setItem('eaziwage_token', data.access_token);
       localStorage.setItem('eaziwage_user', JSON.stringify(data.user));
       
-      const user = data.user;
-      switch (user.role) {
-        case 'employer':
-          navigate('/employer/onboarding');
-          break;
-        case 'employee':
-          navigate('/employee/onboarding');
-          break;
-        default:
-          navigate('/');
-      }
+      // Navigate to onboarding after registration
+      navigate('/employee/onboarding');
     } catch (err) {
       console.error('Registration error:', err);
       const errorMessage = err.response?.data?.detail || 'Registration failed. Please try again.';
@@ -72,7 +68,7 @@ export default function RegisterPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [fullName, email, phone, password, role, navigate]);
+  }, [fullName, email, companyCode, password, agreedToTerms, navigate]);
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -80,329 +76,177 @@ export default function RegisterPage() {
     }
   };
 
-  const roles = [
-    { 
-      value: 'employee', 
-      label: 'Employee', 
-      icon: UserCircle, 
-      description: 'Access your earned wages instantly',
-      color: 'from-primary to-emerald-500'
-    },
-    { 
-      value: 'employer', 
-      label: 'Employer', 
-      icon: Building2, 
-      description: 'Empower your workforce with EWA',
-      color: 'from-emerald-500 to-teal-500'
-    },
-  ];
-
-  const benefits = [
-    { icon: CheckCircle2, text: 'No interest, ever' },
-    { icon: CheckCircle2, text: 'Instant mobile money transfer' },
-    { icon: CheckCircle2, text: 'Bank-grade security' },
-    { icon: CheckCircle2, text: 'Works across East Africa' },
-  ];
-
   return (
-    <div className="min-h-screen flex bg-[#f5f8f6] dark:bg-[#0a1510]">
-      {/* Left Side - Visual/Branding (Hidden on mobile) */}
-      <div className="hidden lg:flex lg:w-1/2 xl:w-[55%] relative overflow-hidden">
-        {/* Background Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#102216] via-[#152b1d] to-[#0a1510]" />
+    <div className="min-h-screen bg-[#f5f8f6] dark:bg-[#102216] font-sans antialiased text-slate-900 dark:text-white transition-colors duration-200">
+      {/* Mobile Container */}
+      <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden max-w-md mx-auto">
         
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[200px] -ml-48 -mt-48" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-emerald-500/15 rounded-full blur-[180px] -mr-32 -mb-32" />
-        <div className="absolute top-1/3 right-1/4 w-[300px] h-[300px] bg-teal-500/10 rounded-full blur-[120px]" />
-        
-        {/* Grid Pattern */}
-        <div className="absolute inset-0 bg-grid opacity-[0.03]" />
-        
-        {/* Content */}
-        <div className="relative z-10 flex flex-col justify-between p-12 xl:p-16 w-full">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 group" data-testid="register-logo">
-            <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30 group-hover:scale-105 transition-transform">
-              <span className="text-black font-bold text-xl">E</span>
-            </div>
-            <span className="font-heading font-bold text-2xl text-white">EaziWage</span>
+        {/* Top App Bar */}
+        <div className="flex items-center p-4 pb-2 justify-between">
+          <Link 
+            to="/"
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
+            data-testid="back-button"
+          >
+            <ArrowLeft className="w-6 h-6 text-slate-900 dark:text-white" />
           </Link>
-          
-          {/* Main Content */}
-          <div className="flex-1 flex flex-col justify-center py-12">
-            <div className="max-w-lg">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 backdrop-blur-sm border border-white/10 rounded-full text-sm font-medium text-primary mb-6">
-                <Sparkles className="w-4 h-4" />
-                Join 50,000+ workers across East Africa
-              </div>
-              
-              <h1 className="font-heading text-4xl xl:text-5xl font-bold text-white leading-tight mb-6">
-                Start Your
-                <span className="block text-gradient">Financial Freedom</span>
-                Journey Today
-              </h1>
-              <p className="text-lg text-slate-300 leading-relaxed mb-10">
-                Get instant access to wages you've already earned. No waiting, no loans, no stress.
-              </p>
-              
-              {/* Benefits List */}
-              <div className="space-y-4 mb-12">
-                {benefits.map((benefit, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center shrink-0">
-                      <benefit.icon className="w-4 h-4 text-primary" />
-                    </div>
-                    <span className="text-slate-300">{benefit.text}</span>
-                  </div>
-                ))}
-              </div>
-              
-              {/* Countries */}
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <Globe className="w-5 h-5 text-primary" />
-                  <span className="text-sm text-slate-400">Available in:</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  {['🇰🇪', '🇺🇬', '🇹🇿', '🇷🇼'].map((flag, i) => (
-                    <span key={i} className="text-2xl hover:scale-125 transition-transform cursor-default">{flag}</span>
-                  ))}
-                </div>
-              </div>
-            </div>
+          <h2 className="text-slate-900 dark:text-white text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">
+            EaziWage
+          </h2>
+        </div>
+
+        {/* Headline & Description */}
+        <div className="px-4 pt-4 pb-2 text-center">
+          <h1 className="text-slate-900 dark:text-white tracking-tight text-[28px] font-bold leading-tight mb-2">
+            Access your wages, anytime.
+          </h1>
+          <p className="text-slate-600 dark:text-gray-400 text-base font-normal leading-normal">
+            Sign up to link your employment profile.
+          </p>
+        </div>
+
+        {/* Error Message */}
+        {error && (
+          <div className="px-4">
+            <Alert variant="destructive" className="mb-4 bg-red-500/10 border-red-500/20 rounded-xl" data-testid="register-error">
+              <AlertCircle className="h-4 w-4 text-red-400" />
+              <AlertDescription className="text-red-400">{error}</AlertDescription>
+            </Alert>
           </div>
+        )}
+
+        {/* Registration Form */}
+        <div className="flex flex-col gap-5 px-4 py-6 w-full">
           
-          {/* Bottom Testimonial */}
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-            <p className="text-slate-300 italic mb-4">
-              "EaziWage saved me when my daughter got sick. I accessed my wages in 2 seconds and paid the hospital bill immediately. This is a game-changer!"
-            </p>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-full flex items-center justify-center">
-                <span className="text-black font-bold text-sm">MW</span>
-              </div>
-              <div>
-                <p className="text-white font-medium">Mary Wanjiku</p>
-                <p className="text-sm text-slate-400">Nurse, Kenyatta Hospital</p>
-              </div>
+          {/* Full Name */}
+          <label className="flex flex-col w-full">
+            <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal pb-2">Full Name</p>
+            <Input
+              type="text"
+              placeholder="e.g. Jane Doe"
+              className="flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-[#0df259] focus:ring-1 focus:ring-[#0df259] h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 px-4 text-base font-normal leading-normal transition-all"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              onKeyPress={handleKeyPress}
+              data-testid="register-name"
+            />
+          </label>
+
+          {/* Work Email */}
+          <label className="flex flex-col w-full">
+            <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal pb-2">Work Email</p>
+            <Input
+              type="email"
+              placeholder="name@company.com"
+              className="flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-[#0df259] focus:ring-1 focus:ring-[#0df259] h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 px-4 text-base font-normal leading-normal transition-all"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              onKeyPress={handleKeyPress}
+              data-testid="register-email"
+            />
+          </label>
+
+          {/* Company Code */}
+          <label className="flex flex-col w-full">
+            <div className="flex justify-between items-baseline pb-2">
+              <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal">Company Code</p>
+              <span className="text-xs text-[#0df259] cursor-pointer hover:underline">Find my code</span>
             </div>
+            <Input
+              type="text"
+              placeholder="e.g. EZ-8842"
+              className="flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-[#0df259] focus:ring-1 focus:ring-[#0df259] h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 px-4 text-base font-normal leading-normal transition-all uppercase tracking-wide"
+              value={companyCode}
+              onChange={(e) => setCompanyCode(e.target.value.toUpperCase())}
+              onKeyPress={handleKeyPress}
+              data-testid="register-company-code"
+            />
+            <p className="text-slate-500 dark:text-gray-500 text-xs pt-1.5">Ask your HR manager if you are unsure.</p>
+          </label>
+
+          {/* Password */}
+          <label className="flex flex-col w-full relative">
+            <p className="text-slate-900 dark:text-white text-sm font-medium leading-normal pb-2">Password</p>
+            <div className="relative">
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Create a secure password"
+                className="flex w-full resize-none overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 bg-white dark:bg-white/5 focus:border-[#0df259] focus:ring-1 focus:ring-[#0df259] h-14 placeholder:text-slate-400 dark:placeholder:text-gray-500 pl-4 pr-12 text-base font-normal leading-normal transition-all"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onKeyPress={handleKeyPress}
+                data-testid="register-password"
+              />
+              <button
+                type="button"
+                className="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-slate-400 hover:text-[#0df259] transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+                data-testid="toggle-password"
+              >
+                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </button>
+            </div>
+          </label>
+
+          {/* Terms & Conditions */}
+          <div className="flex items-start gap-3 py-2">
+            <div className="relative flex items-center">
+              <input
+                type="checkbox"
+                id="terms"
+                checked={agreedToTerms}
+                onChange={(e) => setAgreedToTerms(e.target.checked)}
+                className="peer h-5 w-5 cursor-pointer appearance-none rounded border border-slate-300 dark:border-white/20 bg-white dark:bg-white/5 checked:border-[#0df259] checked:bg-[#0df259] transition-all hover:border-[#0df259]"
+                data-testid="terms-checkbox"
+              />
+              <span className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-black opacity-0 peer-checked:opacity-100">
+                <Check className="w-4 h-4 font-bold" />
+              </span>
+            </div>
+            <label htmlFor="terms" className="text-sm text-slate-600 dark:text-gray-400 leading-snug cursor-pointer select-none">
+              I agree to the{' '}
+              <Link to="/terms" className="text-[#0df259] hover:underline">Terms of Service</Link>
+              {' '}and{' '}
+              <Link to="/privacy" className="text-[#0df259] hover:underline">Privacy Policy</Link>.
+            </label>
+          </div>
+
+          {/* Action Button */}
+          <Button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="w-full h-14 rounded-xl bg-[#0df259] text-[#102216] font-bold text-lg shadow-lg shadow-[#0df259]/20 hover:bg-[#0be050] hover:shadow-[#0df259]/30 active:scale-[0.98] transition-all flex items-center justify-center gap-2 mt-2 border-0"
+            data-testid="register-submit-btn"
+          >
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <div className="w-5 h-5 border-2 border-[#102216]/30 border-t-[#102216] rounded-full animate-spin" />
+                Creating Account...
+              </span>
+            ) : (
+              'Create Account'
+            )}
+          </Button>
+
+          {/* Security Note */}
+          <div className="flex items-center justify-center gap-1.5 pt-2 opacity-60">
+            <Lock className="w-4 h-4 text-slate-500 dark:text-gray-400" />
+            <span className="text-xs font-medium text-slate-500 dark:text-gray-400">Bank-grade 256-bit encryption</span>
           </div>
         </div>
-      </div>
-      
-      {/* Right Side - Register Form */}
-      <div className="w-full lg:w-1/2 xl:w-[45%] flex items-center justify-center p-6 sm:p-8 lg:p-12 overflow-y-auto">
-        <div className="w-full max-w-md">
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-8">
-            <Link to="/" className="flex items-center justify-center gap-3" data-testid="register-logo-mobile">
-              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
-                <span className="text-black font-bold text-xl">E</span>
-              </div>
-              <span className="font-heading font-bold text-2xl text-slate-900 dark:text-white">EaziWage</span>
+
+        {/* Footer Link */}
+        <div className="mt-auto pb-8 pt-4 text-center">
+          <p className="text-slate-600 dark:text-gray-400 text-sm">
+            Already have an account?{' '}
+            <Link 
+              to="/login" 
+              className="text-[#0df259] font-semibold hover:underline"
+              data-testid="login-link"
+            >
+              Log in
             </Link>
-          </div>
-
-          {/* Card */}
-          <div className="bg-white dark:bg-[#152b1d] rounded-3xl shadow-xl shadow-slate-200/50 dark:shadow-black/20 border border-slate-100 dark:border-white/5 p-8 sm:p-10">
-            <div className="text-center mb-8">
-              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">
-                Create your account
-              </h2>
-              <p className="text-slate-500 dark:text-slate-400">Start accessing your earned wages today</p>
-            </div>
-
-            {error && (
-              <Alert variant="destructive" className="mb-6 bg-red-50 dark:bg-red-500/10 border-red-200 dark:border-red-500/20" data-testid="register-error">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <div className="space-y-5">
-              {/* Role Selection */}
-              <div>
-                <Label className="text-slate-700 dark:text-slate-300 font-medium mb-3 block">
-                  I am an
-                </Label>
-                <div className="grid grid-cols-2 gap-3">
-                  {roles.map((r) => {
-                    const Icon = r.icon;
-                    const isSelected = role === r.value;
-                    return (
-                      <button
-                        key={r.value}
-                        type="button"
-                        onClick={() => setRole(r.value)}
-                        className={cn(
-                          "relative flex flex-col items-center p-4 rounded-2xl border-2 transition-all duration-300 overflow-hidden group",
-                          isSelected
-                            ? "border-primary bg-primary/5 dark:bg-primary/10"
-                            : "border-slate-200 dark:border-white/10 hover:border-slate-300 dark:hover:border-white/20 bg-slate-50 dark:bg-[#102216]"
-                        )}
-                        data-testid={`role-${r.value}`}
-                      >
-                        {/* Gradient overlay on hover/select */}
-                        <div className={cn(
-                          "absolute inset-0 opacity-0 transition-opacity duration-300 bg-gradient-to-br",
-                          r.color,
-                          isSelected ? "opacity-5" : "group-hover:opacity-[0.02]"
-                        )} />
-                        
-                        <div className={cn(
-                          "relative z-10 w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-all",
-                          isSelected 
-                            ? "bg-primary/20" 
-                            : "bg-slate-200 dark:bg-white/10 group-hover:bg-slate-300 dark:group-hover:bg-white/15"
-                        )}>
-                          <Icon className={cn(
-                            "w-6 h-6 transition-colors",
-                            isSelected ? "text-primary" : "text-slate-400 dark:text-slate-500"
-                          )} />
-                        </div>
-                        <span className={cn(
-                          "relative z-10 font-semibold transition-colors",
-                          isSelected ? "text-primary" : "text-slate-700 dark:text-slate-300"
-                        )}>{r.label}</span>
-                        <span className="relative z-10 text-xs text-slate-500 dark:text-slate-400 mt-1 text-center leading-tight">
-                          {r.description}
-                        </span>
-                        
-                        {/* Selected indicator */}
-                        {isSelected && (
-                          <div className="absolute top-2 right-2 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
-                            <CheckCircle2 className="w-3 h-3 text-black" />
-                          </div>
-                        )}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="full_name" className="text-slate-700 dark:text-slate-300 font-medium">
-                  Full name
-                </Label>
-                <div className="relative mt-2">
-                  <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" />
-                  <Input
-                    id="full_name"
-                    type="text"
-                    placeholder="John Doe"
-                    className="pl-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={fullName}
-                    onChange={(e) => setFullName(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    data-testid="register-name"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="email" className="text-slate-700 dark:text-slate-300 font-medium">
-                  Email address
-                </Label>
-                <div className="relative mt-2">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" />
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="you@company.com"
-                    className="pl-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    data-testid="register-email"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="phone" className="text-slate-700 dark:text-slate-300 font-medium">
-                  Phone number
-                </Label>
-                <div className="relative mt-2">
-                  <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" />
-                  <Input
-                    id="phone"
-                    type="tel"
-                    placeholder="+254 700 000 000"
-                    className="pl-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    data-testid="register-phone"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="password" className="text-slate-700 dark:text-slate-300 font-medium">
-                  Password
-                </Label>
-                <div className="relative mt-2">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 dark:text-slate-500" />
-                  <Input
-                    id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Create a strong password"
-                    className="pl-12 pr-12 h-12 rounded-xl bg-slate-50 dark:bg-[#102216] border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:ring-2 focus:ring-primary/50 focus:border-primary"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    data-testid="register-password"
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
-                    onClick={() => setShowPassword(!showPassword)}
-                    data-testid="toggle-password"
-                  >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                  </button>
-                </div>
-                <p className="text-xs text-slate-400 mt-2">
-                  Must be at least 8 characters
-                </p>
-              </div>
-
-              <Button 
-                type="button"
-                onClick={handleSubmit}
-                className="w-full h-12 rounded-xl bg-primary text-black font-bold text-base hover:bg-primary/90 shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all active:scale-[0.98]"
-                disabled={isLoading}
-                data-testid="register-submit-btn"
-              >
-                {isLoading ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                    Creating account...
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-2">
-                    Create account
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                )}
-              </Button>
-            </div>
-
-            <p className="text-center mt-6 text-slate-500 dark:text-slate-400">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary font-semibold hover:text-primary/80 transition-colors" data-testid="login-link">
-                Sign in
-              </Link>
-            </p>
-          </div>
-
-          {/* Footer */}
-          <p className="text-center text-sm text-slate-400 dark:text-slate-500 mt-8 px-4">
-            By creating an account, you agree to our{' '}
-            <Link to="/terms" className="text-primary hover:underline">Terms of Service</Link>
-            {' '}and{' '}
-            <Link to="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
         </div>
       </div>
