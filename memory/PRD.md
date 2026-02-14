@@ -147,13 +147,15 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 - `GET /api/employee/dashboard` - Employee dashboard data
 - `GET /api/employer/dashboard` - Employer dashboard data
 
-## Test Results (Dec 2025)
+## Test Results (Feb 2026)
 - Frontend Marketing Pages: **100%** (12/12 pages passing)
 - Africa Map Component: **100%** (react-simple-maps with full continent render, 4 highlighted countries, 4 city markers with pulsing animations)
 - Theme Toggle: **Working**
 - Navigation: **Working**
 - Backend: 95% (previous test iteration)
 - UI/Content Update (Feb 2026): **100%** - About page Mission/Vision/Our Story, Footer Legal & Compliance font size, Partners page pre-seed positioning
+- Policy Pages Update (Feb 2026): **100%** - Cookie/Data Policy removed from footer, all 5 policy pages now have sidebar TOC matching Terms of Service
+- Employee Dashboard Redesign: **Implemented** - Dark theme with green accents, new layout matches reference screenshots
 
 ## Notes
 - Marketing pages now have rich content, not minimalistic
