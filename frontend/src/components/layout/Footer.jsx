@@ -209,7 +209,7 @@ export const Footer = () => {
       <div className="relative border-t border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="flex flex-col items-center gap-4">
-            <h4 className="font-heading font-semibold text-white text-sm">Legal & Compliance</h4>
+            <h4 className="font-heading font-semibold text-white text-base sm:text-lg">Legal & Compliance</h4>
             <div className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-2">
               {footerLinks.legal.map((link) => (
                 <a 

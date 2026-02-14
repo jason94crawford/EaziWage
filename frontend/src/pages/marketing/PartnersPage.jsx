@@ -48,62 +48,42 @@ const partnerTypes = [
   },
 ];
 
-const currentPartners = [
+const targetPartnerTypes = [
   { 
-    name: 'Safaricom', 
-    type: 'Mobile Money', 
-    initial: 'S',
-    bgColor: 'bg-[#00C853]'
+    name: 'Mobile Money Providers', 
+    type: 'Integration Target', 
+    initial: 'MM',
+    bgColor: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
+    examples: 'M-PESA, MTN MoMo, Airtel Money'
   },
   { 
-    name: 'KCB Bank', 
-    type: 'Banking', 
-    initial: 'KCB',
-    bgColor: 'bg-[#1E88E5]'
+    name: 'Banking Institutions', 
+    type: 'Integration Target', 
+    initial: 'BK',
+    bgColor: 'bg-gradient-to-br from-blue-500 to-blue-600',
+    examples: 'Commercial & Microfinance Banks'
   },
   { 
-    name: 'Equity Bank', 
-    type: 'Banking', 
-    initial: 'E',
-    bgColor: 'bg-[#7B1FA2]'
+    name: 'Payroll Platforms', 
+    type: 'Integration Target', 
+    initial: 'PR',
+    bgColor: 'bg-gradient-to-br from-purple-500 to-purple-600',
+    examples: 'HR & Payroll Software Providers'
   },
   { 
-    name: 'MTN', 
-    type: 'Mobile Money', 
-    initial: 'MTN',
-    bgColor: 'bg-[#FFCC00]'
-  },
-  { 
-    name: 'Twiga Foods', 
-    type: 'Employer', 
-    initial: 'TF',
-    bgColor: 'bg-[#4CAF50]'
-  },
-  { 
-    name: 'Jumia', 
-    type: 'Employer', 
-    initial: 'J',
-    bgColor: 'bg-[#FF9800]'
-  },
-  { 
-    name: 'Glovo', 
-    type: 'Employer', 
-    initial: 'G',
-    bgColor: 'bg-[#FFC244]'
-  },
-  { 
-    name: 'Bolt', 
-    type: 'Employer', 
-    initial: 'B',
-    bgColor: 'bg-[#34D186]'
+    name: 'Enterprise Employers', 
+    type: 'Client Target', 
+    initial: 'EE',
+    bgColor: 'bg-gradient-to-br from-amber-500 to-amber-600',
+    examples: 'Manufacturing, Retail, Healthcare'
   },
 ];
 
 const stats = [
-  { value: '500+', label: 'Partner Companies' },
-  { value: '50K+', label: 'Workers Served' },
-  { value: 'KES 2B+', label: 'Disbursed' },
-  { value: '4', label: 'Countries' },
+  { value: '50K+', label: 'Target Workers' },
+  { value: '$2B+', label: 'Market Potential' },
+  { value: '4', label: 'Target Countries' },
+  { value: '2026', label: 'Launch Year' },
 ];
 
 const benefits = [

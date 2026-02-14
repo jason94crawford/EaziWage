@@ -143,13 +143,8 @@ export default function AboutPage() {
                   </div>
                   <h2 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Our Mission</h2>
                 </div>
-                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-4 sm:mb-6">
-                  To give every worker in Africa the power to access their earned wages when they need it most — 
-                  not when their employer's payroll calendar allows.
-                </p>
-                <p className="text-sm sm:text-base text-slate-500 dark:text-slate-400 leading-relaxed">
-                  We believe financial stress shouldn't define working life. That a nurse shouldn't have to borrow 
-                  at 30% interest to pay a hospital bill. That a driver shouldn't skip meals while waiting for payday.
+                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                  To empower employees and employers with a safe, transparent platform that provides early access to earned wages — reducing financial anxiety while strengthening workplace trust and productivity.
                 </p>
               </div>
             </div>
@@ -165,8 +160,7 @@ export default function AboutPage() {
                   <h2 className="font-heading text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">Our Vision</h2>
                 </div>
                 <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-4 sm:mb-6">
-                  A world where every African worker has real-time access to their earnings. Where payday loans 
-                  are obsolete. Where financial freedom is the default, not the exception.
+                  To be Africa's most trusted workplace finance partner — fostering financial wellness through innovation, transparency, and secure technology.
                 </p>
                 <div className="flex flex-wrap gap-2 sm:gap-3">
                   <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-full text-xs sm:text-sm font-medium">Zero Interest</span>
@@ -174,6 +168,31 @@ export default function AboutPage() {
                   <span className="px-3 sm:px-4 py-1.5 sm:py-2 bg-primary/10 dark:bg-primary/20 text-primary rounded-full text-xs sm:text-sm font-medium">No Credit Checks</span>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Our Story */}
+      <section className="py-16 sm:py-24 bg-slate-50 dark:bg-slate-900">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-10 sm:mb-12">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 rounded-full text-sm font-semibold text-primary mb-4 sm:mb-6">
+              <Heart className="w-4 h-4" />
+              Our Story
+            </div>
+            <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white">
+              Why We <span className="text-gradient">Started</span>
+            </h2>
+          </div>
+          <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 sm:p-8 lg:p-12 border border-slate-200 dark:border-slate-700 shadow-xl">
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed mb-6">
+                EaziWage was born from a simple truth: thousands of workers across Kenya and Africa face a financial gap before payday. Many turn to costly mobile loans — a cycle that creates stress, debt, and lost productivity.
+              </p>
+              <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+                We built EaziWage to break that cycle. Our team of engineers and finance experts joined forces to craft a secure, scalable, and inclusive system that gives employees control over their earned income — backed by trusted banks and mobile money platforms.
+              </p>
             </div>
           </div>
         </div>
