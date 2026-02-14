@@ -8,7 +8,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://wage-advance-staging.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://mobile-money-11.preview.emergentagent.com')
 
 class TestRegistrationWithMobileNumber:
     """Test registration with mobile number and dialing code"""

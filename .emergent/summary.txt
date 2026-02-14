@@ -1,0 +1,184 @@
+<analysis>**original_problem_statement:** The user wants to develop a full-stack earned wage access platform named Eaziwage. The platform should serve users in Kenya, Uganda, Tanzania, and Rwanda, facilitating wage advances through mobile money and bank transfers.
+
+**PRODUCT REQUIREMENTS:**
+1.  **Applications:** A unified web platform containing a public website, an Employer Application, an Employee Application, and an Admin Application.
+2.  **Access Control:** Role-based access for Employees, Employers, and Admins.
+3.  **Authentication:** JWT-based custom authentication, plus social logins (Google, Apple) and biometric options.
+4.  **Core Functionality:**
+    *   **Employee:** A multi-step registration and onboarding flow, including KYC document submission, viewing earned wages, requesting advances, and viewing transaction history.
+    *   **Employer:** Company onboarding, employee management, and a dashboard.
+    *   **Admin:** Verification of employers/employees, review of risk scores, and management of disbursements.
+5.  **Risk Scoring:** An automated system to calculate a Credit Risk Score (CRS).
+6.  **Integrations:** Mock integrations for mobile money providers; live integration for Google OAuth.
+7.  **File Storage:** Use local file storage for KYC documents.
+8.  **Design:** A modern, content-rich, African-fintech aesthetic with a green color scheme and a dark/light theme, consistent across all pages.
+
+**User's preferred language**: English
+
+**what currently exists?**
+A full-stack application with a FastAPI backend and a React frontend. It features a polished marketing website, JWT and Google OAuth authentication, and a multi-step registration/onboarding flow with a consistent, user-approved glass-morphism design.
+
+Key functionalities recently added or updated:
+*   **Registration:** Mobile number fields with dialing code selectors (Kenya, Tanzania, Uganda, Rwanda) were added. The employer referral form was also updated with a dialing code selector for the HR contact.
+*   **Onboarding:** The employee onboarding flow was enhanced with an ID Type selector (Passport/National ID), a conditional Country of Nationality field, and inline, scrollable content for Terms & Privacy.
+*   **Error Handling:** Improved frontend error handling across Login, Register, and Onboarding pages to correctly display Pydantic validation errors from the backend, which was causing the app to crash.
+
+**Last working item**:
+- **Last item agent was working:** The agent received a new, extensive list of requirements from the user to build a comprehensive KYC and document verification system within the employee onboarding flow. The agent's last action was to acknowledge this new request.
+- **Status:** NOT STARTED
+- **Agent Testing Done:** N
+- **Which testing method agent to use?** Both. This major feature will require a frontend testing agent to validate the new UI/UX for multiple steps and file uploads, and a backend testing agent to verify the new API endpoints, data models, and file storage logic.
+- **User Testing Done:** N
+
+**All Pending/In progress Issue list**:
+- **Issue 1:** Implement comprehensive KYC/verification steps in the employee onboarding flow (Priority: P0 - HIGHEST)
+- **Issue 2:** Create Employee Account button runs into error bug (Priority: P1)
+- **Issue 3:** Implement scroll-to-top on footer link click (Priority: P2)
+
+**Issues Detail:**
+- **Issue 1:** Implement comprehensive KYC/verification steps
+    - **Attempted fixes:** None. This is a new feature request.
+    - **Next debug checklist:**
+        1.  **Plan Onboarding Steps:** Design new steps for the onboarding flow based on the user's list: (1) Scan ID/Passport, (2) Address Verification, (3) Tax Identification, (4) Employment & Salary Info, (5) Bank/Wallet Verification.
+        2.  **Modify Frontend ():**
+            *   Update the stepper component to include the new steps.
+            *   Create new components for each step, including file uploaders for documents (ID, utility bill, payslips, etc.) and forms for new data fields (TIN, salary, etc.).
+        3.  **Modify Backend ():**
+            *   Update the  model or create a new  model to store paths to uploaded documents and new data fields.
+            *   Implement secure file upload endpoints, storing files in a persistent local directory.
+            *   Update the user profile/onboarding endpoints to handle the new data.
+    - **Why fix this issue and what will be achieved with the fix?** This is a core business requirement to verify employee identity and financial details before approving wage advances.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** N
+    - **Should Test frontend/backend/both after fix?** Both
+    - **Blocked on other issue:** None
+
+- **Issue 2:** Create Employee Account button runs into error bug
+    - **Attempted fixes:** The agent identified the React error Objects are not valid as a React child was caused by rendering a Pydantic validation error object directly. A fix was implemented across , , and  to parse these error objects into readable strings before displaying them.
+    - **Next debug checklist:**
+        1.  The primary action is to confirm with the user if the implemented fix has resolved the error on their end.
+        2.  If the error persists, ask the user for a new screenshot and the browser's console logs to identify the specific edge case, as the agent's own tests were successful post-fix.
+    - **Why fix this issue and what will be achieved with the fix?** The bug is critical as it blocks the employee registration flow.
+    - **Status:** USER VERIFICATION PENDING
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** Frontend
+    - **Blocked on other issue:** User feedback.
+
+- **Issue 3:** Implement scroll-to-top on footer link click
+    - **Attempted fixes:** None.
+    - **Next debug checklist:** In , add an  handler to the  components that executes .
+    - **Why fix this issue and what will be achieved with the fix?** A minor but expected UX improvement for website navigation.
+    - **Status:** NOT STARTED
+    - **Is recurring issue?** Y
+    - **Should Test frontend/backend/both after fix?** Frontend
+    - **Blocked on other issue:** None
+
+**In progress Task List**:
+There are no tasks currently in progress.
+
+**Upcoming and Future Tasks**
+*   **Upcoming Tasks:**
+    *   **P1:** Build the UI and logic for the Admin KYC Review page ().
+    *   **P2:** Implement the Risk Scoring calculator on the Admin Risk Scoring page ().
+*   **Future Tasks:**
+    *   Implement Biometric Face Scan functionality.
+    *   Implement Apple Login functionality.
+    *   Redesign the Admin and Employer dashboards to match the new website aesthetic.
+    *   Flesh out the Employer pages for employee management and payroll.
+    *   Integrate with live Mobile Money APIs.
+
+**Completed work in this session**
+- **P0 Task Completion:** Successfully implemented user-requested updates to the registration and onboarding pages, including mobile number fields with dialing codes, a Passport/ID selector, and inline scrollable content for legal terms.
+- **Bug Fix Attempt:** Addressed a critical app crash on the registration page by implementing robust error handling for backend validation messages.
+- **Feature Enhancement:** Added a dialing code selector to the HR Contact Phone field in the employer referral form to maintain consistency.
+- **Testing:** Manually verified all UI changes with screenshots and ran the automated testing agent, which reported a 100% success rate on the implemented features.
+
+**Earlier issues found/mentioned but not fixed**
+- **Issue 1:** The scroll-to-top on footer link click feature has been requested multiple times but remains unimplemented due to lower priority.
+    - **Debug checklist:** Add an  handler to the  components in  that calls .
+    - **Why to solve this issue and what will be achieved with this?** It's a minor UX improvement.
+    - **Should Test frontend/backend/both after fix:** Frontend
+    - **Is recurring issue?** Y
+
+**Known issue recurrence from previous fork**
+- **Issue recurrence in previous fork:** User dissatisfaction with the UI of the auth pages.
+- **Recurrence count:** 2
+- **Status:** RESOLVED. The user explicitly approved the current design.
+
+**Code Architecture**
+
+
+**Key Technical Concepts**
+*   **Backend:** FastAPI
+*   **Frontend:** React, 
+*   **Database:** MongoDB
+*   **Styling:** TailwindCSS
+*   **Authentication:** JSON Web Tokens (JWT), Emergent-managed Google OAuth
+*   **API Client:** Axios
+
+**key DB schema**
+*   **users:**  (Note: This will need significant expansion for the new KYC task).
+*   **employer_referrals:** 
+
+**changes in tech stack**
+*    was added to backend dependencies for the Google OAuth flow.
+
+**All files of reference**
+*   **Files Modified in Session:**
+    *   : Added mobile number field, HR phone field with dialing code, and fixed error handling.
+    *   : Added new onboarding fields (ID type, etc.), inline terms content, and fixed error handling.
+    *   : Fixed error handling.
+    *   : Fixed error handling.
+    *   : Updated Pydantic models and the  endpoint to accept new fields.
+*   **Files for Next Task:** The same files above will be the starting point for the new KYC implementation.
+
+**Areas that need refactoring**:
+*   The Admin and Employer dashboard pages are visually inconsistent with the rest of the application and will require a full redesign in the future.
+
+**key api endpoints**
+*   
+*   
+*   
+*   
+*   
+
+**Critical Info for New Agent**
+*   **Your highest priority (P0) is to implement the new comprehensive KYC onboarding flow.** This is a large feature request. Plan the new steps and components carefully before coding. File uploads should be handled securely and stored in a persistent local directory.
+*   **Your second priority (P1) is to follow up with the user about the Create Employee Account bug.** The previous agent implemented a fix for the error rendering, but it needs user verification to be considered resolved.
+*   **Maintain the approved visual style.** All new UI components must adhere to the existing design language (glass-morphism, gradients, etc.).
+
+**documents and test reports created in this job**
+*    (Updated)
+*   
+
+**Last 10 User Messages and any pending HUMAN messages**
+1.  **User (LATEST):** Provided a detailed list of new KYC requirements for the employee onboarding flow, including document scanning, address/tax/employment verification, and bank account validation. **STATUS: NOT STARTED.**
+2.  **User:** Reported a runtime error when clicking Create Employee Account, providing a screenshot. **STATUS: FIX ATTEMPTED, PENDING USER VERIFICATION.**
+3.  **User:** Initially reported the error on the Create Employee Account button and requested that the HR Contact number field have the same country code selector as the mobile number. **STATUS: HR field updated; error fix pending verification.**
+4.  **Agent:** Completed the initial set of registration/onboarding features and confirmed with the testing agent. **STATUS: COMPLETED.**
+
+**Project Health Check:**
+*   **Broken:** The employee registration flow may still be failing for the user in a specific edge case. The fix for the error display needs to be validated by the user.
+*   **Mocked:** Mobile money integrations, Apple Login, Face ID Login, all payroll-related employer functionality.
+*   **User Dissatisfaction:** User was experiencing a critical bug with registration. Satisfaction is pending verification of the fix.
+
+**3rd Party Integrations**
+*   
+*   
+*   
+*    (for Emergent-managed Google OAuth)
+
+**Testing status**
+- **Testing agent used after significant changes:** YES. The agent was used to validate the initial feature implementation before the latest bug report.
+- **Troubleshoot agent used after agent stuck in loop:** NO
+- **Test files created:** None
+- **Known regressions:** None, but the registration flow's stability is under question pending user feedback.
+
+**Credentials to test flow:**
+*   **Admin Email:** 
+*   **Admin Password:** 
+*   **Employee Email:** 
+*   **Employee Password:** 
+
+**What agent forgot to execute**
+*   The scroll-to-top on footer link click feature remains unimplemented. It has been consistently deprioritized for more critical features and bugs.</analysis>
