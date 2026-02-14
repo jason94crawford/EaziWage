@@ -137,14 +137,14 @@ const QuickActionCard = ({ icon: Icon, title, description, href }) => (
   </Link>
 );
 
-// Status Item with solid green icon
+// Status Item with gradient icon (matches website)
 const StatusItem = ({ icon: Icon, label, value, status }) => (
   <div className="flex items-center gap-4 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
     <div className={cn(
-      "w-10 h-10 rounded-xl flex items-center justify-center",
-      status === 'success' ? 'bg-emerald-500' : 
-      status === 'warning' ? 'bg-amber-500' : 
-      'bg-primary'
+      "w-10 h-10 rounded-xl flex items-center justify-center shadow-md",
+      status === 'success' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600' : 
+      status === 'warning' ? 'bg-gradient-to-br from-amber-500 to-amber-600' : 
+      'bg-gradient-to-br from-primary to-emerald-600'
     )}>
       <Icon className="w-5 h-5 text-white" />
     </div>
