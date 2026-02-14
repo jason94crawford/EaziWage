@@ -35,17 +35,20 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 - ✅ **For Employees** (/employees) - Benefits, use cases, testimonials, FAQs
 - ✅ **Pricing Page** (/pricing) - Simple fee structure: 3.5%-6% + $0.80 processing, comparison table
 - ✅ **Calculator Page** (/calculator) - Interactive wage access calculator with country selection
-- ✅ **Contact Page** (/contact) - Contact form, 4 office locations (Kenya, Uganda, Tanzania, Rwanda)
-- ✅ **Partners Page** (/partners) - Partner types, current partners, integration steps
+- ✅ **Contact Page** (/contact) - Contact form, 4 office locations (Kenya, Uganda, Tanzania, Rwanda), no interactive map
+- ✅ **Partners Page** (/partners) - Partner types, 8 partner logos (Safaricom, KCB, Equity, MTN, Twiga, Jumia, Glovo, Bolt), integration steps
 - ✅ **FAQ Page** (/faq) - Searchable FAQs with 6 categories
-- ✅ **Blog Page** (/blog) - Featured post, article grid, categories, newsletter signup
+- ✅ **Blog Page** (/blog) - Featured CEO article by Jason Crawford "The Future of Earned Wage Access in Africa: 2026 Trends", 6 external article links from real sources (AfriDigest, WeeTracker, EBNet, Unipesa, Fintech Futures)
 - ✅ **Privacy Policy** (/privacy) - Full legal content with TOC sidebar
 - ✅ **Terms of Service** (/terms) - Full legal content with TOC sidebar
+- ✅ **Legal Policy Pages** - Data Policy, ABC Policy, Code of Ethics, Gifts Policy, AML & CFT Policy, Whistleblowing Policy
 - ✅ **Dark/Light Theme Toggle** - Working across all pages
 - ✅ **Consistent Green Theme** - Primary color #16A34A maintained (no blue/yellow/red)
 - ✅ **Navigation Updated** - About Us, How it Works, For Employers, For Employees, Pricing, Calculator
 - ✅ **M-PESA → Mobile Wallet** - All references changed to generic "Mobile Wallet"
 - ✅ **Clean Hero Sections** - Clear section breaks with proper backgrounds
+- ✅ **Footer Legal Section** - 8 policy links with scroll-to-top behavior
+- ✅ **Mobile/Tablet Responsive** - Tested at 375px and 768px viewports
 
 ### Backend (FastAPI + MongoDB)
 - ✅ User authentication (register, login, JWT tokens)
