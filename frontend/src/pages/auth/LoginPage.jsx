@@ -42,11 +42,15 @@ export default function LoginPage() {
             navigate('/');
         }
       } else {
-        setError(result.error || 'Login failed. Please check your credentials.');
+        const errorMessage = result.error || 'Login failed. Please check your credentials.';
+        setError(errorMessage);
+        toast.error(errorMessage);
       }
     } catch (err) {
       setIsLoading(false);
-      setError('An unexpected error occurred. Please try again.');
+      const errorMessage = 'An unexpected error occurred. Please try again.';
+      setError(errorMessage);
+      toast.error(errorMessage);
     }
   };
 
