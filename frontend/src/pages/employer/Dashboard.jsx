@@ -140,21 +140,16 @@ const QuickActionCard = ({ icon: Icon, title, description, href }) => (
   </Link>
 );
 
-// Status Item
+// Status Item with solid green icon
 const StatusItem = ({ icon: Icon, label, value, status }) => (
   <div className="flex items-center gap-4 p-4 bg-slate-50/50 dark:bg-slate-800/30 rounded-xl">
     <div className={cn(
       "w-10 h-10 rounded-xl flex items-center justify-center",
-      status === 'success' ? 'bg-emerald-100 dark:bg-emerald-500/20' : 
-      status === 'warning' ? 'bg-amber-100 dark:bg-amber-500/20' : 
-      'bg-slate-100 dark:bg-slate-800'
+      status === 'success' ? 'bg-emerald-500' : 
+      status === 'warning' ? 'bg-amber-500' : 
+      'bg-primary'
     )}>
-      <Icon className={cn(
-        "w-5 h-5",
-        status === 'success' ? 'text-emerald-600' : 
-        status === 'warning' ? 'text-amber-600' : 
-        'text-slate-500'
-      )} />
+      <Icon className="w-5 h-5 text-white" />
     </div>
     <div className="flex-1">
       <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
