@@ -114,6 +114,7 @@ function App() {
           {/* Auth Routes */}
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
 
           {/* Employee Routes */}
           <Route path="/employee" element={
