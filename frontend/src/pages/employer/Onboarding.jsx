@@ -270,7 +270,12 @@ export default function EmployerOnboarding() {
     audited_financials: null,
     bank_statement: null,
     proof_of_address: null,
+    proof_of_bank_account: null,
+    employment_contract_template: null,
   });
+  
+  // Countries of operation state (multi-select)
+  const [countriesOfOperation, setCountriesOfOperation] = useState([]);
   
   const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
   
