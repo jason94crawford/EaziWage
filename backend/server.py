@@ -176,6 +176,7 @@ class EmployerOnboardingResponse(BaseModel):
     business_description: Optional[str] = None
     years_in_operation: Optional[int] = None
     employee_count: int
+    countries_of_operation: Optional[List[str]] = None
     annual_revenue_range: Optional[str] = None
     payroll_cycle: str
     monthly_payroll_amount: Optional[float] = None
