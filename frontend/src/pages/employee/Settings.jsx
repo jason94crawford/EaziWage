@@ -34,7 +34,7 @@ const ToggleSwitch = ({ checked, onChange, id }) => (
   </button>
 );
 
-// Editable Field Component
+// Editable Field Component - Updated with gradient icons
 const EditableField = ({ label, value, onSave, type = 'text', placeholder, icon: Icon, disabled = false }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(value || '');
@@ -61,7 +61,7 @@ const EditableField = ({ label, value, onSave, type = 'text', placeholder, icon:
   return (
     <div className="flex items-center gap-3 px-4 py-3.5">
       {Icon && (
-        <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/25">
           <Icon className="w-5 h-5 text-white" />
         </div>
       )}
@@ -99,14 +99,14 @@ const EditableField = ({ label, value, onSave, type = 'text', placeholder, icon:
   );
 };
 
-// Settings Item Component - Updated with green icons
+// Settings Item Component - Updated with gradient icons matching "Get Started" button
 const SettingsItem = ({ icon: Icon, title, subtitle, onClick, rightContent, showChevron = true }) => (
   <button
     onClick={onClick}
     className="w-full flex items-center gap-3 px-4 py-3.5 text-left hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
     data-testid={`settings-${title.toLowerCase().replace(/\s+/g, '-')}`}
   >
-    <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0">
+    <div className="w-10 h-10 bg-gradient-to-r from-primary to-emerald-600 rounded-xl flex items-center justify-center shrink-0 shadow-lg shadow-primary/25">
       <Icon className="w-5 h-5 text-white" />
     </div>
     <div className="flex flex-col items-start flex-1 min-w-0">
@@ -122,12 +122,12 @@ const SectionHeader = ({ title }) => (
   <h3 className="text-xs font-bold tracking-wider text-slate-500 dark:text-slate-400 uppercase px-4 pt-4 pb-2">{title}</h3>
 );
 
-// KYC Document Item - Updated with green icons
+// KYC Document Item - Updated with gradient icons
 const KYCDocumentItem = ({ title, status, icon: Icon }) => (
   <div className="flex items-center gap-3 px-4 py-3">
     <div className={cn(
       "w-9 h-9 rounded-xl flex items-center justify-center",
-      status === 'approved' ? 'bg-primary' : status === 'pending' || status === 'submitted' ? 'bg-primary/60' : 'bg-slate-200 dark:bg-slate-700'
+      status === 'approved' ? 'bg-gradient-to-r from-primary to-emerald-600 shadow-lg shadow-primary/25' : status === 'pending' || status === 'submitted' ? 'bg-gradient-to-r from-primary/60 to-emerald-600/60' : 'bg-slate-200 dark:bg-slate-700'
     )}>
       <Icon className="w-4 h-4 text-white" />
     </div>
@@ -1064,7 +1064,7 @@ export default function SettingsPage() {
         <div className="pt-2 pb-4">
           <button 
             onClick={handleLogout}
-            className="w-full py-4 rounded-xl border border-red-200 dark:border-red-500/20 text-red-500 font-semibold bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 rounded-xl border border-primary/20 dark:border-primary/30 text-white font-semibold bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 shadow-lg shadow-primary/25 transition-all flex items-center justify-center gap-2"
             data-testid="logout-btn"
           >
             <LogOut className="w-5 h-5" /> Log Out
