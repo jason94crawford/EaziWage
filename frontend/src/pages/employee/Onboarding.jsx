@@ -798,7 +798,7 @@ export default function EmployeeOnboarding() {
       
       {/* Header */}
       <header className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-center">
           <Link to="/" className="flex items-center gap-3 group" data-testid="logo-link">
             <div className="relative">
               <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-primary/30">
@@ -808,9 +808,11 @@ export default function EmployeeOnboarding() {
             <span className="font-heading font-bold text-2xl text-slate-900 dark:text-white">EaziWage</span>
           </Link>
           
+          {/* Theme toggle - absolute positioned */}
           <button
             onClick={toggleTheme}
-            className="p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300"
+            className="absolute right-4 sm:right-6 lg:right-8 p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300"
+            data-testid="theme-toggle"
           >
             {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
           </button>
