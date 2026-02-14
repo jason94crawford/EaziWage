@@ -634,7 +634,8 @@ async def create_employee(data: EmployeeCreate, user: dict = Depends(require_rol
         "payslip_1": None,
         "payslip_2": None,
         "bank_statement": None,
-        "selfie": None
+        "selfie": None,
+        "employment_contract": None
     }
     await db.employees.insert_one(employee_doc)
     
