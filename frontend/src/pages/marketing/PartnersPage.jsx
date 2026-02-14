@@ -276,8 +276,8 @@ export default function PartnersPage() {
                 Why Partner With <span className="text-gradient">EaziWage</span>?
               </h2>
               <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mb-6 sm:mb-8 leading-relaxed">
-                We've built the most trusted earned wage access platform in East Africa. 
-                Our partners benefit from proven technology, dedicated support, and a shared mission to empower workers.
+                We're building the most trusted earned wage access platform in East Africa. 
+                Early partners will benefit from preferred pricing, priority integration support, and the opportunity to shape the future of workplace finance together.
               </p>
               <div className="grid sm:grid-cols-2 gap-5 sm:gap-6">
                 {benefits.map((benefit, i) => (
