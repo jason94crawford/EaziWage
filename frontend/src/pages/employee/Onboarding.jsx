@@ -397,24 +397,56 @@ export default function EmployeeOnboarding() {
             </div>
             
             <div className="space-y-4 max-w-md mx-auto">
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Terms of Service</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                  By using EaziWage, you agree to our terms of service which govern your use of our earned wage access platform.
-                </p>
-                <Link to="/terms" target="_blank" className="text-primary text-sm font-medium hover:underline inline-flex items-center gap-1">
-                  Read full terms <ChevronRight className="w-4 h-4" />
-                </Link>
+              {/* Terms of Service */}
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="p-4">
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Terms of Service</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                    By using EaziWage, you agree to our terms of service which govern your use of our earned wage access platform.
+                  </p>
+                  <button 
+                    type="button"
+                    onClick={() => setShowTermsContent(!showTermsContent)}
+                    className="text-primary text-sm font-medium hover:underline inline-flex items-center gap-1"
+                    data-testid="toggle-terms-content"
+                  >
+                    {showTermsContent ? 'Hide terms' : 'Read full terms'} 
+                    <ChevronDown className={`w-4 h-4 transition-transform ${showTermsContent ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+                {showTermsContent && (
+                  <div className="border-t border-slate-200 dark:border-slate-700 p-4 max-h-48 overflow-y-auto bg-white dark:bg-slate-900/50">
+                    <pre className="text-xs text-slate-600 dark:text-slate-400 whitespace-pre-wrap font-sans leading-relaxed">
+                      {TERMS_CONTENT}
+                    </pre>
+                  </div>
+                )}
               </div>
               
-              <div className="p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700">
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Privacy Policy</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                  We take your privacy seriously. Your data is encrypted and never shared without your consent.
-                </p>
-                <Link to="/privacy" target="_blank" className="text-primary text-sm font-medium hover:underline inline-flex items-center gap-1">
-                  Read privacy policy <ChevronRight className="w-4 h-4" />
-                </Link>
+              {/* Privacy Policy */}
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="p-4">
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Privacy Policy</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                    We take your privacy seriously. Your data is encrypted and never shared without your consent.
+                  </p>
+                  <button 
+                    type="button"
+                    onClick={() => setShowPrivacyContent(!showPrivacyContent)}
+                    className="text-primary text-sm font-medium hover:underline inline-flex items-center gap-1"
+                    data-testid="toggle-privacy-content"
+                  >
+                    {showPrivacyContent ? 'Hide privacy policy' : 'Read privacy policy'} 
+                    <ChevronDown className={`w-4 h-4 transition-transform ${showPrivacyContent ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+                {showPrivacyContent && (
+                  <div className="border-t border-slate-200 dark:border-slate-700 p-4 max-h-48 overflow-y-auto bg-white dark:bg-slate-900/50">
+                    <pre className="text-xs text-slate-600 dark:text-slate-400 whitespace-pre-wrap font-sans leading-relaxed">
+                      {PRIVACY_CONTENT}
+                    </pre>
+                  </div>
+                )}
               </div>
               
               <div className="flex items-start gap-3 p-4 bg-primary/5 dark:bg-primary/10 rounded-xl">
