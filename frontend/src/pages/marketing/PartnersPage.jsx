@@ -52,49 +52,49 @@ const currentPartners = [
   { 
     name: 'Safaricom', 
     type: 'Mobile Money', 
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Safaricom_Logo.svg/320px-Safaricom_Logo.svg.png',
-    bgColor: 'bg-white'
+    initial: 'S',
+    bgColor: 'bg-[#00C853]'
   },
   { 
     name: 'KCB Bank', 
     type: 'Banking', 
-    logo: 'https://upload.wikimedia.org/wikipedia/en/thumb/9/93/KCB_Group_Logo.svg/320px-KCB_Group_Logo.svg.png',
-    bgColor: 'bg-white'
+    initial: 'KCB',
+    bgColor: 'bg-[#1E88E5]'
   },
   { 
     name: 'Equity Bank', 
     type: 'Banking', 
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Equity_Bank_Logo.svg/320px-Equity_Bank_Logo.svg.png',
-    bgColor: 'bg-white'
+    initial: 'E',
+    bgColor: 'bg-[#7B1FA2]'
   },
   { 
     name: 'MTN', 
     type: 'Mobile Money', 
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/New-mtn-logo.svg/320px-New-mtn-logo.svg.png',
+    initial: 'MTN',
     bgColor: 'bg-[#FFCC00]'
   },
   { 
     name: 'Twiga Foods', 
     type: 'Employer', 
-    logo: 'https://twiga.com/wp-content/uploads/2023/04/twiga-foods-logo.svg',
-    bgColor: 'bg-white'
+    initial: 'TF',
+    bgColor: 'bg-[#4CAF50]'
   },
   { 
     name: 'Jumia', 
     type: 'Employer', 
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Jumia.svg/320px-Jumia.svg.png',
-    bgColor: 'bg-white'
+    initial: 'J',
+    bgColor: 'bg-[#FF9800]'
   },
   { 
     name: 'Glovo', 
     type: 'Employer', 
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Glovo_app_logo.svg/320px-Glovo_app_logo.svg.png',
+    initial: 'G',
     bgColor: 'bg-[#FFC244]'
   },
   { 
     name: 'Bolt', 
     type: 'Employer', 
-    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Bolt_logo.svg/320px-Bolt_logo.svg.png',
+    initial: 'B',
     bgColor: 'bg-[#34D186]'
   },
 ];
