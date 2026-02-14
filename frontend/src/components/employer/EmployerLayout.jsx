@@ -2,10 +2,15 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, CreditCard, BarChart3, Settings, LogOut, 
-  Sun, Moon, Bell, Menu, X, ChevronRight, Upload, HelpCircle, Building2
+  Sun, Moon, Bell, Menu, X, ChevronRight, Upload, HelpCircle, Building2,
+  MessageSquare
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTheme } from '../../lib/ThemeContext';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 
 // Background component - matching landing page style
 export const EmployerBackground = () => (
@@ -18,12 +23,97 @@ export const EmployerBackground = () => (
   </>
 );
 
+// Contact Support Modal (like Employee section)
+const ContactSupportModal = ({ isOpen, onClose }) => {
+  const [formData, setFormData] = useState({ subject: '', message: '' });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    setSubmitting(false);
+    setSubmitted(true);
+    setTimeout(() => {
+      setSubmitted(false);
+      setFormData({ subject: '', message: '' });
+      onClose();
+    }, 2000);
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div 
+        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-md overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="bg-gradient-to-r from-primary to-emerald-600 p-6">
+          <h2 className="text-xl font-bold text-white">Contact Support</h2>
+          <p className="text-white/80 text-sm mt-1">We're here to help 24/7</p>
+        </div>
+        
+        {submitted ? (
+          <div className="p-8 text-center">
+            <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Message Sent!</h3>
+            <p className="text-slate-500 dark:text-slate-400 mt-2">Our team will respond within 24 hours.</p>
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <div className="space-y-2">
+              <Label className="text-slate-700 dark:text-slate-300">Subject</Label>
+              <Input
+                value={formData.subject}
+                onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                placeholder="Brief description of your issue"
+                required
+                className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-slate-700 dark:text-slate-300">Message</Label>
+              <Textarea
+                value={formData.message}
+                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                placeholder="Describe your issue in detail..."
+                rows={4}
+                required
+                className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 resize-none"
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button type="button" variant="outline" onClick={onClose} className="flex-1">
+                Cancel
+              </Button>
+              <Button 
+                type="submit" 
+                disabled={submitting}
+                className="flex-1 bg-gradient-to-r from-primary to-emerald-600 text-white"
+              >
+                {submitting ? 'Sending...' : 'Send Message'}
+              </Button>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Sidebar Navigation
 const SidebarNav = ({ isOpen, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
   const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
+  const [showContactModal, setShowContactModal] = useState(false);
 
   const navItems = [
     { href: '/employer', label: 'Dashboard', icon: LayoutDashboard },
@@ -60,11 +150,11 @@ const SidebarNav = ({ isOpen, onClose }) => {
         {/* Glass Background */}
         <div className="absolute inset-0 bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl border-r border-slate-200/50 dark:border-slate-700/50" />
         
-        <div className="relative flex flex-col h-full">
+        <div className="relative flex flex-col h-full overflow-hidden">
           {/* Logo Section */}
-          <div className="p-6 border-b border-slate-200/50 dark:border-slate-700/50">
+          <div className="p-6 border-b border-slate-200/50 dark:border-slate-700/50 shrink-0">
             <Link to="/" className="flex items-center gap-3" data-testid="sidebar-logo">
-              <div className="w-12 h-12 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-primary/25">
+              <div className="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/25">
                 <span className="text-white font-bold text-xl">E</span>
               </div>
               <div>
@@ -84,7 +174,7 @@ const SidebarNav = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          {/* Navigation */}
+          {/* Navigation - Scrollable */}
           <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -97,7 +187,7 @@ const SidebarNav = ({ isOpen, onClose }) => {
                   className={cn(
                     "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group",
                     active
-                      ? "bg-gradient-to-r from-primary to-emerald-600 text-white shadow-lg shadow-primary/25"
+                      ? "bg-primary text-white shadow-lg shadow-primary/25"
                       : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50"
                   )}
                   data-testid={`nav-${item.label.toLowerCase().replace(/\s/g, '-')}`}
@@ -106,25 +196,20 @@ const SidebarNav = ({ isOpen, onClose }) => {
                     "w-9 h-9 rounded-xl flex items-center justify-center transition-all",
                     active 
                       ? "bg-white/20" 
-                      : "bg-slate-100 dark:bg-slate-800 group-hover:bg-primary/10 dark:group-hover:bg-primary/20"
+                      : "bg-primary"
                   )}>
-                    <Icon className={cn(
-                      "w-5 h-5",
-                      active ? "text-white" : "text-slate-500 dark:text-slate-400 group-hover:text-primary"
-                    )} />
+                    <Icon className="w-5 h-5 text-white" />
                   </div>
                   <span className="font-medium">{item.label}</span>
                   {active && <ChevronRight className="w-4 h-4 ml-auto" />}
                 </Link>
               );
             })}
-          </nav>
 
-          {/* Help Card */}
-          <div className="px-4 mb-4">
-            <div className="bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-2xl p-4 border border-primary/20">
+            {/* Help Card - Now inside scrollable area */}
+            <div className="mt-6 bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-2xl p-4 border border-primary/20">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-md">
                   <HelpCircle className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -132,16 +217,20 @@ const SidebarNav = ({ isOpen, onClose }) => {
                   <p className="text-xs text-slate-500 dark:text-slate-400">We're here 24/7</p>
                 </div>
               </div>
-              <button className="w-full mt-2 px-4 py-2 bg-white dark:bg-slate-800 text-primary text-sm font-medium rounded-xl hover:shadow-md transition-all">
+              <button 
+                onClick={() => setShowContactModal(true)}
+                className="w-full mt-2 px-4 py-2 bg-white dark:bg-slate-800 text-primary text-sm font-medium rounded-xl hover:shadow-md transition-all"
+                data-testid="contact-support-btn"
+              >
                 Contact Support
               </button>
             </div>
-          </div>
+          </nav>
 
-          {/* User Section */}
-          <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50">
+          {/* User Section - Fixed at bottom */}
+          <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50 shrink-0">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-md">
                 <span className="text-white font-bold text-sm">
                   {user.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </span>
@@ -172,6 +261,9 @@ const SidebarNav = ({ isOpen, onClose }) => {
           </div>
         </div>
       </aside>
+
+      {/* Contact Support Modal */}
+      <ContactSupportModal isOpen={showContactModal} onClose={() => setShowContactModal(false)} />
     </>
   );
 };
