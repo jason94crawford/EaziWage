@@ -616,6 +616,7 @@ export default function EmployerEmployees() {
                 <EmployeeRow 
                   key={employee.id} 
                   employee={employee}
+                  currency={selectedCurrency}
                   onViewDetails={(e) => console.log('View', e)}
                   onEditEWA={(e) => {
                     setSelectedEmployee(e);
