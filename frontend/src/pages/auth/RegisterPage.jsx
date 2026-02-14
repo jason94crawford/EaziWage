@@ -553,16 +553,62 @@ export default function RegisterPage() {
                             <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
                           </div>
                           
-                          <div className="relative">
-                            <Input
-                              type="tel"
-                              placeholder="HR/Contact Phone"
-                              className="h-12 pl-4 pr-10 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white placeholder:text-slate-400"
-                              value={referralEmployerPhone}
-                              onChange={(e) => setReferralEmployerPhone(e.target.value)}
-                              data-testid="referral-employer-phone"
-                            />
-                            <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          {/* HR Contact Phone with Dialing Code */}
+                          <div className="flex flex-col gap-1">
+                            <label className="text-slate-700 dark:text-slate-200 text-xs font-medium ml-1">
+                              HR/Contact Phone
+                            </label>
+                            <div className="flex gap-2">
+                              {/* Dialing Code Selector for Referral */}
+                              <div className="relative">
+                                <button
+                                  type="button"
+                                  onClick={() => setShowReferralDialCodeDropdown(!showReferralDialCodeDropdown)}
+                                  className="h-12 px-2 rounded-xl bg-white dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 hover:border-primary focus:border-primary focus:ring-2 focus:ring-primary/20 flex items-center gap-1.5 transition-colors min-w-[95px]"
+                                  data-testid="referral-dialing-code-selector"
+                                >
+                                  <span className="text-base">{referralPhoneDialCode.flag}</span>
+                                  <span className="text-slate-900 dark:text-white text-xs font-medium">{referralPhoneDialCode.dialCode}</span>
+                                  <ChevronDown className="w-3 h-3 text-slate-400 ml-auto" />
+                                </button>
+                                
+                                {showReferralDialCodeDropdown && (
+                                  <div className="absolute top-full left-0 mt-1 w-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-50 overflow-hidden">
+                                    {DIALING_CODES.map((country) => (
+                                      <button
+                                        key={country.code}
+                                        type="button"
+                                        onClick={() => {
+                                          setReferralPhoneDialCode(country);
+                                          setShowReferralDialCodeDropdown(false);
+                                        }}
+                                        className={`w-full px-2 py-2 flex items-center gap-1.5 hover:bg-primary/5 dark:hover:bg-primary/10 transition-colors text-left ${
+                                          referralPhoneDialCode.code === country.code ? 'bg-primary/5 dark:bg-primary/10' : ''
+                                        }`}
+                                        data-testid={`referral-dialing-code-${country.code}`}
+                                      >
+                                        <span className="text-base">{country.flag}</span>
+                                        <span className="text-slate-900 dark:text-white text-xs">{country.name}</span>
+                                        <span className="text-slate-500 text-xs ml-auto">{country.dialCode}</span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                              
+                              {/* Phone Number Input */}
+                              <div className="relative flex-1">
+                                <Input
+                                  type="tel"
+                                  placeholder="700 000 000"
+                                  className="h-12 pl-3 pr-10 rounded-xl bg-white dark:bg-slate-800/50 border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-900 dark:text-white placeholder:text-slate-400"
+                                  value={referralEmployerPhone}
+                                  onChange={(e) => setReferralEmployerPhone(e.target.value)}
+                                  data-testid="referral-employer-phone"
+                                />
+                                <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                              </div>
+                            </div>
                           </div>
                           
                           <button
