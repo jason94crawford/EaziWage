@@ -86,7 +86,7 @@ const steps = [
   {
     num: '04',
     title: 'Access Instantly',
-    description: 'Withdraw up to 50% of your earned wages anytime. Funds hit your Mobile Wallet or bank account in seconds.',
+    description: 'Withdraw up to 60% of your earned wages anytime. Funds hit your Mobile Wallet or bank account in seconds.',
     icon: Wallet
   }
 ];
