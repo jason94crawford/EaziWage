@@ -500,12 +500,12 @@ export default function EmployerEmployees() {
               </FilterButton>
               
               {departments.length > 0 && (
-                <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
+                <Select value={departmentFilter || 'all'} onValueChange={(v) => setDepartmentFilter(v === 'all' ? '' : v)}>
                   <SelectTrigger className="w-40 bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700">
                     <SelectValue placeholder="Department" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Departments</SelectItem>
+                    <SelectItem value="all">All Departments</SelectItem>
                     {departments.map(dept => (
                       <SelectItem key={dept} value={dept}>{dept}</SelectItem>
                     ))}
