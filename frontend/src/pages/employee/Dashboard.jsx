@@ -3,12 +3,143 @@ import { Link, useNavigate } from 'react-router-dom';
 import { 
   Wallet, TrendingUp, Clock, ArrowRight, 
   AlertCircle, CheckCircle2, History, Calendar, 
-  Building2, Zap, ArrowUpRight, ChevronRight
+  Building2, Zap, ArrowUpRight, ChevronRight, Bell, X, Sun, Moon, LogOut
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { dashboardApi, employeeApi } from '../../lib/api';
 import { formatCurrency, cn } from '../../lib/utils';
-import { EmployeePageLayout, EmployeeHeader } from '../../components/employee/EmployeeLayout';
+import { EmployeePageLayout, EmployeeBackground, FloatingNav } from '../../components/employee/EmployeeLayout';
+import { useTheme } from '../../lib/ThemeContext';
+
+// Notifications Panel
+const NotificationsPanel = ({ isOpen, onClose, notifications }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-start justify-end pt-16 px-4">
+      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
+        <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <h3 className="font-bold text-slate-900 dark:text-white">Notifications</h3>
+          <button onClick={onClose} className="p-1 text-slate-400 hover:text-slate-600">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="max-h-80 overflow-y-auto">
+          {notifications.length > 0 ? (
+            notifications.map((notif, i) => (
+              <div key={i} className="px-4 py-3 border-b border-slate-100 dark:border-slate-800 last:border-0">
+                <div className="flex items-start gap-3">
+                  <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center shrink-0", notif.type === 'success' ? 'bg-primary/10' : 'bg-blue-100 dark:bg-blue-500/20')}>
+                    {notif.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Bell className="w-4 h-4 text-blue-600" />}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-900 dark:text-white">{notif.title}</p>
+                    <p className="text-xs text-slate-500">{notif.message}</p>
+                    <p className="text-[10px] text-slate-400 mt-1">{notif.time}</p>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="p-8 text-center">
+              <Bell className="w-10 h-10 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm text-slate-500">No notifications yet</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Custom Header for Dashboard with working notifications
+const DashboardHeader = ({ user, employee }) => {
+  const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
+  const [showNotifications, setShowNotifications] = useState(false);
+  
+  const notifications = [
+    { type: 'success', title: 'KYC Submitted', message: 'Your documents are under review', time: '2 hours ago' },
+    { type: 'info', title: 'Welcome to EaziWage', message: 'Complete your profile to get started', time: '1 day ago' },
+  ];
+  
+  const handleLogout = () => {
+    localStorage.removeItem('eaziwage_token');
+    localStorage.removeItem('eaziwage_user');
+    navigate('/login');
+  };
+  
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  return (
+    <>
+      <header className="relative z-10 max-w-md mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link to="/employee/settings" className="shrink-0">
+              {user?.profile_picture_url ? (
+                <img 
+                  src={`${process.env.REACT_APP_BACKEND_URL}${user.profile_picture_url}`} 
+                  alt="Profile" 
+                  className="w-10 h-10 rounded-xl object-cover ring-2 ring-primary/20"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary/25">
+                  <span className="text-white font-bold text-sm">{employee?.full_name?.[0] || user?.full_name?.[0] || 'U'}</span>
+                </div>
+              )}
+            </Link>
+            <div className="min-w-0">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">{getGreeting()}</p>
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                {employee?.full_name?.split(' ')[0] || user?.full_name?.split(' ')[0] || 'User'}
+              </h2>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-1">
+            <button 
+              onClick={toggleTheme}
+              className="p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
+              data-testid="theme-toggle"
+            >
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+            <button 
+              onClick={() => setShowNotifications(true)}
+              className="relative p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800/50 transition-colors"
+              data-testid="notifications-btn"
+            >
+              <Bell className="w-4 h-4" />
+              {notifications.length > 0 && (
+                <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full" />
+              )}
+            </button>
+            <button 
+              onClick={handleLogout}
+              className="p-2 rounded-xl text-slate-500 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-colors"
+              data-testid="logout-btn"
+            >
+              <LogOut className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </header>
+      
+      <NotificationsPanel 
+        isOpen={showNotifications} 
+        onClose={() => setShowNotifications(false)}
+        notifications={notifications}
+      />
+    </>
+  );
+};
 
 // Animated Speed Dial Counter Component
 const SpeedDialCounter = ({ value, max }) => {
