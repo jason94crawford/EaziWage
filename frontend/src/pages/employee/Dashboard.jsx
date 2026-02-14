@@ -10,61 +10,55 @@ import { dashboardApi, employeeApi } from '../../lib/api';
 import { formatCurrency, cn } from '../../lib/utils';
 import { useTheme } from '../../lib/ThemeContext';
 
-// Animated Speed Dial Counter Component
-const SpeedDialCounter = ({ value, max, label }) => {
+// Animated Speed Dial Counter Component - Fixed text positioning
+const SpeedDialCounter = ({ value, max }) => {
   const [displayValue, setDisplayValue] = useState(0);
   const animationRef = useRef(null);
   
   useEffect(() => {
     const startTime = performance.now();
     const duration = 1500;
-    const startValue = 0;
-    const endValue = value;
-    
     const animate = (currentTime) => {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const easeOut = 1 - Math.pow(1 - progress, 3);
-      const currentValue = startValue + (endValue - startValue) * easeOut;
-      setDisplayValue(Math.round(currentValue));
-      
-      if (progress < 1) {
-        animationRef.current = requestAnimationFrame(animate);
-      }
+      setDisplayValue(Math.round(value * easeOut));
+      if (progress < 1) animationRef.current = requestAnimationFrame(animate);
     };
-    
     animationRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (animationRef.current) cancelAnimationFrame(animationRef.current);
-    };
+    return () => { if (animationRef.current) cancelAnimationFrame(animationRef.current); };
   }, [value]);
   
   const percentage = max > 0 ? (value / max) * 100 : 0;
   
   return (
-    <div className="relative w-52 h-52 mx-auto">
-      <div className="absolute inset-0 rounded-full bg-primary/20 blur-xl" />
+    <div className="relative w-44 h-44 mx-auto">
+      {/* Glow effect */}
+      <div className="absolute inset-4 rounded-full bg-primary/20 blur-xl" />
+      
+      {/* SVG Progress Ring */}
       <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
-        <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="6" className="text-slate-200 dark:text-slate-800" />
-        <circle cx="50" cy="50" r="42" fill="none" stroke="url(#gradient)" strokeWidth="6" strokeLinecap="round"
-          strokeDasharray={`${percentage * 2.64} 264`} className="transition-all duration-1000" />
+        <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" strokeWidth="8" className="text-slate-100 dark:text-slate-800/50" />
+        <circle cx="50" cy="50" r="40" fill="none" stroke="url(#dialGradient)" strokeWidth="8" strokeLinecap="round"
+          strokeDasharray={`${percentage * 2.51} 251`} className="transition-all duration-1000 ease-out" />
         <defs>
-          <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <linearGradient id="dialGradient" x1="0%" y1="0%" x2="100%" y2="0%">
             <stop offset="0%" stopColor="#0df259" />
             <stop offset="100%" stopColor="#10b981" />
           </linearGradient>
         </defs>
       </svg>
-      <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1">{label}</span>
-        <span className="text-3xl font-bold text-slate-900 dark:text-white">{formatCurrency(displayValue)}</span>
-        <span className="text-xs text-slate-400 dark:text-slate-500 mt-1">of {formatCurrency(max)}</span>
+      
+      {/* Center text - positioned properly */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+        <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest">Available</span>
+        <span className="text-2xl font-bold text-slate-900 dark:text-white mt-0.5">{formatCurrency(displayValue)}</span>
       </div>
     </div>
   );
 };
 
-// Bottom Navigation Component - Centered 4 icons
+// Bottom Navigation - Green theme only
 const BottomNav = ({ active }) => {
   const navigate = useNavigate();
   const navItems = [
@@ -77,21 +71,14 @@ const BottomNav = ({ active }) => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="max-w-md mx-auto px-4 pb-2">
-        <div className="glass-card rounded-2xl shadow-xl border border-slate-200/50 dark:border-white/10">
+        <div className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl rounded-2xl shadow-lg border border-slate-200/50 dark:border-slate-700/50">
           <div className="flex items-center justify-around h-16">
             {navItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => navigate(item.path)}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all duration-300",
-                  active === item.id 
-                    ? "text-primary" 
-                    : "text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300"
-                )}
-                data-testid={`nav-${item.id}`}
-              >
-                <item.icon className={cn("w-5 h-5 transition-transform", active === item.id && "scale-110")} />
+              <button key={item.id} onClick={() => navigate(item.path)}
+                className={cn("flex flex-col items-center justify-center gap-1 flex-1 h-full transition-all",
+                  active === item.id ? "text-primary" : "text-slate-400 dark:text-slate-500"
+                )} data-testid={`nav-${item.id}`}>
+                <item.icon className={cn("w-5 h-5", active === item.id && "scale-110")} />
                 <span className="text-[10px] font-semibold">{item.label}</span>
               </button>
             ))}
@@ -120,11 +107,8 @@ export default function EmployeeDashboard() {
         setStats(statsRes.data);
         setEmployee(employeeRes.data);
       } catch (err) {
-        if (err.response?.status === 404) {
-          setError('profile_not_found');
-        } else {
-          setError('Failed to load dashboard data');
-        }
+        if (err.response?.status === 404) setError('profile_not_found');
+        else setError('Failed to load dashboard');
       } finally {
         setLoading(false);
       }
@@ -157,10 +141,7 @@ export default function EmployeeDashboard() {
       <div className="min-h-screen bg-white dark:bg-slate-950 flex items-center justify-center">
         <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 bg-grid" />
-        <div className="relative flex flex-col items-center gap-4">
-          <div className="w-14 h-14 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
-          <p className="text-slate-500 dark:text-slate-400 font-medium">Loading...</p>
-        </div>
+        <div className="relative"><div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin" /></div>
       </div>
     );
   }
@@ -170,20 +151,16 @@ export default function EmployeeDashboard() {
       <div className="min-h-screen bg-white dark:bg-slate-950 relative overflow-hidden">
         <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 bg-grid" />
-        <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[150px]" />
-        
-        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4">
-          <div className="w-20 h-20 bg-amber-100 dark:bg-amber-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
-            <AlertCircle className="w-10 h-10 text-amber-600 dark:text-amber-400" />
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px]" />
+        <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6">
+          <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-5">
+            <AlertCircle className="w-8 h-8 text-primary" />
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 text-center">Complete Your Profile</h1>
-          <p className="text-slate-600 dark:text-slate-400 mb-8 text-center max-w-sm">
-            Complete your employee profile before accessing the dashboard and requesting advances.
-          </p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white mb-3 text-center">Complete Your Profile</h1>
+          <p className="text-slate-500 dark:text-slate-400 mb-6 text-center text-sm max-w-xs">Set up your employee profile to access wage advances.</p>
           <Link to="/employee/onboarding">
-            <Button className="bg-gradient-to-r from-primary to-emerald-600 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-primary/30" data-testid="complete-profile-btn">
-              Complete Profile <ArrowRight className="w-4 h-4 ml-2" />
+            <Button className="bg-gradient-to-r from-primary to-emerald-600 text-white font-semibold px-6 py-2.5 rounded-xl shadow-lg shadow-primary/25" data-testid="complete-profile-btn">
+              Get Started <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Link>
         </div>
@@ -199,147 +176,141 @@ export default function EmployeeDashboard() {
   const payday = getNextPayday();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors duration-500 relative overflow-hidden">
-      {/* Background - Same as Login */}
+    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors relative overflow-hidden">
+      {/* Background */}
       <div className="absolute inset-0 gradient-mesh" />
       <div className="absolute inset-0 bg-grid" />
-      <div className="absolute top-20 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[150px]" />
-      <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-500/10 rounded-full blur-[150px]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-teal-500/5 rounded-full blur-[200px]" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/8 rounded-full blur-[120px]" />
+      <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-emerald-500/8 rounded-full blur-[100px]" />
 
       {/* Header */}
-      <header className="relative z-10 max-w-md mx-auto px-4 py-4">
+      <header className="relative z-10 max-w-md mx-auto px-5 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-full flex items-center justify-center shadow-lg shadow-primary/30">
-              <span className="text-white font-bold text-lg">{employee?.full_name?.[0] || 'U'}</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-full flex items-center justify-center shadow-md shadow-primary/25">
+              <span className="text-white font-bold">{employee?.full_name?.[0] || 'U'}</span>
             </div>
             <div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">{getGreeting()}</p>
-              <h2 className="text-base font-bold text-slate-900 dark:text-white">{employee?.full_name?.split(' ')[0] || 'User'}</h2>
+              <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium">{getGreeting()}</p>
+              <h2 className="text-sm font-bold text-slate-900 dark:text-white">{employee?.full_name?.split(' ')[0] || 'User'}</h2>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={toggleTheme} className="p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-testid="theme-toggle">
-              {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          <div className="flex items-center gap-1">
+            <button onClick={toggleTheme} className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-testid="theme-toggle">
+              {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
             </button>
-            <button className="relative p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-testid="notifications-btn">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full" />
+            <button className="relative p-2 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all" data-testid="notifications-btn">
+              <Bell className="w-4 h-4" />
+              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-primary rounded-full" />
             </button>
-            <button onClick={handleLogout} className="p-2.5 rounded-xl text-slate-500 dark:text-slate-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-500 transition-all" data-testid="logout-btn">
-              <LogOut className="w-5 h-5" />
+            <button onClick={handleLogout} className="p-2 rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-red-500 transition-all" data-testid="logout-btn">
+              <LogOut className="w-4 h-4" />
             </button>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="relative z-10 max-w-md mx-auto px-4 pb-28 space-y-5">
+      <main className="relative z-10 max-w-md mx-auto px-5 pb-28 space-y-4">
         {/* KYC Alert */}
         {kycPending && (
-          <div className="glass-card rounded-2xl p-4 flex items-start gap-3 border border-amber-200/50 dark:border-amber-500/20 bg-amber-50/50 dark:bg-amber-500/10" data-testid="kyc-alert">
-            <div className="w-10 h-10 bg-amber-100 dark:bg-amber-500/20 rounded-xl flex items-center justify-center shrink-0">
-              <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500" />
+          <div className="bg-primary/5 dark:bg-primary/10 rounded-xl p-3 flex items-center gap-3 border border-primary/10" data-testid="kyc-alert">
+            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
+              <AlertCircle className="w-4 h-4 text-primary" />
             </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-amber-800 dark:text-amber-200 text-sm">Complete verification</h3>
-              <p className="text-xs text-amber-700 dark:text-amber-300/80 mt-0.5">
-                {employee?.kyc_status === 'submitted' ? 'Documents under review (1-2 days)' : 'Upload KYC documents to access advances'}
-              </p>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">Verification in progress</p>
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">{employee?.kyc_status === 'submitted' ? 'Review takes 1-2 days' : 'Complete your KYC'}</p>
             </div>
           </div>
         )}
 
         {/* Speed Dial Card */}
-        <div className="glass-card rounded-3xl p-6 shadow-xl" data-testid="withdraw-card">
-          <SpeedDialCounter value={advanceLimit} max={earnedWages || advanceLimit * 2 || 10000} label="Available" />
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-2xl p-5 shadow-sm border border-slate-200/50 dark:border-slate-700/50" data-testid="withdraw-card">
+          <SpeedDialCounter value={advanceLimit} max={earnedWages || advanceLimit * 2 || 10000} />
           
-          <div className="grid grid-cols-2 gap-3 mt-5 mb-5">
-            <div className="bg-slate-50/80 dark:bg-slate-800/50 rounded-xl p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
-              <span className="text-xs text-slate-500 dark:text-slate-400 block mb-0.5">Fee Rate</span>
-              <span className="font-bold text-slate-900 dark:text-white text-sm">3.5% - 6%</span>
+          <div className="grid grid-cols-2 gap-2 mt-4 mb-4">
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2.5 text-center">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 block">Fee</span>
+              <span className="font-bold text-slate-900 dark:text-white text-xs">3.5% - 6%</span>
             </div>
-            <div className="bg-slate-50/80 dark:bg-slate-800/50 rounded-xl p-3 text-center border border-slate-200/50 dark:border-slate-700/50">
-              <span className="text-xs text-slate-500 dark:text-slate-400 block mb-0.5">Transfer</span>
-              <span className="font-bold text-slate-900 dark:text-white text-sm">Instant</span>
+            <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-2.5 text-center">
+              <span className="text-[10px] text-slate-400 dark:text-slate-500 block">Transfer</span>
+              <span className="font-bold text-slate-900 dark:text-white text-xs">Instant</span>
             </div>
           </div>
 
           <Link to="/employee/advances" className="block">
-            <Button 
-              className="w-full h-14 rounded-2xl bg-gradient-to-r from-primary to-emerald-600 text-white font-bold shadow-xl shadow-primary/30 btn-glow"
-              disabled={!canRequestAdvance}
-              data-testid="request-withdrawal-btn"
-            >
-              <Wallet className="w-5 h-5 mr-2" /> Request Withdrawal
+            <Button className="w-full h-11 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white font-semibold text-sm shadow-lg shadow-primary/25"
+              disabled={!canRequestAdvance} data-testid="request-withdrawal-btn">
+              <Wallet className="w-4 h-4 mr-2" /> Request Withdrawal
             </Button>
           </Link>
         </div>
 
-        {/* Quick Stats */}
+        {/* Stats Grid - Green theme only */}
         <div className="grid grid-cols-2 gap-3" data-testid="quick-stats">
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
               <TrendingUp className="w-4 h-4 text-primary" />
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Earned Wages</p>
-            <p className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency(earnedWages)}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Earned Wages</p>
+            <p className="text-base font-bold text-slate-900 dark:text-white">{formatCurrency(earnedWages)}</p>
           </div>
 
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center mb-2">
-              <Calendar className="w-4 h-4 text-blue-500" />
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+              <Calendar className="w-4 h-4 text-primary" />
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Next Payday</p>
-            <p className="text-lg font-bold text-slate-900 dark:text-white">{payday.date}</p>
-            <p className="text-[10px] text-slate-400">{payday.daysUntil} days away</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Next Payday</p>
+            <p className="text-base font-bold text-slate-900 dark:text-white">{payday.date}</p>
+            <p className="text-[9px] text-slate-400">{payday.daysUntil} days</p>
           </div>
 
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="w-9 h-9 bg-orange-500/10 rounded-lg flex items-center justify-center mb-2">
-              <Wallet className="w-4 h-4 text-orange-500" />
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+              <Wallet className="w-4 h-4 text-primary" />
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Withdrawn</p>
-            <p className="text-lg font-bold text-slate-900 dark:text-white">{formatCurrency(totalAdvances)}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Withdrawn</p>
+            <p className="text-base font-bold text-slate-900 dark:text-white">{formatCurrency(totalAdvances)}</p>
           </div>
 
-          <div className="glass-card p-4 rounded-2xl">
-            <div className="w-9 h-9 bg-purple-500/10 rounded-lg flex items-center justify-center mb-2">
-              <Building2 className="w-4 h-4 text-purple-500" />
+          <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm p-4 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
+            <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
+              <Building2 className="w-4 h-4 text-primary" />
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">Employer</p>
-            <p className="text-sm font-bold text-slate-900 dark:text-white truncate">{employee?.employer_name || 'Not assigned'}</p>
+            <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Employer</p>
+            <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{employee?.employer_name || 'Not assigned'}</p>
           </div>
         </div>
 
         {/* Account Status */}
-        <div className="glass-card rounded-2xl overflow-hidden" data-testid="account-status">
-          <div className="px-4 py-3 border-b border-slate-200/50 dark:border-slate-700/50">
-            <h3 className="font-bold text-slate-900 dark:text-white text-sm">Account Status</h3>
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden" data-testid="account-status">
+          <div className="px-4 py-2.5 border-b border-slate-200/50 dark:border-slate-700/50">
+            <h3 className="font-bold text-slate-900 dark:text-white text-xs">Account Status</h3>
           </div>
           <div className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
-            <div className="flex items-center gap-3 p-4">
-              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", employee?.status === 'approved' ? 'bg-green-100 dark:bg-green-500/20' : 'bg-amber-100 dark:bg-amber-500/20')}>
-                {employee?.status === 'approved' ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : <Clock className="w-4 h-4 text-amber-600" />}
+            <div className="flex items-center gap-3 px-4 py-3">
+              <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", employee?.status === 'approved' ? 'bg-primary/10' : 'bg-slate-100 dark:bg-slate-800')}>
+                {employee?.status === 'approved' ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Clock className="w-4 h-4 text-slate-400" />}
               </div>
               <div className="flex-1">
-                <p className="text-xs text-slate-500 dark:text-slate-400">Account</p>
-                <p className="font-semibold text-slate-900 dark:text-white text-sm capitalize">{employee?.status || 'Pending'}</p>
+                <p className="text-[10px] text-slate-400">Account</p>
+                <p className="font-semibold text-slate-900 dark:text-white text-xs capitalize">{employee?.status || 'Pending'}</p>
               </div>
-              {employee?.status === 'approved' && <span className="px-2 py-0.5 bg-green-100 dark:bg-green-500/20 text-green-700 dark:text-green-400 text-[10px] font-semibold rounded-full">Verified</span>}
+              {employee?.status === 'approved' && <span className="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-semibold rounded-full">Verified</span>}
             </div>
-            <div className="flex items-center gap-3 p-4">
-              <div className={cn("w-9 h-9 rounded-lg flex items-center justify-center", employee?.kyc_status === 'approved' ? 'bg-green-100 dark:bg-green-500/20' : 'bg-amber-100 dark:bg-amber-500/20')}>
-                {employee?.kyc_status === 'approved' ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : <Clock className="w-4 h-4 text-amber-600" />}
+            <div className="flex items-center gap-3 px-4 py-3">
+              <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center", employee?.kyc_status === 'approved' ? 'bg-primary/10' : 'bg-slate-100 dark:bg-slate-800')}>
+                {employee?.kyc_status === 'approved' ? <CheckCircle2 className="w-4 h-4 text-primary" /> : <Clock className="w-4 h-4 text-slate-400" />}
               </div>
               <div className="flex-1">
-                <p className="text-xs text-slate-500 dark:text-slate-400">KYC Status</p>
-                <p className="font-semibold text-slate-900 dark:text-white text-sm capitalize">{employee?.kyc_status || 'Pending'}</p>
+                <p className="text-[10px] text-slate-400">KYC Status</p>
+                <p className="font-semibold text-slate-900 dark:text-white text-xs capitalize">{employee?.kyc_status || 'Pending'}</p>
               </div>
               {employee?.kyc_status !== 'approved' && (
                 <Link to="/employee/onboarding">
-                  <Button size="sm" variant="outline" className="text-primary border-primary/30 hover:bg-primary/10 text-xs h-7 px-2">Complete</Button>
+                  <Button size="sm" variant="ghost" className="text-primary text-[10px] h-6 px-2">Complete</Button>
                 </Link>
               )}
             </div>
@@ -347,43 +318,41 @@ export default function EmployeeDashboard() {
         </div>
 
         {/* Recent Activity */}
-        <div className="glass-card rounded-2xl overflow-hidden" data-testid="recent-activity">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200/50 dark:border-slate-700/50">
-            <h3 className="font-bold text-slate-900 dark:text-white text-sm">Recent Activity</h3>
-            <Link to="/employee/transactions" className="text-xs font-semibold text-primary">See All</Link>
+        <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm rounded-xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden" data-testid="recent-activity">
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-slate-200/50 dark:border-slate-700/50">
+            <h3 className="font-bold text-slate-900 dark:text-white text-xs">Recent Activity</h3>
+            <Link to="/employee/transactions" className="text-[10px] font-semibold text-primary">See All</Link>
           </div>
           {stats?.recent_transactions?.length > 0 ? (
             <div className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
               {stats.recent_transactions.slice(0, 3).map((tx) => (
-                <div key={tx.id} className="flex items-center justify-between p-4">
+                <div key={tx.id} className="flex items-center justify-between px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <div className={cn("w-9 h-9 rounded-full flex items-center justify-center", tx.type === 'disbursement' ? 'bg-red-100 dark:bg-red-500/10 text-red-500' : 'bg-primary/10 text-primary')}>
-                      {tx.type === 'disbursement' ? <Wallet className="w-4 h-4" /> : <CheckCircle2 className="w-4 h-4" />}
+                    <div className={cn("w-8 h-8 rounded-full flex items-center justify-center", tx.type === 'disbursement' ? 'bg-slate-100 dark:bg-slate-800' : 'bg-primary/10')}>
+                      {tx.type === 'disbursement' ? <Wallet className="w-4 h-4 text-slate-500" /> : <CheckCircle2 className="w-4 h-4 text-primary" />}
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-900 dark:text-white">{tx.type === 'disbursement' ? 'Withdrawal' : 'Shift Completed'}</p>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400">{new Date(tx.created_at).toLocaleDateString()}</p>
+                      <p className="text-[11px] font-semibold text-slate-900 dark:text-white">{tx.type === 'disbursement' ? 'Withdrawal' : 'Earned'}</p>
+                      <p className="text-[9px] text-slate-400">{new Date(tx.created_at).toLocaleDateString()}</p>
                     </div>
                   </div>
-                  <span className={cn("text-sm font-bold", tx.type === 'disbursement' ? 'text-red-500' : 'text-primary')}>
+                  <span className={cn("text-xs font-bold", tx.type === 'disbursement' ? 'text-slate-600 dark:text-slate-300' : 'text-primary')}>
                     {tx.type === 'disbursement' ? '-' : '+'}{formatCurrency(tx.amount)}
                   </span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="p-8 text-center">
-              <div className="w-14 h-14 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <History className="w-7 h-7 text-slate-400" />
+            <div className="p-6 text-center">
+              <div className="w-12 h-12 bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mx-auto mb-2">
+                <History className="w-6 h-6 text-slate-400" />
               </div>
-              <p className="text-slate-600 dark:text-slate-400 font-medium text-sm">No transactions yet</p>
-              <p className="text-slate-400 dark:text-slate-500 text-xs mt-1">Your activity will appear here</p>
+              <p className="text-slate-500 dark:text-slate-400 font-medium text-xs">No transactions yet</p>
             </div>
           )}
         </div>
       </main>
 
-      {/* Bottom Navigation */}
       <BottomNav active="home" />
     </div>
   );
