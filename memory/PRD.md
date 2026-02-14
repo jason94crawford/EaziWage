@@ -144,10 +144,17 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 ## Pending Tasks
 
+### P0 - Highest Priority (User Requested)
+- **Risk Scoring Calculator** - Implement based on Risk Scoring_&_Framework_REV1.docx
+  - Admin Portal: Calculator with manual override
+  - Employer Portal: Learn More section about risk scores
+  - Auto-calculation + manual admin override
+- **Employer Notifications Tab** - Currently non-functional
+
 ### P1 - High Priority
 - Dual-role user feature (Employer/Employee on same account)
 - Admin KYC Review page
-- Risk Scoring calculator
+- Employee Onboarding dark theme (still uses light/dark toggle)
 
 ### P2 - Medium Priority
 - Apple Login integration
