@@ -59,31 +59,43 @@ const policies = {
   'abc-policy': {
     title: 'Anti-Bribery & Corruption Policy',
     icon: Scale,
-    lastUpdated: 'December 2025',
+    lastUpdated: 'October 2025',
     content: [
       {
         heading: '1. Policy Statement',
-        text: 'EaziWage maintains a zero-tolerance policy towards bribery and corruption in all its forms. We are committed to conducting business ethically and in compliance with all applicable anti-corruption laws, including the Bribery Act of Kenya and the UK Bribery Act.'
+        text: 'EaziWage Holdings Limited (the "Firm") and its associated companies (the "Group") conduct business in an honest, ethical, and transparent manner. We adopt a zero-tolerance approach toward bribery, corruption, and facilitation payments, and we are committed to acting professionally, fairly, and with integrity in all business dealings. We shall comply with all applicable Kenyan laws regarding bribery, corruption, and related misconduct, especially the Bribery Act, No. 47 of 2016 and the Anti-Corruption and Economic Crimes Act of 2003 (ACECA). Any breach of this Policy will be regarded as serious misconduct and may lead to disciplinary action or referral to law enforcement.'
       },
       {
-        heading: '2. Prohibited Conduct',
-        text: 'All employees, partners, and agents of EaziWage are prohibited from: offering, promising, giving, or accepting bribes; making facilitation payments; giving or receiving improper gifts or hospitality; making political contributions on behalf of the company; and engaging in any form of kickback arrangements.'
+        heading: '2. Legal Framework in Kenya',
+        text: 'Under the Bribery Act, No. 47 of 2016, a "bribe" means giving or receiving an offer, promise or advantage (financial or non-financial) where one knows or believes that acceptance would constitute improper performance. Key offences include: Offering, promising or giving a bribe (Section 5); Requesting, agreeing to receive, or accepting a bribe (Section 6); Bribing a foreign public official (Section 8); Failure of a private entity to prevent bribery (Sections 9 & 10). The Act has extra-territorial reach and entities found liable may be subject to civil or criminal sanctions.'
       },
       {
-        heading: '3. Due Diligence',
-        text: 'We conduct appropriate due diligence on all business partners, agents, and third parties before entering into relationships. This includes assessing corruption risks and ensuring partners commit to our ethical standards.'
+        heading: '3. Principles & Approach',
+        text: 'We adopt a risk-based approach to preventing bribery: Proportionate procedures commensurate with risk exposure; Top-level commitment with visible support from senior management; Regular risk assessment of bribery corruption risks; Due diligence before engaging agents, contractors, third parties; Communication & training provided to all personnel; Monitoring, review & continuous improvement of controls. All records must be retained for at least five (5) years.'
       },
       {
-        heading: '4. Reporting',
-        text: 'All employees and stakeholders are encouraged to report suspected violations through our confidential whistleblowing channel. Reports can be made anonymously, and we prohibit retaliation against anyone making a good-faith report.'
+        heading: '4. Prohibited Conduct',
+        text: 'No employee, officer or associated person shall offer, promise, give, or authorize the giving of any financial or other advantage to any person to induce or reward improper performance. Facilitation payments are prohibited. Gifts may only be given or accepted in line with the Group\'s Gifts & Hospitality Policy, provided they are moderate, transparent, documented, and not given with any expectation of undue influence. Cash gifts are strictly prohibited.'
       },
       {
-        heading: '5. Training',
-        text: 'All employees receive regular training on anti-corruption compliance, including how to recognize and avoid corrupt practices.'
+        heading: '5. Risk Assessment & Due Diligence',
+        text: 'The Firm will conduct a bribery risk assessment at least annually covering: Country risk, Sector/industry risk, Transaction risk, Business partner/third-party risk, and Internal process risk. Due diligence on third parties includes sanctions checks, background and reputation checks, review of anti-bribery policies, reference checks, and clarification of ownership and beneficial owners.'
       },
       {
-        heading: '6. Enforcement',
-        text: 'Violations of this policy may result in disciplinary action, including termination of employment or business relationships, and may be reported to relevant authorities.'
+        heading: '6. Reporting',
+        text: 'Any employee or associated person who is offered a bribe or becomes aware of suspicious conduct must refuse and immediately report the matter to the Chief Executive Officer. The Firm will not allow retaliation against any person who refuses to participate in bribery or who reports a concern in good faith. Anonymous or confidential reporting is permitted in line with the Whistleblowing Policy.'
+      },
+      {
+        heading: '7. Roles & Responsibilities',
+        text: 'Board/Senior Management: Approve and oversee this Policy, demonstrate visible support and leadership. Chief Executive Officer: Oversee day-to-day implementation, management, escalation decisions, and reporting. Employees & Associated Persons: Understand and comply with this Policy, participate in training, promptly report any actual or suspected bribery.'
+      },
+      {
+        heading: '8. Enforcement',
+        text: 'Violations of this policy may result in disciplinary action (including termination), personal criminal liability, corporate fines or sanctions, and reporting to regulatory or law enforcement agencies. Where a possible breach is detected, the Firm may self-report to relevant Kenyan authorities (e.g., EACC or DPP).'
+      },
+      {
+        heading: '9. Contact',
+        text: 'For inquiries regarding this policy, contact: info@eaziwage.com or +254 72 315 4900.'
       }
     ]
   },
