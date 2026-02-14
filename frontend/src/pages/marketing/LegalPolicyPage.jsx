@@ -135,33 +135,49 @@ const policies = {
     ]
   },
   'gifts-policy': {
-    title: 'Gifts Policy',
+    title: 'Gifts, Hospitality & Entertainment Policy',
     icon: Gift,
-    lastUpdated: 'December 2025',
+    lastUpdated: 'October 2025',
     content: [
       {
-        heading: '1. Purpose',
-        text: 'This policy provides guidance on the giving and receiving of gifts and hospitality to prevent improper influence on business decisions and maintain our reputation for integrity.'
+        heading: '1. Policy Statement',
+        text: 'EaziWage Holdings Limited ("the Firm") and its associated entities (the "Group") is committed to conducting business in an honest, ethical, and transparent manner. Offering or accepting inappropriate gifts, hospitality, or entertainment can create actual or perceived conflicts of interest and may constitute bribery or corrupt conduct under Kenyan law. This Policy supports compliance with the Bribery Act of 2016, Anti-Corruption and Economic Crimes Act of 2003 (ACECA), and EACC Guidelines on Gifts and Conflict of Interest. The Group maintains zero tolerance for bribery, inducement, or any practice that compromises objectivity.'
       },
       {
-        heading: '2. General Principles',
-        text: 'Gifts and hospitality must be: reasonable in value, appropriate to the business relationship, not intended to influence business decisions, not given to government officials without prior approval, and properly recorded in company systems.'
+        heading: '2. Purpose & Scope',
+        text: 'This Policy provides clear guidance on the giving, receiving, and recording of gifts and hospitality; prevents bribery, conflicts of interest, and reputational risk; supports compliance with Kenyan law; and promotes transparency. It applies to all employees, directors, officers, contractors, consultants, agents, suppliers, and other third parties acting on behalf of the Group.'
       },
       {
-        heading: '3. Acceptable Gifts',
-        text: 'Generally acceptable gifts include: promotional items of nominal value, modest meals during business discussions, tickets to business-related events, and customary holiday gifts of modest value.'
+        heading: '3. Legal Framework',
+        text: 'Under the Bribery Act of 2016 and ACECA of 2003, it is an offence to: Offer, give, solicit, or accept any advantage to induce or reward improper performance; Provide or receive gifts with intent to influence a business decision; Fail to prevent bribery by associated persons; Fail to declare or record benefits received. Breaches can result in severe criminal penalties including fines, imprisonment (up to 10 years), or both.'
       },
       {
-        heading: '4. Prohibited Gifts',
-        text: 'The following are never acceptable: cash or cash equivalents, gifts during contract negotiations, lavish entertainment, gifts that create a sense of obligation, and anything illegal or unethical.'
+        heading: '4. Principles of Conduct',
+        text: 'Legitimacy: Gifts must serve a genuine business purpose. Transparency: Must be declared and recorded in the Gifts & Hospitality Register. Proportionality: Must be modest and appropriate to the occasion. No Cash or Equivalents: Cash, vouchers, or other easily transferable benefits are prohibited. No Reciprocation Expectation: There must be no intention to induce favorable treatment. Public Official Caution: Extra care with government officials—even small gifts can be perceived as bribery.'
       },
       {
-        heading: '5. Approval Requirements',
-        text: 'Any gift or hospitality exceeding KES 10,000 in value must be pre-approved by management. All gifts to or from government officials require prior approval regardless of value.'
+        heading: '5. Giving Gifts or Hospitality',
+        text: 'Employees may offer modest gifts if: They are made transparently, in good faith, and for legitimate business purposes; They comply with this Policy and applicable laws; They are not frequent or extravagant; They are not made during active tenders, contract negotiations, or regulatory reviews. Acceptable: Token branded items of nominal value (<KES 10,000), working lunches, public/industry events. Prohibited: Cash, vouchers, lavish entertainment, anything to influence a tender/license/regulatory outcome.'
       },
       {
-        heading: '6. Record Keeping',
-        text: 'All gifts given or received must be recorded in the gift register, including the date, recipient/giver, value, and business purpose.'
+        heading: '6. Receiving Gifts or Hospitality',
+        text: 'Employees must not solicit gifts. They may accept modest gestures only if: The value is below KES 10,000 per instance; It does not create obligation or conflict of interest; It is declared within five (5) working days; It is recorded in the Gifts & Hospitality Register. If a gift exceeds KES 10,000 or appears inappropriate: It must be politely declined or returned; If refusal may cause offence, the gift must be surrendered to the Compliance Department for appropriate disposition.'
+      },
+      {
+        heading: '7. Gifts & Hospitality Register',
+        text: 'Maintained by the Chief Executive Officer; Must record: date, giver/recipient, description, value, purpose, and decision; Reviewed quarterly by Senior Management and annually by Internal Audit; Retained for five (5) years for transparency and auditability.'
+      },
+      {
+        heading: '8. Public Officials and Government Bodies',
+        text: 'Gifts or hospitality to public officials are discouraged and permitted only in exceptional, pre-approved cases. All such offers must be pre-cleared by the Chief Executive Officer and recorded in the Register. Even minor benefits may be construed as attempts to improperly influence under the Bribery Act of 2016.'
+      },
+      {
+        heading: '9. Violations',
+        text: 'Failure to comply may result in: Internal disciplinary action (up to termination); Reporting to authorities (EACC, DPP); Criminal penalties under Kenyan law; Civil recovery or reputational sanctions.'
+      },
+      {
+        heading: '10. Contact',
+        text: 'For inquiries: info@eaziwage.com or +254 72 315 4900.'
       }
     ]
   },
