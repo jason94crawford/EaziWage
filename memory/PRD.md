@@ -41,13 +41,23 @@ All marketing pages redesigned with modern "African-fintech" aesthetic:
 - ✅ **Blog Page** (/blog) - Featured CEO article by Jason Crawford "The Future of Earned Wage Access in Africa: 2026 Trends", 6 external article links from real sources (AfriDigest, WeeTracker, EBNet, Unipesa, Fintech Futures)
 - ✅ **Privacy Policy** (/privacy) - Full legal content with TOC sidebar
 - ✅ **Terms of Service** (/terms) - Full legal content with TOC sidebar
-- ✅ **Legal Policy Pages** - Data Privacy & Protection Policy, ABC Policy, Code of Ethics, Gifts/Hospitality/Entertainment Policy, AML & CFT Policy, Whistleblowing Policy (all updated with official policy document content from October 2025)
+- ✅ **Legal Policy Pages** - ABC Policy, Code of Ethics, Gifts/Hospitality/Entertainment Policy, AML & CFT Policy, Whistleblowing Policy (all with sidebar table of contents matching Terms of Service design, official content from October 2025 documents)
 - ✅ **Dark/Light Theme Toggle** - Working across all pages
 - ✅ **Consistent Green Theme** - Primary color #16A34A maintained (no blue/yellow/red)
 - ✅ **Navigation Updated** - About Us, How it Works, For Employers, For Employees, Pricing, Calculator
 - ✅ **M-PESA → Mobile Wallet** - All references changed to generic "Mobile Wallet"
 - ✅ **Clean Hero Sections** - Clear section breaks with proper backgrounds
-- ✅ **Footer Legal Section** - 8 policy links with scroll-to-top behavior, Legal & Compliance heading font size matches Product heading
+- ✅ **Footer Legal Section** - 7 policy links (Cookie Policy and Data Policy removed), Legal & Compliance heading font size matches Product heading
+
+### Employee Dashboard (REDESIGNED - Feb 2026)
+- ✅ Modern dark slate theme with green accents
+- ✅ Dark sidebar navigation for desktop
+- ✅ Bottom navigation bar for mobile
+- ✅ "Available to Withdraw" hero card with fee info
+- ✅ Salary breakdown with progress bar
+- ✅ Quick access cards (Next Payday, Projected Salary)
+- ✅ Recent activity section with transaction list
+- ✅ Account status section showing approval/KYC status
 - ✅ **Mobile/Tablet Responsive** - Tested at 375px and 768px viewports
 
 ### Backend (FastAPI + MongoDB)
