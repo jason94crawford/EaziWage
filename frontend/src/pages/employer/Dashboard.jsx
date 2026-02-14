@@ -124,22 +124,13 @@ const MetricCard = ({ icon: Icon, label, value, subtext, trend, trendUp }) => (
   </div>
 );
 
-// Quick Action Card
-const QuickActionCard = ({ icon: Icon, title, description, href, gradient }) => (
+// Quick Action Card with solid green icon
+const QuickActionCard = ({ icon: Icon, title, description, href }) => (
   <Link to={href} className="block group">
-    <div className={cn(
-      "relative overflow-hidden rounded-2xl p-5 border transition-all duration-300 hover:shadow-xl hover:-translate-y-1",
-      "bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/30"
-    )}>
-      {/* Gradient Background on Hover */}
-      <div className={cn(
-        "absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300",
-        gradient
-      )} />
-      
+    <div className="relative overflow-hidden rounded-2xl p-5 border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm border-slate-200/50 dark:border-slate-700/30">
       <div className="relative z-10">
-        <div className="w-14 h-14 bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
-          <Icon className="w-7 h-7 text-primary" />
+        <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+          <Icon className="w-7 h-7 text-white" />
         </div>
         <h3 className="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">{title}</h3>
         <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{description}</p>
