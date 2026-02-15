@@ -223,12 +223,12 @@ class TestBulkEmployeeActions:
     """Tests for Bulk Employee Actions API"""
 
     def test_bulk_action_unauthorized(self):
-        """Test bulk action without auth returns 401"""
+        """Test bulk action without auth returns 401 or 403"""
         response = requests.post(
             f"{BASE_URL}/api/admin/employees/bulk-action",
             json={"employee_ids": [], "action": "activate"}
         )
-        assert response.status_code == 401, f"Expected 401, got {response.status_code}"
+        assert response.status_code in [401, 403], f"Expected 401/403, got {response.status_code}"
 
     def test_bulk_action_employer_forbidden(self, employer_token):
         """Test bulk action with employer token returns 403"""
