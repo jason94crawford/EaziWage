@@ -231,7 +231,7 @@ const SidebarNav = ({ isOpen, onClose }) => {
           {/* User Section - Fixed at bottom */}
           <div className="p-4 border-t border-slate-200/50 dark:border-slate-700/50 shrink-0">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-11 h-11 bg-primary rounded-xl flex items-center justify-center shadow-md">
+              <div className="w-11 h-11 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
                 <span className="text-white font-bold text-sm">
                   {user.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}
                 </span>
