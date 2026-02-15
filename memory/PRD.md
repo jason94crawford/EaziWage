@@ -182,11 +182,12 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - 9 employers with varying statuses
 - 67 employees seeded across multiple employers
 - 1 review request from Test Corp Ltd
-- 3 default fraud detection rules (seeded automatically in database)
+- 6 fraud detection rules (3 default + 3 employer manipulation)
 
 ## Bug Fixes (Feb 2026)
 - **Payroll Data Consistency**: Fixed mismatch between Dashboard and Payroll page Monthly Payroll values
 - **Department Pie Chart**: Fixed by replacing custom SVG with recharts PieChart component
+- **Table Column Alignment**: Fixed misaligned columns in Admin Employers and Employees tables
 
 ## Completed in Latest Session (Feb 2026)
 1. ✅ Department Distribution Pie Chart - Now using recharts library with proper rendering
@@ -194,7 +195,13 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 3. ✅ Fraud checking integrated into advance creation flow
 4. ✅ Reconciliation system enhanced with unique transaction references (EWA-XXXXXXXX)
 5. ✅ Bulk action APIs for employees and employers
-6. ✅ All new backend endpoints tested and verified (23/23 tests passed)
+6. ✅ Updated Admin pages (Advances, KYC Review, Risk Scoring) to purple AdminPortalLayout
+7. ✅ Fixed Risk Scoring dropdown - now uses admin API and finds employers/employees
+8. ✅ Enhanced Risk Scoring with Net Weighted Score (40% Employer + 60% Employee)
+9. ✅ Bi-annual Verification Alerts system with auto-flagging
+10. ✅ Employer manipulation fraud detection (EWA limit, cooldown, bulk changes)
+11. ✅ Fixed table column alignment in Employers and Employees admin pages
+12. ✅ All tests passed (100% backend, 100% frontend)
 
 ## Mocked Features
 - Mobile Money APIs (M-PESA, Airtel Money, MTN MoMo)
