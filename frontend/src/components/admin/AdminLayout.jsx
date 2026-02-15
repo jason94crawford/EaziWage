@@ -6,7 +6,7 @@ import {
   AlertTriangle, HelpCircle, Activity
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
-import { useTheme } from '../../hooks/useTheme';
+import { useTheme } from '../../lib/ThemeContext';
 import { Button } from '../ui/button';
 
 const API_URL = process.env.REACT_APP_BACKEND_URL;
