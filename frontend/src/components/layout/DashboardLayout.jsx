@@ -31,8 +31,10 @@ const adminLinks = [
   { href: '/admin/employers', label: 'Employers', icon: Building2 },
   { href: '/admin/employees', label: 'Employees', icon: Users },
   { href: '/admin/advances', label: 'Advances', icon: CreditCard },
-  { href: '/admin/kyc', label: 'KYC Review', icon: CheckCircle2 },
+  { href: '/admin/reconciliation', label: 'Reconciliation', icon: BarChart3 },
+  { href: '/admin/kyc-review', label: 'KYC Review', icon: CheckCircle2 },
   { href: '/admin/risk-scoring', label: 'Risk Scoring', icon: Shield },
+  { href: '/admin/api-health', label: 'API Health', icon: HelpCircle },
   { href: '/admin/settings', label: 'Settings', icon: Settings },
 ];
 
