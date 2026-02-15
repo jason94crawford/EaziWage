@@ -51,6 +51,8 @@ import AdminKYCReview from "./pages/admin/KYCReview";
 import AdminRiskScoring from "./pages/admin/RiskScoring";
 import AdminReconciliation from "./pages/admin/Reconciliation";
 import AdminAPIHealth from "./pages/admin/APIHealth";
+import FraudDetection from "./pages/admin/FraudDetection";
+import ReviewManagement from "./pages/admin/ReviewManagement";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
