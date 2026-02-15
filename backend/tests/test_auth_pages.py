@@ -8,7 +8,7 @@ import requests
 import os
 import uuid
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://earned-wage-preview.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://eazi-mobile-pages.preview.emergentagent.com')
 
 class TestAuthEndpoints:
     """Test authentication related endpoints"""

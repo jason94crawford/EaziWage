@@ -8,7 +8,7 @@ import pytest
 import requests
 import os
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://earned-wage-preview.preview.emergentagent.com').rstrip('/')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://eazi-mobile-pages.preview.emergentagent.com').rstrip('/')
 
 class TestAdminAuth:
     """Test admin authentication"""
