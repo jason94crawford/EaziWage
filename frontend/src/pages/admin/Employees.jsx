@@ -1047,6 +1047,61 @@ export default function AdminEmployees() {
           </div>
         </div>
 
+        {/* Bulk Actions Bar */}
+        {selectedIds.size > 0 && (
+          <div className="bg-purple-600 rounded-2xl p-4 flex items-center justify-between shadow-lg shadow-purple-500/25" data-testid="bulk-actions-bar">
+            <div className="flex items-center gap-3">
+              <span className="bg-white/20 rounded-lg px-3 py-1.5 text-white font-semibold">
+                {selectedIds.size} selected
+              </span>
+              <button 
+                onClick={() => setSelectedIds(new Set())}
+                className="text-white/70 hover:text-white text-sm underline"
+              >
+                Clear selection
+              </button>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleBulkAction('approved')}
+                disabled={bulkActionLoading}
+                className="bg-white/20 hover:bg-white/30 text-white border-0"
+                data-testid="bulk-activate"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-1.5" />
+                Activate All
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleBulkAction('suspended')}
+                disabled={bulkActionLoading}
+                className="bg-white/20 hover:bg-white/30 text-white border-0"
+                data-testid="bulk-suspend"
+              >
+                <Ban className="w-4 h-4 mr-1.5" />
+                Suspend All
+              </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => handleBulkAction('kyc_approve')}
+                disabled={bulkActionLoading}
+                className="bg-white/20 hover:bg-white/30 text-white border-0"
+                data-testid="bulk-kyc-approve"
+              >
+                <FileText className="w-4 h-4 mr-1.5" />
+                Approve KYC
+              </Button>
+              {bulkActionLoading && (
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Employees List */}
         <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/30 overflow-hidden">
           {loading ? (
