@@ -315,14 +315,27 @@ export default function EmployerRiskInsights() {
               Understand your company's risk score and how to improve it
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            className="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60"
-            data-testid="request-review-btn"
-          >
-            <HelpCircle className="w-4 h-4" />
-            Request Review
-          </Button>
+          {reviewRequested ? (
+            <div className="flex items-center gap-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 rounded-xl">
+              <CheckCircle2 className="w-4 h-4" />
+              <span className="text-sm font-medium">Review Requested</span>
+            </div>
+          ) : (
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-2 bg-white/60 dark:bg-slate-800/60"
+              onClick={handleRequestReview}
+              disabled={requestingReview}
+              data-testid="request-review-btn"
+            >
+              {requestingReview ? (
+                <div className="w-4 h-4 border-2 border-primary/30 border-t-primary rounded-full animate-spin" />
+              ) : (
+                <HelpCircle className="w-4 h-4" />
+              )}
+              {requestingReview ? 'Requesting...' : 'Request Review'}
+            </Button>
+          )}
         </div>
 
         {/* Main Score Overview */}
