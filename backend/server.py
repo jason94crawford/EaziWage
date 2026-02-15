@@ -2425,6 +2425,37 @@ async def admin_list_employers(user: dict = Depends(require_role(UserRole.ADMIN)
         employer["employee_count_actual"] = emp_count
     return employers
 
+# Admin - Get single employer detail
+@api_router.get("/admin/employers/{employer_id}")
+async def admin_get_employer_detail(
+    employer_id: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get detailed employer info for admin"""
+    employer = await db.employers.find_one({"id": employer_id}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    # Get user data
+    user_data = await db.users.find_one({"id": employer.get("user_id")}, {"_id": 0, "password_hash": 0})
+    if user_data:
+        employer["contact_email"] = user_data.get("email")
+        employer["contact_phone"] = user_data.get("phone")
+    
+    # Get employee count
+    emp_count = await db.employees.count_documents({"employer_id": employer_id})
+    employer["employee_count"] = emp_count
+    
+    # Get advance statistics
+    advances = await db.advances.find({"employer_id": employer_id}, {"_id": 0, "amount": 1, "status": 1}).to_list(10000)
+    employer["total_advances"] = sum(a.get("amount", 0) for a in advances if a.get("status") in ["approved", "disbursed"])
+    
+    # Calculate monthly payroll
+    employees = await db.employees.find({"employer_id": employer_id, "status": "approved"}, {"_id": 0, "monthly_salary": 1}).to_list(10000)
+    employer["monthly_payroll"] = sum(e.get("monthly_salary", 0) for e in employees)
+    
+    return employer
+
 # Admin - Update employer status
 @api_router.patch("/admin/employers/{employer_id}/status")
 async def admin_update_employer_status(
