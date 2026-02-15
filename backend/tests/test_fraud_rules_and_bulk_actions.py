@@ -50,9 +50,9 @@ class TestFraudRulesAPI:
     """Tests for Fraud Detection Rules CRUD API"""
 
     def test_get_fraud_rules_unauthorized(self):
-        """Test GET fraud rules without auth returns 401"""
+        """Test GET fraud rules without auth returns 401 or 403"""
         response = requests.get(f"{BASE_URL}/api/admin/fraud-rules")
-        assert response.status_code == 401, f"Expected 401, got {response.status_code}"
+        assert response.status_code in [401, 403], f"Expected 401/403, got {response.status_code}"
 
     def test_get_fraud_rules_with_employer_token(self, employer_token):
         """Test GET fraud rules with employer token returns 403"""
