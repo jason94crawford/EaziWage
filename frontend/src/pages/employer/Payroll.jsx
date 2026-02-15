@@ -295,12 +295,16 @@ export default function EmployerPayroll() {
                   "w-2 h-2 rounded-full",
                   apiConnectionStatus ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
                 )} />
-                {apiConnectionStatus ? 'Connected' : 'Manual Mode'}
+                {apiConnectionStatus ? 'Auto Mode' : 'Manual Mode'}
               </div>
             </div>
             
             {apiConnectionStatus ? (
               <div className="space-y-3">
+                <div className="p-4 bg-white/50 dark:bg-slate-800/30 rounded-xl mb-3">
+                  <p className="text-sm text-emerald-700 dark:text-emerald-300 font-medium mb-1">Auto upload mode is active</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">Payroll data syncs automatically. Manual upload requires admin approval.</p>
+                </div>
                 <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Last Sync</span>
                   <span className="font-medium text-slate-900 dark:text-white">2 hours ago</span>
@@ -311,7 +315,7 @@ export default function EmployerPayroll() {
                 </div>
                 <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl">
                   <span className="text-sm text-slate-600 dark:text-slate-400">Provider</span>
-                  <span className="font-medium text-slate-900 dark:text-white">3rd Party Payroll API</span>
+                  <span className="font-medium text-slate-900 dark:text-white">Integrated Payroll API</span>
                 </div>
               </div>
             ) : (
@@ -348,11 +352,11 @@ export default function EmployerPayroll() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl text-center">
                   <p className="text-xs text-slate-500">Advance Principal</p>
-                  <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(monthlyDeductions * 0.92)}</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(monthlyAdvancesDisbursed)}</p>
                 </div>
                 <div className="p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl text-center">
-                  <p className="text-xs text-slate-500">Platform Fees</p>
-                  <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(monthlyDeductions * 0.08)}</p>
+                  <p className="text-xs text-slate-500">Platform Fees ({avgFeeRate}%)</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(platformFees)}</p>
                 </div>
               </div>
             </div>
@@ -364,7 +368,7 @@ export default function EmployerPayroll() {
           {/* Upload Card */}
           <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center">
                 <Upload className="w-6 h-6 text-white" />
               </div>
               <div>
