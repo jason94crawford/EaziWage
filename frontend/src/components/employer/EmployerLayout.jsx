@@ -273,6 +273,18 @@ const SidebarNav = ({ isOpen, onClose }) => {
 const TopHeader = ({ onMenuClick, employer }) => {
   const { theme, toggleTheme } = useTheme();
   const [showNotifications, setShowNotifications] = useState(false);
+  const notificationsRef = useRef(null);
+
+  // Close notifications when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notificationsRef.current && !notificationsRef.current.contains(event.target)) {
+        setShowNotifications(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const getGreeting = () => {
     const hour = new Date().getHours();
@@ -280,6 +292,16 @@ const TopHeader = ({ onMenuClick, employer }) => {
     if (hour < 17) return 'Good Afternoon';
     return 'Good Evening';
   };
+
+  // Sample notifications
+  const notifications = [
+    { id: 1, type: 'advance', title: 'New Advance Request', message: 'John Kamau requested KES 15,000 advance', time: '2 hours ago', read: false },
+    { id: 2, type: 'system', title: 'Payroll Due', message: 'Monthly payroll submission is due in 3 days', time: '5 hours ago', read: false },
+    { id: 3, type: 'employee', title: 'KYC Completed', message: 'Sarah Mwangi completed KYC verification', time: '1 day ago', read: true },
+    { id: 4, type: 'advance', title: 'Advance Disbursed', message: '45 advances disbursed successfully', time: '2 days ago', read: true },
+  ];
+
+  const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
     <header className="sticky top-0 z-30 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl border-b border-slate-200/50 dark:border-slate-700/50">
@@ -311,14 +333,82 @@ const TopHeader = ({ onMenuClick, employer }) => {
             >
               {theme === 'dark' ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <button 
-              onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-              data-testid="notifications-btn"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-primary rounded-full ring-2 ring-white dark:ring-slate-900" />
-            </button>
+            
+            {/* Notifications Bell with Dropdown */}
+            <div className="relative" ref={notificationsRef}>
+              <button 
+                onClick={() => setShowNotifications(!showNotifications)}
+                className="relative p-2.5 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                data-testid="notifications-btn"
+              >
+                <Bell className="w-5 h-5" />
+                {unreadCount > 0 && (
+                  <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-primary rounded-full ring-2 ring-white dark:ring-slate-900 text-[10px] font-bold text-white flex items-center justify-center">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Notifications Dropdown */}
+              {showNotifications && (
+                <div className="absolute right-0 top-full mt-2 w-80 bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden z-50">
+                  <div className="p-4 border-b border-slate-200/50 dark:border-slate-700/30 flex items-center justify-between">
+                    <h3 className="font-bold text-slate-900 dark:text-white">Notifications</h3>
+                    {unreadCount > 0 && (
+                      <span className="text-xs font-medium px-2 py-1 bg-primary/10 text-primary rounded-full">
+                        {unreadCount} new
+                      </span>
+                    )}
+                  </div>
+                  <div className="max-h-[320px] overflow-y-auto">
+                    {notifications.map((notif) => (
+                      <div 
+                        key={notif.id}
+                        className={cn(
+                          "p-4 border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors",
+                          !notif.read && "bg-primary/5"
+                        )}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className={cn(
+                            "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
+                            notif.type === 'advance' && "bg-primary/10",
+                            notif.type === 'system' && "bg-amber-100 dark:bg-amber-500/20",
+                            notif.type === 'employee' && "bg-blue-100 dark:bg-blue-500/20"
+                          )}>
+                            {notif.type === 'advance' && <CreditCard className="w-4 h-4 text-primary" />}
+                            {notif.type === 'system' && <Bell className="w-4 h-4 text-amber-600" />}
+                            {notif.type === 'employee' && <Users className="w-4 h-4 text-blue-600" />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className={cn(
+                              "text-sm font-medium",
+                              notif.read ? "text-slate-600 dark:text-slate-400" : "text-slate-900 dark:text-white"
+                            )}>
+                              {notif.title}
+                            </p>
+                            <p className="text-xs text-slate-500 dark:text-slate-500 mt-0.5 truncate">{notif.message}</p>
+                            <p className="text-xs text-slate-400 mt-1">{notif.time}</p>
+                          </div>
+                          {!notif.read && (
+                            <div className="w-2 h-2 bg-primary rounded-full mt-2 shrink-0" />
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="p-3 border-t border-slate-200/50 dark:border-slate-700/30">
+                    <Link 
+                      to="/employer/notifications"
+                      className="block w-full text-center text-sm font-medium text-primary hover:text-primary/80 py-2 rounded-xl hover:bg-primary/5 transition-colors"
+                      onClick={() => setShowNotifications(false)}
+                    >
+                      View All Notifications
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
