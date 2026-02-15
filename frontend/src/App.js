@@ -215,7 +215,7 @@ function App() {
           } />
           <Route path="/admin/employees" element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <PlaceholderPage title="Employees" description="Manage all employees" />
+              <AdminEmployees />
             </ProtectedRoute>
           } />
           <Route path="/admin/advances" element={
