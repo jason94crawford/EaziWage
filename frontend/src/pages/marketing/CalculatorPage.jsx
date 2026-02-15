@@ -93,23 +93,23 @@ export default function CalculatorPage() {
       <MarketingNav />
       
       {/* Hero */}
-      <section className="pt-32 pb-16 relative overflow-hidden">
+      <section className="pt-24 sm:pt-32 pb-10 sm:pb-16 relative overflow-hidden">
         <div className="absolute inset-0 gradient-mesh" />
         <div className="absolute inset-0 bg-grid" />
-        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[150px]" />
+        <div className="absolute top-20 right-0 w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-primary/10 rounded-full blur-[150px]" />
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 dark:bg-primary/20 rounded-full text-sm font-semibold text-primary mb-6">
+            <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary/10 dark:bg-primary/20 rounded-full text-xs sm:text-sm font-semibold text-primary mb-4 sm:mb-6">
               <Calculator className="w-4 h-4" />
               Smart Salary Insights
             </div>
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white mb-6">
+            <h1 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-4 sm:mb-6">
               Precision Wage.
               <br />
               <span className="text-gradient">Effortless Compliance.</span>
             </h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            <p className="text-sm sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto px-2">
               The EaziWage Access Calculator helps employees estimate their accessible portion of earned wages before payday. It's clarity and confidence — simplified.
             </p>
           </div>
@@ -117,31 +117,31 @@ export default function CalculatorPage() {
       </section>
 
       {/* Calculator */}
-      <section className="py-12 bg-slate-50 dark:bg-slate-900">
+      <section className="py-8 sm:py-12 bg-slate-50 dark:bg-slate-900">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-5 gap-8">
+          <div className="grid lg:grid-cols-5 gap-6 sm:gap-8">
             {/* Input Form */}
-            <div className="lg:col-span-3 bg-white dark:bg-slate-800 rounded-3xl p-8 shadow-xl border border-slate-200 dark:border-slate-700">
-              <h2 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-8">
+            <div className="lg:col-span-3 bg-white dark:bg-slate-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-xl border border-slate-200 dark:border-slate-700">
+              <h2 className="font-heading text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mb-5 sm:mb-8">
                 Wage Access Calculator
               </h2>
               
               {/* Country Selection */}
-              <div className="mb-8">
-                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3 block">Select Country</label>
-                <div className="flex gap-3">
+              <div className="mb-6 sm:mb-8">
+                <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 sm:mb-3 block">Select Country</label>
+                <div className="grid grid-cols-4 gap-2 sm:flex sm:gap-3">
                   {countries.map((c) => (
                     <button
                       key={c.code}
                       onClick={() => setCountry(c)}
-                      className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 transition-all ${
+                      className={`flex flex-col sm:flex-row items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 sm:py-3 rounded-lg sm:rounded-xl border-2 transition-all ${
                         country.code === c.code
                           ? 'border-primary bg-primary/5 dark:bg-primary/10'
                           : 'border-slate-200 dark:border-slate-700 hover:border-slate-300'
                       }`}
                     >
-                      <span className="text-2xl">{c.flag}</span>
-                      <span className={`text-sm font-medium ${country.code === c.code ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}>
+                      <span className="text-xl sm:text-2xl">{c.flag}</span>
+                      <span className={`text-xs sm:text-sm font-medium ${country.code === c.code ? 'text-primary' : 'text-slate-600 dark:text-slate-400'}`}>
                         {c.code}
                       </span>
                     </button>
@@ -150,96 +150,96 @@ export default function CalculatorPage() {
               </div>
 
               {/* Salary Inputs */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-6">
                 <div>
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                  <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 block">
                     Gross Monthly Salary ({country.symbol})
                   </label>
                   <Input
                     type="number"
                     value={grossSalary}
                     onChange={(e) => setGrossSalary(Number(e.target.value))}
-                    className="h-12 rounded-xl"
+                    className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                     placeholder="Enter gross salary"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 block">
                       Other Contributions
                     </label>
                     <Input
                       type="number"
                       value={otherContributions}
                       onChange={(e) => setOtherContributions(Number(e.target.value))}
-                      className="h-12 rounded-xl"
+                      className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                       placeholder="0"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 block">
                       Other Remuneration
                     </label>
                     <Input
                       type="number"
                       value={otherRemuneration}
                       onChange={(e) => setOtherRemuneration(Number(e.target.value))}
-                      className="h-12 rounded-xl"
+                      className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                       placeholder="0"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 block">
                       Meal Allowance
                     </label>
                     <Input
                       type="number"
                       value={mealAllowance}
                       onChange={(e) => setMealAllowance(Number(e.target.value))}
-                      className="h-12 rounded-xl"
+                      className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                       placeholder="0"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 block">
                       Night Out Allowance
                     </label>
                     <Input
                       type="number"
                       value={nightAllowance}
                       onChange={(e) => setNightAllowance(Number(e.target.value))}
-                      className="h-12 rounded-xl"
+                      className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                       placeholder="0"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 block">
                       Pension Cover
                     </label>
                     <Input
                       type="number"
                       value={pensionCover}
                       onChange={(e) => setPensionCover(Number(e.target.value))}
-                      className="h-12 rounded-xl"
+                      className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                       placeholder="0"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5 sm:mb-2 block">
                       Medical Cover
                     </label>
                     <Input
                       type="number"
                       value={medicalCover}
                       onChange={(e) => setMedicalCover(Number(e.target.value))}
-                      className="h-12 rounded-xl"
+                      className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                       placeholder="0"
                     />
                   </div>
@@ -247,12 +247,12 @@ export default function CalculatorPage() {
 
                 {/* Days Worked Slider */}
                 <div>
-                  <div className="flex justify-between items-center mb-3">
-                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                  <div className="flex justify-between items-center mb-2 sm:mb-3">
+                    <label className="text-xs sm:text-sm font-medium text-slate-700 dark:text-slate-300">
                       Days Worked
                     </label>
-                    <span className="text-sm font-bold text-primary">
-                      {daysWorked} / {totalDays} days • {calculations.cyclePercent}% of cycle
+                    <span className="text-xs sm:text-sm font-bold text-primary">
+                      {daysWorked} / {totalDays} days • {calculations.cyclePercent}%
                     </span>
                   </div>
                   <input
@@ -261,9 +261,9 @@ export default function CalculatorPage() {
                     max={totalDays}
                     value={daysWorked}
                     onChange={(e) => setDaysWorked(Number(e.target.value))}
-                    className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-primary"
+                    className="w-full h-2 sm:h-3 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-primary"
                   />
-                  <div className="flex justify-between text-xs text-slate-500 mt-2">
+                  <div className="flex justify-between text-[10px] sm:text-xs text-slate-500 mt-1.5 sm:mt-2">
                     <span>1 day</span>
                     <span>{totalDays} days</span>
                   </div>
@@ -272,48 +272,48 @@ export default function CalculatorPage() {
             </div>
 
             {/* Results Panel */}
-            <div className="lg:col-span-2 space-y-6">
+            <div className="lg:col-span-2 space-y-4 sm:space-y-6">
               {/* Main Result Card */}
-              <div className="bg-gradient-to-br from-primary via-emerald-600 to-teal-600 rounded-3xl p-8 text-white shadow-xl">
-                <div className="flex items-center gap-2 mb-6">
-                  <Banknote className="w-5 h-5" />
-                  <span className="text-sm font-medium opacity-80">Accessible Amount</span>
+              <div className="bg-gradient-to-br from-primary via-emerald-600 to-teal-600 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl">
+                <div className="flex items-center gap-2 mb-4 sm:mb-6">
+                  <Banknote className="w-4 sm:w-5 h-4 sm:h-5" />
+                  <span className="text-xs sm:text-sm font-medium opacity-80">Accessible Amount</span>
                 </div>
-                <div className="mb-6">
-                  <p className="text-5xl font-bold mb-2">
+                <div className="mb-4 sm:mb-6">
+                  <p className="text-3xl sm:text-5xl font-bold mb-1 sm:mb-2 break-all">
                     {country.symbol} {formatCurrency(calculations.accessibleAmount)}
                   </p>
-                  <p className="text-sm opacity-70">
+                  <p className="text-xs sm:text-sm opacity-70">
                     Based on {calculations.accessiblePercent}% of earned wages
                   </p>
                 </div>
-                <div className="space-y-3 pt-6 border-t border-white/20">
-                  <div className="flex justify-between text-sm">
+                <div className="space-y-2 sm:space-y-3 pt-4 sm:pt-6 border-t border-white/20">
+                  <div className="flex justify-between text-xs sm:text-sm">
                     <span className="opacity-70">Earned So Far</span>
                     <span className="font-semibold">{country.symbol} {formatCurrency(calculations.earnedSoFar)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="opacity-70">Application Fee (~4.5%)</span>
+                  <div className="flex justify-between text-xs sm:text-sm">
+                    <span className="opacity-70">App Fee (~4.5%)</span>
                     <span className="font-semibold">- {country.symbol} {formatCurrency(calculations.applicationFee)}</span>
                   </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="opacity-70">Processing Fee ($0.80)</span>
+                  <div className="flex justify-between text-xs sm:text-sm">
+                    <span className="opacity-70">Processing ($0.80)</span>
                     <span className="font-semibold">- {country.symbol} {formatCurrency(calculations.processingFeeLocal)}</span>
                   </div>
-                  <div className="flex justify-between text-sm pt-3 border-t border-white/20">
+                  <div className="flex justify-between text-xs sm:text-sm pt-2 sm:pt-3 border-t border-white/20">
                     <span className="font-semibold">You Receive</span>
-                    <span className="font-bold text-lg">{country.symbol} {formatCurrency(calculations.netReceivable)}</span>
+                    <span className="font-bold text-base sm:text-lg">{country.symbol} {formatCurrency(calculations.netReceivable)}</span>
                   </div>
                 </div>
               </div>
 
               {/* Fee Info */}
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-                <h3 className="font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+              <div className="bg-white dark:bg-slate-800 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-3 sm:mb-4 flex items-center gap-2 text-sm sm:text-base">
                   <Info className="w-4 h-4 text-primary" />
                   Fee Structure
                 </h3>
-                <div className="space-y-3 text-sm">
+                <div className="space-y-2 sm:space-y-3 text-xs sm:text-sm">
                   <div className="flex justify-between">
                     <span className="text-slate-600 dark:text-slate-400">Application Fee</span>
                     <span className="font-medium text-slate-900 dark:text-white">3.5% - 6%</span>
@@ -330,12 +330,12 @@ export default function CalculatorPage() {
               </div>
 
               {/* CTA */}
-              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-200 dark:border-slate-700">
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl sm:rounded-2xl p-4 sm:p-6 border border-slate-200 dark:border-slate-700">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mb-3 sm:mb-4">
                   Ready to access your earned wages?
                 </p>
                 <Link to="/register?role=employee">
-                  <Button className="w-full h-12 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white">
+                  <Button className="w-full h-10 sm:h-12 rounded-lg sm:rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white text-sm sm:text-base">
                     Get Started
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
@@ -345,8 +345,8 @@ export default function CalculatorPage() {
           </div>
 
           {/* Disclaimer */}
-          <div className="mt-8 p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20 dark:border-primary/30">
-            <p className="text-sm text-slate-700 dark:text-slate-300">
+          <div className="mt-6 sm:mt-8 p-3 sm:p-4 bg-primary/5 dark:bg-primary/10 rounded-lg sm:rounded-xl border border-primary/20 dark:border-primary/30">
+            <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300">
               <strong className="text-primary">Note:</strong> The calculated figure is an estimate for informational purposes only. 
               Actual amounts depend on payroll verification, residency, and EaziWage eligibility requirements.
             </p>
@@ -355,37 +355,37 @@ export default function CalculatorPage() {
       </section>
 
       {/* Trust Section */}
-      <section className="py-16 bg-white dark:bg-slate-950">
+      <section className="py-10 sm:py-16 bg-white dark:bg-slate-950">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
+          <p className="text-sm sm:text-lg text-slate-600 dark:text-slate-400 mb-6 sm:mb-8">
             <span className="text-primary font-semibold">Precision builds trust.</span> Trust drives growth.
           </p>
-          <div className="flex flex-wrap justify-center gap-8">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center">
-                <Zap className="w-6 h-6 text-primary" />
+          <div className="flex flex-col sm:flex-row flex-wrap justify-center gap-4 sm:gap-8">
+            <div className="flex items-center justify-center sm:justify-start gap-3">
+              <div className="w-10 sm:w-12 h-10 sm:h-12 bg-primary/10 dark:bg-primary/20 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <Zap className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
               </div>
               <div className="text-left">
-                <p className="font-semibold text-slate-900 dark:text-white">Instant</p>
-                <p className="text-sm text-slate-500">Under 3 seconds</p>
+                <p className="font-semibold text-slate-900 dark:text-white text-sm sm:text-base">Instant</p>
+                <p className="text-xs sm:text-sm text-slate-500">Under 3 seconds</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center">
-                <Shield className="w-6 h-6 text-primary" />
+            <div className="flex items-center justify-center sm:justify-start gap-3">
+              <div className="w-10 sm:w-12 h-10 sm:h-12 bg-primary/10 dark:bg-primary/20 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <Shield className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
               </div>
               <div className="text-left">
-                <p className="font-semibold text-slate-900 dark:text-white">Secure</p>
-                <p className="text-sm text-slate-500">Bank-grade encryption</p>
+                <p className="font-semibold text-slate-900 dark:text-white text-sm sm:text-base">Secure</p>
+                <p className="text-xs sm:text-sm text-slate-500">Bank-grade encryption</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center">
-                <Clock className="w-6 h-6 text-primary" />
+            <div className="flex items-center justify-center sm:justify-start gap-3">
+              <div className="w-10 sm:w-12 h-10 sm:h-12 bg-primary/10 dark:bg-primary/20 rounded-lg sm:rounded-xl flex items-center justify-center">
+                <Clock className="w-5 sm:w-6 h-5 sm:h-6 text-primary" />
               </div>
               <div className="text-left">
-                <p className="font-semibold text-slate-900 dark:text-white">24/7</p>
-                <p className="text-sm text-slate-500">Always available</p>
+                <p className="font-semibold text-slate-900 dark:text-white text-sm sm:text-base">24/7</p>
+                <p className="text-xs sm:text-sm text-slate-500">Always available</p>
               </div>
             </div>
           </div>
