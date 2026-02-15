@@ -3,192 +3,220 @@
 **PRODUCT REQUIREMENTS:**
 1.  **Applications:** A unified web platform containing a public website, an Employer Application, an Employee Application, and an Admin Application.
 2.  **Access Control:** Role-based access for Employees, Employers, and Admins.
-3.  **Authentication:** JWT-based custom authentication, plus social logins (Google, Apple) and biometric options.
-4.  **Core Employee Functionality:** A multi-step registration and onboarding flow, KYC document submission, viewing earned wages, requesting advances, and managing their profile.
-5.  **Core Employer Functionality:** A comprehensive onboarding process, a dashboard, employee management, advance management, reporting, and settings.
-6.  **Dual Role:** A user should be able to act as both an Employer and an Employee using the same login credentials.
-7.  **Admin Functionality:** Verification of employers/employees, review of risk scores, and management of disbursements.
-8.  **Design:** A modern, content-rich, African-fintech aesthetic with a consistent design language, including a dark/light theme.
+3.  **Authentication:** JWT-based custom authentication, plus social logins (Google, Apple).
+4.  **Core Employee Functionality:** Registration, KYC, viewing earned wages, requesting advances, and profile management.
+5.  **Core Employer Functionality:** Onboarding, a dashboard, employee management, advance management, reporting, and settings.
+6.  **Admin Functionality:** A comprehensive portal to manage the entire platform, including employer/employee verification, risk scoring, reconciliation, API health monitoring, and fraud detection.
+7.  **Design:** A modern, content-rich, African-fintech aesthetic with a consistent design language (green gradients, dark/light themes).
 
 **User's preferred language**: English
 
 **what currently exists?**
 - A full-stack application with a FastAPI backend and a React frontend.
-- JWT-based and Google OAuth authentication are implemented.
-- The Employer Onboarding flow and the entire Employer Portal (Dashboard, Advances, Reports, etc.) are functionally complete. The UI for the Employer Portal was recently updated to address specific user feedback regarding icon colors, missing filters, and layout issues.
-- The Employee Portal was redesigned to a dark theme, but this was immediately rejected by the user and has since been reverted to its original light-theme state.
+- JWT and Google OAuth authentication are implemented.
+- The Employer Portal is functionally complete and has undergone several UI/UX refinement cycles based on user feedback.
+- The Admin Portal has been significantly enhanced with a new layout matching the Employer Portal's aesthetic, a new dashboard, and foundational pages for Reconciliation and API Health. Backend endpoints have been created to support these new admin features.
+- A large number of user-requested features and fixes have been implemented across the Employer Portal, including dashboard redesign, making settings pages read-only, adding a functional notification bell, and implementing a pie chart for department distribution.
 
 **Last working item**:
--   **Last item agent was working:** The agent addressed a list of UI/UX issues on the **Employer Portal** based on direct user feedback. This involved:
-    1.  Reverting the recent, undesired dark-theme redesign of the **Employee Portal**.
-    2.  Changing icon backgrounds on the Employer Portal from solid green to a green gradient () to match the main website's branding.
-    3.  Adding date-range selectors, country filters, and currency selectors to the Employer Advances and Employees pages.
-    4.  Fixing an overlapping layout issue with the Department Distribution component on the Employees page.
+-   **Last item agent was working:** The agent implemented a comprehensive set of new features and fixes for the Admin and Employer portals based on detailed user feedback. This involved:
+    1.  Fixing UI inconsistencies (sidebar icon gradients).
+    2.  Implementing functional Request Review button on the Risk Insights page with a new backend endpoint.
+    3.  Fixing data display on the Payroll page.
+    4.  Removing the Add Employee button.
+    5.  Building out a new Admin Portal with a consistent design, including a new Dashboard, Reconciliation page, and API Health page, supported by new backend endpoints.
 -   **Status:** USER VERIFICATION PENDING
--   **Agent Testing Done:** Y (Verified via screenshots. A full test run is pending.)
--   **Which testing method agent to use?** both (The agent should run the testing agent to perform a full regression test on the frontend and backend after these significant UI changes).
+-   **Agent Testing Done:** Y (via , which passed after fixing 2 critical bugs)
+-   **Which testing method agent to use?** both (For verifying the large number of changes and for testing the upcoming Admin Portal features).
 -   **User Testing Done:** N
 
 **All Pending/In progress Issue list**:
--   **Issue 1:** Employer Portal UI/UX Refinements (P0 - HIGHEST)
--   **Issue 2:** Implement Risk Scoring Calculator & Display (P1)
--   **Issue 3:** Implement functional Employer Notifications tab (P2)
--   **Issue 4:** Employee Portal Redesign (P3)
+-   **Issue 1:** Department Distribution Visualization (P0 - HIGHEST)
+-   **Issue 2:** Monthly EAW Deduction Mismatch (P1)
+-   **Issue 3:** Functional Request Review Button (P1)
+-   **Issue 4:** Implement functional Employer Notifications tab (P2)
 
 **Issues Detail:**
--   **Issue 1: Employer Portal UI/UX Refinements**
-    -   **Attempted fixes:** The agent implemented fixes for icon gradients, added date/country/currency filters to the  and  pages, and corrected the  UI layout. These changes were verified via screenshots.
+-   **Issue 1: Department Distribution Visualization**
+    -   **Attempted fixes:** The agent replaced the previous component with a pie chart using the  library in . However, the user mentioned this requirement again after the implementation, suggesting the current visualization may still not meet expectations.
     -   **Next debug checklist:**
-        1.  Run the testing agent to conduct a full regression test on the Employer Portal to ensure all new filters work and no existing functionality was broken.
-        2.  Confirm with the user that the UI/UX changes meet their expectations.
-        3.  Refactor the icon implementation to use the  component that was created but not used, reducing code duplication.
-    -   **Why fix this issue and what will be achieved with the fix?** The user was highly dissatisfied with the previous UI, citing inconsistent branding, layout bugs, and missing features. Fixing this is critical for user satisfaction.
+        1.  Take a screenshot of the current  page, highlighting the pie chart.
+        2.  Use  to confirm with the user if the current pie chart is acceptable or if further changes are needed.
+    -   **Why fix this issue and what will be achieved with the fix?** To satisfy the user's explicit request for better data visualization in a key reporting area.
     -   **Status:** USER VERIFICATION PENDING
     -   **Is recurring issue?** Y
-    -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on other issue:** None
-
--   **Issue 2: Implement Risk Scoring Calculator & Display**
-    -   **Attempted fixes:** None. This is a new feature request.
-    -   **Next debug checklist:**
-        1.  Implement the risk calculation logic in  as per .
-        2.  Create new API endpoints for the Admin portal to run calculations and override scores.
-        3.  Create new API endpoints for the Employer portal to fetch and display risk insights.
-        4.  Build the calculator UI in the Admin Portal.
-        5.  Build the risk insights UI in the Employer Portal, including a page to explain the score and suggest improvements.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a core business logic feature required for assessing employer risk.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on other issue:** None (User provided clarification).
-
--   **Issue 3: Implement functional Employer Notifications tab**
-    -   **Attempted fixes:** None.
-    -   **Next debug checklist:**
-        1.  Define a schema for notifications in the backend.
-        2.  Create backend endpoints to create and fetch notifications for an employer.
-        3.  Build the frontend UI for the Notifications tab to display the list of notifications.
-    -   **Why fix this issue and what will be achieved with the fix?** This is a missing piece of functionality in the Employer Portal.
-    -   **Status:** NOT STARTED
-    -   **Is recurring issue?** N
-    -   **Should Test frontend/backend/both after fix?** Both
-    -   **Blocked on other issue:** None
-
--   **Issue 4: Employee Portal Redesign**
-    -   **Attempted fixes:** A full dark-theme redesign was implemented and then completely reverted at the user's request.
-    -   **Next debug checklist:** Do not proceed with any redesign. Wait for explicit instructions and new design mockups from the user if they wish to revisit this.
-    -   **Why fix this issue and what will be achieved with the fix?** The user was initially unhappy with the employee portal's look, but then rejected the proposed redesign.
-    -   **Status:** BLOCKED
-    -   **Is recurring issue?** Y
     -   **Should Test frontend/backend/both after fix?** Frontend
-    -   **Blocked on other issue:** User clarification and new requirements.
+    -   **Blocked on other issue:** User feedback.
+
+-   **Issue 2: Monthly EAW Deduction Mismatch**
+    -   **Attempted fixes:** The agent modified  to fetch and display data. However, the user reported that the figures on this page do not match the dashboard totals.
+    -   **Next debug checklist:**
+        1.  Log in as the test employer ().
+        2.  Navigate to the Dashboard and note the Total Advances and AVG Fee Rate.
+        3.  Navigate to the Payroll page and compare the Total Monthly Deduction with the dashboard values.
+        4.  Debug the data fetching logic in  and potentially the backend API if the data is incorrect at the source.
+    -   **Why fix this issue and what will be achieved with the fix?** Ensures data consistency and accuracy, which is critical for financial reporting.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on other issue:** None
+
+-   **Issue 3: Functional Request Review Button**
+    -   **Attempted fixes:** The agent created a backend endpoint  and a frontend handler  in  to send a POST request.
+    -   **Next debug checklist:**
+        1.  The frontend is implemented, but the admin side needs a UI to view and manage these requests. This is part of the Build Admin Portal task.
+        2.  Verify the backend correctly saves the request and that it can be retrieved.
+    -   **Why fix this issue and what will be achieved with the fix?** It makes a key workflow functional, allowing employers to interact with admins.
+    -   **Status:** IN PROGRESS
+    -   **Is recurring issue?** N
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on other issue:** Upcoming Task: Admin Portal - Review Management UI.
+
+-   **Issue 4: Implement functional Employer Notifications tab**
+    -   **Attempted fixes:** The agent implemented a functional notification *bell icon* with a dropdown panel. The main Notifications *page/tab* is still a placeholder.
+    -   **Next debug checklist:**
+        1.  Define a schema for notifications in the backend (if not already done for the bell).
+        2.  Create backend endpoints to create and fetch all notifications for an employer.
+        3.  Build the frontend UI for the /employer/notifications page to display a persistent list of all notifications.
+    -   **Why fix this issue and what will be achieved with the fix?** Completes a core piece of missing functionality in the Employer Portal.
+    -   **Status:** NOT STARTED
+    -   **Is recurring issue?** Y
+    -   **Should Test frontend/backend/both after fix?** Both
+    -   **Blocked on other issue:** None
 
 **In progress Task List**:
 None.
 
 **Upcoming and Future Tasks**
-*   **Upcoming Tasks:**
-    *   **P1:** Build the UI and logic for the Admin KYC Review page ().
-    *   **P2:** Implement the dual-role user feature (Employer/Employee).
+*   **Upcoming Tasks (Admin Portal Development - Phase 1):**
+    *   **P0:** Build comprehensive Admin Employees Page for managing employee accounts (activate/deactivate, view details).
+    *   **P1:** Build Admin Employers Page for managing employer accounts.
+    *   **P1:** Implement Fraud Detection Rules: Create a UI for admins to set rules (e.g., flag advances > X amount) and a view to see flagged transactions.
+    *   **P2:** Implement Admin Review Management UI to view and action the review requests submitted by employers.
 *   **Future Tasks:**
-    *   Implement Apple Login functionality.
-    *   Integrate with live Mobile Money APIs.
+    *   Implement a robust Reconciliation system with unique transaction references.
+    *   Implement Dual-role User Feature (Employer/Employee).
+    *   Integrate with live Mobile Money & Payroll APIs.
+    *   Implement Apple Login.
 
 **Completed work in this session**
--   **Reverted Employee Portal Redesign:** Restored , , , and  for the employee role to their original light-theme state.
 -   **Employer Portal UI/UX Overhaul:**
-    -   Updated icons on , , and  to use a green gradient instead of a solid color.
-    -   Added functional date-range, country, and currency filters to  and .
-    -   Fixed the broken layout of the Department Distribution component in .
--   **Verification:** Confirmed all UI changes via screenshots and successfully reverted the employee dashboard.
+    -   Fixed sidebar icon backgrounds to use the correct green gradient.
+    -   Removed Add Employee button from the Employees page.
+    -   Updated Dashboard: Replaced Pending Advances with AVG Fee Rate, increased spacing, and made the Risk Card link to the correct Risk Insights page.
+    -   Updated Reports Page: Removed Pending status and added a month selector.
+    -   Updated Settings Pages: Made Company Info and Payroll Cycle read-only and added a non-editable Employer Code.
+    -   Updated Payroll Page: Added API connection status and monthly deduction summary.
+-   **Risk Insights Page:**
+    -   Made the Request Review button functional by adding a frontend handler and a backend endpoint ().
+-   **Admin Portal Foundation:**
+    -   Created a new  that matches the employer portal's theme.
+    -   Created new backend endpoints for admin stats, reconciliation, and API health.
+    -   Created new frontend pages: , , and .
+    -   Updated  with new routes for the admin portal.
+-   **Testing and Validation:**
+    -   Verified the previous session's Employer Portal UI fixes (filters, gradients) via the testing agent.
+    -   Verified all the latest changes via the testing agent, which also fixed two critical bugs in the process.
 
 **Earlier issues found/mentioned but not fixed**
--   The Notifications tab in the employer portal is not yet functional. This is now tracked as a pending issue.
+-   The core Notifications tab in the employer portal remains a placeholder, though the notification bell is now functional. This is tracked in pending issues.
+-   The user has repeatedly mentioned UI/UX issues, specifically with gradients and data visualization (pie chart). While fixes have been implemented, the recurrence suggests a need for careful verification.
 
 **Known issue recurrence from previous fork**
--   **Issue recurrence in previous fork:** User dissatisfaction with UI/UX.
--   **Recurrence count:** 8+ (The user's latest message rejecting one design and critiquing another is the most recent instance).
--   **Status:** IN PROGRESS (The P0 task directly addresses the user's latest UI complaints).
+-   **Issue recurrence in previous fork:** User dissatisfaction with UI/UX details (e.g., gradients, layouts).
+-   **Recurrence count:** 10+
+-   **Status:** IN PROGRESS (The agent continues to address these as they are raised, but the root cause of inconsistency remains).
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
 *   **Backend:** FastAPI, Pydantic
-*   **Frontend:** React, , State Management (useState, useEffect, useContext), TailwindCSS
+*   **Frontend:** React, , State Management (useState, useEffect, useContext), TailwindCSS, 
 *   **Database:** MongoDB
-*   **Authentication:** JSON Web Tokens (JWT), Emergent-managed Google OAuth
+*   **Authentication:** JWT, Emergent-managed Google OAuth
 *   **API Client:** Axios
 
 **key DB schema**
 -   **users:** 
--   **employees:** 
--   **employers:** 
+-   **admin_review_requests:** 
 
 **changes in tech stack**
--   None.
+-   Added  for data visualization (pie charts).
+-   Added  for icons.
 
 **All files of reference**
--   **Recently Modified:**
+-   **New Files:**
     -   
     -   
     -   
     -   
--   **Recently Reverted:**
+-   **Heavily Modified:**
     -   
     -   
     -   
     -   
--   **User-Provided Artifacts:**
-    -   The image uploaded in message #92 showing the UI comparison.
+    -   
+    -   
+    -   
 
 **Areas that need refactoring**:
--   The agent created a reusable component  but did not use it, instead applying gradient classes directly in multiple files (, ). This should be refactored to use the central component to reduce code duplication and improve maintainability.
+-   A reusable component  was created in a previous session but is still not being used. The agent manually applied gradient classes to icons in both  and the new . This should be refactored to use a single, reusable component to ensure UI consistency and reduce code duplication.
 
 **key api endpoints**
--   No new or modified API endpoints in this session. All work was on the frontend.
+-   **POST** : Creates a new review request from an employer.
+-   **GET** : Fetches statistics for the admin dashboard.
+-   **GET** : Fetches data for the admin reconciliation page.
+-   **GET** : Fetches health status of integrated APIs.
+-   **GET** 
+-   **GET** 
 
 **Critical Info for New Agent**
--   The user is highly sensitive to UI/UX details. Absolute priority should be given to matching their specific aesthetic requests, such as the gradient colors.
--   The last major task (Employee Portal dark theme redesign) was a failure and was completely rejected and reverted. Do not attempt any further redesigns without explicit user direction and mockups.
--   The immediate task is to get the recent Employer Portal UI fixes fully tested (using the testing agent) and approved by the user.
--   The user's priorities are now: 1) Verify Employer Portal fixes, 2) Implement Risk Scoring, 3) Implement Notifications tab.
+-   The user has provided a clear, multi-step roadmap for building out the Admin Portal. This should be your primary focus. Propose a plan that tackles these features sequentially, starting with Employee Management.
+-   The user is highly sensitive to UI/UX details. Before implementing a new feature, double-check that you are using the correct branding (e.g., ).
+-   The Department Distribution pie chart and Monthly EAW Deduction mismatch are recurring points of user feedback. Verify these with the user (with screenshots) before moving on to new features to ensure alignment and build trust.
+-   When building the Admin portal, reuse the theme, colors, and layout patterns established in the new  to maintain consistency.
 
 **documents and test reports created in this job**
-*    (updated for the reverted work, needs updating for the new work)
-*    (This report is for the reverted Employee Portal redesign and is now obsolete).
+-    (Updated)
+-    (New)
+-    (New)
+-   
+-   
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User (LATEST):** Continue
-    -   **Status:** Completed. This was interpreted as an instruction to proceed after the agent's implementation of UI fixes.
-2.  **User:** *Uploaded an image and provided detailed negative feedback.* Requested to undo the Employee Dashboard redesign, fix Employer Portal icon colors to a gradient, add various filters (date, country, currency), and fix the overlapping Department Distribution UI.
-    -   **Status:** In Progress. The agent has implemented all requested fixes and reverted the dashboard. The work is now pending testing and user verification.
+1.  **User (LATEST):** Provided an image showing the incorrect solid green background on sidebar icons and asked for clarification questions on Admin Portal features (fraud, reconciliation).
+    -   **Status:** In Progress. The agent fixed the icon issue and is now building the Admin Portal. The user's clarification questions on fraud/reconciliation need to be addressed in the planning for those features.
+2.  **User:** Provided a large list of new feature requests and bug fixes, including building a robust Admin Portal, fixing UI issues, and adding new functionality to various Employer pages.
+    -   **Status:** Completed. The agent implemented all immediate fixes and built the foundation of the Admin Portal.
+3.  **User:** Provided a large list of UI/UX improvements and feature requests for the Employer Portal.
+    -   **Status:** Completed. The agent implemented all items in this list.
 
 **Project Health Check:**
--   **Broken:** The Notifications tab in the Employer Portal remains non-functional.
--   **Mocked:** API health indicator, live Mobile Money APIs, Apple Login, Biometric Scan UI.
--   **User Dissatisfaction:** **High.** The user rejected a major piece of work and provided a detailed list of complaints about another part of the application. Rebuilding trust by successfully delivering on the latest bug fixes is the top priority.
+-   **Broken:**
+    -   The main Notifications tab in the Employer Portal is not functional.
+    -   Data consistency between the Employer Dashboard and Payroll page is reported as broken.
+-   **Mocked:** Live Payroll API connection, fraud detection logic, reconciliation reports.
+-   **User Dissatisfaction:** **Medium**. The user is actively providing detailed requirements for new, complex features, which is a positive sign. However, they continue to identify recurring UI bugs (gradients) and data inconsistencies, indicating a need for more rigorous verification before presenting work.
 
 **3rd Party Integrations**
 *   
 *   
 *   
-*    (for Emergent-managed Google OAuth)
+*    (for Google OAuth)
+*    (for charts)
+*    (for icons)
 
 **Testing status**
--   **Testing agent used after significant changes:** NO (Not yet for the latest batch of Employer Portal fixes. It was used for the now-reverted Employee Portal redesign).
+-   **Testing agent used after significant changes:** YES (Twice in this session).
 -   **Troubleshoot agent used after agent stuck in loop:** NO
--   **Test files created:** None
--   **Known regressions:** None from the latest fixes, but the Employee Portal is now back to its original state, which the user previously wanted to be redesigned.
+-   **Test files created:** None, but the testing agent performed automated testing and fixes.
+-   **Known regressions:** The user reported a data mismatch between two pages, which could be a regression or a pre-existing bug that is now visible.
 
 **Credentials to test flow:**
-*   **Admin Email:** 
-*   **Admin Password:** 
-*   **Employee Email:** 
-*   **Employee Password:** 
-*   **Employer Email:** 
-*   **Employer Password:** 
+*   **Admin Email:**  | **Password:** 
+*   **Employee Email:**  | **Password:** 
+*   **Employer Email:**  | **Password:** 
 
 **What agent forgot to execute**
--   The agent created a reusable  component but failed to use it, instead duplicating gradient class logic across multiple files. This should be refactored.
--   The agent updated icons in the main content area of the Employer Portal but did not update the sidebar icons, which remain solid green, leading to an inconsistent UI.</analysis>
+-   The agent again failed to refactor the icon implementation to use the reusable  component. This was noted in the previous handoff and remains an item of technical debt, leading to inconsistencies like the one the user just reported. The agent fixed the symptom (the sidebar icons) but not the root cause (code duplication).</analysis>
