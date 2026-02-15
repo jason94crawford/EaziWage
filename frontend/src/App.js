@@ -193,6 +193,11 @@ function App() {
               <EmployerSettings />
             </ProtectedRoute>
           } />
+          <Route path="/employer/risk-insights" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <EmployerRiskInsights />
+            </ProtectedRoute>
+          } />
 
           {/* Admin Routes */}
           <Route path="/admin" element={
