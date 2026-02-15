@@ -2433,6 +2433,87 @@ async def admin_list_employees(user: dict = Depends(require_role(UserRole.ADMIN)
         emp["employer_name"] = employer_cache.get(employer_id, "Unknown")
     return employees
 
+# Admin - Get single employee with full details and advance history
+@api_router.get("/admin/employees/{employee_id}")
+async def admin_get_employee_detail(
+    employee_id: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get detailed employee info including advance history"""
+    employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    # Get employer name
+    if employee.get("employer_id"):
+        employer = await db.employers.find_one({"id": employee["employer_id"]}, {"_id": 0})
+        employee["employer_name"] = employer.get("company_name") if employer else "Unknown"
+    
+    # Get user details
+    user_data = await db.users.find_one({"id": employee.get("user_id")}, {"_id": 0})
+    if user_data:
+        employee["email"] = user_data.get("email")
+        employee["phone"] = user_data.get("phone")
+        employee["full_name"] = user_data.get("full_name")
+    
+    # Get advance history
+    advances = await db.advances.find(
+        {"employee_id": employee_id}, 
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+    
+    # Get KYC documents
+    kyc_docs = await db.kyc_documents.find(
+        {"user_id": employee.get("user_id")},
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Calculate advance statistics
+    total_advances = sum(a.get("amount", 0) for a in advances if a.get("status") in ["approved", "disbursed"])
+    pending_repayment = sum(a.get("amount", 0) for a in advances if a.get("status") == "disbursed")
+    total_fees_paid = sum(a.get("fee_amount", 0) for a in advances if a.get("status") == "disbursed")
+    
+    return {
+        **employee,
+        "advances": advances,
+        "kyc_documents": kyc_docs,
+        "advance_stats": {
+            "total_advances": total_advances,
+            "pending_repayment": pending_repayment,
+            "total_fees_paid": total_fees_paid,
+            "advance_count": len([a for a in advances if a.get("status") in ["approved", "disbursed"]])
+        }
+    }
+
+# Admin - Update employee details
+@api_router.put("/admin/employees/{employee_id}")
+async def admin_update_employee(
+    employee_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update employee details (limited fields)"""
+    allowed_fields = [
+        "job_title", "department", "monthly_salary", "employment_type",
+        "bank_name", "bank_account", "mobile_money_provider", "mobile_money_number"
+    ]
+    
+    update_data = {k: v for k, v in data.items() if k in allowed_fields}
+    update_data["updated_at"] = datetime.now(timezone.utc).isoformat()
+    
+    # Recalculate advance limit if salary changed
+    if "monthly_salary" in update_data:
+        update_data["advance_limit"] = update_data["monthly_salary"] * 0.5
+    
+    result = await db.employees.update_one(
+        {"id": employee_id},
+        {"$set": update_data}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    return {"message": "Employee updated successfully"}
+
 # Admin - Update employee status
 @api_router.patch("/admin/employees/{employee_id}/status")
 async def admin_update_employee_status(
