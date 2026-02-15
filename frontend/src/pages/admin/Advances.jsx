@@ -1,40 +1,326 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  CreditCard, Search, CheckCircle2, XCircle, Clock,
-  Eye, MoreHorizontal, Wallet, ArrowUpRight
+  CreditCard, Search, CheckCircle2, XCircle, Clock, Eye, Download,
+  MoreHorizontal, Wallet, ArrowUpRight, RefreshCw, AlertTriangle,
+  DollarSign, Building2, User, Filter
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
-import { Card, CardContent } from '../../components/ui/card';
+import { Badge } from '../../components/ui/badge';
 import { 
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow 
-} from '../../components/ui/table';
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue 
+} from '../../components/ui/select';
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger
 } from '../../components/ui/dropdown-menu';
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
-} from '../../components/ui/dialog';
-import { Badge } from '../../components/ui/badge';
-import { DashboardLayout } from '../../components/layout/DashboardLayout';
-import { advanceApi } from '../../lib/api';
-import { formatCurrency, formatDateTime, getStatusColor, cn } from '../../lib/utils';
+import { AdminPortalLayout } from '../../components/admin/AdminLayout';
+import { formatCurrency, formatDateTime, cn } from '../../lib/utils';
 import { toast } from 'sonner';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
+
+// Gradient Icon Box
+const GradientIconBox = ({ icon: Icon, size = 'md', variant = 'purple' }) => {
+  const sizes = { sm: 'w-10 h-10', md: 'w-12 h-12', lg: 'w-14 h-14' };
+  const iconSizes = { sm: 'w-5 h-5', md: 'w-6 h-6', lg: 'w-7 h-7' };
+  const variants = {
+    purple: 'from-purple-600 to-indigo-600',
+    green: 'from-emerald-500 to-green-600',
+    amber: 'from-amber-500 to-orange-500',
+    red: 'from-red-500 to-rose-500',
+    blue: 'from-blue-500 to-cyan-500'
+  };
+  
+  return (
+    <div className={cn(
+      "rounded-xl flex items-center justify-center bg-gradient-to-br shadow-lg",
+      sizes[size], variants[variant]
+    )}>
+      <Icon className={cn("text-white", iconSizes[size])} />
+    </div>
+  );
+};
+
+// Metric Card
+const MetricCard = ({ icon, label, value, subtext, variant = 'purple' }) => (
+  <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-5 border border-slate-200/50 dark:border-slate-700/30">
+    <div className="flex items-start justify-between">
+      <GradientIconBox icon={icon} size="md" variant={variant} />
+    </div>
+    <div className="mt-4">
+      <p className="text-2xl font-bold text-slate-900 dark:text-white">{value}</p>
+      <p className="text-sm text-slate-600 dark:text-slate-400">{label}</p>
+      {subtext && <p className="text-xs text-slate-500 mt-1">{subtext}</p>}
+    </div>
+  </div>
+);
+
+// Status Badge
+const StatusBadge = ({ status }) => {
+  const config = {
+    pending: { bg: 'bg-amber-100 dark:bg-amber-500/20', text: 'text-amber-700 dark:text-amber-300' },
+    approved: { bg: 'bg-blue-100 dark:bg-blue-500/20', text: 'text-blue-700 dark:text-blue-300' },
+    disbursed: { bg: 'bg-emerald-100 dark:bg-emerald-500/20', text: 'text-emerald-700 dark:text-emerald-300' },
+    rejected: { bg: 'bg-red-100 dark:bg-red-500/20', text: 'text-red-700 dark:text-red-300' },
+    repaid: { bg: 'bg-slate-100 dark:bg-slate-500/20', text: 'text-slate-700 dark:text-slate-300' },
+  };
+  const { bg, text } = config[status] || config.pending;
+  return <span className={cn("px-3 py-1 rounded-full text-xs font-semibold capitalize", bg, text)}>{status}</span>;
+};
+
+// Filter Button
+const FilterButton = ({ active, onClick, children, count }) => (
+  <button
+    onClick={onClick}
+    className={cn(
+      "px-4 py-2 rounded-xl text-sm font-medium transition-all relative",
+      active 
+        ? "bg-purple-600 text-white shadow-lg shadow-purple-500/25"
+        : "bg-white/60 dark:bg-slate-800/60 text-slate-600 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-800"
+    )}
+  >
+    {children}
+    {count > 0 && (
+      <span className={cn(
+        "absolute -top-1 -right-1 w-5 h-5 text-xs rounded-full flex items-center justify-center",
+        active ? "bg-white text-purple-600" : "bg-purple-500 text-white"
+      )}>
+        {count}
+      </span>
+    )}
+  </button>
+);
+
+// Advance Row
+const AdvanceRow = ({ advance, onViewDetails, onApprove, onReject, onDisburse }) => (
+  <div className="flex items-center gap-4 p-4 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors group">
+    {/* Icon */}
+    <div className={cn(
+      "w-10 h-10 rounded-xl flex items-center justify-center shrink-0",
+      advance.status === 'pending' ? "bg-amber-100 dark:bg-amber-500/20" :
+      advance.status === 'approved' ? "bg-blue-100 dark:bg-blue-500/20" :
+      advance.status === 'disbursed' ? "bg-emerald-100 dark:bg-emerald-500/20" :
+      advance.status === 'rejected' ? "bg-red-100 dark:bg-red-500/20" :
+      "bg-slate-100 dark:bg-slate-500/20"
+    )}>
+      <CreditCard className={cn(
+        "w-5 h-5",
+        advance.status === 'pending' ? "text-amber-600" :
+        advance.status === 'approved' ? "text-blue-600" :
+        advance.status === 'disbursed' ? "text-emerald-600" :
+        advance.status === 'rejected' ? "text-red-600" :
+        "text-slate-600"
+      )} />
+    </div>
+    
+    {/* Employee Info */}
+    <div className="flex-1 min-w-0">
+      <p className="font-semibold text-slate-900 dark:text-white truncate">{advance.employee_name}</p>
+      <p className="text-xs text-slate-500 dark:text-slate-400">{advance.employer_name}</p>
+    </div>
+    
+    {/* Amount */}
+    <div className="text-right w-28">
+      <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(advance.amount)}</p>
+      <p className="text-xs text-slate-500">Fee: {formatCurrency(advance.fee_amount)}</p>
+    </div>
+    
+    {/* Net Amount */}
+    <div className="text-right w-28 hidden md:block">
+      <p className="font-bold text-purple-600">{formatCurrency(advance.net_amount)}</p>
+      <p className="text-xs text-slate-500">Net</p>
+    </div>
+    
+    {/* Method */}
+    <div className="w-24 hidden lg:block">
+      <p className="text-sm text-slate-700 dark:text-slate-300 capitalize">{advance.disbursement_method?.replace('_', ' ')}</p>
+    </div>
+    
+    {/* Status */}
+    <div className="w-24">
+      <StatusBadge status={advance.status} />
+    </div>
+    
+    {/* Date */}
+    <div className="w-32 hidden xl:block">
+      <p className="text-sm text-slate-600 dark:text-slate-400">{formatDateTime(advance.created_at)}</p>
+    </div>
+    
+    {/* Actions */}
+    <div className="flex items-center gap-1">
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button className="p-2 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-colors">
+            <MoreHorizontal className="w-4 h-4" />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuItem onClick={() => onViewDetails(advance)}>
+            <Eye className="w-4 h-4 mr-2" /> View Details
+          </DropdownMenuItem>
+          {advance.status === 'pending' && (
+            <>
+              <DropdownMenuItem onClick={() => onApprove(advance.id)} className="text-emerald-600">
+                <CheckCircle2 className="w-4 h-4 mr-2" /> Approve
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => onReject(advance.id)} className="text-red-600">
+                <XCircle className="w-4 h-4 mr-2" /> Reject
+              </DropdownMenuItem>
+            </>
+          )}
+          {advance.status === 'approved' && (
+            <DropdownMenuItem onClick={() => onDisburse(advance.id)} className="text-purple-600">
+              <ArrowUpRight className="w-4 h-4 mr-2" /> Disburse
+            </DropdownMenuItem>
+          )}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </div>
+  </div>
+);
+
+// Detail Modal
+const AdvanceDetailModal = ({ advance, isOpen, onClose, onApprove, onReject, onDisburse, loading }) => {
+  if (!isOpen || !advance) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center">
+              <CreditCard className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-white">Advance Request</h2>
+              <p className="text-white/80 text-sm">ID: {advance.id?.substring(0, 8)}...</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-slate-500">Employee</p>
+              <p className="font-semibold text-slate-900 dark:text-white">{advance.employee_name}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500">Employer</p>
+              <p className="font-semibold text-slate-900 dark:text-white">{advance.employer_name}</p>
+            </div>
+          </div>
+          
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-4 space-y-2">
+            <div className="flex justify-between">
+              <span className="text-slate-600 dark:text-slate-400">Amount Requested</span>
+              <span className="font-medium text-slate-900 dark:text-white">{formatCurrency(advance.amount)}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-slate-600 dark:text-slate-400">Service Fee ({advance.fee_percentage?.toFixed(1)}%)</span>
+              <span className="font-medium text-red-600">-{formatCurrency(advance.fee_amount)}</span>
+            </div>
+            <div className="flex justify-between border-t border-slate-200 dark:border-slate-700 pt-2">
+              <span className="font-semibold text-slate-900 dark:text-white">Net Amount</span>
+              <span className="font-bold text-purple-600">{formatCurrency(advance.net_amount)}</span>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <p className="text-sm text-slate-500">Disbursement Method</p>
+              <p className="font-medium capitalize text-slate-900 dark:text-white">{advance.disbursement_method?.replace('_', ' ')}</p>
+            </div>
+            <div>
+              <p className="text-sm text-slate-500">Status</p>
+              <StatusBadge status={advance.status} />
+            </div>
+          </div>
+          
+          {advance.disbursement_details && (
+            <div>
+              <p className="text-sm text-slate-500">Disbursement Details</p>
+              <p className="font-mono text-sm text-slate-700 dark:text-slate-300">
+                {advance.disbursement_details.provider || advance.disbursement_details.bank}: {advance.disbursement_details.number || advance.disbursement_details.account}
+              </p>
+            </div>
+          )}
+          
+          {advance.reason && (
+            <div>
+              <p className="text-sm text-slate-500">Reason</p>
+              <p className="text-slate-700 dark:text-slate-300">{advance.reason}</p>
+            </div>
+          )}
+          
+          {advance.flagged && (
+            <div className="bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 rounded-xl p-3">
+              <div className="flex items-center gap-2 text-red-700 dark:text-red-400">
+                <AlertTriangle className="w-4 h-4" />
+                <span className="font-medium">Flagged: {advance.flag_type}</span>
+              </div>
+              {advance.flag_reason && (
+                <p className="text-sm text-red-600 dark:text-red-400 mt-1">{advance.flag_reason}</p>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-3 p-6 border-t border-slate-200 dark:border-slate-700">
+          <Button variant="outline" onClick={onClose} className="flex-1">Close</Button>
+          {advance.status === 'pending' && (
+            <>
+              <Button 
+                variant="outline" 
+                onClick={() => onReject(advance.id)} 
+                disabled={loading}
+                className="border-red-200 text-red-600 hover:bg-red-50"
+              >
+                <XCircle className="w-4 h-4 mr-2" /> Reject
+              </Button>
+              <Button 
+                onClick={() => onApprove(advance.id)} 
+                disabled={loading}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white"
+              >
+                <CheckCircle2 className="w-4 h-4 mr-2" /> Approve
+              </Button>
+            </>
+          )}
+          {advance.status === 'approved' && (
+            <Button 
+              onClick={() => onDisburse(advance.id)} 
+              disabled={loading}
+              className="bg-purple-600 hover:bg-purple-700 text-white flex-1"
+            >
+              <ArrowUpRight className="w-4 h-4 mr-2" /> Disburse Now
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function AdminAdvances() {
   const [advances, setAdvances] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedAdvance, setSelectedAdvance] = useState(null);
-  const [showDetailDialog, setShowDetailDialog] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const [actionLoading, setActionLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
   const fetchAdvances = async () => {
+    setLoading(true);
     try {
-      const params = statusFilter ? { status: statusFilter } : {};
-      const response = await advanceApi.list(params);
-      setAdvances(response.data);
+      const token = localStorage.getItem('eaziwage_token');
+      const response = await fetch(`${API_URL}/api/admin/advances`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAdvances(data);
+      }
     } catch (err) {
       console.error('Failed to fetch advances:', err);
     } finally {
@@ -44,17 +330,26 @@ export default function AdminAdvances() {
 
   useEffect(() => {
     fetchAdvances();
-  }, [statusFilter]);
+  }, []);
 
   const handleApprove = async (advanceId) => {
     setActionLoading(true);
     try {
-      await advanceApi.approve(advanceId);
-      toast.success('Advance approved');
-      fetchAdvances();
-      setShowDetailDialog(false);
+      const token = localStorage.getItem('eaziwage_token');
+      const response = await fetch(`${API_URL}/api/advances/${advanceId}/approve`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        toast.success('Advance approved');
+        fetchAdvances();
+        setShowDetailModal(false);
+      } else {
+        const err = await response.json();
+        toast.error(err.detail || 'Failed to approve');
+      }
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Failed to approve');
+      toast.error('Failed to approve');
     } finally {
       setActionLoading(false);
     }
@@ -63,12 +358,22 @@ export default function AdminAdvances() {
   const handleDisburse = async (advanceId) => {
     setActionLoading(true);
     try {
-      const response = await advanceApi.disburse(advanceId);
-      toast.success(`Disbursement initiated: ${response.data.reference}`);
-      fetchAdvances();
-      setShowDetailDialog(false);
+      const token = localStorage.getItem('eaziwage_token');
+      const response = await fetch(`${API_URL}/api/advances/${advanceId}/disburse`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        toast.success(`Disbursement initiated: ${data.reference}`);
+        fetchAdvances();
+        setShowDetailModal(false);
+      } else {
+        const err = await response.json();
+        toast.error(err.detail || 'Failed to disburse');
+      }
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Failed to disburse');
+      toast.error('Failed to disburse');
     } finally {
       setActionLoading(false);
     }
@@ -77,250 +382,180 @@ export default function AdminAdvances() {
   const handleReject = async (advanceId) => {
     setActionLoading(true);
     try {
-      await advanceApi.reject(advanceId, 'Rejected by admin');
-      toast.success('Advance rejected');
-      fetchAdvances();
-      setShowDetailDialog(false);
+      const token = localStorage.getItem('eaziwage_token');
+      const response = await fetch(`${API_URL}/api/advances/${advanceId}/reject?reason=Rejected by admin`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        toast.success('Advance rejected');
+        fetchAdvances();
+        setShowDetailModal(false);
+      } else {
+        const err = await response.json();
+        toast.error(err.detail || 'Failed to reject');
+      }
     } catch (err) {
-      toast.error(err.response?.data?.detail || 'Failed to reject');
+      toast.error('Failed to reject');
     } finally {
       setActionLoading(false);
     }
   };
 
-  const filteredAdvances = advances.filter(a => 
-    a.employee_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    a.employer_name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter advances
+  const filteredAdvances = advances.filter(a => {
+    if (statusFilter && a.status !== statusFilter) return false;
+    if (searchTerm) {
+      const search = searchTerm.toLowerCase();
+      return (
+        a.employee_name?.toLowerCase().includes(search) ||
+        a.employer_name?.toLowerCase().includes(search)
+      );
+    }
+    return true;
+  });
 
-  const getStatusBadge = (status) => {
-    const colors = {
-      pending: 'bg-amber-100 text-amber-700',
-      approved: 'bg-blue-100 text-blue-700',
-      disbursed: 'bg-green-100 text-green-700',
-      rejected: 'bg-red-100 text-red-700',
-      repaid: 'bg-slate-100 text-slate-700',
-    };
-    return <Badge className={cn(colors[status] || 'bg-slate-100 text-slate-700')}>{status}</Badge>;
+  // Stats
+  const stats = {
+    total: advances.length,
+    pending: advances.filter(a => a.status === 'pending').length,
+    approved: advances.filter(a => a.status === 'approved').length,
+    disbursed: advances.filter(a => a.status === 'disbursed').length,
+    total_amount: advances.reduce((sum, a) => sum + (a.amount || 0), 0),
+    total_fees: advances.reduce((sum, a) => sum + (a.fee_amount || 0), 0),
   };
 
   return (
-    <DashboardLayout role="admin">
-      <div className="space-y-6">
+    <AdminPortalLayout>
+      <div className="max-w-7xl mx-auto space-y-6" data-testid="admin-advances-page">
         {/* Header */}
-        <div>
-          <h1 className="font-heading text-2xl font-bold text-slate-900">Advances</h1>
-          <p className="text-slate-500 mt-1">Manage wage advance requests</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Advances</h1>
+            <p className="text-slate-500 dark:text-slate-400 mt-1">
+              Manage wage advance requests
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <Button variant="outline" className="bg-white/60 dark:bg-slate-800/60" onClick={fetchAdvances}>
+              <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+            </Button>
+            <Button variant="outline" className="bg-white/60 dark:bg-slate-800/60">
+              <Download className="w-4 h-4 mr-2" /> Export
+            </Button>
+          </div>
         </div>
 
-        {/* Filters */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <Input
-                  placeholder="Search by employee or employer..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                  data-testid="search-advances"
-                />
-              </div>
-              <div className="flex gap-2 flex-wrap">
-                {['', 'pending', 'approved', 'disbursed'].map((status) => (
-                  <Button
-                    key={status}
-                    variant={statusFilter === status ? 'default' : 'outline'}
-                    onClick={() => setStatusFilter(status)}
-                    className={statusFilter === status ? 'bg-primary' : ''}
-                    size="sm"
-                  >
-                    {status || 'All'}
-                  </Button>
-                ))}
-              </div>
+        {/* Stats Grid */}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <MetricCard icon={CreditCard} label="Total Advances" value={stats.total} variant="purple" />
+          <MetricCard icon={Clock} label="Pending" value={stats.pending} subtext="Awaiting approval" variant="amber" />
+          <MetricCard icon={DollarSign} label="Total Disbursed" value={formatCurrency(stats.total_amount)} variant="green" />
+          <MetricCard icon={Wallet} label="Total Fees" value={formatCurrency(stats.total_fees)} variant="blue" />
+        </div>
+
+        {/* Search & Filters */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-4 border border-slate-200/50 dark:border-slate-700/30">
+          <div className="flex flex-col lg:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+              <Input
+                placeholder="Search by employee or employer..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-12 h-11 bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 rounded-xl"
+                data-testid="search-advances"
+              />
             </div>
-          </CardContent>
-        </Card>
+            
+            <div className="flex items-center gap-2 flex-wrap">
+              <FilterButton active={statusFilter === ''} onClick={() => setStatusFilter('')}>
+                All
+              </FilterButton>
+              <FilterButton active={statusFilter === 'pending'} onClick={() => setStatusFilter('pending')} count={stats.pending}>
+                Pending
+              </FilterButton>
+              <FilterButton active={statusFilter === 'approved'} onClick={() => setStatusFilter('approved')}>
+                Approved
+              </FilterButton>
+              <FilterButton active={statusFilter === 'disbursed'} onClick={() => setStatusFilter('disbursed')}>
+                Disbursed
+              </FilterButton>
+              <FilterButton active={statusFilter === 'rejected'} onClick={() => setStatusFilter('rejected')}>
+                Rejected
+              </FilterButton>
+            </div>
+          </div>
+        </div>
 
-        {/* Table */}
-        <Card>
-          <CardContent className="p-0">
-            {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        {/* Advances List */}
+        <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/30 overflow-hidden">
+          {loading ? (
+            <div className="flex items-center justify-center py-16">
+              <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+            </div>
+          ) : filteredAdvances.length === 0 ? (
+            <div className="text-center py-16 px-4">
+              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <CreditCard className="w-8 h-8 text-purple-600" />
               </div>
-            ) : filteredAdvances.length === 0 ? (
-              <div className="text-center py-12 text-slate-500">
-                <CreditCard className="w-12 h-12 mx-auto mb-3 text-slate-300" />
-                <p>No advances found</p>
+              <h3 className="font-semibold text-slate-900 dark:text-white">No advances found</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                {searchTerm || statusFilter ? 'Try adjusting your search or filters' : 'No advance requests yet'}
+              </p>
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-200/50 dark:divide-slate-700/30">
+              {/* Header */}
+              <div className="hidden lg:flex items-center gap-4 px-4 py-3 bg-slate-50/50 dark:bg-slate-800/30 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <div className="w-10" />
+                <div className="flex-1">Employee</div>
+                <div className="w-28 text-right">Amount</div>
+                <div className="w-28 text-right hidden md:block">Net</div>
+                <div className="w-24 hidden lg:block">Method</div>
+                <div className="w-24">Status</div>
+                <div className="w-32 hidden xl:block">Date</div>
+                <div className="w-10" />
               </div>
-            ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Employee</TableHead>
-                    <TableHead>Employer</TableHead>
-                    <TableHead>Amount</TableHead>
-                    <TableHead>Fee</TableHead>
-                    <TableHead>Net Amount</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Requested</TableHead>
-                    <TableHead></TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredAdvances.map((advance) => (
-                    <TableRow key={advance.id} data-testid={`advance-row-${advance.id}`}>
-                      <TableCell className="font-medium">{advance.employee_name}</TableCell>
-                      <TableCell>{advance.employer_name}</TableCell>
-                      <TableCell>{formatCurrency(advance.amount)}</TableCell>
-                      <TableCell className="text-slate-500">
-                        {formatCurrency(advance.fee_amount)} ({advance.fee_percentage.toFixed(1)}%)
-                      </TableCell>
-                      <TableCell className="font-medium text-primary">
-                        {formatCurrency(advance.net_amount)}
-                      </TableCell>
-                      <TableCell className="capitalize">{advance.disbursement_method?.replace('_', ' ')}</TableCell>
-                      <TableCell>{getStatusBadge(advance.status)}</TableCell>
-                      <TableCell>{formatDateTime(advance.created_at)}</TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" data-testid={`advance-actions-${advance.id}`}>
-                              <MoreHorizontal className="w-4 h-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuItem onClick={() => { setSelectedAdvance(advance); setShowDetailDialog(true); }}>
-                              <Eye className="w-4 h-4 mr-2" />
-                              View Details
-                            </DropdownMenuItem>
-                            {advance.status === 'pending' && (
-                              <>
-                                <DropdownMenuItem onClick={() => handleApprove(advance.id)}>
-                                  <CheckCircle2 className="w-4 h-4 mr-2 text-green-600" />
-                                  Approve
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleReject(advance.id)}>
-                                  <XCircle className="w-4 h-4 mr-2 text-red-600" />
-                                  Reject
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                            {advance.status === 'approved' && (
-                              <DropdownMenuItem onClick={() => handleDisburse(advance.id)}>
-                                <ArrowUpRight className="w-4 h-4 mr-2 text-primary" />
-                                Disburse
-                              </DropdownMenuItem>
-                            )}
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            )}
-          </CardContent>
-        </Card>
+              
+              {filteredAdvances.map(advance => (
+                <AdvanceRow 
+                  key={advance.id} 
+                  advance={advance}
+                  onViewDetails={(a) => {
+                    setSelectedAdvance(a);
+                    setShowDetailModal(true);
+                  }}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onDisburse={handleDisburse}
+                />
+              ))}
+            </div>
+          )}
+        </div>
 
-        {/* Detail Dialog */}
-        <Dialog open={showDetailDialog} onOpenChange={setShowDetailDialog}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Advance Details</DialogTitle>
-              <DialogDescription>Review and process this advance request</DialogDescription>
-            </DialogHeader>
-            {selectedAdvance && (
-              <div className="space-y-4 py-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-slate-500">Employee</p>
-                    <p className="font-medium">{selectedAdvance.employee_name}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Employer</p>
-                    <p className="font-medium">{selectedAdvance.employer_name}</p>
-                  </div>
-                </div>
-                <div className="bg-slate-50 rounded-lg p-4 space-y-2">
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Amount Requested</span>
-                    <span className="font-medium">{formatCurrency(selectedAdvance.amount)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-600">Service Fee ({selectedAdvance.fee_percentage.toFixed(1)}%)</span>
-                    <span className="font-medium">-{formatCurrency(selectedAdvance.fee_amount)}</span>
-                  </div>
-                  <div className="flex justify-between border-t pt-2">
-                    <span className="font-medium">Net Amount</span>
-                    <span className="font-bold text-primary">{formatCurrency(selectedAdvance.net_amount)}</span>
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <p className="text-sm text-slate-500">Disbursement Method</p>
-                    <p className="font-medium capitalize">{selectedAdvance.disbursement_method?.replace('_', ' ')}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-slate-500">Status</p>
-                    {getStatusBadge(selectedAdvance.status)}
-                  </div>
-                </div>
-                {selectedAdvance.disbursement_details && (
-                  <div>
-                    <p className="text-sm text-slate-500">Disbursement Details</p>
-                    <p className="font-mono text-sm">
-                      {selectedAdvance.disbursement_details.provider || selectedAdvance.disbursement_details.bank}: {selectedAdvance.disbursement_details.number || selectedAdvance.disbursement_details.account}
-                    </p>
-                  </div>
-                )}
-                {selectedAdvance.reason && (
-                  <div>
-                    <p className="text-sm text-slate-500">Reason</p>
-                    <p className="text-slate-700">{selectedAdvance.reason}</p>
-                  </div>
-                )}
-              </div>
-            )}
-            <DialogFooter>
-              {selectedAdvance?.status === 'pending' && (
-                <>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleReject(selectedAdvance.id)}
-                    disabled={actionLoading}
-                  >
-                    <XCircle className="w-4 h-4 mr-2" />
-                    Reject
-                  </Button>
-                  <Button
-                    className="bg-primary"
-                    onClick={() => handleApprove(selectedAdvance.id)}
-                    disabled={actionLoading}
-                  >
-                    <CheckCircle2 className="w-4 h-4 mr-2" />
-                    Approve
-                  </Button>
-                </>
-              )}
-              {selectedAdvance?.status === 'approved' && (
-                <Button
-                  className="bg-primary"
-                  onClick={() => handleDisburse(selectedAdvance.id)}
-                  disabled={actionLoading}
-                >
-                  <ArrowUpRight className="w-4 h-4 mr-2" />
-                  Disburse Now
-                </Button>
-              )}
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        {/* Summary */}
+        {filteredAdvances.length > 0 && (
+          <div className="text-sm text-slate-500">
+            Showing {filteredAdvances.length} of {advances.length} advances
+          </div>
+        )}
       </div>
-    </DashboardLayout>
+
+      {/* Detail Modal */}
+      <AdvanceDetailModal
+        advance={selectedAdvance}
+        isOpen={showDetailModal}
+        onClose={() => {
+          setShowDetailModal(false);
+          setSelectedAdvance(null);
+        }}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        onDisburse={handleDisburse}
+        loading={actionLoading}
+      />
+    </AdminPortalLayout>
   );
 }
