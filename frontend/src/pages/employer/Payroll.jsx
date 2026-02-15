@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Upload, Download, Calendar, FileText, CheckCircle2, Clock, AlertCircle,
-  TrendingUp, Users, DollarSign, BarChart3, ChevronRight, Eye, Trash2
+  TrendingUp, Users, DollarSign, BarChart3, ChevronRight, Eye, Trash2, Wifi, CreditCard
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
