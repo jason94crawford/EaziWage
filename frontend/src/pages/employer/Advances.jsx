@@ -269,10 +269,6 @@ export default function EmployerAdvances() {
               </FilterButton>
               <FilterButton active={statusFilter === 'disbursed'} onClick={() => setStatusFilter('disbursed')}>
                 Disbursed
-                Approved
-              </FilterButton>
-              <FilterButton active={statusFilter === 'disbursed'} onClick={() => setStatusFilter('disbursed')}>
-                Disbursed
               </FilterButton>
               <FilterButton active={statusFilter === 'rejected'} onClick={() => setStatusFilter('rejected')}>
                 Rejected
