@@ -839,6 +839,74 @@ export default function AdminEmployees() {
     setShowQuickActions(false);
   };
 
+  // Bulk action handlers
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredEmployees.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredEmployees.map(e => e.id)));
+    }
+  };
+
+  const toggleSelectOne = (id) => {
+    const newSet = new Set(selectedIds);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    setSelectedIds(newSet);
+  };
+
+  const handleBulkAction = async (actionType) => {
+    if (selectedIds.size === 0) {
+      toast.error('No employees selected');
+      return;
+    }
+    
+    setBulkActionLoading(true);
+    const token = localStorage.getItem('eaziwage_token');
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const id of selectedIds) {
+      try {
+        if (actionType === 'kyc_approve') {
+          await fetch(`${API_URL}/api/admin/employees/${id}/kyc`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ kyc_status: 'approved' })
+          });
+        } else {
+          await fetch(`${API_URL}/api/admin/employees/${id}/status`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ status: actionType })
+          });
+        }
+        successCount++;
+      } catch (err) {
+        failCount++;
+      }
+    }
+
+    setBulkActionLoading(false);
+    setSelectedIds(new Set());
+    fetchEmployees();
+
+    if (failCount === 0) {
+      toast.success(`Successfully updated ${successCount} employees`);
+    } else {
+      toast.warning(`Updated ${successCount} employees, ${failCount} failed`);
+    }
+  };
+
   // Filter employees
   const filteredEmployees = employees.filter(e => {
     if (statusFilter && e.status !== statusFilter) return false;
