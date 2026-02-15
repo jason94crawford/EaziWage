@@ -568,9 +568,6 @@ export default function EmployerEmployees() {
                 {seeding ? 'Seeding...' : 'Seed 60 Demo Employees'}
               </Button>
             )}
-            <Button className="bg-primary text-white" data-testid="add-employee-btn">
-              <Plus className="w-4 h-4 mr-2" /> Add Employee
-            </Button>
           </div>
         </div>
 
