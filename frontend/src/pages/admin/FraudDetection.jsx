@@ -377,56 +377,30 @@ const ReviewModal = ({ transaction, isOpen, onClose, onAction }) => {
 
 export default function FraudDetection() {
   const [activeTab, setActiveTab] = useState('rules');
-  const [rules, setRules] = useState([
-    {
-      id: '1',
-      name: 'High Amount Alert',
-      type: 'amount_threshold',
-      description: 'Flag advances exceeding KES 50,000',
-      threshold: 50000,
-      threshold_display: 'KES 50,000',
-      severity: 'high',
-      enabled: true,
-      action: 'flag',
-      trigger_count: 12
-    },
-    {
-      id: '2',
-      name: 'Frequency Limit',
-      type: 'frequency',
-      description: 'Maximum 3 advance requests per day',
-      threshold: 3,
-      threshold_display: '3 per day',
-      severity: 'medium',
-      enabled: true,
-      action: 'flag',
-      trigger_count: 8
-    },
-    {
-      id: '3',
-      name: 'New Employee Velocity',
-      type: 'velocity',
-      description: 'Flag new employees requesting > KES 20,000 in first week',
-      threshold: 20000,
-      threshold_display: 'KES 20,000/week (new)',
-      severity: 'high',
-      enabled: false,
-      action: 'block',
-      trigger_count: 3
-    }
-  ]);
+  const [rules, setRules] = useState([]);
   const [flaggedTransactions, setFlaggedTransactions] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [showRuleModal, setShowRuleModal] = useState(false);
   const [editingRule, setEditingRule] = useState(null);
   const [reviewTransaction, setReviewTransaction] = useState(null);
 
-  useEffect(() => {
-    fetchFlaggedTransactions();
-  }, []);
+  // Fetch fraud rules from backend
+  const fetchRules = async () => {
+    try {
+      const token = localStorage.getItem('eaziwage_token');
+      const response = await fetch(`${API_URL}/api/admin/fraud-rules`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setRules(data);
+      }
+    } catch (err) {
+      console.error('Failed to fetch fraud rules:', err);
+    }
+  };
 
   const fetchFlaggedTransactions = async () => {
-    setLoading(true);
     try {
       const token = localStorage.getItem('eaziwage_token');
       const response = await fetch(`${API_URL}/api/admin/advances/flagged`, {
@@ -438,44 +412,93 @@ export default function FraudDetection() {
       }
     } catch (err) {
       console.error('Failed to fetch flagged transactions:', err);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const handleToggleRule = (ruleId) => {
-    setRules(prev => prev.map(r => 
-      r.id === ruleId ? { ...r, enabled: !r.enabled } : r
-    ));
-    toast.success('Rule updated');
+  const fetchData = async () => {
+    setLoading(true);
+    await Promise.all([fetchRules(), fetchFlaggedTransactions()]);
+    setLoading(false);
   };
 
-  const handleDeleteRule = (ruleId) => {
-    setRules(prev => prev.filter(r => r.id !== ruleId));
-    toast.success('Rule deleted');
-  };
+  useEffect(() => {
+    fetchData();
+  }, []);
 
-  const handleSaveRule = (ruleData) => {
-    const thresholdDisplay = 
-      ruleData.type === 'amount_threshold' ? `KES ${ruleData.threshold.toLocaleString()}` :
-      ruleData.type === 'frequency' ? `${ruleData.threshold} per day` :
-      ruleData.type === 'velocity' ? `KES ${ruleData.threshold.toLocaleString()}/hour` :
-      ruleData.threshold.toString();
-
-    if (editingRule) {
-      setRules(prev => prev.map(r => 
-        r.id === editingRule.id ? { ...ruleData, id: r.id, threshold_display: thresholdDisplay, trigger_count: r.trigger_count } : r
-      ));
-      toast.success('Rule updated');
-    } else {
-      setRules(prev => [...prev, { 
-        ...ruleData, 
-        id: Date.now().toString(), 
-        threshold_display: thresholdDisplay,
-        trigger_count: 0 
-      }]);
-      toast.success('Rule created');
+  const handleToggleRule = async (ruleId) => {
+    try {
+      const token = localStorage.getItem('eaziwage_token');
+      const response = await fetch(`${API_URL}/api/admin/fraud-rules/${ruleId}/toggle`, {
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const result = await response.json();
+        setRules(prev => prev.map(r => 
+          r.id === ruleId ? { ...r, enabled: result.enabled } : r
+        ));
+        toast.success('Rule updated');
+      }
+    } catch (err) {
+      toast.error('Failed to update rule');
     }
+  };
+
+  const handleDeleteRule = async (ruleId) => {
+    try {
+      const token = localStorage.getItem('eaziwage_token');
+      const response = await fetch(`${API_URL}/api/admin/fraud-rules/${ruleId}`, {
+        method: 'DELETE',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (response.ok) {
+        setRules(prev => prev.filter(r => r.id !== ruleId));
+        toast.success('Rule deleted');
+      }
+    } catch (err) {
+      toast.error('Failed to delete rule');
+    }
+  };
+
+  const handleSaveRule = async (ruleData) => {
+    try {
+      const token = localStorage.getItem('eaziwage_token');
+      
+      if (editingRule) {
+        // Update existing rule
+        const response = await fetch(`${API_URL}/api/admin/fraud-rules/${editingRule.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(ruleData)
+        });
+        if (response.ok) {
+          const updatedRule = await response.json();
+          setRules(prev => prev.map(r => r.id === editingRule.id ? updatedRule : r));
+          toast.success('Rule updated');
+        }
+      } else {
+        // Create new rule
+        const response = await fetch(`${API_URL}/api/admin/fraud-rules`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(ruleData)
+        });
+        if (response.ok) {
+          const newRule = await response.json();
+          setRules(prev => [...prev, newRule]);
+          toast.success('Rule created');
+        }
+      }
+    } catch (err) {
+      toast.error('Failed to save rule');
+    }
+    
     setShowRuleModal(false);
     setEditingRule(null);
   };
