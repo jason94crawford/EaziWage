@@ -193,9 +193,10 @@ export default function EmployerPayroll() {
     }
   };
 
-  // Calculate stats
-  const totalPayroll = employees.reduce((sum, e) => sum + (e.monthly_salary || 0), 0);
-  const activeEmployees = employees.filter(e => e.status === 'approved').length;
+  // Calculate stats - use only active employees for consistency with Dashboard
+  const activeEmployeesList = employees.filter(e => e.status === 'approved');
+  const totalPayroll = activeEmployeesList.reduce((sum, e) => sum + (e.monthly_salary || 0), 0);
+  const activeEmployees = activeEmployeesList.length;
   const lastUpload = payrollHistory[0];
   // Get monthly advances - fallback calculation based on payroll
   const monthlyAdvancesDisbursed = Math.round(totalPayroll * 0.033);
