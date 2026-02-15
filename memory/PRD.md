@@ -13,15 +13,15 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Role-based access: Employee, Employer, Admin ✅
 
 ### Employee Features ✅ **LIGHT THEME**
-- **7-Step KYC Onboarding Flow** ✅
-- **Employee Dashboard** ✅
-- **Request Advance Page** ✅
-- **Transaction History** ✅
-- **Profile & Settings** ✅
+- 7-Step KYC Onboarding Flow ✅
+- Employee Dashboard ✅
+- Request Advance Page ✅
+- Transaction History ✅
+- Profile & Settings ✅
 
 ### Employer Features ✅ COMPLETE
-- **8-Step Comprehensive Onboarding Portal** ✅
-- **Employer Portal (Post-Onboarding)** ✅
+- 8-Step Comprehensive Onboarding Portal ✅
+- Employer Portal (Post-Onboarding) ✅
   - Dashboard with consistent metrics ✅
   - Risk Insights Page with Request Review ✅
   - Employees Page with Pie Chart distribution ✅
@@ -38,43 +38,88 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
   - Quick Actions grid
   - API Health Summary
 
-- **Admin Employees Page** ✅ **NEW Feb 2026**
+- **Admin Employees Page** ✅ **ENHANCED WITH BULK ACTIONS**
   - Stats cards (Total, Active, Pending KYC, Suspended)
   - Search by name, ID, email, job title, employer
-  - Filter buttons (All Status, Active, Pending, Suspended)
-  - KYC status dropdown filter
-  - Employee list with details (salary, KYC, status, risk score)
-  - **Employee Detail Modal** with 4 tabs:
-    - Overview: Stats, Personal Info, Employment Details, Risk Assessment
-    - Advances: Full advance history
-    - KYC: Document status, Approve/Reject buttons
-    - Actions: Activate/Suspend/Pending/Reject account buttons
+  - Filter buttons and KYC status dropdown
+  - **BULK SELECTION** with select-all checkbox
+  - **BULK ACTIONS BAR** with:
+    - Bulk Activate All
+    - Bulk Suspend All
+    - Bulk Approve KYC
+  - Employee Detail Modal with 4 tabs
   - Risk Score Override with audit trail
-  - Edit employee details (job title, department, salary)
 
-- **Reconciliation Page** ✅
-- **API Health Monitor** ✅
-- **Risk Scoring Calculator** ✅
-- **KYC Review** ✅
-- **Employers Management** ✅
-- **Advances Management** ✅
+- **Admin Employers Page** ✅ **REDESIGNED WITH PURPLE THEME**
+  - Stats cards (Total, Active, Pending, Total Employees)
+  - Search by company name, email, code
+  - Filter buttons (All, Active, Pending, Suspended) + Country dropdown
+  - **BULK SELECTION** with checkboxes
+  - **BULK ACTIONS** (Approve All, Suspend All)
+  - **Employer Detail Modal** with 4 tabs:
+    - Overview: Stats, Company Info, Contact Person
+    - Employees: List of employer's employees
+    - Advances: (Placeholder for detailed reports)
+    - Actions: Approve/Suspend/Reject/Set Pending buttons
+
+- **Fraud Detection Page** ✅ **NEW**
+  - Stats cards (Total Rules, Active Rules, Flagged Transactions, High Risk)
+  - **Detection Rules Tab**:
+    - Pre-configured demo rules (High Amount Alert, Frequency Limit, New Employee Velocity)
+    - Rule toggle (enable/disable) with toast notifications
+    - Edit and Delete buttons per rule
+    - Create Rule button with modal
+  - **Flagged Transactions Tab**:
+    - List of flagged advances
+    - Review button per transaction
+    - Review modal with decision dropdown
+  - NOTE: Rules stored in React state (MOCKED - not persisted to backend)
+
+- **Review Management Page** ✅ **NEW**
+  - Stats cards (Total, Pending, In Review, Resolved)
+  - Status filters (All, Pending, In Review, Resolved) with badge counts
+  - Type filter dropdown (All Types, Risk Score, KYC Review, Dispute, General)
+  - Review request cards showing:
+    - Subject, Employer name, Priority badge
+    - Message preview, Type tag, Employee name (if applicable)
+    - Status badge, Review button
+  - **Review Detail Modal**:
+    - Request details (type, priority, contact email, related employee)
+    - Message from employer
+    - Update Status dropdown
+    - Response to Employer textarea
+    - Internal Notes field (admin only)
+    - Submit Response button
+
+- **Other Admin Pages** ✅
+  - Reconciliation Page
+  - API Health Monitor
+  - Risk Scoring Calculator
+  - KYC Review
+  - Advances Management
 
 ## API Endpoints
 
-### Admin Employees (NEW)
-- `GET /api/admin/employees` - List all employees with employer names
-- `GET /api/admin/employees/{id}` - Get employee detail with advances and stats
-- `PUT /api/admin/employees/{id}` - Update employee details (job_title, department, salary)
+### Admin Employees
+- `GET /api/admin/employees` - List all employees
+- `GET /api/admin/employees/{id}` - Get employee detail with advances
+- `PUT /api/admin/employees/{id}` - Update employee details
 - `PATCH /api/admin/employees/{id}/status` - Update account status
 - `PATCH /api/admin/employees/{id}/kyc` - Update KYC status
-- `PATCH /api/admin/employees/{id}/risk-score` - Override risk score with audit trail
+- `PATCH /api/admin/employees/{id}/risk-score` - Override risk score
 
-### Employer Portal
-- `GET /api/dashboard/employer` - Dashboard stats
-- `GET /api/dashboard/employer/extended` - Extended dashboard with retention metrics
-- `GET /api/employees/{id}/ewa-settings` - Get employee EWA settings
-- `PUT /api/employees/{id}/ewa-settings` - Update employee EWA settings
-- `POST /api/admin/review-requests` - Submit review request from employer
+### Admin Employers
+- `GET /api/admin/employers` - List all employers
+- `GET /api/admin/employers/{id}` - Get employer detail ✅ **NEW**
+- `PATCH /api/admin/employers/{id}/status` - Update employer status
+
+### Admin Review Management
+- `GET /api/admin/review-requests` - List review requests
+- `PATCH /api/admin/review-requests/{id}` - Update request status/response ✅ **NEW**
+
+### Admin Fraud Detection
+- `GET /api/admin/advances/flagged` - Get flagged advances
+- `PATCH /api/admin/advances/{id}/review` - Review flagged advance ✅ **NEW**
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
@@ -82,24 +127,35 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - **Employer**: testemployer2@eaziwage.com / Employer@123
 
 ## Demo Data
+- 9 employers with varying statuses
 - 67 employees seeded across multiple employers
-- Varying salaries, departments, tenures
-- Mixed KYC and account statuses
+- 1 review request from Test Corp Ltd
+- 3 pre-configured fraud detection rules (demo data in frontend)
 
 ## Bug Fixes (Feb 2026)
-- **Payroll Data Consistency**: Fixed mismatch between Dashboard and Payroll page Monthly Payroll values. Both now use active employees only for consistent calculation.
+- **Payroll Data Consistency**: Fixed mismatch between Dashboard and Payroll page Monthly Payroll values
+
+## Completed in Latest Session (Feb 2026)
+1. ✅ Admin Employees Bulk Actions (select all, bulk activate/suspend/KYC approve)
+2. ✅ Admin Employers Page Redesign (purple theme, bulk actions, detail modal)
+3. ✅ Fraud Detection Page (rules management, flagged transactions)
+4. ✅ Review Management Page (employer requests handling)
+5. ✅ Backend endpoints for review requests and advance reviews
+6. ✅ Sidebar navigation updated with new page links
+
+## Mocked Features
+- Mobile Money APIs (M-PESA, Airtel Money, MTN MoMo)
+- Bank Transfer APIs
+- Apple Login
+- Biometric Face Scan
+- Live Payroll API (Auto Mode is simulated)
+- **Fraud Detection Rules CRUD** (stored in React state, not persisted)
 
 ## Pending Tasks
 
-### P0 - Completed ✅
-- ✅ Admin Employees Management Page
-- ✅ Payroll data consistency fix
-
 ### P1 - High Priority
-- Admin Employers Page enhancement
-- Fraud Detection Rules UI
-- Admin Review Management UI (for employer review requests)
-- Implement functional Employer Notifications tab (full page)
+- Persist fraud detection rules to database
+- Implement full Employer Notifications page (not just bell icon)
 
 ### P2 - Medium Priority
 - Real-time notifications via WebSocket
@@ -107,37 +163,29 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Apple Login integration
 - Dual-role User Feature (Employer/Employee)
 
-### Mocked Features
-- Mobile Money APIs (M-PESA, Airtel Money, MTN MoMo)
-- Bank Transfer APIs
-- Apple Login
-- Biometric Face Scan
-- Live Payroll API (Auto Mode is simulated)
-
 ## Architecture
 ```
 /app/
 ├── backend/
-│   └── server.py           # FastAPI backend with all endpoints
+│   └── server.py
 ├── frontend/
 │   └── src/
 │       ├── components/
 │       │   ├── admin/
 │       │   │   └── AdminLayout.jsx
 │       │   ├── employer/
-│       │   │   └── EmployerLayout.jsx
-│       │   └── ui/         # Shadcn components
-│       ├── layouts/
+│       │   └── ui/
 │       ├── pages/
 │       │   ├── admin/
 │       │   │   ├── Dashboard.jsx
-│       │   │   ├── Employees.jsx   # NEW
-│       │   │   ├── Employers.jsx
+│       │   │   ├── Employees.jsx      # Enhanced with bulk actions
+│       │   │   ├── Employers.jsx      # Redesigned with purple theme
+│       │   │   ├── FraudDetection.jsx # NEW
+│       │   │   ├── ReviewManagement.jsx # NEW
 │       │   │   ├── Reconciliation.jsx
 │       │   │   └── APIHealth.jsx
 │       │   ├── employer/
 │       │   └── employee/
-│       ├── lib/
 │       └── App.js
 ├── memory/
 │   └── PRD.md
