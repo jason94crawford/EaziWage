@@ -234,15 +234,15 @@ export default function EmployerAdvances() {
                 />
               </div>
               
-              {/* Date Range */}
+              {/* Date Range - Themed */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2 px-3 h-11 bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl">
-                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <Calendar className="w-4 h-4 text-primary" />
                   <input 
                     type="date"
                     value={dateRange.from}
                     onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32"
+                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.4] [&::-webkit-calendar-picker-indicator]:sepia [&::-webkit-calendar-picker-indicator]:saturate-[10] [&::-webkit-calendar-picker-indicator]:hue-rotate-[90deg]"
                     placeholder="From"
                   />
                 </div>
@@ -252,22 +252,23 @@ export default function EmployerAdvances() {
                     type="date"
                     value={dateRange.to}
                     onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32"
+                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.4] [&::-webkit-calendar-picker-indicator]:sepia [&::-webkit-calendar-picker-indicator]:saturate-[10] [&::-webkit-calendar-picker-indicator]:hue-rotate-[90deg]"
                     placeholder="To"
                   />
                 </div>
               </div>
             </div>
             
-            {/* Row 2: Filter Buttons */}
+            {/* Row 2: Filter Buttons - Remove Pending */}
             <div className="flex items-center gap-2 flex-wrap">
               <FilterButton active={statusFilter === ''} onClick={() => setStatusFilter('')}>
                 All
               </FilterButton>
-              <FilterButton active={statusFilter === 'pending'} onClick={() => setStatusFilter('pending')}>
-                Pending
-              </FilterButton>
               <FilterButton active={statusFilter === 'approved'} onClick={() => setStatusFilter('approved')}>
+                Approved
+              </FilterButton>
+              <FilterButton active={statusFilter === 'disbursed'} onClick={() => setStatusFilter('disbursed')}>
+                Disbursed
                 Approved
               </FilterButton>
               <FilterButton active={statusFilter === 'disbursed'} onClick={() => setStatusFilter('disbursed')}>
