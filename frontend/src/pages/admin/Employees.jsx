@@ -783,6 +783,8 @@ export default function AdminEmployees() {
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showQuickActions, setShowQuickActions] = useState(false);
+  const [selectedIds, setSelectedIds] = useState(new Set());
+  const [bulkActionLoading, setBulkActionLoading] = useState(false);
 
   const fetchEmployees = async () => {
     setLoading(true);
