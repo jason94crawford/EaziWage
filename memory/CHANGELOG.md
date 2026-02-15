@@ -1,59 +1,50 @@
 # EaziWage Changelog
 
-## Feb 15, 2026 - Comprehensive Employer Portal Updates
+## Feb 15, 2026 - Admin Portal & UI Fixes
 
-### Dashboard Changes
-- ✅ Replaced "Total Advances" with "Advances This Month"
-- ✅ Replaced "Pending Advances" with "Avg. Fee Rate (%)"
-- ✅ Risk Assessment "View Details" now links to /employer/risk-insights
-- ✅ Removed "View Status" button when verification pending
+### Employer Portal Fixes
+- ✅ **Sidebar gradient icons** - Changed from solid green to `from-primary to-emerald-600`
+- ✅ **User avatar gradient** - Sidebar user avatar now uses gradient background
+- ✅ **Add Employee button removed** - Per user request
+- ✅ **Request Review button** - Now functional with loading/success states
+- ✅ **Payroll API Connection** - Default to "Auto Mode" (Manual requires admin approval)
+- ✅ **Monthly EWA Deduction** - Fixed to match Dashboard totals
 
-### Risk Insights Page (NEW)
-- ✅ Composite Risk Score with circular progress
-- ✅ Risk Rating Badge (A/B/C/D)
-- ✅ 5 Category breakdown with expandable improvement tips
-- ✅ Fee Impact visualization with scenarios
-- ✅ Added to sidebar navigation with Shield icon
+### New Admin Portal
+- ✅ **AdminLayout.jsx** - New layout matching Employer Portal design with purple gradient
+- ✅ **Dashboard.jsx** - Comprehensive admin dashboard with:
+  - Platform metrics (Employers, Employees, Advances, Disbursed)
+  - Monthly Performance cards
+  - API Health summary
+  - Alert cards for pending actions
+  - Quick Actions section
+- ✅ **Reconciliation.jsx** - Payment tracking with:
+  - Summary cards (Disbursed, Pending Recoupment, Recouped)
+  - Reference tracking system (EWA-XXXXXXXX)
+  - Per-employer breakdown with expandable details
+- ✅ **APIHealth.jsx** - Integration status monitor with:
+  - Overall health banner
+  - M-PESA, Airtel Money, Bank Transfer, Payroll Sync status
+  - Latency, uptime, transaction metrics
 
-### Employees Page Updates
-- ✅ Department Distribution now shows Pie Chart visualization
-- ✅ View button opens Employee View Modal with full details
-- ✅ Date selectors themed green (not blue)
-- ✅ More spacing between metric cards and Department Distribution
+### Backend Additions
+- ✅ `/api/admin/dashboard` - Platform-wide stats
+- ✅ `/api/admin/reconciliation` - Reconciliation data with reference tracking
+- ✅ `/api/admin/api-health` - API integration status
+- ✅ `/api/admin/review-requests` - Employer review request handling
+- ✅ `/api/admin/notifications` - Admin notification aggregation
+- ✅ `/api/admin/employers/{id}/status` - Activate/deactivate employers
+- ✅ `/api/admin/employers/{id}/risk-score` - Override risk scores
+- ✅ `/api/admin/employees/{id}/status` - Activate/deactivate employees
+- ✅ `/api/admin/employees/{id}/kyc` - Approve/reject KYC
+- ✅ `/api/admin/advances/{id}/flag` - Flag for fraud review
 
-### Advances Page Updates
-- ✅ Removed "Pending" filter (advances are automated)
-- ✅ Date selectors themed green
-- ✅ Fixed duplicate filter button bug
-
-### Reports Page Updates
-- ✅ Removed "Pending Review" from Monthly Summary
-- ✅ Added month selector (input type="month") for filtering
-
-### Settings Page Updates
-- ✅ Company Name is now read-only
-- ✅ Payroll Cycle is now read-only (not dropdown)
-- ✅ Added Employer Code display in green highlighted box
-
-### Payroll Page Updates
-- ✅ Added "Payroll API Connection" status card
-- ✅ Added "Monthly EWA Deduction" summary (principal + fees)
-- ✅ Manual uploads only (API requires Admin approval)
-
-### Notifications
-- ✅ Bell icon now shows functional dropdown
-- ✅ Shows unread notification count
-- ✅ Sample notifications with types (advance, system, employee)
-- ✅ "View All Notifications" link
+### Bugs Fixed by Testing Agent
+- AdminLayout.jsx - Fixed import path for useTheme hook
+- Payroll.jsx - Fixed undefined 'stats' variable reference
 
 ### Test Reports
-- iteration_26.json: Previous UI fixes (gradient icons, filters)
-- iteration_27.json: Risk Insights page
-- iteration_28.json: Comprehensive UI/UX updates (100% pass)
-
-### MOCKED Features
-- Notifications data (hardcoded samples)
-- API connection status (employer.payroll_api_connected)
+- iteration_29.json: All 15 features verified (100% pass)
 
 ---
 
