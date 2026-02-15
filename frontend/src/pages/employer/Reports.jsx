@@ -199,6 +199,16 @@ export default function EmployerReports() {
             </p>
           </div>
           <div className="flex gap-3">
+            {/* Month Selector */}
+            <div className="flex items-center gap-2 px-3 h-10 bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl">
+              <Calendar className="w-4 h-4 text-primary" />
+              <input 
+                type="month"
+                value={selectedMonth}
+                onChange={(e) => setSelectedMonth(e.target.value)}
+                className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.4] [&::-webkit-calendar-picker-indicator]:sepia [&::-webkit-calendar-picker-indicator]:saturate-[10] [&::-webkit-calendar-picker-indicator]:hue-rotate-[90deg]"
+              />
+            </div>
             <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
               <SelectTrigger className="w-40 bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700" data-testid="period-select">
                 <SelectValue placeholder="Select period" />
