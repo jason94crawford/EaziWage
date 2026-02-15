@@ -48,6 +48,8 @@ import AdminEmployers from "./pages/admin/Employers";
 import AdminAdvances from "./pages/admin/Advances";
 import AdminKYCReview from "./pages/admin/KYCReview";
 import AdminRiskScoring from "./pages/admin/RiskScoring";
+import AdminReconciliation from "./pages/admin/Reconciliation";
+import AdminAPIHealth from "./pages/admin/APIHealth";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
