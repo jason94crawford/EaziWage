@@ -197,6 +197,9 @@ export default function EmployerPayroll() {
   const totalPayroll = employees.reduce((sum, e) => sum + (e.monthly_salary || 0), 0);
   const activeEmployees = employees.filter(e => e.status === 'approved').length;
   const lastUpload = payrollHistory[0];
+  // Calculate total EWA deductions for the month (mock based on advances)
+  const monthlyDeductions = Math.round(totalPayroll * 0.08); // ~8% typical utilization
+  const apiConnectionStatus = employer?.payroll_api_connected || false;
 
   if (loading) {
     return (
