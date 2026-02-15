@@ -263,10 +263,14 @@ class EmployeeResponse(BaseModel):
     country: Optional[str] = None
     status: str = "pending"
     risk_score: Optional[float] = None
+    risk_factors: Optional[Dict[str, Any]] = None
     kyc_status: str = "pending"
     kyc_step: int = 0  # Current onboarding step
     earned_wages: float = 0
     advance_limit: float = 0
+    last_verified_at: Optional[str] = None
+    next_verification_due: Optional[str] = None
+    tenure_months: Optional[int] = 0
     created_at: str
     full_name: Optional[str] = None
     email: Optional[str] = None
