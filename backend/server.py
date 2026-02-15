@@ -2258,7 +2258,77 @@ async def create_review_request(
 async def get_review_requests(user: dict = Depends(require_role(UserRole.ADMIN))):
     """Get all review requests for admin"""
     requests = await db.admin_requests.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Enrich with employer names
+    for req in requests:
+        if req.get("employer_id"):
+            employer = await db.employers.find_one({"id": req["employer_id"]}, {"_id": 0, "company_name": 1, "contact_email": 1})
+            if employer:
+                req["employer_name"] = employer.get("company_name")
+                req["contact_email"] = employer.get("contact_email")
+    
     return requests
+
+@api_router.patch("/admin/review-requests/{request_id}")
+async def update_review_request(
+    request_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update review request status and add response"""
+    update_data = {
+        "status": data.get("status", "in_review"),
+        "admin_response": data.get("response"),
+        "internal_notes": data.get("internal_notes"),
+        "reviewed_by": user["id"],
+        "reviewed_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    result = await db.admin_requests.update_one(
+        {"id": request_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Review request not found")
+    
+    return {"message": "Review request updated"}
+
+@api_router.patch("/admin/advances/{advance_id}/review")
+async def admin_review_advance(
+    advance_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Review a flagged advance"""
+    decision = data.get("decision")  # approve, block, escalate
+    notes = data.get("notes", "")
+    
+    update_data = {
+        "review_decision": decision,
+        "review_notes": notes,
+        "reviewed_by": user["id"],
+        "reviewed_at": datetime.now(timezone.utc).isoformat(),
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if decision == "approve":
+        update_data["flagged"] = False
+        update_data["flag_cleared"] = True
+    elif decision == "block":
+        update_data["status"] = "rejected"
+        update_data["rejection_reason"] = f"Blocked due to fraud review: {notes}"
+    
+    result = await db.advances.update_one(
+        {"id": advance_id},
+        {"$set": update_data}
+    )
+    
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    
+    return {"message": f"Advance {decision}"}
 
 # Admin Dashboard - Platform Overview
 @api_router.get("/admin/dashboard")
