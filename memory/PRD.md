@@ -169,7 +169,20 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Change percentages in Dashboard (hardcoded placeholders)
 
 ---
-Last Updated: February 14, 2026
+Last Updated: February 15, 2026
+
+## Risk Scoring Implementation (Feb 15, 2026)
+- ✅ Admin Risk Scoring Calculator at `/admin/risk-scoring`
+- ✅ NEW: Employer Risk Insights page at `/employer/risk-insights`
+  - Composite Risk Score display with circular progress
+  - Risk Rating Badge (A/B/C/D)
+  - 5 Category breakdown: Legal & Compliance (20%), Financial Health (35%), Operational (20%), Sector & Regulatory (15%), AML & Ownership (10%)
+  - Expandable improvement tips per category
+  - Fee Impact visualization with scenarios
+  - Rating Scale explanation
+  - How to Improve section
+- ✅ Sidebar navigation updated with "Risk Insights" link (Shield icon)
+- ✅ Backend EmployerResponse model updated to include risk_rating and risk_factors
 
 ## Architecture - Employee Dark Theme
 ```
