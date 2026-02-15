@@ -40,6 +40,7 @@ import EmployerPayroll from "./pages/employer/Payroll";
 import EmployerAdvances from "./pages/employer/Advances";
 import EmployerReports from "./pages/employer/Reports";
 import EmployerSettings from "./pages/employer/Settings";
+import EmployerRiskInsights from "./pages/employer/RiskInsights";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
