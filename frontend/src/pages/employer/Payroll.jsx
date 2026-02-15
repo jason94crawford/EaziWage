@@ -259,6 +259,102 @@ export default function EmployerPayroll() {
           />
         </div>
 
+        {/* Live API Connection & Monthly Deduction */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* API Connection Status */}
+          <div className={cn(
+            "backdrop-blur-sm rounded-2xl p-6 border",
+            apiConnectionStatus 
+              ? "bg-emerald-50/60 dark:bg-emerald-900/20 border-emerald-200/50 dark:border-emerald-700/30"
+              : "bg-amber-50/60 dark:bg-amber-900/20 border-amber-200/50 dark:border-amber-700/30"
+          )}>
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className={cn(
+                  "w-12 h-12 rounded-xl flex items-center justify-center",
+                  apiConnectionStatus ? "bg-emerald-500/20" : "bg-amber-500/20"
+                )}>
+                  <Wifi className={cn("w-6 h-6", apiConnectionStatus ? "text-emerald-600" : "text-amber-600")} />
+                </div>
+                <div>
+                  <h2 className="font-bold text-slate-900 dark:text-white">Payroll API Connection</h2>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Live integration with your payroll system</p>
+                </div>
+              </div>
+              <div className={cn(
+                "px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2",
+                apiConnectionStatus 
+                  ? "bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300"
+                  : "bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300"
+              )}>
+                <div className={cn(
+                  "w-2 h-2 rounded-full",
+                  apiConnectionStatus ? "bg-emerald-500 animate-pulse" : "bg-amber-500"
+                )} />
+                {apiConnectionStatus ? 'Connected' : 'Manual Mode'}
+              </div>
+            </div>
+            
+            {apiConnectionStatus ? (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl">
+                  <span className="text-sm text-slate-600 dark:text-slate-400">Last Sync</span>
+                  <span className="font-medium text-slate-900 dark:text-white">2 hours ago</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl">
+                  <span className="text-sm text-slate-600 dark:text-slate-400">Sync Frequency</span>
+                  <span className="font-medium text-slate-900 dark:text-white">Daily (6:00 AM)</span>
+                </div>
+                <div className="flex items-center justify-between p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl">
+                  <span className="text-sm text-slate-600 dark:text-slate-400">Provider</span>
+                  <span className="font-medium text-slate-900 dark:text-white">3rd Party Payroll API</span>
+                </div>
+              </div>
+            ) : (
+              <div className="p-4 bg-white/50 dark:bg-slate-800/30 rounded-xl">
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                  Manual upload mode is active. API integration requires admin approval.
+                </p>
+                <Button variant="outline" size="sm" className="border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:text-amber-300">
+                  Request API Integration
+                </Button>
+              </div>
+            )}
+          </div>
+
+          {/* Monthly Deduction Summary */}
+          <div className="bg-gradient-to-br from-primary/5 to-emerald-500/5 dark:from-primary/10 dark:to-emerald-500/10 backdrop-blur-sm rounded-2xl p-6 border border-primary/20">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center">
+                <CreditCard className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h2 className="font-bold text-slate-900 dark:text-white">Monthly EWA Deduction</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Total deductions from employer to EaziWage</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4">
+              <div className="text-center p-6 bg-white/60 dark:bg-slate-800/30 rounded-xl">
+                <p className="text-sm text-slate-500 dark:text-slate-400 mb-1">Total This Month</p>
+                <p className="text-4xl font-bold text-primary">{formatCurrency(monthlyDeductions)}</p>
+                <p className="text-xs text-slate-400 mt-1">On behalf of {activeEmployees} employees</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl text-center">
+                  <p className="text-xs text-slate-500">Advance Principal</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(monthlyDeductions * 0.92)}</p>
+                </div>
+                <div className="p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl text-center">
+                  <p className="text-xs text-slate-500">Platform Fees</p>
+                  <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(monthlyDeductions * 0.08)}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Upload Section */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Upload Card */}
