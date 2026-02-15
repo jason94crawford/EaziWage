@@ -4,6 +4,7 @@ import {
   ChevronRight, MoreHorizontal, Eye, Settings, CreditCard, AlertCircle,
   CheckCircle2, XCircle, Percent, Calendar, Building2, Mail, Phone, Globe
 } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
