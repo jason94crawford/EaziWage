@@ -139,15 +139,17 @@ const EmployerRow = ({ employer, isSelected, onToggleSelect, onViewDetails, onQu
     </div>
     
     {/* Risk Score */}
-    <div className="hidden lg:block">
+    <div className="hidden lg:block w-28">
       {employer.risk_score ? <RiskBadge score={employer.risk_score} /> : <span className="text-slate-400 text-sm">-</span>}
     </div>
     
     {/* Status */}
-    <StatusBadge status={employer.status} />
+    <div className="w-24">
+      <StatusBadge status={employer.status} />
+    </div>
     
     {/* Actions */}
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 w-20 justify-end">
       <button 
         onClick={() => onViewDetails(employer)}
         className="p-2 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-colors"
