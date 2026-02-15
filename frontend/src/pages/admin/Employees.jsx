@@ -1069,6 +1069,13 @@ export default function AdminEmployees() {
             <div className="divide-y divide-slate-200/50 dark:divide-slate-700/30">
               {/* Header */}
               <div className="hidden lg:flex items-center gap-4 px-4 py-3 bg-slate-50/50 dark:bg-slate-800/30 text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                <input
+                  type="checkbox"
+                  checked={selectedIds.size === filteredEmployees.length && filteredEmployees.length > 0}
+                  onChange={toggleSelectAll}
+                  className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer shrink-0"
+                  data-testid="select-all-employees"
+                />
                 <div className="w-11" />
                 <div className="flex-1">Employee</div>
                 <div className="w-24 text-right hidden sm:block">Salary</div>
@@ -1082,6 +1089,8 @@ export default function AdminEmployees() {
                 <EmployeeRow 
                   key={employee.id} 
                   employee={employee}
+                  isSelected={selectedIds.has(employee.id)}
+                  onToggleSelect={toggleSelectOne}
                   onViewDetails={(e) => {
                     setSelectedEmployee(e);
                     setShowDetailModal(true);
