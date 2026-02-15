@@ -250,6 +250,16 @@ function App() {
               <AdminAPIHealth />
             </ProtectedRoute>
           } />
+          <Route path="/admin/fraud-detection" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <FraudDetection />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/review-management" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ReviewManagement />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/settings" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <PlaceholderPage title="Settings" description="System settings" />
