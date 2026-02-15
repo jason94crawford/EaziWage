@@ -12,42 +12,61 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Biometric Face ID (MOCKED - UI simulation only)
 - Role-based access: Employee, Employer, Admin ✅
 
-### Employee Features ✅ **REDESIGNED Feb 14, 2026**
+### Employee Features ✅ **LIGHT THEME (Feb 14, 2026)**
 - **7-Step KYC Onboarding Flow** ✅
-- **Employee Dashboard** ✅ **DARK THEME**
-- **Request Advance Page** ✅ **DARK THEME**
-- **Transaction History** ✅ **DARK THEME**
-- **Profile & Settings** ✅ **DARK THEME**
+- **Employee Dashboard** ✅
+- **Request Advance Page** ✅
+- **Transaction History** ✅
+- **Profile & Settings** ✅
+  - Profile picture upload - shown in header bubble
 
-**New Employee Portal Dark Theme (Feb 14, 2026):**
-- Dark navy background (#0f0f1a)
-- Card backgrounds (#1a1a2e)
-- Vibrant neon green accent (#0df259)
-- Solid green icon buttons with white icons
-- Bottom navigation with green active indicator
-- Premium fintech aesthetic with subtle grid patterns
-- Dark mode is now the default (no theme toggle)
+**Note:** Dark theme redesign was attempted and reverted. Employee portal uses light theme.
 
-### Employer Features ✅ COMPLETE (Feb 14, 2026)
+### Employer Features ✅ COMPLETE (Feb 15, 2026)
 - **8-Step Comprehensive Onboarding Portal** ✅
   
-- **Employer Portal (Post-Onboarding)** ✅
+- **Employer Portal (Post-Onboarding)** ✅ **UPDATED Feb 15, 2026**
   - **Dashboard** ✅
-    - 60 total employees with animated circular progress
-    - Real-time metrics (Total Advances, Pending, Monthly Payroll, Avg Advance)
-    - Quick Actions section
-    - Company Status and Risk Assessment
+    - Metrics: Advances This Month, Avg Fee Rate %, Monthly Payroll, Avg Advance
+    - Risk Assessment card linked to Risk Insights page
+    - Removed: View Status button (when pending), Pending Advances metric
   
-  - **Employees Page** ✅ **REDESIGNED Feb 14, 2026**
-    - Auto-calculated retention metrics (80% retention rate, 58.3% KYC completion, 26.9 months avg tenure)
-    - Department Distribution breakdown (10 departments)
-    - Search, filters (All, Active, Pending), department dropdown
-    - **Per-Employee EWA Settings** - Custom advance limits per employee
-    - EWA modal with: Enable toggle, Max %, Min/Max amounts, Cooldown period
-    - 60 demo employees seeded with varying data
+  - **Risk Insights Page** ✅ **NEW Feb 15, 2026**
+    - Composite Risk Score with circular progress
+    - Risk Rating Badge (A/B/C/D)
+    - 5 Category breakdown with expandable tips
+    - Fee Impact visualization
+    - How to Improve section
   
-  - **Payroll Page** ✅ **REDESIGNED Feb 14, 2026**
-    - Monthly payroll metrics
+  - **Employees Page** ✅ **UPDATED Feb 15, 2026**
+    - Department Distribution with Pie Chart visualization
+    - Employee View Modal (click View to see details)
+    - Green themed date selectors
+    - EWA Settings modal per employee
+  
+  - **Advances Page** ✅ **UPDATED Feb 15, 2026**
+    - Filters: All, Approved, Disbursed, Rejected (Pending removed - advances are automated)
+    - Green themed date selectors
+  
+  - **Reports Page** ✅ **UPDATED Feb 15, 2026**
+    - Month selector for filtering by month
+    - Monthly Summary: Total Requests, Disbursed, Rejected, Total Amount (Pending Review removed)
+  
+  - **Payroll Page** ✅ **UPDATED Feb 15, 2026**
+    - Live API Connection Status card (shows Manual Mode or Connected)
+    - Monthly EWA Deduction summary (principal + platform fees)
+    - Manual upload only with Admin approval
+  
+  - **Settings Page** ✅ **UPDATED Feb 15, 2026**
+    - Company Name: Read-only (contact support to change)
+    - Payroll Cycle: Read-only (contact support to change)
+    - Employer Code: Unique identifier shown in green box (non-editable)
+    - KYC Documents section
+  
+  - **Notifications** ✅ **FUNCTIONAL Feb 15, 2026**
+    - Bell icon dropdown with notifications
+    - Shows unread count
+    - Links to View All Notifications
     - File upload with drag & drop
     - Upload process steps (4 steps)
     - Payroll history
