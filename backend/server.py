@@ -2557,6 +2557,98 @@ async def admin_update_employer_status(
     
     return {"message": f"Employer status updated to {new_status}"}
 
+# Admin - Update employer settings (with fraud detection)
+@api_router.patch("/admin/employers/{employer_id}/settings")
+async def admin_update_employer_settings(
+    employer_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update employer settings with fraud detection for manipulation"""
+    employer = await db.employers.find_one({"id": employer_id}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    update_data = {"updated_at": datetime.now(timezone.utc).isoformat()}
+    fraud_flags = []
+    
+    # Check for EWA limit manipulation
+    if "ewa_limit_percentage" in data:
+        new_limit = data["ewa_limit_percentage"]
+        old_limit = employer.get("ewa_limit_percentage", 50)
+        if new_limit > 60:  # Flag if above 60%
+            fraud_flags.append({
+                "type": "employer_ewa_limit",
+                "description": f"EWA limit increased to {new_limit}% (was {old_limit}%)",
+                "severity": "high"
+            })
+        update_data["ewa_limit_percentage"] = new_limit
+    
+    # Check for cooldown manipulation
+    if "advance_cooldown_days" in data:
+        new_cooldown = data["advance_cooldown_days"]
+        old_cooldown = employer.get("advance_cooldown_days", 7)
+        if new_cooldown < 3:  # Flag if below 3 days
+            fraud_flags.append({
+                "type": "employer_cooldown",
+                "description": f"Cooldown reduced to {new_cooldown} days (was {old_cooldown} days)",
+                "severity": "medium"
+            })
+        update_data["advance_cooldown_days"] = new_cooldown
+    
+    # Check for payroll system type change
+    if "payroll_system_type" in data:
+        update_data["payroll_system_type"] = data["payroll_system_type"]
+    
+    # Check for bulk changes in last 24 hours
+    yesterday = datetime.now(timezone.utc) - timedelta(days=1)
+    recent_changes = await db.employer_settings_log.count_documents({
+        "employer_id": employer_id,
+        "created_at": {"$gte": yesterday.isoformat()}
+    })
+    if recent_changes >= 3:
+        fraud_flags.append({
+            "type": "employer_bulk_change",
+            "description": f"Multiple setting changes detected ({recent_changes + 1} in 24h)",
+            "severity": "medium"
+        })
+    
+    # Log the change
+    await db.employer_settings_log.insert_one({
+        "id": str(uuid.uuid4()),
+        "employer_id": employer_id,
+        "changes": data,
+        "changed_by": user["id"],
+        "fraud_flags": fraud_flags,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Update fraud rule trigger counts
+    if fraud_flags:
+        for flag in fraud_flags:
+            await db.fraud_rules.update_one(
+                {"type": flag["type"]},
+                {"$inc": {"trigger_count": 1}}
+            )
+        
+        # Create fraud alert
+        await db.fraud_alerts.insert_one({
+            "id": str(uuid.uuid4()),
+            "type": "employer_manipulation",
+            "employer_id": employer_id,
+            "employer_name": employer.get("company_name"),
+            "flags": fraud_flags,
+            "status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat()
+        })
+    
+    await db.employers.update_one({"id": employer_id}, {"$set": update_data})
+    
+    return {
+        "message": "Settings updated successfully",
+        "fraud_flags": fraud_flags if fraud_flags else None
+    }
+
 # Admin - Override employer risk score
 @api_router.patch("/admin/employers/{employer_id}/risk-score")
 async def admin_override_employer_risk(
