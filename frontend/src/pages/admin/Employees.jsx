@@ -109,8 +109,22 @@ const FilterButton = ({ active, onClick, children }) => (
 );
 
 // Employee Row
-const EmployeeRow = ({ employee, onViewDetails, onQuickAction }) => (
-  <div className="flex items-center gap-4 p-4 bg-white/40 dark:bg-slate-800/40 rounded-xl hover:bg-white/60 dark:hover:bg-slate-800/60 transition-colors group">
+const EmployeeRow = ({ employee, onViewDetails, onQuickAction, isSelected, onToggleSelect }) => (
+  <div className={cn(
+    "flex items-center gap-4 p-4 rounded-xl transition-colors group",
+    isSelected 
+      ? "bg-purple-50/80 dark:bg-purple-900/20 ring-1 ring-purple-300 dark:ring-purple-700"
+      : "bg-white/40 dark:bg-slate-800/40 hover:bg-white/60 dark:hover:bg-slate-800/60"
+  )}>
+    {/* Checkbox */}
+    <input
+      type="checkbox"
+      checked={isSelected}
+      onChange={() => onToggleSelect(employee.id)}
+      className="w-4 h-4 rounded border-slate-300 text-purple-600 focus:ring-purple-500 cursor-pointer shrink-0"
+      data-testid={`select-employee-${employee.id}`}
+    />
+    
     {/* Avatar */}
     <div className="w-11 h-11 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-md shrink-0">
       <span className="text-white font-bold text-sm">
