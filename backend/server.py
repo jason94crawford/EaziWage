@@ -211,6 +211,11 @@ class EmployerResponse(BaseModel):
     risk_score: Optional[float] = None
     risk_rating: Optional[str] = None
     risk_factors: Optional[Dict[str, Any]] = None
+    payroll_system_type: Optional[str] = "manual"  # api_integration, manual
+    last_verified_at: Optional[str] = None
+    next_verification_due: Optional[str] = None
+    ewa_limit_percentage: Optional[float] = 50.0  # Default 50%
+    advance_cooldown_days: Optional[int] = 7  # Default 7 days
     created_at: str
 
 # Employee Models
