@@ -121,6 +121,7 @@ const SidebarNav = ({ isOpen, onClose }) => {
     { href: '/employer/payroll', label: 'Payroll', icon: Upload },
     { href: '/employer/advances', label: 'Advances', icon: CreditCard },
     { href: '/employer/reports', label: 'Reports', icon: BarChart3 },
+    { href: '/employer/risk-insights', label: 'Risk Insights', icon: Shield },
     { href: '/employer/settings', label: 'Settings', icon: Settings },
   ];
 
