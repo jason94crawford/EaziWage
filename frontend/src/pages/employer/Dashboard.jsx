@@ -232,9 +232,6 @@ export default function EmployerDashboard() {
                 Your company profile is being reviewed. This usually takes 1-2 business days.
               </p>
             </div>
-            <Button variant="outline" className="hidden sm:flex border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-500/30 dark:text-amber-300">
-              View Status
-            </Button>
           </div>
         )}
 
