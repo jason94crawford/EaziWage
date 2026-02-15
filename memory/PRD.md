@@ -113,19 +113,34 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - `PATCH /api/admin/employees/{id}/status` - Update account status
 - `PATCH /api/admin/employees/{id}/kyc` - Update KYC status
 - `PATCH /api/admin/employees/{id}/risk-score` - Override risk score
+- `POST /api/admin/employees/bulk-action` - Bulk actions (activate/suspend/approve_kyc) ✅ **NEW**
 
 ### Admin Employers
 - `GET /api/admin/employers` - List all employers
-- `GET /api/admin/employers/{id}` - Get employer detail ✅ **NEW**
+- `GET /api/admin/employers/{id}` - Get employer detail ✅
 - `PATCH /api/admin/employers/{id}/status` - Update employer status
+- `POST /api/admin/employers/bulk-action` - Bulk actions (approve/suspend/reject) ✅ **NEW**
 
 ### Admin Review Management
 - `GET /api/admin/review-requests` - List review requests
-- `PATCH /api/admin/review-requests/{id}` - Update request status/response ✅ **NEW**
+- `PATCH /api/admin/review-requests/{id}` - Update request status/response ✅
 
-### Admin Fraud Detection
+### Admin Fraud Detection ✅ **NEW - FULLY FUNCTIONAL**
+- `GET /api/admin/fraud-rules` - List all fraud detection rules
+- `POST /api/admin/fraud-rules` - Create new fraud rule
+- `PUT /api/admin/fraud-rules/{id}` - Update fraud rule
+- `DELETE /api/admin/fraud-rules/{id}` - Delete fraud rule
+- `PATCH /api/admin/fraud-rules/{id}/toggle` - Toggle rule enabled status
 - `GET /api/admin/advances/flagged` - Get flagged advances
-- `PATCH /api/admin/advances/{id}/review` - Review flagged advance ✅ **NEW**
+- `PATCH /api/admin/advances/{id}/review` - Review flagged advance
+
+### Admin Reconciliation ✅ **ENHANCED**
+- `GET /api/admin/reconciliation` - Get reconciliation data by employer
+- `GET /api/admin/reconciliation/summary` - Get reconciliation summary stats
+- `GET /api/admin/reconciliation/transactions` - Get transaction list for reconciliation
+- `POST /api/admin/reconciliation/reconcile/{id}` - Mark transaction as reconciled
+- `POST /api/admin/reconciliation/dispute/{id}` - Mark transaction as disputed
+- `POST /api/admin/reconciliation/bulk-reconcile` - Bulk reconcile transactions
 
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
@@ -136,18 +151,19 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - 9 employers with varying statuses
 - 67 employees seeded across multiple employers
 - 1 review request from Test Corp Ltd
-- 3 pre-configured fraud detection rules (demo data in frontend)
+- 3 default fraud detection rules (seeded automatically in database)
 
 ## Bug Fixes (Feb 2026)
 - **Payroll Data Consistency**: Fixed mismatch between Dashboard and Payroll page Monthly Payroll values
+- **Department Pie Chart**: Fixed by replacing custom SVG with recharts PieChart component
 
 ## Completed in Latest Session (Feb 2026)
-1. ✅ Admin Employees Bulk Actions (select all, bulk activate/suspend/KYC approve)
-2. ✅ Admin Employers Page Redesign (purple theme, bulk actions, detail modal)
-3. ✅ Fraud Detection Page (rules management, flagged transactions)
-4. ✅ Review Management Page (employer requests handling)
-5. ✅ Backend endpoints for review requests and advance reviews
-6. ✅ Sidebar navigation updated with new page links
+1. ✅ Department Distribution Pie Chart - Now using recharts library with proper rendering
+2. ✅ Fraud Detection Rules CRUD - Full backend integration with MongoDB persistence
+3. ✅ Fraud checking integrated into advance creation flow
+4. ✅ Reconciliation system enhanced with unique transaction references (EWA-XXXXXXXX)
+5. ✅ Bulk action APIs for employees and employers
+6. ✅ All new backend endpoints tested and verified (23/23 tests passed)
 
 ## Mocked Features
 - Mobile Money APIs (M-PESA, Airtel Money, MTN MoMo)
@@ -155,12 +171,10 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Apple Login
 - Biometric Face Scan
 - Live Payroll API (Auto Mode is simulated)
-- **Fraud Detection Rules CRUD** (stored in React state, not persisted)
 
 ## Pending Tasks
 
 ### P1 - High Priority
-- Persist fraud detection rules to database
 - Implement full Employer Notifications page (not just bell icon)
 
 ### P2 - Medium Priority
