@@ -2972,6 +2972,432 @@ async def admin_get_reports_summary(user: dict = Depends(require_role(UserRole.A
         }
     }
 
+# ======================== FRAUD DETECTION RULES ========================
+
+def format_threshold_display(rule_type: str, threshold: float) -> str:
+    """Format threshold for display based on rule type"""
+    if rule_type == "amount_threshold":
+        return f"KES {threshold:,.0f}"
+    elif rule_type == "frequency":
+        return f"{int(threshold)} per day"
+    elif rule_type == "velocity":
+        return f"KES {threshold:,.0f}/hour"
+    else:
+        return str(threshold)
+
+@api_router.get("/admin/fraud-rules")
+async def admin_list_fraud_rules(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all fraud detection rules"""
+    rules = await db.fraud_rules.find({}, {"_id": 0}).to_list(100)
+    
+    # If no rules exist, seed default rules
+    if len(rules) == 0:
+        default_rules = [
+            {
+                "id": str(uuid.uuid4()),
+                "name": "High Amount Alert",
+                "type": "amount_threshold",
+                "description": "Flag advances exceeding KES 50,000",
+                "threshold": 50000,
+                "threshold_display": "KES 50,000",
+                "severity": "high",
+                "enabled": True,
+                "action": "flag",
+                "trigger_count": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Frequency Limit",
+                "type": "frequency",
+                "description": "Maximum 3 advance requests per day",
+                "threshold": 3,
+                "threshold_display": "3 per day",
+                "severity": "medium",
+                "enabled": True,
+                "action": "flag",
+                "trigger_count": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "New Employee Velocity",
+                "type": "velocity",
+                "description": "Flag new employees requesting > KES 20,000 in first week",
+                "threshold": 20000,
+                "threshold_display": "KES 20,000/week (new)",
+                "severity": "high",
+                "enabled": False,
+                "action": "block",
+                "trigger_count": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            }
+        ]
+        await db.fraud_rules.insert_many(default_rules)
+        rules = default_rules
+    
+    return rules
+
+@api_router.post("/admin/fraud-rules")
+async def admin_create_fraud_rule(
+    data: FraudRuleCreate,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Create a new fraud detection rule"""
+    rule = {
+        "id": str(uuid.uuid4()),
+        "name": data.name,
+        "type": data.type,
+        "description": data.description,
+        "threshold": data.threshold,
+        "threshold_display": format_threshold_display(data.type, data.threshold),
+        "severity": data.severity,
+        "enabled": data.enabled,
+        "action": data.action,
+        "trigger_count": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.fraud_rules.insert_one(rule)
+    rule.pop("_id", None)
+    return rule
+
+@api_router.put("/admin/fraud-rules/{rule_id}")
+async def admin_update_fraud_rule(
+    rule_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update an existing fraud rule"""
+    update_data = {
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    for field in ["name", "type", "description", "threshold", "severity", "enabled", "action"]:
+        if field in data:
+            update_data[field] = data[field]
+    
+    if "type" in data or "threshold" in data:
+        rule_type = data.get("type") or (await db.fraud_rules.find_one({"id": rule_id})).get("type", "amount_threshold")
+        threshold = data.get("threshold", 0)
+        update_data["threshold_display"] = format_threshold_display(rule_type, threshold)
+    
+    result = await db.fraud_rules.update_one({"id": rule_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Rule not found")
+    
+    updated_rule = await db.fraud_rules.find_one({"id": rule_id}, {"_id": 0})
+    return updated_rule
+
+@api_router.delete("/admin/fraud-rules/{rule_id}")
+async def admin_delete_fraud_rule(
+    rule_id: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Delete a fraud detection rule"""
+    result = await db.fraud_rules.delete_one({"id": rule_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Rule not found")
+    return {"message": "Rule deleted successfully"}
+
+@api_router.patch("/admin/fraud-rules/{rule_id}/toggle")
+async def admin_toggle_fraud_rule(
+    rule_id: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Toggle a fraud rule's enabled status"""
+    rule = await db.fraud_rules.find_one({"id": rule_id})
+    if not rule:
+        raise HTTPException(status_code=404, detail="Rule not found")
+    
+    new_status = not rule.get("enabled", True)
+    await db.fraud_rules.update_one(
+        {"id": rule_id},
+        {"$set": {"enabled": new_status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    return {"id": rule_id, "enabled": new_status}
+
+async def check_fraud_rules(advance_request: dict, employee: dict) -> dict:
+    """Check an advance request against all enabled fraud rules"""
+    rules = await db.fraud_rules.find({"enabled": True}, {"_id": 0}).to_list(100)
+    violations = []
+    
+    amount = advance_request.get("amount", 0)
+    employee_id = employee.get("id")
+    
+    for rule in rules:
+        triggered = False
+        
+        if rule["type"] == "amount_threshold":
+            if amount > rule["threshold"]:
+                triggered = True
+        
+        elif rule["type"] == "frequency":
+            # Check how many advances in the last 24 hours
+            yesterday = datetime.now(timezone.utc) - timedelta(days=1)
+            recent_count = await db.advances.count_documents({
+                "employee_id": employee_id,
+                "created_at": {"$gte": yesterday.isoformat()}
+            })
+            if recent_count >= rule["threshold"]:
+                triggered = True
+        
+        elif rule["type"] == "velocity":
+            # Check total amount in the last hour for new employees (< 30 days)
+            tenure = employee.get("tenure_months", 0)
+            if tenure < 1:  # New employee
+                one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
+                recent_advances = await db.advances.find({
+                    "employee_id": employee_id,
+                    "created_at": {"$gte": one_hour_ago.isoformat()}
+                }, {"_id": 0, "amount": 1}).to_list(100)
+                total_recent = sum(a.get("amount", 0) for a in recent_advances) + amount
+                if total_recent > rule["threshold"]:
+                    triggered = True
+        
+        if triggered:
+            violations.append({
+                "rule_id": rule["id"],
+                "rule_name": rule["name"],
+                "severity": rule["severity"],
+                "action": rule["action"]
+            })
+            # Increment trigger count
+            await db.fraud_rules.update_one(
+                {"id": rule["id"]},
+                {"$inc": {"trigger_count": 1}}
+            )
+    
+    return {
+        "passed": len(violations) == 0,
+        "violations": violations,
+        "should_block": any(v["action"] == "block" for v in violations),
+        "should_flag": any(v["action"] in ["flag", "block"] for v in violations)
+    }
+
+# ======================== RECONCILIATION SYSTEM ========================
+
+def generate_transaction_reference() -> str:
+    """Generate a unique transaction reference"""
+    timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    random_part = str(uuid.uuid4())[:8].upper()
+    return f"EWA-{timestamp}-{random_part}"
+
+@api_router.get("/admin/reconciliation/transactions")
+async def admin_get_reconciliation_transactions(
+    status: Optional[str] = None,
+    date_from: Optional[str] = None,
+    date_to: Optional[str] = None,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get transactions for reconciliation with detailed info"""
+    query = {}
+    
+    if status == "pending":
+        query["reconciliation_status"] = {"$in": ["pending", None]}
+    elif status == "reconciled":
+        query["reconciliation_status"] = "reconciled"
+    elif status == "disputed":
+        query["reconciliation_status"] = "disputed"
+    
+    if date_from:
+        query["created_at"] = {"$gte": date_from}
+    if date_to:
+        if "created_at" in query:
+            query["created_at"]["$lte"] = date_to
+        else:
+            query["created_at"] = {"$lte": date_to}
+    
+    advances = await db.advances.find(
+        {"status": {"$in": ["approved", "disbursed", "repaid"]}, **query},
+        {"_id": 0}
+    ).to_list(1000)
+    
+    transactions = []
+    for adv in advances:
+        # Get employee and employer names
+        employee = await db.employees.find_one({"id": adv.get("employee_id")}, {"_id": 0, "full_name": 1})
+        employer = await db.employers.find_one({"id": adv.get("employer_id")}, {"_id": 0, "company_name": 1})
+        
+        transactions.append({
+            "id": adv.get("id"),
+            "transaction_ref": adv.get("transaction_ref") or generate_transaction_reference(),
+            "advance_id": adv.get("id"),
+            "employee_name": employee.get("full_name", "Unknown") if employee else "Unknown",
+            "employer_name": employer.get("company_name", "Unknown") if employer else "Unknown",
+            "amount": adv.get("amount", 0),
+            "fee": adv.get("fee_amount", 0),
+            "net_amount": adv.get("amount", 0) - adv.get("fee_amount", 0),
+            "status": adv.get("status"),
+            "payment_method": adv.get("payment_method", "mobile_money"),
+            "created_at": adv.get("created_at"),
+            "reconciled_at": adv.get("reconciled_at"),
+            "reconciliation_status": adv.get("reconciliation_status", "pending")
+        })
+    
+    return transactions
+
+@api_router.post("/admin/reconciliation/reconcile/{advance_id}")
+async def admin_reconcile_transaction(
+    advance_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Mark a transaction as reconciled"""
+    result = await db.advances.update_one(
+        {"id": advance_id},
+        {"$set": {
+            "reconciliation_status": "reconciled",
+            "reconciled_at": datetime.now(timezone.utc).isoformat(),
+            "reconciled_by": user.get("id"),
+            "reconciliation_notes": data.get("notes", "")
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    return {"message": "Transaction reconciled successfully"}
+
+@api_router.post("/admin/reconciliation/dispute/{advance_id}")
+async def admin_dispute_transaction(
+    advance_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Mark a transaction as disputed for investigation"""
+    result = await db.advances.update_one(
+        {"id": advance_id},
+        {"$set": {
+            "reconciliation_status": "disputed",
+            "dispute_reason": data.get("reason", ""),
+            "disputed_at": datetime.now(timezone.utc).isoformat(),
+            "disputed_by": user.get("id")
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    return {"message": "Transaction marked as disputed"}
+
+@api_router.post("/admin/reconciliation/bulk-reconcile")
+async def admin_bulk_reconcile(
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Bulk reconcile multiple transactions"""
+    advance_ids = data.get("advance_ids", [])
+    if not advance_ids:
+        raise HTTPException(status_code=400, detail="No advance IDs provided")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    result = await db.advances.update_many(
+        {"id": {"$in": advance_ids}},
+        {"$set": {
+            "reconciliation_status": "reconciled",
+            "reconciled_at": now,
+            "reconciled_by": user.get("id")
+        }}
+    )
+    
+    return {
+        "message": f"Successfully reconciled {result.modified_count} transactions",
+        "reconciled_count": result.modified_count
+    }
+
+@api_router.get("/admin/reconciliation/summary")
+async def admin_reconciliation_summary(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get reconciliation summary statistics"""
+    all_advances = await db.advances.find(
+        {"status": {"$in": ["approved", "disbursed", "repaid"]}},
+        {"_id": 0}
+    ).to_list(10000)
+    
+    pending = len([a for a in all_advances if a.get("reconciliation_status") in [None, "pending"]])
+    reconciled = len([a for a in all_advances if a.get("reconciliation_status") == "reconciled"])
+    disputed = len([a for a in all_advances if a.get("reconciliation_status") == "disputed"])
+    
+    total_amount = sum(a.get("amount", 0) for a in all_advances)
+    reconciled_amount = sum(a.get("amount", 0) for a in all_advances if a.get("reconciliation_status") == "reconciled")
+    pending_amount = sum(a.get("amount", 0) for a in all_advances if a.get("reconciliation_status") in [None, "pending"])
+    
+    return {
+        "total_transactions": len(all_advances),
+        "pending_count": pending,
+        "reconciled_count": reconciled,
+        "disputed_count": disputed,
+        "total_amount": total_amount,
+        "reconciled_amount": reconciled_amount,
+        "pending_amount": pending_amount,
+        "reconciliation_rate": round((reconciled / len(all_advances) * 100), 1) if all_advances else 0
+    }
+
+# ======================== BULK ACTIONS ========================
+
+@api_router.post("/admin/employees/bulk-action")
+async def admin_bulk_employee_action(
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Perform bulk actions on employees"""
+    employee_ids = data.get("employee_ids", [])
+    action = data.get("action")  # activate, suspend, approve_kyc
+    
+    if not employee_ids:
+        raise HTTPException(status_code=400, detail="No employee IDs provided")
+    
+    if action not in ["activate", "suspend", "approve_kyc"]:
+        raise HTTPException(status_code=400, detail="Invalid action")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    if action == "activate":
+        update_data = {"status": "approved", "updated_at": now}
+    elif action == "suspend":
+        update_data = {"status": "suspended", "updated_at": now}
+    elif action == "approve_kyc":
+        update_data = {"kyc_status": "approved", "status": "approved", "kyc_step": 7, "updated_at": now}
+    
+    result = await db.employees.update_many(
+        {"id": {"$in": employee_ids}},
+        {"$set": update_data}
+    )
+    
+    return {
+        "message": f"Successfully updated {result.modified_count} employees",
+        "modified_count": result.modified_count
+    }
+
+@api_router.post("/admin/employers/bulk-action")
+async def admin_bulk_employer_action(
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Perform bulk actions on employers"""
+    employer_ids = data.get("employer_ids", [])
+    action = data.get("action")  # approve, suspend, reject
+    
+    if not employer_ids:
+        raise HTTPException(status_code=400, detail="No employer IDs provided")
+    
+    if action not in ["approve", "suspend", "reject"]:
+        raise HTTPException(status_code=400, detail="Invalid action")
+    
+    now = datetime.now(timezone.utc).isoformat()
+    
+    if action == "approve":
+        update_data = {"status": "approved", "updated_at": now}
+    elif action == "suspend":
+        update_data = {"status": "suspended", "updated_at": now}
+    elif action == "reject":
+        update_data = {"status": "rejected", "updated_at": now}
+    
+    result = await db.employers.update_many(
+        {"id": {"$in": employer_ids}},
+        {"$set": update_data}
+    )
+    
+    return {
+        "message": f"Successfully updated {result.modified_count} employers",
+        "modified_count": result.modified_count
+    }
+
 @api_router.get("/")
 async def root():
     return {"message": "EaziWage API v1.0", "status": "running"}
