@@ -222,6 +222,16 @@ function App() {
               <AdminAdvances />
             </ProtectedRoute>
           } />
+          <Route path="/admin/reconciliation" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminReconciliation />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/kyc-review" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminKYCReview />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/kyc" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminKYCReview />
@@ -230,6 +240,11 @@ function App() {
           <Route path="/admin/risk-scoring" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminRiskScoring />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/api-health" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminAPIHealth />
             </ProtectedRoute>
           } />
           <Route path="/admin/settings" element={
