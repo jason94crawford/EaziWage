@@ -359,10 +359,9 @@ export default function EmployerReports() {
             
             <div className="divide-y divide-slate-200/50 dark:divide-slate-700/30">
               <SummaryRow label="Total Requests" value={advanceStats.total} />
-              <SummaryRow label="Approved" value={advanceStats.approved} valueColor="text-emerald-600" />
-              <SummaryRow label="Pending Review" value={advanceStats.pending} valueColor="text-amber-600" />
+              <SummaryRow label="Disbursed" value={advanceStats.approved} valueColor="text-emerald-600" />
               <SummaryRow label="Rejected" value={advanceStats.rejected} valueColor="text-red-600" />
-              <SummaryRow label="Total Disbursed" value={formatCurrency(totalDisbursed)} valueColor="text-primary" />
+              <SummaryRow label="Total Amount" value={formatCurrency(totalDisbursed)} valueColor="text-primary" />
             </div>
           </div>
 
