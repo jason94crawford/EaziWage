@@ -2223,10 +2223,525 @@ async def get_employer_dashboard_extended(user: dict = Depends(require_role(User
         "avg_salary": avg_salary,
         "total_monthly_payroll": total_payroll,
         "total_advances_disbursed": total_disbursed,
+        "monthly_advances_disbursed": total_disbursed,  # For Payroll page sync
+        "avg_fee_rate": 4.5,  # Default fee rate
         "pending_advances": pending_advances,
         "ewa_utilization_rate": ewa_utilization_rate,
         "employees_with_advances": employees_with_advances,
         "risk_score": employer.get("risk_score")
+    }
+
+# ============================================
+# ADMIN PORTAL ENDPOINTS
+# ============================================
+
+# Review Requests (from employers requesting risk score review, etc.)
+@api_router.post("/admin/review-requests")
+async def create_review_request(
+    data: dict,
+    user: dict = Depends(get_current_user)
+):
+    """Create a review request from employer (e.g., risk score review)"""
+    request_id = str(uuid.uuid4())
+    await db.admin_requests.insert_one({
+        "id": request_id,
+        "type": data.get("type", "general"),
+        "employer_id": data.get("employer_id"),
+        "user_id": user["id"],
+        "message": data.get("message"),
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat()
+    })
+    return {"message": "Review request submitted", "request_id": request_id}
+
+@api_router.get("/admin/review-requests")
+async def get_review_requests(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all review requests for admin"""
+    requests = await db.admin_requests.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    return requests
+
+# Admin Dashboard - Platform Overview
+@api_router.get("/admin/dashboard")
+async def get_admin_dashboard(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get comprehensive admin dashboard stats"""
+    # Employers
+    employers = await db.employers.find({}, {"_id": 0}).to_list(1000)
+    total_employers = len(employers)
+    active_employers = len([e for e in employers if e.get("status") == "approved"])
+    pending_employers = len([e for e in employers if e.get("status") == "pending"])
+    
+    # Employees
+    employees = await db.employees.find({}, {"_id": 0}).to_list(10000)
+    total_employees = len(employees)
+    active_employees = len([e for e in employees if e.get("status") == "approved"])
+    pending_employees = len([e for e in employees if e.get("status") == "pending"])
+    
+    # KYC Stats
+    kyc_pending_employers = len([e for e in employers if e.get("status") == "pending"])
+    kyc_pending_employees = len([e for e in employees if e.get("kyc_status") in ["pending", "submitted"]])
+    
+    # Advances
+    advances = await db.advances.find({}, {"_id": 0}).to_list(10000)
+    total_advances = len(advances)
+    total_disbursed = sum(a.get("amount", 0) for a in advances if a.get("status") in ["approved", "disbursed", "repaid"])
+    total_fees = sum(a.get("fee_amount", 0) for a in advances if a.get("status") in ["approved", "disbursed", "repaid"])
+    pending_advances = len([a for a in advances if a.get("status") == "pending"])
+    
+    # Monthly stats (current month)
+    current_month = datetime.now(timezone.utc).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    monthly_advances = [a for a in advances if a.get("created_at") and datetime.fromisoformat(a["created_at"].replace('Z', '+00:00')) >= current_month]
+    monthly_disbursed = sum(a.get("amount", 0) for a in monthly_advances if a.get("status") in ["approved", "disbursed"])
+    monthly_fees = sum(a.get("fee_amount", 0) for a in monthly_advances if a.get("status") in ["approved", "disbursed"])
+    
+    # Risk distribution
+    employer_risk_scores = [e.get("risk_score", 3.0) for e in employers if e.get("risk_score")]
+    avg_employer_risk = round(sum(employer_risk_scores) / len(employer_risk_scores), 2) if employer_risk_scores else 0
+    
+    # Review requests
+    pending_reviews = await db.admin_requests.count_documents({"status": "pending"})
+    
+    # API Health (mock)
+    api_health = {
+        "mpesa": {"status": "healthy", "latency": 120},
+        "airtel_money": {"status": "healthy", "latency": 95},
+        "bank_api": {"status": "healthy", "latency": 200},
+        "payroll_sync": {"status": "healthy", "latency": 150}
+    }
+    
+    return {
+        "employers": {
+            "total": total_employers,
+            "active": active_employers,
+            "pending": pending_employers
+        },
+        "employees": {
+            "total": total_employees,
+            "active": active_employees,
+            "pending": pending_employees
+        },
+        "kyc_pending": {
+            "employers": kyc_pending_employers,
+            "employees": kyc_pending_employees
+        },
+        "advances": {
+            "total_count": total_advances,
+            "total_disbursed": total_disbursed,
+            "total_fees": total_fees,
+            "pending_count": pending_advances
+        },
+        "monthly": {
+            "disbursed": monthly_disbursed,
+            "fees": monthly_fees,
+            "advance_count": len(monthly_advances)
+        },
+        "risk": {
+            "avg_employer_score": avg_employer_risk
+        },
+        "pending_reviews": pending_reviews,
+        "api_health": api_health
+    }
+
+# Admin - List all employers
+@api_router.get("/admin/employers")
+async def admin_list_employers(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all employers for admin management"""
+    employers = await db.employers.find({}, {"_id": 0}).to_list(1000)
+    # Enrich with user data
+    for employer in employers:
+        user_data = await db.users.find_one({"id": employer.get("user_id")}, {"_id": 0, "password_hash": 0})
+        employer["user"] = user_data
+        # Get employee count
+        emp_count = await db.employees.count_documents({"employer_id": employer["id"]})
+        employer["employee_count_actual"] = emp_count
+    return employers
+
+# Admin - Update employer status
+@api_router.patch("/admin/employers/{employer_id}/status")
+async def admin_update_employer_status(
+    employer_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Activate/deactivate employer account"""
+    new_status = data.get("status")
+    if new_status not in ["approved", "pending", "rejected", "suspended"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    result = await db.employers.update_one(
+        {"id": employer_id},
+        {"$set": {"status": new_status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    return {"message": f"Employer status updated to {new_status}"}
+
+# Admin - Override employer risk score
+@api_router.patch("/admin/employers/{employer_id}/risk-score")
+async def admin_override_employer_risk(
+    employer_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Manually override employer risk score"""
+    new_score = data.get("risk_score")
+    reason = data.get("reason", "Admin override")
+    
+    if not 0 <= new_score <= 5:
+        raise HTTPException(status_code=400, detail="Risk score must be between 0 and 5")
+    
+    # Determine rating
+    if new_score >= 4:
+        rating = "A"
+    elif new_score >= 3:
+        rating = "B"
+    elif new_score >= 2.6:
+        rating = "C"
+    else:
+        rating = "D"
+    
+    result = await db.employers.update_one(
+        {"id": employer_id},
+        {"$set": {
+            "risk_score": new_score,
+            "risk_rating": rating,
+            "risk_override": {
+                "admin_id": user["id"],
+                "reason": reason,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            },
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    return {"message": f"Risk score updated to {new_score} ({rating})", "rating": rating}
+
+# Admin - List all employees across all employers
+@api_router.get("/admin/employees")
+async def admin_list_employees(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all employees for admin management"""
+    employees = await db.employees.find({}, {"_id": 0}).to_list(10000)
+    # Enrich with employer name
+    employer_cache = {}
+    for emp in employees:
+        employer_id = emp.get("employer_id")
+        if employer_id and employer_id not in employer_cache:
+            employer = await db.employers.find_one({"id": employer_id}, {"_id": 0, "company_name": 1})
+            employer_cache[employer_id] = employer.get("company_name") if employer else "Unknown"
+        emp["employer_name"] = employer_cache.get(employer_id, "Unknown")
+    return employees
+
+# Admin - Update employee status
+@api_router.patch("/admin/employees/{employee_id}/status")
+async def admin_update_employee_status(
+    employee_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Activate/deactivate employee account"""
+    new_status = data.get("status")
+    if new_status not in ["approved", "pending", "rejected", "suspended"]:
+        raise HTTPException(status_code=400, detail="Invalid status")
+    
+    result = await db.employees.update_one(
+        {"id": employee_id},
+        {"$set": {"status": new_status, "updated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    return {"message": f"Employee status updated to {new_status}"}
+
+# Admin - Update employee KYC status
+@api_router.patch("/admin/employees/{employee_id}/kyc")
+async def admin_update_employee_kyc(
+    employee_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Approve/reject employee KYC"""
+    new_status = data.get("kyc_status")
+    if new_status not in ["approved", "rejected", "pending"]:
+        raise HTTPException(status_code=400, detail="Invalid KYC status")
+    
+    update_data = {
+        "kyc_status": new_status,
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if new_status == "approved":
+        update_data["status"] = "approved"
+        update_data["kyc_step"] = 7
+    
+    result = await db.employees.update_one({"id": employee_id}, {"$set": update_data})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    return {"message": f"Employee KYC status updated to {new_status}"}
+
+# Admin - Override employee risk score
+@api_router.patch("/admin/employees/{employee_id}/risk-score")
+async def admin_override_employee_risk(
+    employee_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Manually override employee risk score"""
+    new_score = data.get("risk_score")
+    reason = data.get("reason", "Admin override")
+    
+    if not 0 <= new_score <= 5:
+        raise HTTPException(status_code=400, detail="Risk score must be between 0 and 5")
+    
+    result = await db.employees.update_one(
+        {"id": employee_id},
+        {"$set": {
+            "risk_score": new_score,
+            "risk_override": {
+                "admin_id": user["id"],
+                "reason": reason,
+                "timestamp": datetime.now(timezone.utc).isoformat()
+            },
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    return {"message": f"Employee risk score updated to {new_score}"}
+
+# Admin - Get all advances
+@api_router.get("/admin/advances")
+async def admin_list_advances(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all advances for reconciliation"""
+    advances = await db.advances.find({}, {"_id": 0}).sort("created_at", -1).to_list(10000)
+    return advances
+
+# Admin - Reconciliation summary
+@api_router.get("/admin/reconciliation")
+async def admin_get_reconciliation(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get reconciliation data with reference tracking"""
+    advances = await db.advances.find({}, {"_id": 0}).to_list(10000)
+    
+    # Group by employer for reconciliation
+    employer_reconciliation = {}
+    for adv in advances:
+        employer_id = adv.get("employer_id")
+        if employer_id not in employer_reconciliation:
+            employer_reconciliation[employer_id] = {
+                "employer_id": employer_id,
+                "employer_name": adv.get("employer_name", "Unknown"),
+                "total_advances": 0,
+                "total_amount": 0,
+                "total_fees": 0,
+                "pending_recoupment": 0,
+                "recouped": 0,
+                "advances": []
+            }
+        
+        amount = adv.get("amount", 0)
+        fee = adv.get("fee_amount", 0)
+        status = adv.get("status")
+        
+        employer_reconciliation[employer_id]["total_advances"] += 1
+        employer_reconciliation[employer_id]["total_amount"] += amount
+        employer_reconciliation[employer_id]["total_fees"] += fee
+        
+        if status in ["disbursed", "approved"]:
+            employer_reconciliation[employer_id]["pending_recoupment"] += amount + fee
+        elif status == "repaid":
+            employer_reconciliation[employer_id]["recouped"] += amount + fee
+        
+        # Add reference for tracking
+        adv["reference"] = f"EWA-{adv.get('id', '')[:8].upper()}"
+        employer_reconciliation[employer_id]["advances"].append(adv)
+    
+    return {
+        "summary": {
+            "total_employers": len(employer_reconciliation),
+            "total_advances": sum(e["total_advances"] for e in employer_reconciliation.values()),
+            "total_disbursed": sum(e["total_amount"] for e in employer_reconciliation.values()),
+            "total_fees": sum(e["total_fees"] for e in employer_reconciliation.values()),
+            "pending_recoupment": sum(e["pending_recoupment"] for e in employer_reconciliation.values()),
+            "total_recouped": sum(e["recouped"] for e in employer_reconciliation.values())
+        },
+        "by_employer": list(employer_reconciliation.values())
+    }
+
+# Admin - Flag advance for fraud review
+@api_router.post("/admin/advances/{advance_id}/flag")
+async def admin_flag_advance(
+    advance_id: str,
+    data: dict,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Flag an advance for fraud review"""
+    flag_type = data.get("flag_type", "suspicious")  # suspicious, fraud, mispayment
+    notes = data.get("notes", "")
+    
+    result = await db.advances.update_one(
+        {"id": advance_id},
+        {"$set": {
+            "flagged": True,
+            "flag_type": flag_type,
+            "flag_notes": notes,
+            "flagged_by": user["id"],
+            "flagged_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    
+    return {"message": f"Advance flagged as {flag_type}"}
+
+# Admin - Get flagged advances
+@api_router.get("/admin/advances/flagged")
+async def admin_get_flagged_advances(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all flagged advances for review"""
+    flagged = await db.advances.find({"flagged": True}, {"_id": 0}).to_list(1000)
+    return flagged
+
+# Admin - Notifications
+@api_router.get("/admin/notifications")
+async def admin_get_notifications(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get admin notifications"""
+    # Combine various notification sources
+    notifications = []
+    
+    # Pending review requests
+    reviews = await db.admin_requests.find({"status": "pending"}, {"_id": 0}).to_list(50)
+    for r in reviews:
+        notifications.append({
+            "id": r["id"],
+            "type": "review_request",
+            "title": f"Risk Review Request",
+            "message": r.get("message", "Employer requested risk score review"),
+            "created_at": r.get("created_at"),
+            "read": False
+        })
+    
+    # Pending KYC (employers)
+    pending_employers = await db.employers.find({"status": "pending"}, {"_id": 0, "id": 1, "company_name": 1, "created_at": 1}).to_list(20)
+    for e in pending_employers:
+        notifications.append({
+            "id": f"emp-{e['id']}",
+            "type": "employer_kyc",
+            "title": "Employer Verification Pending",
+            "message": f"{e.get('company_name', 'New employer')} awaiting verification",
+            "created_at": e.get("created_at"),
+            "read": False
+        })
+    
+    # Flagged advances
+    flagged = await db.advances.find({"flagged": True}, {"_id": 0, "id": 1, "flag_type": 1, "flagged_at": 1, "amount": 1}).to_list(20)
+    for f in flagged:
+        notifications.append({
+            "id": f"flag-{f['id']}",
+            "type": "flagged_advance",
+            "title": f"Flagged: {f.get('flag_type', 'suspicious').title()}",
+            "message": f"Advance of KES {f.get('amount', 0):,} requires review",
+            "created_at": f.get("flagged_at"),
+            "read": False
+        })
+    
+    # Sort by date
+    notifications.sort(key=lambda x: x.get("created_at", ""), reverse=True)
+    return notifications[:50]
+
+# Admin - API Health Status
+@api_router.get("/admin/api-health")
+async def admin_get_api_health(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get API health status for all integrations"""
+    # Mock API health data
+    return {
+        "integrations": [
+            {
+                "name": "M-PESA API",
+                "provider": "Safaricom",
+                "status": "healthy",
+                "latency_ms": 120,
+                "uptime_percent": 99.8,
+                "last_check": datetime.now(timezone.utc).isoformat(),
+                "transactions_today": 156
+            },
+            {
+                "name": "Airtel Money API",
+                "provider": "Airtel",
+                "status": "healthy",
+                "latency_ms": 95,
+                "uptime_percent": 99.5,
+                "last_check": datetime.now(timezone.utc).isoformat(),
+                "transactions_today": 89
+            },
+            {
+                "name": "Bank Transfer API",
+                "provider": "Banking Partner",
+                "status": "healthy",
+                "latency_ms": 200,
+                "uptime_percent": 99.9,
+                "last_check": datetime.now(timezone.utc).isoformat(),
+                "transactions_today": 45
+            },
+            {
+                "name": "Payroll Sync API",
+                "provider": "Integrated Payroll",
+                "status": "healthy",
+                "latency_ms": 150,
+                "uptime_percent": 99.7,
+                "last_check": datetime.now(timezone.utc).isoformat(),
+                "syncs_today": 12
+            }
+        ],
+        "overall_status": "healthy",
+        "last_updated": datetime.now(timezone.utc).isoformat()
+    }
+
+# Admin - Reports
+@api_router.get("/admin/reports/summary")
+async def admin_get_reports_summary(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get platform-wide reports summary"""
+    advances = await db.advances.find({}, {"_id": 0}).to_list(10000)
+    employers = await db.employers.find({}, {"_id": 0}).to_list(1000)
+    employees = await db.employees.find({}, {"_id": 0}).to_list(10000)
+    
+    # Monthly breakdown (last 6 months)
+    monthly_data = {}
+    for adv in advances:
+        created = adv.get("created_at", "")
+        if created:
+            month = created[:7]  # YYYY-MM
+            if month not in monthly_data:
+                monthly_data[month] = {"disbursed": 0, "fees": 0, "count": 0}
+            if adv.get("status") in ["approved", "disbursed", "repaid"]:
+                monthly_data[month]["disbursed"] += adv.get("amount", 0)
+                monthly_data[month]["fees"] += adv.get("fee_amount", 0)
+                monthly_data[month]["count"] += 1
+    
+    # Country breakdown
+    country_data = {}
+    for emp in employers:
+        country = emp.get("country", "KE")
+        if country not in country_data:
+            country_data[country] = {"employers": 0, "employees": 0, "disbursed": 0}
+        country_data[country]["employers"] += 1
+    
+    for e in employees:
+        country = e.get("country", "KE")
+        if country in country_data:
+            country_data[country]["employees"] += 1
+    
+    return {
+        "monthly": monthly_data,
+        "by_country": country_data,
+        "totals": {
+            "total_employers": len(employers),
+            "total_employees": len(employees),
+            "total_advances": len(advances),
+            "total_disbursed": sum(a.get("amount", 0) for a in advances if a.get("status") in ["approved", "disbursed", "repaid"]),
+            "total_fees": sum(a.get("fee_amount", 0) for a in advances if a.get("status") in ["approved", "disbursed", "repaid"])
+        }
     }
 
 @api_router.get("/")
