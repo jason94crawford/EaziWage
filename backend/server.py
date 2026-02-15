@@ -3065,6 +3065,46 @@ async def admin_list_fraud_rules(user: dict = Depends(require_role(UserRole.ADMI
                 "action": "block",
                 "trigger_count": 0,
                 "created_at": datetime.now(timezone.utc).isoformat()
+            },
+            # Employer Manipulation Rules
+            {
+                "id": str(uuid.uuid4()),
+                "name": "EWA Limit Increase Detection",
+                "type": "employer_ewa_limit",
+                "description": "Flag employer increasing EWA limit above 60%",
+                "threshold": 60,
+                "threshold_display": ">60% EWA limit",
+                "severity": "high",
+                "enabled": True,
+                "action": "flag",
+                "trigger_count": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Cooldown Reduction Alert",
+                "type": "employer_cooldown",
+                "description": "Flag employer reducing advance cooldown below 3 days",
+                "threshold": 3,
+                "threshold_display": "<3 days cooldown",
+                "severity": "medium",
+                "enabled": True,
+                "action": "flag",
+                "trigger_count": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
+            },
+            {
+                "id": str(uuid.uuid4()),
+                "name": "Bulk Settings Change",
+                "type": "employer_bulk_change",
+                "description": "Flag employer making multiple setting changes in 24 hours",
+                "threshold": 3,
+                "threshold_display": ">3 changes/day",
+                "severity": "medium",
+                "enabled": True,
+                "action": "flag",
+                "trigger_count": 0,
+                "created_at": datetime.now(timezone.utc).isoformat()
             }
         ]
         await db.fraud_rules.insert_many(default_rules)
