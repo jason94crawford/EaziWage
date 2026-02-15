@@ -144,21 +144,23 @@ const EmployeeRow = ({ employee, onViewDetails, onQuickAction, isSelected, onTog
     </div>
     
     {/* Salary */}
-    <div className="text-right hidden sm:block">
+    <div className="text-right hidden sm:block w-24 shrink-0">
       <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(employee.monthly_salary)}</p>
       <p className="text-xs text-slate-500 dark:text-slate-400">Monthly</p>
     </div>
     
     {/* KYC Status */}
-    <div className="hidden md:block">
+    <div className="hidden md:block w-28 shrink-0">
       <KYCBadge status={employee.kyc_status} />
     </div>
     
     {/* Status */}
-    <StatusBadge status={employee.status} />
+    <div className="w-24 shrink-0">
+      <StatusBadge status={employee.status} />
+    </div>
     
     {/* Risk Score */}
-    <div className="hidden lg:block text-center w-16">
+    <div className="hidden lg:block text-center w-16 shrink-0">
       <p className={cn(
         "font-bold",
         employee.risk_score >= 4 ? "text-emerald-600" :
@@ -170,7 +172,7 @@ const EmployeeRow = ({ employee, onViewDetails, onQuickAction, isSelected, onTog
     </div>
     
     {/* Actions */}
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1 w-20 justify-end shrink-0">
       <button 
         onClick={() => onViewDetails(employee)}
         className="p-2 rounded-lg text-slate-400 hover:text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-500/10 transition-colors"
