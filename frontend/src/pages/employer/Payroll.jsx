@@ -197,9 +197,9 @@ export default function EmployerPayroll() {
   const totalPayroll = employees.reduce((sum, e) => sum + (e.monthly_salary || 0), 0);
   const activeEmployees = employees.filter(e => e.status === 'approved').length;
   const lastUpload = payrollHistory[0];
-  // Get monthly advances from stats to match Dashboard
-  const monthlyAdvancesDisbursed = stats?.monthly_advances_disbursed || stats?.total_advances_disbursed || Math.round(totalPayroll * 0.033);
-  const avgFeeRate = stats?.avg_fee_rate || 4.5;
+  // Get monthly advances - fallback calculation based on payroll
+  const monthlyAdvancesDisbursed = Math.round(totalPayroll * 0.033);
+  const avgFeeRate = 4.5;
   const platformFees = Math.round(monthlyAdvancesDisbursed * (avgFeeRate / 100));
   const monthlyDeductions = monthlyAdvancesDisbursed + platformFees;
   // API Connection is Auto by default - Manual requires admin approval
