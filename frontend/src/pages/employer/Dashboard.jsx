@@ -247,17 +247,17 @@ export default function EmployerDashboard() {
           <div className="lg:col-span-2 grid sm:grid-cols-2 gap-4">
             <MetricCard 
               icon={DollarSign}
-              label="Total Advances"
-              value={formatCurrency(stats?.total_advances_disbursed || 0)}
-              subtext="All time disbursements"
+              label="Advances This Month"
+              value={formatCurrency(stats?.monthly_advances_disbursed || stats?.total_advances_disbursed || 0)}
+              subtext="This month's disbursements"
               trend="+12.5%"
               trendUp={true}
             />
             <MetricCard 
-              icon={Clock}
-              label="Pending Advances"
-              value={stats?.pending_advances || 0}
-              subtext="Awaiting processing"
+              icon={TrendingUp}
+              label="Avg. Fee Rate"
+              value={`${(stats?.avg_fee_rate || 4.5).toFixed(1)}%`}
+              subtext="Based on risk score"
             />
             <MetricCard 
               icon={Wallet}
