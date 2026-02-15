@@ -297,6 +297,157 @@ const FilterButton = ({ active, onClick, children }) => (
   </button>
 );
 
+// Department Pie Chart
+const DepartmentPieChart = ({ data, totalEmployees }) => {
+  if (!data || Object.keys(data).length === 0) return null;
+  
+  const entries = Object.entries(data);
+  const colors = [
+    '#0df259', '#10b981', '#059669', '#047857', '#065f46',
+    '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#ec4899'
+  ];
+  
+  // Calculate pie chart segments
+  let cumulativePercentage = 0;
+  const segments = entries.map(([dept, count], index) => {
+    const percentage = (count / totalEmployees) * 100;
+    const startAngle = (cumulativePercentage / 100) * 360;
+    cumulativePercentage += percentage;
+    const endAngle = (cumulativePercentage / 100) * 360;
+    
+    // Calculate SVG arc path
+    const startRad = (startAngle - 90) * (Math.PI / 180);
+    const endRad = (endAngle - 90) * (Math.PI / 180);
+    const largeArc = percentage > 50 ? 1 : 0;
+    
+    const x1 = 50 + 40 * Math.cos(startRad);
+    const y1 = 50 + 40 * Math.sin(startRad);
+    const x2 = 50 + 40 * Math.cos(endRad);
+    const y2 = 50 + 40 * Math.sin(endRad);
+    
+    return {
+      dept,
+      count,
+      percentage,
+      color: colors[index % colors.length],
+      path: `M 50 50 L ${x1} ${y1} A 40 40 0 ${largeArc} 1 ${x2} ${y2} Z`
+    };
+  });
+
+  return (
+    <div className="flex items-center gap-6">
+      {/* Pie Chart */}
+      <div className="relative w-32 h-32 shrink-0">
+        <svg viewBox="0 0 100 100" className="w-full h-full">
+          {segments.map((seg, idx) => (
+            <path
+              key={seg.dept}
+              d={seg.path}
+              fill={seg.color}
+              className="hover:opacity-80 transition-opacity cursor-pointer"
+            />
+          ))}
+          {/* Center hole for donut effect */}
+          <circle cx="50" cy="50" r="20" fill="white" className="dark:fill-slate-900" />
+          <text x="50" y="50" textAnchor="middle" dominantBaseline="middle" className="text-xs font-bold fill-slate-900 dark:fill-white">
+            {totalEmployees}
+          </text>
+          <text x="50" y="58" textAnchor="middle" dominantBaseline="middle" className="text-[6px] fill-slate-500">
+            Total
+          </text>
+        </svg>
+      </div>
+      
+      {/* Legend */}
+      <div className="flex-1 grid grid-cols-2 gap-2">
+        {segments.slice(0, 8).map((seg) => (
+          <div key={seg.dept} className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: seg.color }} />
+            <span className="text-xs text-slate-600 dark:text-slate-400 truncate">{seg.dept}</span>
+            <span className="text-xs font-semibold text-slate-900 dark:text-white ml-auto">{seg.count}</span>
+          </div>
+        ))}
+        {entries.length > 8 && (
+          <div className="text-xs text-slate-500 col-span-2">+{entries.length - 8} more departments</div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Employee View Modal
+const EmployeeViewModal = ({ employee, isOpen, onClose }) => {
+  if (!isOpen || !employee) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div 
+        className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="bg-gradient-to-r from-primary to-emerald-600 p-6">
+          <div className="flex items-center gap-4">
+            <GradientAvatar 
+              initials={employee.full_name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'E'}
+              size="lg"
+              className="border-2 border-white/30"
+            />
+            <div>
+              <h2 className="text-xl font-bold text-white">{employee.full_name || 'Employee'}</h2>
+              <p className="text-white/80 text-sm">{employee.job_title} • {employee.department || 'General'}</p>
+              <p className="text-white/60 text-xs mt-1">ID: {employee.employee_code}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="p-6 space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Monthly Salary</p>
+              <p className="font-bold text-slate-900 dark:text-white">{formatCurrency(employee.monthly_salary)}</p>
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Tenure</p>
+              <p className="font-bold text-slate-900 dark:text-white">{employee.tenure_months || 0} months</p>
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <p className="text-xs text-slate-500 dark:text-slate-400">Status</p>
+              <StatusBadge status={employee.status} />
+            </div>
+            <div className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+              <p className="text-xs text-slate-500 dark:text-slate-400">KYC Status</p>
+              <div className="flex items-center gap-2 mt-1">
+                <KYCBadge status={employee.kyc_status} />
+                <span className="text-sm capitalize text-slate-700 dark:text-slate-300">{employee.kyc_status}</span>
+              </div>
+            </div>
+          </div>
+
+          {employee.ewa_settings && (
+            <div className="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+              <p className="text-sm font-semibold text-primary mb-2">EWA Settings</p>
+              <div className="grid grid-cols-2 gap-2 text-sm">
+                <div>
+                  <span className="text-slate-500">Max Advance:</span>
+                  <span className="ml-2 font-medium text-slate-900 dark:text-white">{employee.ewa_settings.max_advance_percentage || 50}%</span>
+                </div>
+                <div>
+                  <span className="text-slate-500">Status:</span>
+                  <span className="ml-2 font-medium text-slate-900 dark:text-white">{employee.ewa_settings.ewa_enabled === false ? 'Disabled' : 'Enabled'}</span>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="flex gap-3 p-6 border-t border-slate-200 dark:border-slate-700">
+          <Button variant="outline" onClick={onClose} className="flex-1">Close</Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function EmployerEmployees() {
   const [employees, setEmployees] = useState([]);
   const [employer, setEmployer] = useState(null);
@@ -310,6 +461,7 @@ export default function EmployerEmployees() {
   const [dateRange, setDateRange] = useState({ from: '', to: '' });
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [showEWAModal, setShowEWAModal] = useState(false);
+  const [showViewModal, setShowViewModal] = useState(false);
   const [seeding, setSeeding] = useState(false);
 
   const fetchData = async () => {
