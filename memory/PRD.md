@@ -132,9 +132,6 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 - **Other Admin Pages** ✅
   - API Health Monitor
-  - Risk Scoring Calculator
-  - KYC Review
-  - Advances Management
 
 ## API Endpoints
 
@@ -144,14 +141,16 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - `PUT /api/admin/employees/{id}` - Update employee details
 - `PATCH /api/admin/employees/{id}/status` - Update account status
 - `PATCH /api/admin/employees/{id}/kyc` - Update KYC status
-- `PATCH /api/admin/employees/{id}/risk-score` - Override risk score
-- `POST /api/admin/employees/bulk-action` - Bulk actions (activate/suspend/approve_kyc) ✅ **NEW**
+- `PATCH /api/admin/employees/{id}/risk-score` - Override risk score (supports risk_factors, last_verified_at)
+- `POST /api/admin/employees/bulk-action` - Bulk actions (activate/suspend/approve_kyc) ✅
 
 ### Admin Employers
 - `GET /api/admin/employers` - List all employers
 - `GET /api/admin/employers/{id}` - Get employer detail ✅
 - `PATCH /api/admin/employers/{id}/status` - Update employer status
-- `POST /api/admin/employers/bulk-action` - Bulk actions (approve/suspend/reject) ✅ **NEW**
+- `PATCH /api/admin/employers/{id}/settings` - Update employer settings with fraud detection ✅ **NEW**
+- `PATCH /api/admin/employers/{id}/risk-score` - Override risk score (supports risk_factors, last_verified_at)
+- `POST /api/admin/employers/bulk-action` - Bulk actions (approve/suspend/reject) ✅
 
 ### Admin Review Management
 - `GET /api/admin/review-requests` - List review requests
