@@ -209,6 +209,8 @@ class EmployerResponse(BaseModel):
     contact_phone: str
     status: str  # pending, approved, rejected
     risk_score: Optional[float] = None
+    risk_rating: Optional[str] = None
+    risk_factors: Optional[Dict[str, Any]] = None
     created_at: str
 
 # Employee Models
