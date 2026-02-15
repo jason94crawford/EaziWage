@@ -350,14 +350,14 @@ export default function EmployerDashboard() {
               </div>
               <div className={cn(
                 "px-4 py-2 rounded-xl font-semibold text-sm",
-                (stats?.risk_score || 0) >= 4 ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' :
-                (stats?.risk_score || 0) >= 3 ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300' :
-                (stats?.risk_score || 0) >= 2.6 ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300' :
+                (employer?.risk_score || 3.5) >= 4 ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300' :
+                (employer?.risk_score || 3.5) >= 3 ? 'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300' :
+                (employer?.risk_score || 3.5) >= 2.6 ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300' :
                 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300'
               )}>
-                {(stats?.risk_score || 0) >= 4 ? 'Low Risk' :
-                 (stats?.risk_score || 0) >= 3 ? 'Medium Risk' :
-                 (stats?.risk_score || 0) >= 2.6 ? 'High Risk' : 'Very High Risk'}
+                {(employer?.risk_score || 3.5) >= 4 ? 'Low Risk' :
+                 (employer?.risk_score || 3.5) >= 3 ? 'Medium Risk' :
+                 (employer?.risk_score || 3.5) >= 2.6 ? 'High Risk' : 'Very High Risk'}
               </div>
             </div>
             
@@ -368,7 +368,7 @@ export default function EmployerDashboard() {
                     className="text-white/50 dark:text-slate-700/50" />
                   <circle cx="50" cy="50" r="40" fill="none" stroke="url(#riskGradient)" strokeWidth="8" 
                     strokeLinecap="round" strokeDasharray={2 * Math.PI * 40} 
-                    strokeDashoffset={2 * Math.PI * 40 * (1 - ((stats?.risk_score || 0) / 5))}
+                    strokeDashoffset={2 * Math.PI * 40 * (1 - ((employer?.risk_score || 3.5) / 5))}
                     className="transition-all duration-1000" />
                   <defs>
                     <linearGradient id="riskGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -379,7 +379,7 @@ export default function EmployerDashboard() {
                 </svg>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {(stats?.risk_score || 0).toFixed(1)}
+                    {(employer?.risk_score || 3.5).toFixed(1)}
                   </span>
                 </div>
               </div>
@@ -387,7 +387,7 @@ export default function EmployerDashboard() {
                 <p className="text-sm text-slate-600 dark:text-slate-300">
                   Your risk score determines the fee rates applied to employee advances. A lower risk score means better rates for your employees.
                 </p>
-                <Link to="/employer/reports" className="inline-flex items-center gap-1 text-sm font-medium text-primary mt-3 hover:gap-2 transition-all">
+                <Link to="/employer/risk-insights" className="inline-flex items-center gap-1 text-sm font-medium text-primary mt-3 hover:gap-2 transition-all">
                   View Details <ChevronRight className="w-4 h-4" />
                 </Link>
               </div>
