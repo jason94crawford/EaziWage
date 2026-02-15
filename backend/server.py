@@ -385,6 +385,52 @@ class AdminDashboardStats(BaseModel):
     total_advances_today: float
     pending_disbursements: int
 
+# Fraud Detection Models
+class FraudRuleCreate(BaseModel):
+    name: str
+    type: str  # amount_threshold, frequency, velocity, pattern
+    description: Optional[str] = None
+    threshold: float
+    severity: str = "medium"  # low, medium, high
+    enabled: bool = True
+    action: str = "flag"  # flag, block, notify
+
+class FraudRuleResponse(BaseModel):
+    id: str
+    name: str
+    type: str
+    description: Optional[str] = None
+    threshold: float
+    threshold_display: str
+    severity: str
+    enabled: bool
+    action: str
+    trigger_count: int = 0
+    created_at: str
+    updated_at: Optional[str] = None
+
+class ReviewRequestCreate(BaseModel):
+    type: str  # risk_score, kyc_review, dispute, general
+    subject: str
+    message: Optional[str] = None
+    priority: str = "medium"  # low, medium, high
+    employee_id: Optional[str] = None
+
+class ReconciliationTransaction(BaseModel):
+    id: str
+    transaction_ref: str
+    advance_id: str
+    employee_name: str
+    employer_name: str
+    amount: float
+    fee: float
+    net_amount: float
+    status: str
+    payment_method: str
+    created_at: str
+    reconciled_at: Optional[str] = None
+    reconciliation_status: str = "pending"
+
 # ======================== UTILITIES ========================
 
 def hash_password(password: str) -> str:
