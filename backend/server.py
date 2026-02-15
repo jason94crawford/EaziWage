@@ -2753,26 +2753,38 @@ async def admin_override_employee_risk(
     """Manually override employee risk score"""
     new_score = data.get("risk_score")
     reason = data.get("reason", "Admin override")
+    risk_factors = data.get("risk_factors")
+    last_verified_at = data.get("last_verified_at")
     
-    if not 0 <= new_score <= 5:
+    if new_score is not None and not 0 <= new_score <= 5:
         raise HTTPException(status_code=400, detail="Risk score must be between 0 and 5")
     
-    result = await db.employees.update_one(
-        {"id": employee_id},
-        {"$set": {
-            "risk_score": new_score,
-            "risk_override": {
-                "admin_id": user["id"],
-                "reason": reason,
-                "timestamp": datetime.now(timezone.utc).isoformat()
-            },
-            "updated_at": datetime.now(timezone.utc).isoformat()
-        }}
-    )
+    update_data = {
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    if new_score is not None:
+        update_data["risk_score"] = new_score
+        update_data["risk_override"] = {
+            "admin_id": user["id"],
+            "reason": reason,
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+    
+    if risk_factors:
+        update_data["risk_factors"] = risk_factors
+    
+    if last_verified_at:
+        update_data["last_verified_at"] = last_verified_at
+        # Calculate next verification due (6 months)
+        next_due = datetime.fromisoformat(last_verified_at.replace('Z', '+00:00')) + timedelta(days=180)
+        update_data["next_verification_due"] = next_due.isoformat()
+    
+    result = await db.employees.update_one({"id": employee_id}, {"$set": update_data})
     if result.matched_count == 0:
         raise HTTPException(status_code=404, detail="Employee not found")
     
-    return {"message": f"Employee risk score updated to {new_score}"}
+    return {"message": f"Employee risk score updated to {new_score}", "risk_score": new_score}
 
 # Admin - Get all advances
 @api_router.get("/admin/advances")
