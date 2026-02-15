@@ -9,7 +9,7 @@ import os
 import uuid
 import io
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://eazi-fintech-staging.preview.emergentagent.com')
+BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', 'https://eaziwage-preview-1.preview.emergentagent.com')
 
 
 class TestKYCUploadEndpoint:
