@@ -1091,6 +1091,9 @@ async def create_advance(data: AdvanceCreate, user: dict = Depends(require_role(
     
     employer = await db.employers.find_one({"id": employee["employer_id"]}, {"_id": 0})
     
+    # Check fraud rules
+    fraud_check = await check_fraud_rules({"amount": data.amount}, employee)
+    
     # Calculate fee based on risk scores
     employee_crs = employee.get("risk_score", 3.0)
     employer_crs = employer.get("risk_score", 3.0) if employer else 3.0
@@ -1112,9 +1115,16 @@ async def create_advance(data: AdvanceCreate, user: dict = Depends(require_role(
             "account": employee.get("bank_account")
         }
     
+    # Determine initial status based on fraud check
+    initial_status = "pending"
+    if fraud_check["should_block"]:
+        initial_status = "rejected"
+    
     advance_id = str(uuid.uuid4())
+    transaction_ref = generate_transaction_reference()
     advance_doc = {
         "id": advance_id,
+        "transaction_ref": transaction_ref,
         "employee_id": employee["id"],
         "employee_name": user["full_name"],
         "employer_id": employee["employer_id"],
@@ -1125,10 +1135,17 @@ async def create_advance(data: AdvanceCreate, user: dict = Depends(require_role(
         "net_amount": net_amount,
         "disbursement_method": data.disbursement_method,
         "disbursement_details": disbursement_details,
-        "status": "pending",
+        "status": initial_status,
         "reason": data.reason,
         "created_at": datetime.now(timezone.utc).isoformat(),
-        "processed_at": None
+        "processed_at": None,
+        "reconciliation_status": "pending",
+        # Fraud tracking
+        "flagged": fraud_check["should_flag"],
+        "flag_type": "suspicious" if fraud_check["should_flag"] else None,
+        "flag_reason": ", ".join([v["rule_name"] for v in fraud_check["violations"]]) if fraud_check["violations"] else None,
+        "flagged_at": datetime.now(timezone.utc).isoformat() if fraud_check["should_flag"] else None,
+        "fraud_violations": fraud_check["violations"]
     }
     await db.advances.insert_one(advance_doc)
     
@@ -1139,12 +1156,20 @@ async def create_advance(data: AdvanceCreate, user: dict = Depends(require_role(
         "type": "advance_request",
         "amount": data.amount,
         "reference": advance_id,
+        "transaction_ref": transaction_ref,
         "status": "pending",
         "created_at": datetime.now(timezone.utc).isoformat(),
         "metadata": {"advance_id": advance_id}
     })
     
-    return AdvanceResponse(**{k: v for k, v in advance_doc.items() if k != "_id"})
+    # If blocked, return with explanation
+    if fraud_check["should_block"]:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Request blocked by fraud prevention rules: {fraud_check['violations'][0]['rule_name'] if fraud_check['violations'] else 'Policy violation'}"
+        )
+    
+    return AdvanceResponse(**{k: v for k, v in advance_doc.items() if k not in ["_id", "fraud_violations"]})
 
 @api_router.get("/advances", response_model=List[AdvanceResponse])
 async def list_advances(
