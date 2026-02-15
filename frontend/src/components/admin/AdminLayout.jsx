@@ -44,6 +44,8 @@ const AdminSidebar = ({ isOpen, onClose, user }) => {
     { href: '/admin/reconciliation', label: 'Reconciliation', icon: BarChart3 },
     { href: '/admin/kyc-review', label: 'KYC Review', icon: CheckCircle2 },
     { href: '/admin/risk-scoring', label: 'Risk Scoring', icon: Shield },
+    { href: '/admin/fraud-detection', label: 'Fraud Detection', icon: AlertTriangle },
+    { href: '/admin/review-management', label: 'Review Requests', icon: HelpCircle },
     { href: '/admin/api-health', label: 'API Health', icon: Wifi },
     { href: '/admin/settings', label: 'Settings', icon: Settings },
   ];
