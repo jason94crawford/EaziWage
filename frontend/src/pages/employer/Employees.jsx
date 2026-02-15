@@ -604,26 +604,17 @@ export default function EmployerEmployees() {
           />
         </div>
 
-        {/* Department Breakdown (if we have extended stats) */}
+        {/* Department Distribution with Utilization Pie Chart */}
         {extendedStats?.department_breakdown && Object.keys(extendedStats.department_breakdown).length > 0 && (
-          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white mb-4">Department Distribution</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-              {Object.entries(extendedStats.department_breakdown).map(([dept, count]) => (
-                <div 
-                  key={dept}
-                  className="p-3 bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/30"
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <div className="w-6 h-6 bg-gradient-to-br from-primary to-emerald-600 rounded-md flex items-center justify-center">
-                      <Building2 className="w-3 h-3 text-white" />
-                    </div>
-                    <span className="text-lg font-bold text-slate-900 dark:text-white">{count}</span>
-                  </div>
-                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{dept}</p>
-                </div>
-              ))}
+          <div className="bg-white/60 dark:bg-slate-900/60 backdrop-blur-sm rounded-2xl p-6 border border-slate-200/50 dark:border-slate-700/30 mt-8">
+            <div className="flex items-center gap-3 mb-6">
+              <GradientIconBox icon={Building2} size="md" />
+              <div>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Department Distribution</h2>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Employee utilization across departments</p>
+              </div>
             </div>
+            <DepartmentPieChart data={extendedStats.department_breakdown} totalEmployees={stats.total_employees} />
           </div>
         )}
 
@@ -643,15 +634,15 @@ export default function EmployerEmployees() {
                 />
               </div>
               
-              {/* Date Range */}
+              {/* Date Range - Themed */}
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-2 px-3 h-11 bg-white/60 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl">
-                  <Calendar className="w-4 h-4 text-slate-400" />
+                  <Calendar className="w-4 h-4 text-primary" />
                   <input 
                     type="date"
                     value={dateRange.from}
                     onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32"
+                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.4] [&::-webkit-calendar-picker-indicator]:sepia [&::-webkit-calendar-picker-indicator]:saturate-[10] [&::-webkit-calendar-picker-indicator]:hue-rotate-[90deg]"
                     placeholder="From"
                   />
                 </div>
@@ -661,7 +652,7 @@ export default function EmployerEmployees() {
                     type="date"
                     value={dateRange.to}
                     onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32"
+                    className="bg-transparent text-sm text-slate-700 dark:text-slate-300 outline-none w-32 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert-[0.4] [&::-webkit-calendar-picker-indicator]:sepia [&::-webkit-calendar-picker-indicator]:saturate-[10] [&::-webkit-calendar-picker-indicator]:hue-rotate-[90deg]"
                     placeholder="To"
                   />
                 </div>
