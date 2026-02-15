@@ -31,7 +31,7 @@ def admin_token():
         "password": ADMIN_PASSWORD
     })
     assert response.status_code == 200, f"Admin login failed: {response.text}"
-    return response.json().get("token")
+    return response.json().get("access_token")
 
 
 @pytest.fixture(scope="module")
@@ -42,7 +42,7 @@ def employer_token():
         "password": EMPLOYER_PASSWORD
     })
     if response.status_code == 200:
-        return response.json().get("token")
+        return response.json().get("access_token")
     return None
 
 
