@@ -127,13 +127,13 @@ const EmployerRow = ({ employer, isSelected, onToggleSelect, onViewDetails, onQu
     </div>
     
     {/* Employee Count */}
-    <div className="text-right hidden sm:block w-20">
+    <div className="text-right hidden sm:block w-20 shrink-0">
       <p className="font-bold text-slate-900 dark:text-white">{employer.employee_count || 0}</p>
       <p className="text-xs text-slate-500">Employees</p>
     </div>
     
     {/* Monthly Advances */}
-    <div className="text-right hidden md:block w-28">
+    <div className="text-right hidden md:block w-28 shrink-0">
       <p className="font-bold text-purple-600">{formatCurrency(employer.total_advances || 0)}</p>
       <p className="text-xs text-slate-500">Advances</p>
     </div>
