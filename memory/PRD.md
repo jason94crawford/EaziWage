@@ -68,13 +68,45 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
     - Rules persisted to MongoDB ✅
     - CRUD operations (Create, Read, Update, Delete) ✅
     - Rule toggle (enable/disable) ✅
-    - 3 default rules seeded automatically
+    - 6 rules total (3 default + 3 employer manipulation)
+  - **Employer Manipulation Detection** ✅ **NEW**:
+    - EWA Limit Increase Detection (>60% limit)
+    - Cooldown Reduction Alert (<3 days)
+    - Bulk Settings Change (>3 changes/day)
   - **Flagged Transactions Tab**:
     - Real-time flagged advances from database
     - Review modal with decision dropdown
   - **Fraud Checking in Advance Creation** ✅:
     - Advances checked against enabled rules
     - Automatic flagging/blocking based on rule action
+
+- **Risk Scoring Page** ✅ **COMPLETELY REBUILT**
+  - Uses AdminPortalLayout with purple theme
+  - **Risk Calculator Tab**:
+    - Employer/Employee toggle tabs
+    - Searchable dropdown with existing risk scores
+    - Category-based scoring sliders (Legal, Financial, Operational, etc.)
+    - Real-time score calculation
+    - **Net Weighted Score for Employees** (40% Employer + 60% Employee)
+    - Application fee calculation (3.5% + 3% × (1 - CRS/5))
+    - Save risk score to database
+  - **Verification Alerts Tab** ✅:
+    - Bi-annual re-verification system (6 months)
+    - Overdue reviews (immediate action)
+    - Pending reviews (due within 60 days)
+    - Click-to-review functionality
+
+- **KYC Review Page** ✅ **UPDATED TO PURPLE THEME**
+  - Uses AdminPortalLayout
+  - Stats cards (Pending, Approved, Rejected, Total)
+  - Document cards with employee names
+  - Review modal with approve/reject
+
+- **Advances Page** ✅ **UPDATED TO PURPLE THEME**
+  - Uses AdminPortalLayout
+  - Stats cards (Total, Pending, Disbursed, Fees)
+  - Filter buttons
+  - Detail modal with approve/reject/disburse actions
 
 - **Review Management Page** ✅ **NEW**
   - Stats cards (Total, Pending, In Review, Resolved)
