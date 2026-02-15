@@ -45,6 +45,7 @@ import EmployerRiskInsights from "./pages/employer/RiskInsights";
 // Admin Pages
 import AdminDashboard from "./pages/admin/Dashboard";
 import AdminEmployers from "./pages/admin/Employers";
+import AdminEmployees from "./pages/admin/Employees";
 import AdminAdvances from "./pages/admin/Advances";
 import AdminKYCReview from "./pages/admin/KYCReview";
 import AdminRiskScoring from "./pages/admin/RiskScoring";
