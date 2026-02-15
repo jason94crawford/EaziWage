@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, CreditCard, BarChart3, Settings, LogOut, 
   Sun, Moon, Bell, Menu, X, ChevronRight, Upload, HelpCircle, Building2,
-  MessageSquare
+  MessageSquare, Shield
 } from 'lucide-react';
 import { cn } from '../../lib/utils';
 import { useTheme } from '../../lib/ThemeContext';
