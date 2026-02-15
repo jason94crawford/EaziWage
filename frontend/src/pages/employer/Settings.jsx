@@ -317,24 +317,32 @@ export default function EmployerSettings() {
                       <Label className="text-slate-700 dark:text-slate-300">Company Name</Label>
                       <Input
                         value={settings.companyName}
-                        onChange={(e) => setSettings(prev => ({ ...prev, companyName: e.target.value }))}
-                        placeholder="Your company name"
-                        className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700"
+                        readOnly
+                        className="bg-slate-100 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 cursor-not-allowed"
                         data-testid="company-name-input"
                       />
+                      <p className="text-xs text-slate-500">Contact support to change company name</p>
                     </div>
                     <div className="space-y-2">
                       <Label className="text-slate-700 dark:text-slate-300">Payroll Cycle</Label>
-                      <Select value={settings.payrollCycle} onValueChange={(v) => setSettings(prev => ({ ...prev, payrollCycle: v }))}>
-                        <SelectTrigger className="bg-white/60 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700" data-testid="payroll-cycle-select">
-                          <SelectValue placeholder="Select cycle" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="bi-weekly">Bi-Weekly</SelectItem>
-                          <SelectItem value="monthly">Monthly</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Input
+                        value={settings.payrollCycle === 'monthly' ? 'Monthly' : settings.payrollCycle === 'bi-weekly' ? 'Bi-Weekly' : settings.payrollCycle === 'weekly' ? 'Weekly' : settings.payrollCycle}
+                        readOnly
+                        className="bg-slate-100 dark:bg-slate-800/80 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 cursor-not-allowed capitalize"
+                        data-testid="payroll-cycle-select"
+                      />
+                      <p className="text-xs text-slate-500">Contact support to change payroll cycle</p>
+                    </div>
+                  </div>
+                  
+                  {/* Employer Code */}
+                  <div className="mt-4 p-4 bg-gradient-to-br from-primary/5 to-emerald-500/5 dark:from-primary/10 dark:to-emerald-500/10 rounded-xl border border-primary/20">
+                    <Label className="text-slate-700 dark:text-slate-300 text-sm">Employer Code</Label>
+                    <div className="flex items-center gap-3 mt-2">
+                      <code className="px-4 py-2 bg-white dark:bg-slate-800 rounded-lg font-mono text-lg font-bold text-primary border border-primary/30">
+                        {employer?.employer_code || `EW-${employer?.id?.slice(0, 8).toUpperCase() || 'XXXXXXXX'}`}
+                      </code>
+                      <span className="text-xs text-slate-500 dark:text-slate-400">Unique identifier assigned upon registration</span>
                     </div>
                   </div>
                 </SettingsCard>
