@@ -197,7 +197,7 @@ const SidebarNav = ({ isOpen, onClose }) => {
                     "w-9 h-9 rounded-xl flex items-center justify-center transition-all",
                     active 
                       ? "bg-white/20" 
-                      : "bg-primary"
+                      : "bg-gradient-to-br from-primary to-emerald-600"
                   )}>
                     <Icon className="w-5 h-5 text-white" />
                   </div>
@@ -210,7 +210,7 @@ const SidebarNav = ({ isOpen, onClose }) => {
             {/* Help Card - Now inside scrollable area */}
             <div className="mt-6 bg-gradient-to-br from-primary/10 to-emerald-500/10 dark:from-primary/20 dark:to-emerald-500/20 rounded-2xl p-4 border border-primary/20">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center shadow-md">
                   <HelpCircle className="w-5 h-5 text-white" />
                 </div>
                 <div>
