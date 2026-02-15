@@ -2403,7 +2403,7 @@ async def admin_review_advance(
 
 # Admin Dashboard - Platform Overview
 @api_router.get("/admin/dashboard")
-async def get_admin_dashboard(user: dict = Depends(require_role(UserRole.ADMIN))):
+async def get_admin_dashboard_extended(user: dict = Depends(require_role(UserRole.ADMIN))):
     """Get comprehensive admin dashboard stats"""
     # Employers
     employers = await db.employers.find({}, {"_id": 0}).to_list(1000)
