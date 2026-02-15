@@ -760,7 +760,10 @@ export default function EmployerEmployees() {
                   key={employee.id} 
                   employee={employee}
                   currency={selectedCurrency}
-                  onViewDetails={(e) => console.log('View', e)}
+                  onViewDetails={(e) => {
+                    setSelectedEmployee(e);
+                    setShowViewModal(true);
+                  }}
                   onEditEWA={(e) => {
                     setSelectedEmployee(e);
                     setShowEWAModal(true);
@@ -791,6 +794,16 @@ export default function EmployerEmployees() {
           setSelectedEmployee(null);
         }}
         onSave={handleEWASave}
+      />
+
+      {/* Employee View Modal */}
+      <EmployeeViewModal 
+        employee={selectedEmployee}
+        isOpen={showViewModal}
+        onClose={() => {
+          setShowViewModal(false);
+          setSelectedEmployee(null);
+        }}
       />
     </EmployerPortalLayout>
   );
