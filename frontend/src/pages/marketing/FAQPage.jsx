@@ -52,7 +52,7 @@ const faqs = {
     },
     {
       q: "How much can I access?",
-      a: "You can access up to 50% of your earned (but unpaid) wages at any time. This limit helps ensure responsible usage and that you have enough for regular expenses. The exact amount available is shown in your dashboard."
+      a: "You can access up to 60% of your earned (but unpaid) wages at any time. This limit helps ensure responsible usage and that you have enough for regular expenses. The exact amount available is shown in your dashboard."
     },
     {
       q: "How fast will I receive my money?",
@@ -64,7 +64,7 @@ const faqs = {
     },
     {
       q: "Can I take multiple advances?",
-      a: "Yes, you can take multiple advances as long as you stay within your available limit (50% of earned wages). Each advance has its own fee calculated independently — there's no compounding."
+      a: "Yes, you can take multiple advances as long as you stay within your available limit (60% of earned wages). Each advance has its own fee calculated independently — there's no compounding."
     },
     {
       q: "What if my employer isn't on EaziWage?",
@@ -86,7 +86,7 @@ const faqs = {
     },
     {
       q: "Can we customize advance limits and policies?",
-      a: "Absolutely. You can set custom advance limits (e.g., 30% instead of 50%), frequency caps (e.g., max 2 advances per month), minimum employment tenure requirements, and more. You maintain full control."
+      a: "Absolutely. You can set custom advance limits (e.g., 30% instead of 60%), frequency caps (e.g., max 2 advances per month), minimum employment tenure requirements, and more. You maintain full control."
     },
     {
       q: "Will employees see their individual transactions?",

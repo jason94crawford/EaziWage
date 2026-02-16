@@ -166,7 +166,7 @@ const faqs = [
   },
   {
     q: "How much can I access?",
-    a: "You can access up to 50% of your earned wages at any time. This limit helps ensure responsible usage while giving you financial flexibility."
+    a: "You can access up to 60% of your earned wages at any time. This limit helps ensure responsible usage while giving you financial flexibility."
   }
 ];
 
@@ -199,7 +199,7 @@ export default function LandingPage() {
               </h1>
               
               <p className="text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-xl leading-relaxed">
-                Access up to 50% of your earned wages instantly. No loans, no interest, no waiting for payday. 
+                Access up to 60% of your earned wages instantly. No loans, no interest, no waiting for payday. 
                 Just your hard-earned money when you need it most.
               </p>
               
@@ -254,7 +254,7 @@ export default function LandingPage() {
                       <div className="w-full bg-white/20 rounded-full h-3">
                         <div className="bg-white rounded-full h-3 w-1/2 shadow-lg" />
                       </div>
-                      <p className="text-xs mt-3 opacity-70">50% available for advance</p>
+                      <p className="text-xs mt-3 opacity-70">60% available for advance</p>
                     </div>
                   </div>
                   

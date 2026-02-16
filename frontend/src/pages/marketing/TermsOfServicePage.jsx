@@ -46,7 +46,7 @@ To use our Services, you must:
 - Features may vary by country and employer
 
 **Advance Limits**
-- You may access up to 50% of your earned wages, subject to employer policies
+- You may access up to 60% of your earned wages, subject to employer policies
 - Minimum and maximum advance amounts may apply
 - Limits may be adjusted based on your usage history and risk profile`
   },

@@ -352,7 +352,7 @@ export default function EmployerAdvances() {
               <ul className="mt-2 space-y-1.5 text-sm text-blue-800 dark:text-blue-300/80">
                 <li className="flex items-center gap-2">
                   <ChevronRight className="w-4 h-4 text-blue-500" />
-                  Employees can request up to 50% of their earned wages
+                  Employees can request up to 60% of their earned wages
                 </li>
                 <li className="flex items-center gap-2">
                   <ChevronRight className="w-4 h-4 text-blue-500" />

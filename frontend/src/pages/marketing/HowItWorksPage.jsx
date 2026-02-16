@@ -52,7 +52,7 @@ const steps = [
     title: 'Access Wages Instantly',
     description: 'Request an advance anytime you need it. Choose your amount, confirm the small fee, and receive funds in your Mobile Wallet within seconds.',
     details: [
-      'Access up to 50% of earned wages',
+      'Access up to 60% of earned wages',
       'Instant Mobile Wallet disbursement',
       'Transparent fee shown upfront',
       'Auto-deducted on payday'
@@ -97,8 +97,8 @@ const faqs = [
     a: 'The advance amount plus fee is automatically deducted from your next paycheck. You don\'t need to do anything — it\'s completely automatic and hassle-free.'
   },
   {
-    q: 'What if I need more than 50% of my wages?',
-    a: 'The 50% limit is designed to ensure you have enough for your regular expenses. This helps maintain financial balance and prevents over-reliance on advances.'
+    q: 'What if I need more than 60% of my wages?',
+    a: 'The 60% limit is designed to ensure you have enough for your regular expenses. This helps maintain financial balance and prevents over-reliance on advances.'
   },
   {
     q: 'Can I use EaziWage if I\'m on contract/part-time?',

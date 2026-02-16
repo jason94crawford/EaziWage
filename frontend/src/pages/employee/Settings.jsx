@@ -297,7 +297,7 @@ const HelpCenterSection = ({ isExpanded, onToggle }) => {
     },
     {
       q: "How much can I access?",
-      a: "You can access up to 50% of your earned wages at any time. Your available balance is shown on your dashboard and updates as you earn."
+      a: "You can access up to 60% of your earned wages at any time. Your available balance is shown on your dashboard and updates as you earn."
     },
     {
       q: "When will my KYC be approved?",
