@@ -22,6 +22,7 @@ const footerLinks = {
   resources: [
     { label: 'Help Center', href: '/faq' },
     { label: 'Wage Calculator', href: '/calculator' },
+    { label: 'Blog', href: '/blog' },
     { label: 'For Companies', href: '/employers' },
     { label: 'Get Started', href: '/register' },
   ],
@@ -76,9 +77,9 @@ export const Footer = () => {
               <Input 
                 type="email" 
                 placeholder="Enter your email" 
-                className="h-12 sm:h-14 px-5 sm:px-6 bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 rounded-xl flex-1"
+                className="h-14 sm:h-14 px-5 sm:px-6 bg-slate-800 border-slate-700 text-white placeholder:text-slate-500 rounded-xl flex-1 text-base"
               />
-              <Button className="h-12 sm:h-14 px-6 sm:px-8 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 rounded-xl font-medium">
+              <Button className="h-14 sm:h-14 px-6 sm:px-8 bg-gradient-to-r from-primary to-emerald-600 hover:from-primary/90 hover:to-emerald-600/90 rounded-xl font-medium">
                 <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                 Subscribe
               </Button>

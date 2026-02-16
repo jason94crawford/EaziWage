@@ -331,31 +331,6 @@ export default function BlogPage() {
         </div>
       </section>
 
-      {/* Newsletter */}
-      <section className="py-16 sm:py-24 bg-white dark:bg-slate-950">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 sm:mb-4">
-            Stay Updated
-          </h2>
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mb-6 sm:mb-8 max-w-2xl mx-auto">
-            Get the latest articles, industry insights, and EaziWage news delivered to your inbox.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 max-w-md mx-auto">
-            <Input 
-              type="email" 
-              placeholder="Enter your email"
-              className="h-12 sm:h-14 rounded-xl flex-1"
-            />
-            <Button className="h-12 sm:h-14 px-6 sm:px-8 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white">
-              Subscribe
-            </Button>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-4">
-            No spam, unsubscribe anytime.
-          </p>
-        </div>
-      </section>
-
       <Footer />
     </div>
   );

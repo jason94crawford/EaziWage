@@ -188,9 +188,9 @@ export const AfricaMap = memo(() => {
             // Pixel positions calibrated for the new projection
             const positions = {
               'Nairobi': { top: '48%', left: '70%' },
-              'Kampala': { top: '40%', left: '62%' },
+              'Kampala': { top: '35%', left: '58%' },
               'Dar es Salaam': { top: '56%', left: '74%' },
-              'Kigali': { top: '44%', left: '56%' },
+              'Kigali': { top: '44%', left: '50%' },
             };
             const pos = positions[marker.name];
             return (

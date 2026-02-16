@@ -356,9 +356,6 @@ export default function PrivacyPolicyPage() {
             <Link to="/terms" className="px-6 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
               Terms of Service
             </Link>
-            <Link to="/cookies" className="px-6 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-              Cookie Policy
-            </Link>
             <Link to="/contact" className="px-6 py-3 bg-slate-100 dark:bg-slate-800 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
               Contact Us
             </Link>
