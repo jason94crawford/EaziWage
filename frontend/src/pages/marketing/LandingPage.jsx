@@ -380,17 +380,17 @@ export default function LandingPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {steps.map((step, index) => (
-              <div key={index} className="relative group">
+              <div key={index} className="relative group h-full">
                 {index < steps.length - 1 && (
                   <div className="hidden lg:block absolute top-16 left-full w-full h-0.5 bg-gradient-to-r from-primary/50 to-transparent" />
                 )}
-                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2">
+                <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 hover:bg-white/10 transition-all duration-500 hover:-translate-y-2 h-full flex flex-col">
                   <div className="w-14 h-14 bg-gradient-to-br from-primary to-emerald-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg shadow-primary/30">
                     <step.icon className="w-7 h-7 text-white" />
                   </div>
                   <div className="text-6xl font-bold text-primary/20 mb-4">{step.num}</div>
                   <h3 className="font-heading text-xl font-bold mb-3">{step.title}</h3>
-                  <p className="text-slate-400 leading-relaxed">{step.description}</p>
+                  <p className="text-slate-400 leading-relaxed flex-grow">{step.description}</p>
                 </div>
               </div>
             ))}
