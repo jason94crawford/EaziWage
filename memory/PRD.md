@@ -147,6 +147,44 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - **Other Admin Pages** ✅
   - API Health Monitor
 
+- **Admin Settings Portal** ✅ **NEW (March 2026)**
+  - **Global Settings Tab**:
+    - EWA Advance Limits (default percentage, min/max amounts, daily/weekly/monthly limits)
+    - Fee Structure (processing fee range, mobile money fee, bank transfer fee)
+    - Cooldown & Frequency (default cooldown, new employee wait period)
+    - Platform Features toggles (instant mobile, bank transfers, auto-approval, weekend advances)
+    - Enabled Countries (Kenya, Uganda, Tanzania, Rwanda)
+  - **Employer Config Tab**:
+    - Employer list with search functionality
+    - Per-employer EWA configuration (advance limit, cooldown, fee, monthly advances)
+    - Employee Limit Constraints (min/max advance limits employers can set on employees)
+    - Funding & Risk Settings (funding model, risk tier, credit limit)
+    - Feature toggles (EWA enabled, instant transfers, auto-approve, weekend access)
+  - **Employee Config Tab**:
+    - Employee list with search functionality
+    - Individual EWA Settings with custom override toggle
+    - Access & Restrictions (EWA enabled, VIP status, manual approval, watchlist)
+    - Admin Notes for internal documentation
+  - **Risk & Compliance Tab** (Tied to Fraud Detection):
+    - Risk Score Thresholds (employer/employee low/medium/high bands)
+    - Automatic Actions (auto-suspend threshold, reduce limits threshold)
+    - Verification Requirements (ID, Face ID, address proof, employment contract)
+    - Re-verification Frequency setting
+  - **Notifications Tab**:
+    - Email Notifications (new employer, large advance, fraud alert, daily summary, weekly report)
+    - SMS Notifications (fraud alerts, system alerts, large transactions)
+    - Alert Thresholds (large advance threshold, daily volume threshold)
+    - Admin contact configuration
+  - **Blackout Periods Tab**:
+    - Create/Edit/Delete blackout periods
+    - Date range, applies to (all/country/employer), reason
+    - Active/Inactive toggle
+  - **Legal Documents Tab**:
+    - Employee Terms & Conditions
+    - Employer Partnership Agreement
+    - Privacy Policy
+    - Version history and document editor with markdown support
+
 ## API Endpoints
 
 ### Admin Employees
