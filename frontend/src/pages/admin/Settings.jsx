@@ -1756,6 +1756,403 @@ const LegalDocumentsTab = ({ token }) => {
   );
 };
 
+// Audit Trail Dashboard Tab
+const AuditTrailTab = ({ token }) => {
+  const [logs, setLogs] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [admins, setAdmins] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    auditType: '',
+    settingsType: '',
+    changedBy: '',
+    startDate: '',
+    endDate: ''
+  });
+  const [pagination, setPagination] = useState({ skip: 0, limit: 50, total: 0 });
+
+  useEffect(() => {
+    fetchAuditData();
+    fetchAdmins();
+  }, []);
+
+  useEffect(() => {
+    fetchAuditLogs();
+  }, [filters, pagination.skip]);
+
+  const fetchAuditData = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/audit-trail/stats`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Error fetching audit stats:', error);
+    }
+  };
+
+  const fetchAdmins = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/audit-trail/admins`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setAdmins(data);
+      }
+    } catch (error) {
+      console.error('Error fetching admins:', error);
+    }
+  };
+
+  const fetchAuditLogs = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      params.append('limit', pagination.limit);
+      params.append('skip', pagination.skip);
+      if (filters.auditType) params.append('audit_type', filters.auditType);
+      if (filters.settingsType) params.append('settings_type', filters.settingsType);
+      if (filters.changedBy) params.append('changed_by', filters.changedBy);
+      if (filters.startDate) params.append('start_date', filters.startDate);
+      if (filters.endDate) params.append('end_date', filters.endDate);
+
+      const response = await fetch(`${API_URL}/api/admin/audit-trail?${params.toString()}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setLogs(data.logs);
+        setPagination(prev => ({ ...prev, total: data.total }));
+      }
+    } catch (error) {
+      console.error('Error fetching audit logs:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      auditType: '',
+      settingsType: '',
+      changedBy: '',
+      startDate: '',
+      endDate: ''
+    });
+    setPagination(prev => ({ ...prev, skip: 0 }));
+  };
+
+  const exportAuditLog = () => {
+    const csvContent = [
+      ['Date', 'Type', 'Changed By', 'Description', 'Employer', 'Employee'].join(','),
+      ...logs.map(log => [
+        log.changed_at,
+        log.type,
+        log.changed_by_name || 'Unknown',
+        log.description || '',
+        log.employer_name || '',
+        log.employee_name || ''
+      ].map(v => `"${v}"`).join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `audit_trail_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click();
+  };
+
+  const getTypeColor = (type) => {
+    const colors = {
+      platform_settings: 'bg-purple-100 text-purple-700 dark:bg-purple-500/20 dark:text-purple-400',
+      risk_settings: 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400',
+      notification_settings: 'bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-400',
+      employer_settings: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400',
+      employee_settings: 'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400',
+      legal_document: 'bg-slate-100 text-slate-700 dark:bg-slate-500/20 dark:text-slate-400',
+      blackout: 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-400'
+    };
+    return colors[type] || 'bg-slate-100 text-slate-700';
+  };
+
+  const getTypeLabel = (type) => {
+    const labels = {
+      platform_settings: 'Platform Settings',
+      risk_settings: 'Risk Settings',
+      notification_settings: 'Notifications',
+      employer_settings: 'Employer Config',
+      employee_settings: 'Employee Config',
+      legal_document: 'Legal Document',
+      blackout: 'Blackout Period'
+    };
+    return labels[type] || type;
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Stats Overview */}
+      {stats && (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center">
+                <ClipboardList className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.total_changes}</p>
+                <p className="text-sm text-slate-500">Total Changes</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-green-600 rounded-xl flex items-center justify-center">
+                <Building2 className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.by_type?.employer_settings || 0}</p>
+                <p className="text-sm text-slate-500">Employer Changes</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-600 rounded-xl flex items-center justify-center">
+                <Users className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.by_type?.employee_settings || 0}</p>
+                <p className="text-sm text-slate-500">Employee Changes</p>
+              </div>
+            </div>
+          </div>
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                <User className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900 dark:text-white">{stats.by_admin?.length || 0}</p>
+                <p className="text-sm text-slate-500">Active Admins</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Filters */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Filter className="w-5 h-5" />
+            Filters
+          </h3>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={clearFilters} className="rounded-lg">
+              Clear All
+            </Button>
+            <Button variant="outline" size="sm" onClick={exportAuditLog} className="rounded-lg">
+              <Download className="w-4 h-4 mr-2" />
+              Export CSV
+            </Button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div>
+            <Label className="text-sm font-medium mb-1 block">Change Type</Label>
+            <select
+              value={filters.auditType}
+              onChange={(e) => { setFilters({ ...filters, auditType: e.target.value }); setPagination(p => ({ ...p, skip: 0 })); }}
+              className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+            >
+              <option value="">All Types</option>
+              <option value="settings">All Settings</option>
+              <option value="employer_activity">Employer Activity</option>
+              <option value="employee_activity">Employee Activity</option>
+            </select>
+          </div>
+          <div>
+            <Label className="text-sm font-medium mb-1 block">Settings Type</Label>
+            <select
+              value={filters.settingsType}
+              onChange={(e) => { setFilters({ ...filters, settingsType: e.target.value }); setPagination(p => ({ ...p, skip: 0 })); }}
+              className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+            >
+              <option value="">All Settings</option>
+              <option value="platform_settings">Platform Settings</option>
+              <option value="risk_settings">Risk Settings</option>
+              <option value="notification_settings">Notifications</option>
+              <option value="employer_settings">Employer Config</option>
+              <option value="employee_settings">Employee Config</option>
+              <option value="legal_document">Legal Documents</option>
+            </select>
+          </div>
+          <div>
+            <Label className="text-sm font-medium mb-1 block">Changed By</Label>
+            <select
+              value={filters.changedBy}
+              onChange={(e) => { setFilters({ ...filters, changedBy: e.target.value }); setPagination(p => ({ ...p, skip: 0 })); }}
+              className="w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+            >
+              <option value="">All Admins</option>
+              {admins.map(admin => (
+                <option key={admin.id} value={admin.id}>{admin.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <Label className="text-sm font-medium mb-1 block">Start Date</Label>
+            <Input
+              type="date"
+              value={filters.startDate}
+              onChange={(e) => { setFilters({ ...filters, startDate: e.target.value }); setPagination(p => ({ ...p, skip: 0 })); }}
+            />
+          </div>
+          <div>
+            <Label className="text-sm font-medium mb-1 block">End Date</Label>
+            <Input
+              type="date"
+              value={filters.endDate}
+              onChange={(e) => { setFilters({ ...filters, endDate: e.target.value }); setPagination(p => ({ ...p, skip: 0 })); }}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Activity By Admin */}
+      {stats?.by_admin && stats.by_admin.length > 0 && (
+        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
+          <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5" />
+            Activity by Admin
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {stats.by_admin.slice(0, 6).map((admin, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-600 rounded-full flex items-center justify-center text-white font-bold">
+                    {admin.name?.charAt(0) || 'A'}
+                  </div>
+                  <div>
+                    <p className="font-medium text-slate-900 dark:text-white">{admin.name}</p>
+                    <p className="text-xs text-slate-500">{admin.count} changes</p>
+                  </div>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  onClick={() => { setFilters({ ...filters, changedBy: admin.admin_id }); setPagination(p => ({ ...p, skip: 0 })); }}
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Audit Log Table */}
+      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+          <h3 className="font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <History className="w-5 h-5" />
+            Audit Log
+          </h3>
+          <span className="text-sm text-slate-500">
+            Showing {Math.min(pagination.skip + 1, pagination.total)} - {Math.min(pagination.skip + pagination.limit, pagination.total)} of {pagination.total}
+          </span>
+        </div>
+        
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+          </div>
+        ) : logs.length === 0 ? (
+          <div className="p-12 text-center">
+            <ClipboardList className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <p className="text-slate-600 dark:text-slate-400">No audit logs found</p>
+            <p className="text-sm text-slate-500 mt-1">Try adjusting your filters</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-slate-200 dark:divide-slate-700">
+            {logs.map((log) => (
+              <div key={log.id} className="p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-gradient-to-br from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <History className="w-5 h-5 text-slate-600 dark:text-slate-300" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <p className="font-medium text-slate-900 dark:text-white">
+                          {log.description || `Updated ${getTypeLabel(log.type)}`}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${getTypeColor(log.type)}`}>
+                            {getTypeLabel(log.type)}
+                          </span>
+                          {log.employer_name && (
+                            <span className="px-2 py-0.5 text-xs bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400 rounded-full">
+                              {log.employer_name}
+                            </span>
+                          )}
+                          {log.employee_name && (
+                            <span className="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400 rounded-full">
+                              {log.employee_name}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{log.changed_by_name || 'System'}</p>
+                        <p className="text-xs text-slate-500">
+                          {new Date(log.changed_at).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        
+        {/* Pagination */}
+        {pagination.total > pagination.limit && (
+          <div className="px-6 py-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pagination.skip === 0}
+              onClick={() => setPagination(prev => ({ ...prev, skip: Math.max(0, prev.skip - prev.limit) }))}
+              className="rounded-lg"
+            >
+              Previous
+            </Button>
+            <span className="text-sm text-slate-500">
+              Page {Math.floor(pagination.skip / pagination.limit) + 1} of {Math.ceil(pagination.total / pagination.limit)}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pagination.skip + pagination.limit >= pagination.total}
+              onClick={() => setPagination(prev => ({ ...prev, skip: prev.skip + prev.limit }))}
+              className="rounded-lg"
+            >
+              Next
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Main Component
 export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
