@@ -250,6 +250,15 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 
 ### P0 - Completed This Session
 - ✅ Mobile responsiveness for Pricing, How It Works, Calculator pages
+- ✅ Kampala map label visibility fixed
+- ✅ Privacy Policy - Cookie Policy link removed
+- ✅ Blog added to Footer under Resources
+- ✅ Blog page - duplicate Stay Updated section removed
+- ✅ Subscribe field larger on mobile (h-14)
+- ✅ 50% changed to 60% throughout website
+- ✅ 4 step cards equal height on Landing page
+- ✅ Face ID Verification added as Step 2 in Employee Onboarding (8 steps total)
+- ✅ Comprehensive Fraud Detection Framework in Admin Portal
 
 ### P1 - High Priority
 - Implement full Employer Notifications page (not just bell icon)
