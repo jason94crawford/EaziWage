@@ -220,6 +220,7 @@ Address: EaziWage Ltd, Westlands, Nairobi, Kenya`;
 const STEPS = [
   { id: 'welcome', title: 'Welcome', icon: Sparkles },
   { id: 'terms', title: 'Terms & Privacy', icon: Shield },
+  { id: 'face_id', title: 'Face ID', icon: ScanFace },
   { id: 'identity', title: 'ID Verification', icon: FileText },
   { id: 'address', title: 'Address', icon: Home },
   { id: 'tax', title: 'Tax Info', icon: Receipt },
