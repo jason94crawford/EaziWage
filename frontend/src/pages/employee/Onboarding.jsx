@@ -338,7 +338,16 @@ export default function EmployeeOnboarding() {
     payslip_2: null,
     bank_statement: null,
     employment_contract: null,
+    face_id: null,
   });
+  
+  // Face ID state
+  const [faceIdCaptured, setFaceIdCaptured] = useState(false);
+  const [faceIdEnabled, setFaceIdEnabled] = useState(true);
+  const [capturingFaceId, setCapturingFaceId] = useState(false);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
   
   const user = JSON.parse(localStorage.getItem('eaziwage_user') || '{}');
   
