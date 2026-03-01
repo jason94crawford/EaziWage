@@ -3712,11 +3712,13 @@ async def get_platform_settings(user: dict = Depends(require_role(UserRole.ADMIN
     settings = await db.platform_settings.find_one({"type": "global"}, {"_id": 0})
     if not settings:
         # Return defaults
-        settings = PlatformSettingsModel().model_dump()
-        settings["type"] = "global"
-        settings["id"] = str(uuid.uuid4())
-        settings["created_at"] = datetime.now(timezone.utc).isoformat()
-        await db.platform_settings.insert_one(settings)
+        default_settings = PlatformSettingsModel().model_dump()
+        default_settings["type"] = "global"
+        default_settings["id"] = str(uuid.uuid4())
+        default_settings["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.platform_settings.insert_one(default_settings)
+        # Refetch without _id
+        settings = await db.platform_settings.find_one({"type": "global"}, {"_id": 0})
     return settings
 
 # Update Platform Settings
