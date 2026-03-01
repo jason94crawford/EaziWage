@@ -53,6 +53,7 @@ import AdminReconciliation from "./pages/admin/Reconciliation";
 import AdminAPIHealth from "./pages/admin/APIHealth";
 import FraudDetection from "./pages/admin/FraudDetection";
 import ReviewManagement from "./pages/admin/ReviewManagement";
+import AdminSettings from "./pages/admin/Settings";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
