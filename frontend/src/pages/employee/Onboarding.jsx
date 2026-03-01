@@ -1007,7 +1007,7 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 3: // Address Verification
+      case 4: // Address Verification
         return (
           <div className="py-6">
             <div className="text-center mb-8">
@@ -1118,7 +1118,7 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 4: // Tax Identification
+      case 5: // Tax Identification
         return (
           <div className="py-6">
             <div className="text-center mb-8">
@@ -1187,7 +1187,7 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 5: // Employment & Salary
+      case 6: // Employment & Salary
         return (
           <div className="py-6">
             <div className="text-center mb-8">
@@ -1314,7 +1314,7 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 6: // Payment (Bank/Wallet Verification)
+      case 7: // Payment (Bank/Wallet Verification)
         // Get mobile money providers based on country of work selected in Address step
         const selectedWorkCountry = COUNTRIES_OF_WORK.find(c => c.code === formData.country);
         const mobileMoneyProviders = selectedWorkCountry?.providers || [];
