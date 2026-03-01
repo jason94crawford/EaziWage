@@ -4213,15 +4213,242 @@ async def get_public_legal_document(doc_type: str):
         document["document_type"] = doc_type
     return document
 
-# ======================== SETTINGS AUDIT LOG ========================
+# ======================== COMPREHENSIVE AUDIT TRAIL ========================
 
+@api_router.get("/admin/audit-trail")
+async def get_comprehensive_audit_trail(
+    limit: int = 100,
+    skip: int = 0,
+    audit_type: Optional[str] = None,  # settings, employer_activity, employee_activity, advance, system
+    settings_type: Optional[str] = None,  # platform_settings, risk_settings, employer_settings, etc.
+    changed_by: Optional[str] = None,  # Admin user ID
+    employer_id: Optional[str] = None,
+    employee_id: Optional[str] = None,
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get comprehensive audit trail with advanced filtering"""
+    query = {}
+    
+    # Filter by audit type
+    if audit_type:
+        if audit_type == "settings":
+            query["type"] = {"$in": ["platform_settings", "risk_settings", "notification_settings", 
+                                     "employer_settings", "employee_settings", "legal_document", "blackout"]}
+        elif audit_type == "employer_activity":
+            query["type"] = {"$in": ["employer_settings", "employer_status_change", "employer_advance_config"]}
+        elif audit_type == "employee_activity":
+            query["type"] = {"$in": ["employee_settings", "employee_status_change", "employee_kyc"]}
+        elif audit_type == "advance":
+            query["type"] = {"$in": ["advance_approved", "advance_rejected", "advance_disbursed"]}
+        else:
+            query["type"] = audit_type
+    
+    # Filter by specific settings type
+    if settings_type:
+        query["type"] = settings_type
+    
+    # Filter by admin who made the change
+    if changed_by:
+        query["changed_by"] = changed_by
+    
+    # Filter by employer
+    if employer_id:
+        query["employer_id"] = employer_id
+    
+    # Filter by employee
+    if employee_id:
+        query["employee_id"] = employee_id
+    
+    # Date range filter
+    if start_date or end_date:
+        date_query = {}
+        if start_date:
+            date_query["$gte"] = start_date
+        if end_date:
+            date_query["$lte"] = end_date + "T23:59:59"
+        query["changed_at"] = date_query
+    
+    # Get total count for pagination
+    total_count = await db.audit_trail.count_documents(query)
+    
+    # Get logs with pagination
+    logs = await db.audit_trail.find(
+        query,
+        {"_id": 0}
+    ).sort("changed_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    # Enrich with user and entity names
+    for log in logs:
+        # Get admin name
+        if log.get("changed_by"):
+            admin = await db.users.find_one({"id": log["changed_by"]}, {"_id": 0, "full_name": 1, "email": 1})
+            if admin:
+                log["changed_by_name"] = admin.get("full_name", admin.get("email", "Unknown"))
+        
+        # Get employer name if applicable
+        if log.get("employer_id"):
+            employer = await db.employers.find_one({"id": log["employer_id"]}, {"_id": 0, "company_name": 1})
+            if employer:
+                log["employer_name"] = employer.get("company_name", "Unknown")
+        
+        # Get employee name if applicable
+        if log.get("employee_id"):
+            employee = await db.employees.find_one({"id": log["employee_id"]}, {"_id": 0, "user_id": 1})
+            if employee:
+                user_info = await db.users.find_one({"id": employee.get("user_id")}, {"_id": 0, "full_name": 1})
+                if user_info:
+                    log["employee_name"] = user_info.get("full_name", "Unknown")
+    
+    return {
+        "total": total_count,
+        "skip": skip,
+        "limit": limit,
+        "logs": logs
+    }
+
+@api_router.get("/admin/audit-trail/stats")
+async def get_audit_trail_stats(
+    start_date: Optional[str] = None,
+    end_date: Optional[str] = None,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get audit trail statistics"""
+    query = {}
+    if start_date or end_date:
+        date_query = {}
+        if start_date:
+            date_query["$gte"] = start_date
+        if end_date:
+            date_query["$lte"] = end_date + "T23:59:59"
+        query["changed_at"] = date_query
+    
+    # Get counts by type
+    pipeline = [
+        {"$match": query},
+        {"$group": {"_id": "$type", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}}
+    ]
+    
+    type_counts_cursor = db.audit_trail.aggregate(pipeline)
+    type_counts = await type_counts_cursor.to_list(100)
+    
+    # Get counts by admin
+    admin_pipeline = [
+        {"$match": query},
+        {"$group": {"_id": "$changed_by", "count": {"$sum": 1}}},
+        {"$sort": {"count": -1}},
+        {"$limit": 10}
+    ]
+    
+    admin_counts_cursor = db.audit_trail.aggregate(admin_pipeline)
+    admin_counts = await admin_counts_cursor.to_list(10)
+    
+    # Enrich admin names
+    for ac in admin_counts:
+        if ac.get("_id"):
+            admin = await db.users.find_one({"id": ac["_id"]}, {"_id": 0, "full_name": 1, "email": 1})
+            if admin:
+                ac["name"] = admin.get("full_name", admin.get("email", "Unknown"))
+            else:
+                ac["name"] = "Unknown"
+    
+    # Get daily activity for last 30 days
+    thirty_days_ago = (datetime.now(timezone.utc) - timedelta(days=30)).isoformat()
+    daily_pipeline = [
+        {"$match": {"changed_at": {"$gte": thirty_days_ago}}},
+        {"$project": {"date": {"$substr": ["$changed_at", 0, 10]}}},
+        {"$group": {"_id": "$date", "count": {"$sum": 1}}},
+        {"$sort": {"_id": 1}}
+    ]
+    
+    daily_counts_cursor = db.audit_trail.aggregate(daily_pipeline)
+    daily_counts = await daily_counts_cursor.to_list(30)
+    
+    total_count = await db.audit_trail.count_documents(query)
+    
+    return {
+        "total_changes": total_count,
+        "by_type": {tc["_id"]: tc["count"] for tc in type_counts},
+        "by_admin": [{"admin_id": ac["_id"], "name": ac.get("name", "Unknown"), "count": ac["count"]} for ac in admin_counts],
+        "daily_activity": [{"date": dc["_id"], "count": dc["count"]} for dc in daily_counts]
+    }
+
+@api_router.get("/admin/audit-trail/admins")
+async def get_audit_trail_admins(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get list of admins who have made changes"""
+    pipeline = [
+        {"$group": {"_id": "$changed_by"}},
+        {"$match": {"_id": {"$ne": None}}}
+    ]
+    
+    admin_ids_cursor = db.audit_trail.aggregate(pipeline)
+    admin_ids = await admin_ids_cursor.to_list(100)
+    
+    admins = []
+    for aid in admin_ids:
+        if aid.get("_id"):
+            admin = await db.users.find_one({"id": aid["_id"]}, {"_id": 0, "id": 1, "full_name": 1, "email": 1})
+            if admin:
+                admins.append({
+                    "id": admin["id"],
+                    "name": admin.get("full_name", admin.get("email", "Unknown")),
+                    "email": admin.get("email", "")
+                })
+    
+    return admins
+
+# Utility function to log audit trail (call this from other endpoints)
+async def log_audit_trail(
+    audit_type: str,
+    changed_by: str,
+    changes: dict,
+    employer_id: Optional[str] = None,
+    employee_id: Optional[str] = None,
+    description: Optional[str] = None
+):
+    """Log an audit trail entry"""
+    entry = {
+        "id": str(uuid.uuid4()),
+        "type": audit_type,
+        "changed_by": changed_by,
+        "changed_at": datetime.now(timezone.utc).isoformat(),
+        "changes": changes,
+        "description": description
+    }
+    if employer_id:
+        entry["employer_id"] = employer_id
+    if employee_id:
+        entry["employee_id"] = employee_id
+    
+    await db.audit_trail.insert_one(entry)
+
+# Migration endpoint to copy settings_audit_log to audit_trail
+@api_router.post("/admin/audit-trail/migrate")
+async def migrate_audit_logs(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Migrate settings_audit_log to unified audit_trail"""
+    # Copy from settings_audit_log
+    old_logs = await db.settings_audit_log.find({}, {"_id": 0}).to_list(1000)
+    
+    migrated = 0
+    for log in old_logs:
+        # Check if already migrated
+        existing = await db.audit_trail.find_one({"id": log.get("id")})
+        if not existing:
+            await db.audit_trail.insert_one(log)
+            migrated += 1
+    
+    return {"message": f"Migrated {migrated} audit log entries"}
+
+# Legacy endpoint for backward compatibility
 @api_router.get("/admin/settings/audit-log")
 async def get_settings_audit_log(
     limit: int = 50,
     settings_type: Optional[str] = None,
     user: dict = Depends(require_role(UserRole.ADMIN))
 ):
-    """Get settings change audit log"""
+    """Get settings change audit log (legacy endpoint)"""
     query = {}
     if settings_type:
         query["type"] = settings_type
