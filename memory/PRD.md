@@ -184,6 +184,13 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
     - Employer Partnership Agreement
     - Privacy Policy
     - Version history and document editor with markdown support
+  - **Audit Trail Dashboard Tab** ✅ **NEW**:
+    - Overview stats (total changes, employer changes, employee changes, active admins)
+    - Advanced filtering (by change type, settings type, admin, date range)
+    - Activity by admin breakdown with click-to-filter
+    - Paginated audit log table with type badges and timestamps
+    - Export to CSV functionality
+    - Real-time logging of all settings changes
 
 ## API Endpoints
 
