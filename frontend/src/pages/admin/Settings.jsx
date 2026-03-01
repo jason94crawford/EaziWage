@@ -1769,7 +1769,7 @@ export default function AdminSettings() {
   const [notificationSettings, setNotificationSettings] = useState({});
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    const storedToken = localStorage.getItem('eaziwage_token');
     setToken(storedToken);
     if (storedToken) {
       fetchAllSettings(storedToken);
