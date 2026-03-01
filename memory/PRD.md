@@ -13,11 +13,19 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - Role-based access: Employee, Employer, Admin ✅
 
 ### Employee Features ✅ **LIGHT THEME**
-- 7-Step KYC Onboarding Flow ✅
+- 8-Step KYC Onboarding Flow ✅ **UPDATED WITH FACE ID**
+  - Step 1: Welcome
+  - Step 2: Terms & Privacy
+  - Step 3: Face ID Verification ✅ **NEW** (Camera capture, enable/disable toggle, skip option)
+  - Step 4: ID Verification (National ID/Passport)
+  - Step 5: Address Verification
+  - Step 6: Tax Information
+  - Step 7: Employment & Salary
+  - Step 8: Payment (Mobile Money + Bank Account)
 - Employee Dashboard ✅
 - Request Advance Page ✅
 - Transaction History ✅
-- Profile & Settings ✅
+- Profile & Settings ✅ (includes Face ID Login toggle)
 
 ### Employer Features ✅ COMPLETE
 - 8-Step Comprehensive Onboarding Portal ✅
@@ -62,22 +70,28 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
     - Advances: (Placeholder for detailed reports)
     - Actions: Approve/Suspend/Reject/Set Pending buttons
 
-- **Fraud Detection Page** ✅ **FULLY FUNCTIONAL WITH BACKEND**
-  - Stats cards (Total Rules, Active Rules, Flagged Transactions, High Risk)
-  - **Detection Rules Tab**:
-    - Rules persisted to MongoDB ✅
-    - CRUD operations (Create, Read, Update, Delete) ✅
-    - Rule toggle (enable/disable) ✅
-    - 6 rules total (3 default + 3 employer manipulation)
-  - **Employer Manipulation Detection** ✅ **NEW**:
-    - EWA Limit Increase Detection (>60% limit)
-    - Cooldown Reduction Alert (<3 days)
-    - Bulk Settings Change (>3 changes/day)
-  - **Flagged Transactions Tab**:
-    - Real-time flagged advances from database
-    - Review modal with decision dropdown
-  - **Fraud Checking in Advance Creation** ✅:
-    - Advances checked against enabled rules
+- **Fraud Detection Page** ✅ **COMPREHENSIVE FRAMEWORK (Feb 2026)**
+  - **Overview Tab**:
+    - Stats cards (Active Alerts, Suspended Accounts, System Risk Score, Fraud Loss Ratio)
+    - Active Fraud Alerts list with review actions
+    - KPIs summary and Suspension Process
+  - **Risk Taxonomy Tab**:
+    - 5 Risk Categories: Payroll Manipulation, Employer Insolvency, Identity & Account Fraud, Collusion Fraud, Internal Operational Fraud
+    - Severity levels (High, Elevated, Moderate)
+    - Risk indicators for each category
+  - **Risk Scoring Engine Tab**:
+    - Employer Risk Score (ERS): Payroll consistency (25%), Payment history (25%), Funding buffer (20%), Staff volatility (15%), Disputes (15%)
+    - Employee Risk Score (eRS): Salary variance (30%), Advance frequency (20%), Device consistency (15%), Bank/Mobile changes (15%), Employer linkage (20%)
+    - Risk Score Bands: 80-100 (Low), 60-79 (Moderate), 40-59 (Elevated), <40 (High)
+  - **Suspension Triggers Tab**:
+    - Immediate Suspension (Hard Stops): Debit failure, Funding buffer issues, Payroll anomalies, SIM swap, Device changes
+    - Soft Risk Controls: Advance cap reduction (60%→35%), Withdrawal cooldown, Manual review queue
+  - **Payroll Integrity Controls Tab**:
+    - Locked Payroll Snapshots, Hash Fingerprinting, Cooling-Off Period, Dual Payroll Approval
+  - **Behavioral Analytics Tab**:
+    - Time-of-day patterns, Cluster withdrawals, Device duplication, Geo anomalies, IP consistency, Velocity attacks
+  - **KPIs Tab**:
+    - Fraud Loss Ratio, Recovery Ratio, Suspension Rate, False Positive Rate, Avg Investigation Time, Advance Utilization
     - Automatic flagging/blocking based on rule action
 
 - **Risk Scoring Page** ✅ **COMPLETELY REBUILT**
