@@ -6,7 +6,8 @@ import {
   CheckCircle2, XCircle, Edit, Eye, Lock, Unlock,
   Globe, Database, Mail, Smartphone, FileText, Scale,
   TrendingUp, Activity, Zap, Ban, UserCheck, CreditCard,
-  Plus, Trash2, X, Info, HelpCircle, ArrowUpRight
+  Plus, Trash2, X, Info, HelpCircle, ArrowUpRight, History,
+  FileCheck, BookOpen, CalendarOff
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -17,7 +18,7 @@ import AdminPortalLayout from '../../components/admin/AdminLayout';
 const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Slider Component
-const RangeSlider = ({ label, min, max, value, onChange, unit = '', step = 1, helpText }) => (
+const RangeSlider = ({ label, min, max, value, onChange, unit = '', step = 1, helpText, disabled = false }) => (
   <div className="space-y-2">
     <div className="flex items-center justify-between">
       <Label className="text-sm font-medium">{label}</Label>
@@ -32,7 +33,8 @@ const RangeSlider = ({ label, min, max, value, onChange, unit = '', step = 1, he
       step={step}
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
-      className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-purple-500"
+      disabled={disabled}
+      className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full appearance-none cursor-pointer accent-purple-500 disabled:opacity-50"
     />
     <div className="flex justify-between text-xs text-slate-500">
       <span>{min}{unit}</span>
@@ -43,17 +45,18 @@ const RangeSlider = ({ label, min, max, value, onChange, unit = '', step = 1, he
 );
 
 // Toggle Component
-const Toggle = ({ enabled, onChange, label, description }) => (
+const Toggle = ({ enabled, onChange, label, description, disabled = false }) => (
   <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
     <div>
       <p className="font-medium text-slate-900 dark:text-white">{label}</p>
       {description && <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>}
     </div>
     <button
-      onClick={() => onChange(!enabled)}
+      onClick={() => !disabled && onChange(!enabled)}
+      disabled={disabled}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
         enabled ? 'bg-purple-500' : 'bg-slate-300 dark:bg-slate-600'
-      }`}
+      } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
     >
       <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform ${
         enabled ? 'translate-x-[22px]' : 'translate-x-0.5'
@@ -81,7 +84,15 @@ const SectionCard = ({ title, icon: Icon, children, description }) => (
 );
 
 // Global Settings Tab
-const GlobalSettingsTab = ({ settings, onUpdate }) => {
+const GlobalSettingsTab = ({ settings, onUpdate, loading }) => {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* EWA Limits */}
@@ -91,8 +102,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="Default Advance Percentage"
             min={10}
             max={80}
-            value={settings.defaultAdvancePercent}
-            onChange={(v) => onUpdate({ ...settings, defaultAdvancePercent: v })}
+            value={settings.default_advance_percent || 60}
+            onChange={(v) => onUpdate({ ...settings, default_advance_percent: v })}
             unit="%"
             helpText="Maximum % of earned wages employees can access"
           />
@@ -100,8 +111,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="Minimum Advance Amount"
             min={100}
             max={5000}
-            value={settings.minAdvanceAmount}
-            onChange={(v) => onUpdate({ ...settings, minAdvanceAmount: v })}
+            value={settings.min_advance_amount || 500}
+            onChange={(v) => onUpdate({ ...settings, min_advance_amount: v })}
             unit=" KES"
             step={100}
             helpText="Minimum amount per advance request"
@@ -110,8 +121,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="Maximum Advance Amount"
             min={10000}
             max={500000}
-            value={settings.maxAdvanceAmount}
-            onChange={(v) => onUpdate({ ...settings, maxAdvanceAmount: v })}
+            value={settings.max_advance_amount || 100000}
+            onChange={(v) => onUpdate({ ...settings, max_advance_amount: v })}
             unit=" KES"
             step={5000}
             helpText="Maximum amount per advance request"
@@ -120,8 +131,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="Daily Advance Limit"
             min={1}
             max={10}
-            value={settings.dailyAdvanceLimit}
-            onChange={(v) => onUpdate({ ...settings, dailyAdvanceLimit: v })}
+            value={settings.daily_advance_limit || 3}
+            onChange={(v) => onUpdate({ ...settings, daily_advance_limit: v })}
             unit=" requests"
             helpText="Maximum advances per employee per day"
           />
@@ -140,8 +151,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
                   <Input
                     type="number"
                     step="0.1"
-                    value={settings.minProcessingFee}
-                    onChange={(e) => onUpdate({ ...settings, minProcessingFee: parseFloat(e.target.value) })}
+                    value={settings.min_processing_fee || 3.5}
+                    onChange={(e) => onUpdate({ ...settings, min_processing_fee: parseFloat(e.target.value) })}
                     className="pr-8"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">%</span>
@@ -153,8 +164,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
                   <Input
                     type="number"
                     step="0.1"
-                    value={settings.maxProcessingFee}
-                    onChange={(e) => onUpdate({ ...settings, maxProcessingFee: parseFloat(e.target.value) })}
+                    value={settings.max_processing_fee || 6.0}
+                    onChange={(e) => onUpdate({ ...settings, max_processing_fee: parseFloat(e.target.value) })}
                     className="pr-8"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">%</span>
@@ -172,8 +183,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
                   <Input
                     type="number"
                     step="0.5"
-                    value={settings.mobileFee}
-                    onChange={(e) => onUpdate({ ...settings, mobileFee: parseFloat(e.target.value) })}
+                    value={settings.mobile_fee || 50}
+                    onChange={(e) => onUpdate({ ...settings, mobile_fee: parseFloat(e.target.value) })}
                     className="pr-12"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">KES</span>
@@ -185,8 +196,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
                   <Input
                     type="number"
                     step="0.5"
-                    value={settings.bankFee}
-                    onChange={(e) => onUpdate({ ...settings, bankFee: parseFloat(e.target.value) })}
+                    value={settings.bank_fee || 100}
+                    onChange={(e) => onUpdate({ ...settings, bank_fee: parseFloat(e.target.value) })}
                     className="pr-12"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">KES</span>
@@ -204,8 +215,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="Default Cooldown Period"
             min={0}
             max={14}
-            value={settings.defaultCooldown}
-            onChange={(v) => onUpdate({ ...settings, defaultCooldown: v })}
+            value={settings.default_cooldown_days || 3}
+            onChange={(v) => onUpdate({ ...settings, default_cooldown_days: v })}
             unit=" days"
             helpText="Wait time between advance requests"
           />
@@ -213,8 +224,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="Weekly Advance Limit"
             min={1}
             max={20}
-            value={settings.weeklyAdvanceLimit}
-            onChange={(v) => onUpdate({ ...settings, weeklyAdvanceLimit: v })}
+            value={settings.weekly_advance_limit || 5}
+            onChange={(v) => onUpdate({ ...settings, weekly_advance_limit: v })}
             unit=" requests"
             helpText="Maximum advances per employee per week"
           />
@@ -222,8 +233,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="Monthly Advance Limit"
             min={1}
             max={50}
-            value={settings.monthlyAdvanceLimit}
-            onChange={(v) => onUpdate({ ...settings, monthlyAdvanceLimit: v })}
+            value={settings.monthly_advance_limit || 15}
+            onChange={(v) => onUpdate({ ...settings, monthly_advance_limit: v })}
             unit=" requests"
             helpText="Maximum advances per employee per month"
           />
@@ -231,8 +242,8 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
             label="New Employee Waiting Period"
             min={0}
             max={90}
-            value={settings.newEmployeeWaitDays}
-            onChange={(v) => onUpdate({ ...settings, newEmployeeWaitDays: v })}
+            value={settings.new_employee_wait_days || 30}
+            onChange={(v) => onUpdate({ ...settings, new_employee_wait_days: v })}
             unit=" days"
             helpText="Days before new employees can request advances"
           />
@@ -245,27 +256,62 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
           <Toggle
             label="Instant Mobile Money Transfers"
             description="Enable real-time M-Pesa/Airtel Money disbursements"
-            enabled={settings.instantMobileEnabled}
-            onChange={(v) => onUpdate({ ...settings, instantMobileEnabled: v })}
+            enabled={settings.instant_mobile_enabled ?? true}
+            onChange={(v) => onUpdate({ ...settings, instant_mobile_enabled: v })}
           />
           <Toggle
             label="Bank Transfers"
             description="Allow advances to bank accounts"
-            enabled={settings.bankTransfersEnabled}
-            onChange={(v) => onUpdate({ ...settings, bankTransfersEnabled: v })}
+            enabled={settings.bank_transfers_enabled ?? true}
+            onChange={(v) => onUpdate({ ...settings, bank_transfers_enabled: v })}
           />
           <Toggle
             label="Auto-Approval for Low Risk"
             description="Automatically approve advances for low-risk employees"
-            enabled={settings.autoApprovalEnabled}
-            onChange={(v) => onUpdate({ ...settings, autoApprovalEnabled: v })}
+            enabled={settings.auto_approval_enabled ?? true}
+            onChange={(v) => onUpdate({ ...settings, auto_approval_enabled: v })}
           />
           <Toggle
             label="Weekend Advances"
             description="Allow advance requests on weekends"
-            enabled={settings.weekendAdvancesEnabled}
-            onChange={(v) => onUpdate({ ...settings, weekendAdvancesEnabled: v })}
+            enabled={settings.weekend_advances_enabled ?? false}
+            onChange={(v) => onUpdate({ ...settings, weekend_advances_enabled: v })}
           />
+        </div>
+      </SectionCard>
+
+      {/* Enabled Countries */}
+      <SectionCard title="Enabled Countries" icon={Globe} description="Countries where EWA service is available">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { code: 'KE', name: 'Kenya', flag: '🇰🇪' },
+            { code: 'UG', name: 'Uganda', flag: '🇺🇬' },
+            { code: 'TZ', name: 'Tanzania', flag: '🇹🇿' },
+            { code: 'RW', name: 'Rwanda', flag: '🇷🇼' }
+          ].map((country) => {
+            const isEnabled = (settings.enabled_countries || ['KE', 'UG', 'TZ', 'RW']).includes(country.code);
+            return (
+              <button
+                key={country.code}
+                onClick={() => {
+                  const current = settings.enabled_countries || ['KE', 'UG', 'TZ', 'RW'];
+                  const updated = isEnabled 
+                    ? current.filter(c => c !== country.code)
+                    : [...current, country.code];
+                  onUpdate({ ...settings, enabled_countries: updated });
+                }}
+                className={`p-4 rounded-xl border-2 transition-all ${
+                  isEnabled 
+                    ? 'border-purple-500 bg-purple-50 dark:bg-purple-500/10' 
+                    : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
+                }`}
+              >
+                <span className="text-2xl">{country.flag}</span>
+                <p className="font-medium text-slate-900 dark:text-white mt-2">{country.name}</p>
+                <p className="text-xs text-slate-500">{country.code}</p>
+              </button>
+            );
+          })}
         </div>
       </SectionCard>
     </div>
@@ -273,13 +319,86 @@ const GlobalSettingsTab = ({ settings, onUpdate }) => {
 };
 
 // Employer Configuration Tab
-const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, employerSettings, onUpdateEmployer }) => {
+const EmployerConfigTab = ({ token, onSave }) => {
+  const [employers, setEmployers] = useState([]);
+  const [selectedEmployer, setSelectedEmployer] = useState(null);
+  const [employerSettings, setEmployerSettings] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchEmployers();
+  }, []);
+
+  const fetchEmployers = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/employers`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEmployers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching employers:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectEmployer = async (employer) => {
+    setSelectedEmployer(employer);
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/employers/${employer.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEmployerSettings(data.settings);
+      }
+    } catch (error) {
+      console.error('Error fetching employer settings:', error);
+    }
+  };
+
+  const saveEmployerSettings = async () => {
+    if (!selectedEmployer || !employerSettings) return;
+    setSaving(true);
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/employers/${selectedEmployer.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(employerSettings)
+      });
+      if (response.ok) {
+        toast.success('Employer settings saved successfully');
+        onSave();
+      } else {
+        toast.error('Failed to save employer settings');
+      }
+    } catch (error) {
+      toast.error('Error saving employer settings');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filteredEmployers = employers.filter(emp => 
-    emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.code.toLowerCase().includes(searchTerm.toLowerCase())
+    emp.company_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    emp.id?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
@@ -301,21 +420,23 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
           {filteredEmployers.map((employer) => (
             <button
               key={employer.id}
-              onClick={() => onSelectEmployer(employer)}
+              onClick={() => selectEmployer(employer)}
               className={`w-full p-4 text-left border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${
                 selectedEmployer?.id === employer.id ? 'bg-purple-50 dark:bg-purple-500/10 border-l-4 border-l-purple-500' : ''
               }`}
+              data-testid={`employer-${employer.id}`}
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg flex items-center justify-center text-white font-bold">
-                  {employer.name.charAt(0)}
+                  {employer.company_name?.charAt(0) || 'E'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-slate-900 dark:text-white truncate">{employer.name}</p>
-                  <p className="text-xs text-slate-500">{employer.code} • {employer.employeeCount} employees</p>
+                  <p className="font-medium text-slate-900 dark:text-white truncate">{employer.company_name}</p>
+                  <p className="text-xs text-slate-500">{employer.employee_count || 0} employees</p>
                 </div>
                 <span className={`px-2 py-1 text-xs rounded-full ${
-                  employer.status === 'active' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
+                  employer.status === 'approved' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/20 dark:text-emerald-400' :
+                  employer.status === 'suspended' ? 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400' :
                   'bg-amber-100 text-amber-700 dark:bg-amber-500/20 dark:text-amber-400'
                 }`}>
                   {employer.status}
@@ -328,43 +449,47 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
 
       {/* Employer Settings */}
       <div className="lg:col-span-2 space-y-6">
-        {selectedEmployer ? (
+        {selectedEmployer && employerSettings ? (
           <>
             {/* Employer Header */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center text-white text-xl font-bold">
-                    {selectedEmployer.name.charAt(0)}
+                    {selectedEmployer.company_name?.charAt(0) || 'E'}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedEmployer.name}</h2>
-                    <p className="text-slate-500">Code: {selectedEmployer.code} • {selectedEmployer.employeeCount} employees</p>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedEmployer.company_name}</h2>
+                    <p className="text-slate-500">{selectedEmployer.employee_count || 0} employees • {selectedEmployer.country}</p>
                   </div>
                 </div>
-                <span className={`px-3 py-1.5 text-sm font-semibold rounded-full ${
-                  selectedEmployer.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-                }`}>
-                  {selectedEmployer.status.charAt(0).toUpperCase() + selectedEmployer.status.slice(1)}
-                </span>
+                <Button 
+                  onClick={saveEmployerSettings}
+                  disabled={saving}
+                  className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
+                  data-testid="save-employer-settings-btn"
+                >
+                  {saving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Save Settings
+                </Button>
               </div>
 
               {/* Quick Stats */}
               <div className="grid grid-cols-4 gap-4">
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employerSettings.advanceLimit}%</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employerSettings.advance_limit_percent || 60}%</p>
                   <p className="text-xs text-slate-500">Advance Limit</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employerSettings.cooldownDays}d</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employerSettings.cooldown_days || 3}d</p>
                   <p className="text-xs text-slate-500">Cooldown</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employerSettings.processingFee}%</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employerSettings.processing_fee || 4.5}%</p>
                   <p className="text-xs text-slate-500">Fee Rate</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employerSettings.riskScore}</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{selectedEmployer.risk_score?.toFixed(1) || 'N/A'}</p>
                   <p className="text-xs text-slate-500">Risk Score</p>
                 </div>
               </div>
@@ -377,16 +502,16 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
                   label="Advance Percentage Limit"
                   min={10}
                   max={80}
-                  value={employerSettings.advanceLimit}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, advanceLimit: v })}
+                  value={employerSettings.advance_limit_percent || 60}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, advance_limit_percent: v })}
                   unit="%"
                 />
                 <RangeSlider
                   label="Cooldown Period"
                   min={0}
                   max={14}
-                  value={employerSettings.cooldownDays}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, cooldownDays: v })}
+                  value={employerSettings.cooldown_days || 3}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, cooldown_days: v })}
                   unit=" days"
                 />
                 <RangeSlider
@@ -394,18 +519,71 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
                   min={2}
                   max={8}
                   step={0.5}
-                  value={employerSettings.processingFee}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, processingFee: v })}
+                  value={employerSettings.processing_fee || 4.5}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, processing_fee: v })}
                   unit="%"
                 />
                 <RangeSlider
                   label="Max Monthly Advances"
                   min={1}
                   max={30}
-                  value={employerSettings.maxMonthlyAdvances}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, maxMonthlyAdvances: v })}
+                  value={employerSettings.max_monthly_advances || 10}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, max_monthly_advances: v })}
                   unit=" requests"
                 />
+              </div>
+            </SectionCard>
+
+            {/* Employee Limits (Employer-Imposed) */}
+            <SectionCard title="Employee Limit Constraints" icon={Users} description="Limits this employer can set on their employees">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-slate-900 dark:text-white">Advance Limit Range</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm">Min %</Label>
+                      <Input
+                        type="number"
+                        value={employerSettings.employee_advance_limit_min || 10}
+                        onChange={(e) => setEmployerSettings({ ...employerSettings, employee_advance_limit_min: parseFloat(e.target.value) })}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm">Max %</Label>
+                      <Input
+                        type="number"
+                        value={employerSettings.employee_advance_limit_max || 60}
+                        onChange={(e) => setEmployerSettings({ ...employerSettings, employee_advance_limit_max: parseFloat(e.target.value) })}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                  <p className="text-xs text-slate-500">Range within which employer can adjust employee limits</p>
+                </div>
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-slate-900 dark:text-white">Cooldown Range</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm">Min Days</Label>
+                      <Input
+                        type="number"
+                        value={employerSettings.employee_cooldown_min || 1}
+                        onChange={(e) => setEmployerSettings({ ...employerSettings, employee_cooldown_min: parseInt(e.target.value) })}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm">Max Days</Label>
+                      <Input
+                        type="number"
+                        value={employerSettings.employee_cooldown_max || 14}
+                        onChange={(e) => setEmployerSettings({ ...employerSettings, employee_cooldown_max: parseInt(e.target.value) })}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
             </SectionCard>
 
@@ -416,8 +594,8 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
                   <div>
                     <Label className="text-sm font-medium">Funding Model</Label>
                     <select
-                      value={employerSettings.fundingModel}
-                      onChange={(e) => onUpdateEmployer({ ...employerSettings, fundingModel: e.target.value })}
+                      value={employerSettings.funding_model || 'prefunded'}
+                      onChange={(e) => setEmployerSettings({ ...employerSettings, funding_model: e.target.value })}
                       className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
                     >
                       <option value="prefunded">Prefunded Wallet</option>
@@ -428,8 +606,8 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
                   <div>
                     <Label className="text-sm font-medium">Risk Tier</Label>
                     <select
-                      value={employerSettings.riskTier}
-                      onChange={(e) => onUpdateEmployer({ ...employerSettings, riskTier: e.target.value })}
+                      value={employerSettings.risk_tier || 'low'}
+                      onChange={(e) => setEmployerSettings({ ...employerSettings, risk_tier: e.target.value })}
                       className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
                     >
                       <option value="low">Low Risk</option>
@@ -444,8 +622,8 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
                     <div className="relative mt-1">
                       <Input
                         type="number"
-                        value={employerSettings.fundingBuffer}
-                        onChange={(e) => onUpdateEmployer({ ...employerSettings, fundingBuffer: parseInt(e.target.value) })}
+                        value={employerSettings.funding_buffer_percent || 20}
+                        onChange={(e) => setEmployerSettings({ ...employerSettings, funding_buffer_percent: parseInt(e.target.value) })}
                         className="pr-8"
                       />
                       <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500">%</span>
@@ -455,8 +633,8 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
                     <Label className="text-sm font-medium">Credit Limit (KES)</Label>
                     <Input
                       type="number"
-                      value={employerSettings.creditLimit}
-                      onChange={(e) => onUpdateEmployer({ ...employerSettings, creditLimit: parseInt(e.target.value) })}
+                      value={employerSettings.credit_limit || 5000000}
+                      onChange={(e) => setEmployerSettings({ ...employerSettings, credit_limit: parseInt(e.target.value) })}
                       className="mt-1"
                     />
                   </div>
@@ -470,26 +648,26 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
                 <Toggle
                   label="EWA Service Active"
                   description="Master switch for EWA access"
-                  enabled={employerSettings.ewaEnabled}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, ewaEnabled: v })}
+                  enabled={employerSettings.ewa_enabled ?? true}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, ewa_enabled: v })}
                 />
                 <Toggle
                   label="Allow Instant Transfers"
                   description="Real-time mobile money disbursements"
-                  enabled={employerSettings.instantEnabled}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, instantEnabled: v })}
+                  enabled={employerSettings.instant_enabled ?? true}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, instant_enabled: v })}
                 />
                 <Toggle
                   label="Auto-Approve Low Risk Employees"
                   description="Skip manual review for low-risk advances"
-                  enabled={employerSettings.autoApprove}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, autoApprove: v })}
+                  enabled={employerSettings.auto_approve ?? true}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, auto_approve: v })}
                 />
                 <Toggle
                   label="Weekend Access"
                   description="Allow advances on weekends"
-                  enabled={employerSettings.weekendAccess}
-                  onChange={(v) => onUpdateEmployer({ ...employerSettings, weekendAccess: v })}
+                  enabled={employerSettings.weekend_access ?? false}
+                  onChange={(v) => setEmployerSettings({ ...employerSettings, weekend_access: v })}
                 />
               </div>
             </SectionCard>
@@ -507,13 +685,90 @@ const EmployerConfigTab = ({ employers, onSelectEmployer, selectedEmployer, empl
 };
 
 // Employee Configuration Tab
-const EmployeeConfigTab = ({ employees, onSelectEmployee, selectedEmployee, employeeSettings, onUpdateEmployee }) => {
+const EmployeeConfigTab = ({ token, onSave }) => {
+  const [employees, setEmployees] = useState([]);
+  const [selectedEmployee, setSelectedEmployee] = useState(null);
+  const [employeeSettings, setEmployeeSettings] = useState(null);
+  const [employeeStats, setEmployeeStats] = useState(null);
+  const [employerSettings, setEmployerSettings] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    fetchEmployees();
+  }, []);
+
+  const fetchEmployees = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/employees`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEmployees(data);
+      }
+    } catch (error) {
+      console.error('Error fetching employees:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectEmployee = async (employee) => {
+    setSelectedEmployee(employee);
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/employees/${employee.id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEmployeeSettings(data.settings);
+        setEmployeeStats(data.stats);
+        setEmployerSettings(data.employer_settings);
+      }
+    } catch (error) {
+      console.error('Error fetching employee settings:', error);
+    }
+  };
+
+  const saveEmployeeSettings = async () => {
+    if (!selectedEmployee || !employeeSettings) return;
+    setSaving(true);
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/employees/${selectedEmployee.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(employeeSettings)
+      });
+      if (response.ok) {
+        toast.success('Employee settings saved successfully');
+        onSave();
+      } else {
+        toast.error('Failed to save employee settings');
+      }
+    } catch (error) {
+      toast.error('Error saving employee settings');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const filteredEmployees = employees.filter(emp => 
-    emp.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    emp.email.toLowerCase().includes(searchTerm.toLowerCase())
+    emp.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    emp.email?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <div className="grid lg:grid-cols-3 gap-6">
@@ -535,25 +790,26 @@ const EmployeeConfigTab = ({ employees, onSelectEmployee, selectedEmployee, empl
           {filteredEmployees.map((employee) => (
             <button
               key={employee.id}
-              onClick={() => onSelectEmployee(employee)}
+              onClick={() => selectEmployee(employee)}
               className={`w-full p-4 text-left border-b border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${
                 selectedEmployee?.id === employee.id ? 'bg-purple-50 dark:bg-purple-500/10 border-l-4 border-l-purple-500' : ''
               }`}
+              data-testid={`employee-${employee.id}`}
             >
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white font-bold">
-                  {employee.name.charAt(0)}
+                  {employee.full_name?.charAt(0) || 'E'}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-slate-900 dark:text-white truncate">{employee.name}</p>
-                  <p className="text-xs text-slate-500 truncate">{employee.employer}</p>
+                  <p className="font-medium text-slate-900 dark:text-white truncate">{employee.full_name || 'Unknown'}</p>
+                  <p className="text-xs text-slate-500 truncate">{employee.employer_name || 'No employer'}</p>
                 </div>
                 <span className={`px-2 py-1 text-xs rounded-full ${
-                  employee.riskLevel === 'low' ? 'bg-emerald-100 text-emerald-700' :
-                  employee.riskLevel === 'medium' ? 'bg-amber-100 text-amber-700' :
+                  employee.risk_level === 'low' ? 'bg-emerald-100 text-emerald-700' :
+                  employee.risk_level === 'medium' ? 'bg-amber-100 text-amber-700' :
                   'bg-red-100 text-red-700'
                 }`}>
-                  {employee.riskLevel}
+                  {employee.risk_level || 'N/A'}
                 </span>
               </div>
             </button>
@@ -563,48 +819,57 @@ const EmployeeConfigTab = ({ employees, onSelectEmployee, selectedEmployee, empl
 
       {/* Employee Settings */}
       <div className="lg:col-span-2 space-y-6">
-        {selectedEmployee ? (
+        {selectedEmployee && employeeSettings ? (
           <>
             {/* Employee Header */}
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
                   <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                    {selectedEmployee.name.charAt(0)}
+                    {selectedEmployee.full_name?.charAt(0) || 'E'}
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedEmployee.name}</h2>
+                    <h2 className="text-xl font-bold text-slate-900 dark:text-white">{selectedEmployee.full_name}</h2>
                     <p className="text-slate-500">{selectedEmployee.email}</p>
-                    <p className="text-sm text-slate-400">{selectedEmployee.employer}</p>
+                    <p className="text-sm text-slate-400">{selectedEmployee.employer_name}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <span className={`px-3 py-1.5 text-sm font-semibold rounded-full ${
-                    selectedEmployee.riskLevel === 'low' ? 'bg-emerald-100 text-emerald-700' :
-                    selectedEmployee.riskLevel === 'medium' ? 'bg-amber-100 text-amber-700' :
+                    selectedEmployee.risk_level === 'low' ? 'bg-emerald-100 text-emerald-700' :
+                    selectedEmployee.risk_level === 'medium' ? 'bg-amber-100 text-amber-700' :
                     'bg-red-100 text-red-700'
                   }`}>
-                    {selectedEmployee.riskLevel.charAt(0).toUpperCase() + selectedEmployee.riskLevel.slice(1)} Risk
+                    {selectedEmployee.risk_level ? selectedEmployee.risk_level.charAt(0).toUpperCase() + selectedEmployee.risk_level.slice(1) : 'N/A'} Risk
                   </span>
+                  <Button 
+                    onClick={saveEmployeeSettings}
+                    disabled={saving}
+                    className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
+                    data-testid="save-employee-settings-btn"
+                  >
+                    {saving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                    Save
+                  </Button>
                 </div>
               </div>
 
               {/* Quick Stats */}
               <div className="grid grid-cols-4 gap-4">
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employeeSettings.advanceLimit}%</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employeeSettings.advance_limit_percent || 60}%</p>
                   <p className="text-xs text-slate-500">Limit</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employeeSettings.riskScore}</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{selectedEmployee.risk_score?.toFixed(1) || 'N/A'}</p>
                   <p className="text-xs text-slate-500">Risk Score</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{selectedEmployee.totalAdvances}</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employeeStats?.total_advances || 0}</p>
                   <p className="text-xs text-slate-500">Advances</p>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-700/50 rounded-xl p-3 text-center">
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{selectedEmployee.repaymentRate}%</p>
+                  <p className="text-2xl font-bold text-slate-900 dark:text-white">{employeeStats?.repayment_rate || 100}%</p>
                   <p className="text-xs text-slate-500">Repayment</p>
                 </div>
               </div>
@@ -612,53 +877,53 @@ const EmployeeConfigTab = ({ employees, onSelectEmployee, selectedEmployee, empl
 
             {/* Individual Settings */}
             <SectionCard title="Individual EWA Settings" icon={Sliders} description="Override default settings for this employee">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div>
-                  <Toggle
-                    label="Use Custom Settings"
-                    description="Override employer defaults"
-                    enabled={employeeSettings.useCustomSettings}
-                    onChange={(v) => onUpdateEmployee({ ...employeeSettings, useCustomSettings: v })}
-                  />
-                </div>
+              <div className="space-y-6">
+                <Toggle
+                  label="Use Custom Settings"
+                  description="Override employer defaults for this employee"
+                  enabled={employeeSettings.use_custom_settings ?? false}
+                  onChange={(v) => setEmployeeSettings({ ...employeeSettings, use_custom_settings: v })}
+                />
+                
+                {employeeSettings.use_custom_settings && (
+                  <div className="grid md:grid-cols-2 gap-6 pt-6 border-t border-slate-200 dark:border-slate-700">
+                    <RangeSlider
+                      label="Custom Advance Limit"
+                      min={employerSettings?.employee_advance_limit_min || 10}
+                      max={employerSettings?.employee_advance_limit_max || 80}
+                      value={employeeSettings.advance_limit_percent || 60}
+                      onChange={(v) => setEmployeeSettings({ ...employeeSettings, advance_limit_percent: v })}
+                      unit="%"
+                      helpText={employerSettings ? `Employer range: ${employerSettings.employee_advance_limit_min || 10}% - ${employerSettings.employee_advance_limit_max || 60}%` : undefined}
+                    />
+                    <RangeSlider
+                      label="Custom Cooldown"
+                      min={employerSettings?.employee_cooldown_min || 0}
+                      max={employerSettings?.employee_cooldown_max || 14}
+                      value={employeeSettings.cooldown_days || 3}
+                      onChange={(v) => setEmployeeSettings({ ...employeeSettings, cooldown_days: v })}
+                      unit=" days"
+                    />
+                    <RangeSlider
+                      label="Max Monthly Advances"
+                      min={1}
+                      max={30}
+                      value={employeeSettings.max_monthly_advances || 10}
+                      onChange={(v) => setEmployeeSettings({ ...employeeSettings, max_monthly_advances: v })}
+                      unit=" requests"
+                    />
+                    <RangeSlider
+                      label="Custom Fee Rate"
+                      min={2}
+                      max={8}
+                      step={0.5}
+                      value={employeeSettings.fee_rate || 4.5}
+                      onChange={(v) => setEmployeeSettings({ ...employeeSettings, fee_rate: v })}
+                      unit="%"
+                    />
+                  </div>
+                )}
               </div>
-              {employeeSettings.useCustomSettings && (
-                <div className="grid md:grid-cols-2 gap-6 mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
-                  <RangeSlider
-                    label="Custom Advance Limit"
-                    min={10}
-                    max={80}
-                    value={employeeSettings.advanceLimit}
-                    onChange={(v) => onUpdateEmployee({ ...employeeSettings, advanceLimit: v })}
-                    unit="%"
-                  />
-                  <RangeSlider
-                    label="Custom Cooldown"
-                    min={0}
-                    max={14}
-                    value={employeeSettings.cooldownDays}
-                    onChange={(v) => onUpdateEmployee({ ...employeeSettings, cooldownDays: v })}
-                    unit=" days"
-                  />
-                  <RangeSlider
-                    label="Max Monthly Advances"
-                    min={1}
-                    max={30}
-                    value={employeeSettings.maxMonthlyAdvances}
-                    onChange={(v) => onUpdateEmployee({ ...employeeSettings, maxMonthlyAdvances: v })}
-                    unit=" requests"
-                  />
-                  <RangeSlider
-                    label="Custom Fee Rate"
-                    min={2}
-                    max={8}
-                    step={0.5}
-                    value={employeeSettings.feeRate}
-                    onChange={(v) => onUpdateEmployee({ ...employeeSettings, feeRate: v })}
-                    unit="%"
-                  />
-                </div>
-              )}
             </SectionCard>
 
             {/* Access & Restrictions */}
@@ -667,26 +932,26 @@ const EmployeeConfigTab = ({ employees, onSelectEmployee, selectedEmployee, empl
                 <Toggle
                   label="EWA Access Enabled"
                   description="Allow this employee to request advances"
-                  enabled={employeeSettings.ewaEnabled}
-                  onChange={(v) => onUpdateEmployee({ ...employeeSettings, ewaEnabled: v })}
+                  enabled={employeeSettings.ewa_enabled ?? true}
+                  onChange={(v) => setEmployeeSettings({ ...employeeSettings, ewa_enabled: v })}
                 />
                 <Toggle
                   label="VIP Status"
                   description="Priority processing and higher limits"
-                  enabled={employeeSettings.vipStatus}
-                  onChange={(v) => onUpdateEmployee({ ...employeeSettings, vipStatus: v })}
+                  enabled={employeeSettings.vip_status ?? false}
+                  onChange={(v) => setEmployeeSettings({ ...employeeSettings, vip_status: v })}
                 />
                 <Toggle
                   label="Require Manual Approval"
                   description="All advances need admin approval"
-                  enabled={employeeSettings.manualApproval}
-                  onChange={(v) => onUpdateEmployee({ ...employeeSettings, manualApproval: v })}
+                  enabled={employeeSettings.manual_approval ?? false}
+                  onChange={(v) => setEmployeeSettings({ ...employeeSettings, manual_approval: v })}
                 />
                 <Toggle
                   label="Watchlist"
                   description="Flag for enhanced monitoring"
-                  enabled={employeeSettings.onWatchlist}
-                  onChange={(v) => onUpdateEmployee({ ...employeeSettings, onWatchlist: v })}
+                  enabled={employeeSettings.on_watchlist ?? false}
+                  onChange={(v) => setEmployeeSettings({ ...employeeSettings, on_watchlist: v })}
                 />
               </div>
             </SectionCard>
@@ -694,8 +959,8 @@ const EmployeeConfigTab = ({ employees, onSelectEmployee, selectedEmployee, empl
             {/* Notes */}
             <SectionCard title="Admin Notes" icon={FileText} description="Internal notes about this employee">
               <textarea
-                value={employeeSettings.adminNotes}
-                onChange={(e) => onUpdateEmployee({ ...employeeSettings, adminNotes: e.target.value })}
+                value={employeeSettings.admin_notes || ''}
+                onChange={(e) => setEmployeeSettings({ ...employeeSettings, admin_notes: e.target.value })}
                 placeholder="Add notes about this employee..."
                 className="w-full h-32 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm resize-none"
               />
@@ -714,39 +979,47 @@ const EmployeeConfigTab = ({ employees, onSelectEmployee, selectedEmployee, empl
 };
 
 // Risk & Compliance Tab
-const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
+const RiskComplianceTab = ({ settings, onUpdate, loading }) => {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Risk Thresholds */}
-      <SectionCard title="Risk Score Thresholds" icon={TrendingUp} description="Define risk level boundaries">
+      <SectionCard title="Risk Score Thresholds" icon={TrendingUp} description="Define risk level boundaries (tied to Fraud Detection)">
         <div className="grid md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <h4 className="font-semibold text-slate-900 dark:text-white">Employer Risk Bands</h4>
             <div className="space-y-3">
               <div className="flex items-center justify-between p-3 bg-emerald-50 dark:bg-emerald-500/10 rounded-lg">
-                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">Low Risk</span>
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">Low Risk (A)</span>
                 <Input
                   type="number"
-                  value={riskSettings.employerLowThreshold}
-                  onChange={(e) => onUpdate({ ...riskSettings, employerLowThreshold: parseInt(e.target.value) })}
-                  className="w-24 text-center"
+                  value={settings.employer_low_threshold || 80}
+                  onChange={(e) => onUpdate({ ...settings, employer_low_threshold: parseInt(e.target.value) })}
+                  className="w-20 text-center"
                 />
                 <span className="text-sm text-slate-500">- 100</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-500/10 rounded-lg">
-                <span className="text-sm font-medium text-amber-700 dark:text-amber-400">Medium Risk</span>
+                <span className="text-sm font-medium text-amber-700 dark:text-amber-400">Medium Risk (B)</span>
                 <Input
                   type="number"
-                  value={riskSettings.employerMediumThreshold}
-                  onChange={(e) => onUpdate({ ...riskSettings, employerMediumThreshold: parseInt(e.target.value) })}
-                  className="w-24 text-center"
+                  value={settings.employer_medium_threshold || 60}
+                  onChange={(e) => onUpdate({ ...settings, employer_medium_threshold: parseInt(e.target.value) })}
+                  className="w-20 text-center"
                 />
-                <span className="text-sm text-slate-500">- {riskSettings.employerLowThreshold - 1}</span>
+                <span className="text-sm text-slate-500">- {(settings.employer_low_threshold || 80) - 1}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-500/10 rounded-lg">
-                <span className="text-sm font-medium text-red-700 dark:text-red-400">High Risk</span>
+                <span className="text-sm font-medium text-red-700 dark:text-red-400">High Risk (C/D)</span>
                 <span className="text-sm text-slate-500">0</span>
-                <span className="text-sm text-slate-500">- {riskSettings.employerMediumThreshold - 1}</span>
+                <span className="text-sm text-slate-500">- {(settings.employer_medium_threshold || 60) - 1}</span>
               </div>
             </div>
           </div>
@@ -757,9 +1030,9 @@ const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
                 <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">Low Risk</span>
                 <Input
                   type="number"
-                  value={riskSettings.employeeLowThreshold}
-                  onChange={(e) => onUpdate({ ...riskSettings, employeeLowThreshold: parseInt(e.target.value) })}
-                  className="w-24 text-center"
+                  value={settings.employee_low_threshold || 80}
+                  onChange={(e) => onUpdate({ ...settings, employee_low_threshold: parseInt(e.target.value) })}
+                  className="w-20 text-center"
                 />
                 <span className="text-sm text-slate-500">- 100</span>
               </div>
@@ -767,16 +1040,16 @@ const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
                 <span className="text-sm font-medium text-amber-700 dark:text-amber-400">Medium Risk</span>
                 <Input
                   type="number"
-                  value={riskSettings.employeeMediumThreshold}
-                  onChange={(e) => onUpdate({ ...riskSettings, employeeMediumThreshold: parseInt(e.target.value) })}
-                  className="w-24 text-center"
+                  value={settings.employee_medium_threshold || 60}
+                  onChange={(e) => onUpdate({ ...settings, employee_medium_threshold: parseInt(e.target.value) })}
+                  className="w-20 text-center"
                 />
-                <span className="text-sm text-slate-500">- {riskSettings.employeeLowThreshold - 1}</span>
+                <span className="text-sm text-slate-500">- {(settings.employee_low_threshold || 80) - 1}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-red-50 dark:bg-red-500/10 rounded-lg">
                 <span className="text-sm font-medium text-red-700 dark:text-red-400">High Risk</span>
                 <span className="text-sm text-slate-500">0</span>
-                <span className="text-sm text-slate-500">- {riskSettings.employeeMediumThreshold - 1}</span>
+                <span className="text-sm text-slate-500">- {(settings.employee_medium_threshold || 60) - 1}</span>
               </div>
             </div>
           </div>
@@ -791,8 +1064,8 @@ const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
               <Label className="text-sm font-medium">Auto-suspend at risk score below</Label>
               <Input
                 type="number"
-                value={riskSettings.autoSuspendThreshold}
-                onChange={(e) => onUpdate({ ...riskSettings, autoSuspendThreshold: parseInt(e.target.value) })}
+                value={settings.auto_suspend_threshold || 40}
+                onChange={(e) => onUpdate({ ...settings, auto_suspend_threshold: parseInt(e.target.value) })}
                 className="mt-1"
               />
             </div>
@@ -800,8 +1073,8 @@ const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
               <Label className="text-sm font-medium">Reduce limits at risk score below</Label>
               <Input
                 type="number"
-                value={riskSettings.reduceLimitsThreshold}
-                onChange={(e) => onUpdate({ ...riskSettings, reduceLimitsThreshold: parseInt(e.target.value) })}
+                value={settings.reduce_limits_threshold || 60}
+                onChange={(e) => onUpdate({ ...settings, reduce_limits_threshold: parseInt(e.target.value) })}
                 className="mt-1"
               />
             </div>
@@ -810,20 +1083,20 @@ const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
             <Toggle
               label="Auto-suspend on fraud alert"
               description="Immediately suspend when fraud detected"
-              enabled={riskSettings.autoSuspendOnFraud}
-              onChange={(v) => onUpdate({ ...riskSettings, autoSuspendOnFraud: v })}
+              enabled={settings.auto_suspend_on_fraud ?? true}
+              onChange={(v) => onUpdate({ ...settings, auto_suspend_on_fraud: v })}
             />
             <Toggle
               label="Auto-reduce limits on warning"
               description="Reduce advance limits when warnings triggered"
-              enabled={riskSettings.autoReduceOnWarning}
-              onChange={(v) => onUpdate({ ...riskSettings, autoReduceOnWarning: v })}
+              enabled={settings.auto_reduce_on_warning ?? true}
+              onChange={(v) => onUpdate({ ...settings, auto_reduce_on_warning: v })}
             />
             <Toggle
               label="Notify admin on high-risk activity"
               description="Send alerts for suspicious activity"
-              enabled={riskSettings.notifyOnHighRisk}
-              onChange={(v) => onUpdate({ ...riskSettings, notifyOnHighRisk: v })}
+              enabled={settings.notify_on_high_risk ?? true}
+              onChange={(v) => onUpdate({ ...settings, notify_on_high_risk: v })}
             />
           </div>
         </div>
@@ -835,37 +1108,37 @@ const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
           <Toggle
             label="Require ID Verification"
             description="National ID or Passport verification required"
-            enabled={riskSettings.requireIdVerification}
-            onChange={(v) => onUpdate({ ...riskSettings, requireIdVerification: v })}
+            enabled={settings.require_id_verification ?? true}
+            onChange={(v) => onUpdate({ ...settings, require_id_verification: v })}
           />
           <Toggle
             label="Require Face ID"
             description="Biometric face verification required"
-            enabled={riskSettings.requireFaceId}
-            onChange={(v) => onUpdate({ ...riskSettings, requireFaceId: v })}
+            enabled={settings.require_face_id ?? true}
+            onChange={(v) => onUpdate({ ...settings, require_face_id: v })}
           />
           <Toggle
             label="Require Address Proof"
             description="Proof of address document required"
-            enabled={riskSettings.requireAddressProof}
-            onChange={(v) => onUpdate({ ...riskSettings, requireAddressProof: v })}
+            enabled={settings.require_address_proof ?? true}
+            onChange={(v) => onUpdate({ ...settings, require_address_proof: v })}
           />
           <Toggle
             label="Require Employment Contract"
             description="Employment contract upload required"
-            enabled={riskSettings.requireEmploymentContract}
-            onChange={(v) => onUpdate({ ...riskSettings, requireEmploymentContract: v })}
+            enabled={settings.require_employment_contract ?? true}
+            onChange={(v) => onUpdate({ ...settings, require_employment_contract: v })}
           />
           <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
             <Label className="text-sm font-medium">Re-verification Frequency</Label>
             <select
-              value={riskSettings.reverificationFrequency}
-              onChange={(e) => onUpdate({ ...riskSettings, reverificationFrequency: e.target.value })}
+              value={settings.reverification_frequency || 'biannually'}
+              onChange={(e) => onUpdate({ ...settings, reverification_frequency: e.target.value })}
               className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
             >
               <option value="monthly">Monthly</option>
               <option value="quarterly">Quarterly</option>
-              <option value="biannually">Bi-annually</option>
+              <option value="biannually">Bi-annually (6 months)</option>
               <option value="annually">Annually</option>
               <option value="never">Never</option>
             </select>
@@ -877,7 +1150,15 @@ const RiskComplianceTab = ({ riskSettings, onUpdate }) => {
 };
 
 // Notification Settings Tab
-const NotificationSettingsTab = ({ notificationSettings, onUpdate }) => {
+const NotificationSettingsTab = ({ settings, onUpdate, loading }) => {
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Email Notifications */}
@@ -886,32 +1167,32 @@ const NotificationSettingsTab = ({ notificationSettings, onUpdate }) => {
           <Toggle
             label="New Employer Registration"
             description="Alert when new employer signs up"
-            enabled={notificationSettings.emailNewEmployer}
-            onChange={(v) => onUpdate({ ...notificationSettings, emailNewEmployer: v })}
+            enabled={settings.email_new_employer ?? true}
+            onChange={(v) => onUpdate({ ...settings, email_new_employer: v })}
           />
           <Toggle
             label="Large Advance Requests"
             description="Alert for advances above threshold"
-            enabled={notificationSettings.emailLargeAdvance}
-            onChange={(v) => onUpdate({ ...notificationSettings, emailLargeAdvance: v })}
+            enabled={settings.email_large_advance ?? true}
+            onChange={(v) => onUpdate({ ...settings, email_large_advance: v })}
           />
           <Toggle
             label="Fraud Alerts"
             description="Immediate notification on fraud detection"
-            enabled={notificationSettings.emailFraudAlert}
-            onChange={(v) => onUpdate({ ...notificationSettings, emailFraudAlert: v })}
+            enabled={settings.email_fraud_alert ?? true}
+            onChange={(v) => onUpdate({ ...settings, email_fraud_alert: v })}
           />
           <Toggle
             label="Daily Summary Report"
             description="Daily digest of platform activity"
-            enabled={notificationSettings.emailDailySummary}
-            onChange={(v) => onUpdate({ ...notificationSettings, emailDailySummary: v })}
+            enabled={settings.email_daily_summary ?? true}
+            onChange={(v) => onUpdate({ ...settings, email_daily_summary: v })}
           />
           <Toggle
             label="Weekly Analytics Report"
             description="Weekly performance metrics"
-            enabled={notificationSettings.emailWeeklyReport}
-            onChange={(v) => onUpdate({ ...notificationSettings, emailWeeklyReport: v })}
+            enabled={settings.email_weekly_report ?? true}
+            onChange={(v) => onUpdate({ ...settings, email_weekly_report: v })}
           />
         </div>
       </SectionCard>
@@ -922,20 +1203,20 @@ const NotificationSettingsTab = ({ notificationSettings, onUpdate }) => {
           <Toggle
             label="Critical Fraud Alerts"
             description="SMS for high-priority fraud cases"
-            enabled={notificationSettings.smsFraudAlert}
-            onChange={(v) => onUpdate({ ...notificationSettings, smsFraudAlert: v })}
+            enabled={settings.sms_fraud_alert ?? true}
+            onChange={(v) => onUpdate({ ...settings, sms_fraud_alert: v })}
           />
           <Toggle
             label="System Downtime Alerts"
             description="SMS when system issues detected"
-            enabled={notificationSettings.smsSystemAlert}
-            onChange={(v) => onUpdate({ ...notificationSettings, smsSystemAlert: v })}
+            enabled={settings.sms_system_alert ?? true}
+            onChange={(v) => onUpdate({ ...settings, sms_system_alert: v })}
           />
           <Toggle
             label="Large Transaction Alerts"
             description="SMS for transactions above threshold"
-            enabled={notificationSettings.smsLargeTransaction}
-            onChange={(v) => onUpdate({ ...notificationSettings, smsLargeTransaction: v })}
+            enabled={settings.sms_large_transaction ?? false}
+            onChange={(v) => onUpdate({ ...settings, sms_large_transaction: v })}
           />
         </div>
       </SectionCard>
@@ -947,8 +1228,8 @@ const NotificationSettingsTab = ({ notificationSettings, onUpdate }) => {
             <Label className="text-sm font-medium">Large Advance Threshold (KES)</Label>
             <Input
               type="number"
-              value={notificationSettings.largeAdvanceThreshold}
-              onChange={(e) => onUpdate({ ...notificationSettings, largeAdvanceThreshold: parseInt(e.target.value) })}
+              value={settings.large_advance_threshold || 50000}
+              onChange={(e) => onUpdate({ ...settings, large_advance_threshold: parseInt(e.target.value) })}
               className="mt-1"
             />
           </div>
@@ -956,17 +1237,17 @@ const NotificationSettingsTab = ({ notificationSettings, onUpdate }) => {
             <Label className="text-sm font-medium">Daily Volume Alert Threshold (KES)</Label>
             <Input
               type="number"
-              value={notificationSettings.dailyVolumeThreshold}
-              onChange={(e) => onUpdate({ ...notificationSettings, dailyVolumeThreshold: parseInt(e.target.value) })}
+              value={settings.daily_volume_threshold || 1000000}
+              onChange={(e) => onUpdate({ ...settings, daily_volume_threshold: parseInt(e.target.value) })}
               className="mt-1"
             />
           </div>
           <div>
             <Label className="text-sm font-medium">Fraud Alert Email Recipients</Label>
             <Input
-              type="email"
-              value={notificationSettings.fraudAlertEmails}
-              onChange={(e) => onUpdate({ ...notificationSettings, fraudAlertEmails: e.target.value })}
+              type="text"
+              value={settings.fraud_alert_emails || 'admin@eaziwage.com'}
+              onChange={(e) => onUpdate({ ...settings, fraud_alert_emails: e.target.value })}
               placeholder="email1@example.com, email2@example.com"
               className="mt-1"
             />
@@ -975,8 +1256,8 @@ const NotificationSettingsTab = ({ notificationSettings, onUpdate }) => {
             <Label className="text-sm font-medium">Admin SMS Numbers</Label>
             <Input
               type="text"
-              value={notificationSettings.adminSmsNumbers}
-              onChange={(e) => onUpdate({ ...notificationSettings, adminSmsNumbers: e.target.value })}
+              value={settings.admin_sms_numbers || '+254700000000'}
+              onChange={(e) => onUpdate({ ...settings, admin_sms_numbers: e.target.value })}
               placeholder="+254700000000, +254711111111"
               className="mt-1"
             />
@@ -987,124 +1268,570 @@ const NotificationSettingsTab = ({ notificationSettings, onUpdate }) => {
   );
 };
 
+// Blackout Periods Tab
+const BlackoutPeriodsTab = ({ token }) => {
+  const [blackouts, setBlackouts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [editingBlackout, setEditingBlackout] = useState(null);
+  const [newBlackout, setNewBlackout] = useState({
+    name: '',
+    start_date: '',
+    end_date: '',
+    applies_to: 'all',
+    reason: '',
+    is_active: true
+  });
+
+  useEffect(() => {
+    fetchBlackouts();
+  }, []);
+
+  const fetchBlackouts = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/blackouts`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setBlackouts(data);
+      }
+    } catch (error) {
+      console.error('Error fetching blackouts:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const saveBlackout = async () => {
+    if (!newBlackout.name || !newBlackout.start_date || !newBlackout.end_date) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const url = editingBlackout 
+        ? `${API_URL}/api/admin/settings/blackouts/${editingBlackout.id}`
+        : `${API_URL}/api/admin/settings/blackouts`;
+      
+      const response = await fetch(url, {
+        method: editingBlackout ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(newBlackout)
+      });
+
+      if (response.ok) {
+        toast.success(editingBlackout ? 'Blackout period updated' : 'Blackout period created');
+        fetchBlackouts();
+        setShowModal(false);
+        setEditingBlackout(null);
+        setNewBlackout({ name: '', start_date: '', end_date: '', applies_to: 'all', reason: '', is_active: true });
+      } else {
+        toast.error('Failed to save blackout period');
+      }
+    } catch (error) {
+      toast.error('Error saving blackout period');
+    }
+  };
+
+  const deleteBlackout = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this blackout period?')) return;
+    
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/blackouts/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        toast.success('Blackout period deleted');
+        fetchBlackouts();
+      }
+    } catch (error) {
+      toast.error('Error deleting blackout period');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Blackout Periods</h3>
+          <p className="text-sm text-slate-500">Define periods when advances are blocked</p>
+        </div>
+        <Button 
+          onClick={() => setShowModal(true)}
+          className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
+          data-testid="add-blackout-btn"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Blackout Period
+        </Button>
+      </div>
+
+      {/* Blackouts List */}
+      <div className="grid gap-4">
+        {blackouts.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-8 text-center">
+            <CalendarOff className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <p className="text-slate-600 dark:text-slate-400">No blackout periods configured</p>
+          </div>
+        ) : (
+          blackouts.map((blackout) => (
+            <div 
+              key={blackout.id}
+              className={`bg-white dark:bg-slate-800 rounded-2xl border p-5 ${
+                blackout.is_active ? 'border-red-200 dark:border-red-500/30' : 'border-slate-200 dark:border-slate-700 opacity-60'
+              }`}
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-4">
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                    blackout.is_active ? 'bg-red-100 dark:bg-red-500/20' : 'bg-slate-100 dark:bg-slate-700'
+                  }`}>
+                    <CalendarOff className={`w-6 h-6 ${blackout.is_active ? 'text-red-600' : 'text-slate-500'}`} />
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white">{blackout.name}</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                      {new Date(blackout.start_date).toLocaleDateString()} - {new Date(blackout.end_date).toLocaleDateString()}
+                    </p>
+                    {blackout.reason && (
+                      <p className="text-sm text-slate-500 mt-1">{blackout.reason}</p>
+                    )}
+                    <span className={`inline-block mt-2 px-2 py-1 text-xs rounded-full ${
+                      blackout.applies_to === 'all' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'
+                    }`}>
+                      Applies to: {blackout.applies_to}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => {
+                      setEditingBlackout(blackout);
+                      setNewBlackout(blackout);
+                      setShowModal(true);
+                    }}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => deleteBlackout(blackout.id)}
+                    className="text-red-500 hover:text-red-600"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                {editingBlackout ? 'Edit Blackout Period' : 'Add Blackout Period'}
+              </h3>
+              <Button variant="ghost" size="sm" onClick={() => { setShowModal(false); setEditingBlackout(null); }}>
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium">Name *</Label>
+                <Input
+                  value={newBlackout.name}
+                  onChange={(e) => setNewBlackout({ ...newBlackout, name: e.target.value })}
+                  placeholder="e.g., End of Year Holiday"
+                  className="mt-1"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Start Date *</Label>
+                  <Input
+                    type="date"
+                    value={newBlackout.start_date}
+                    onChange={(e) => setNewBlackout({ ...newBlackout, start_date: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">End Date *</Label>
+                  <Input
+                    type="date"
+                    value={newBlackout.end_date}
+                    onChange={(e) => setNewBlackout({ ...newBlackout, end_date: e.target.value })}
+                    className="mt-1"
+                  />
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Applies To</Label>
+                <select
+                  value={newBlackout.applies_to}
+                  onChange={(e) => setNewBlackout({ ...newBlackout, applies_to: e.target.value })}
+                  className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+                >
+                  <option value="all">All Employers & Employees</option>
+                  <option value="KE">Kenya Only</option>
+                  <option value="UG">Uganda Only</option>
+                  <option value="TZ">Tanzania Only</option>
+                  <option value="RW">Rwanda Only</option>
+                </select>
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Reason</Label>
+                <Input
+                  value={newBlackout.reason || ''}
+                  onChange={(e) => setNewBlackout({ ...newBlackout, reason: e.target.value })}
+                  placeholder="Optional description"
+                  className="mt-1"
+                />
+              </div>
+              <Toggle
+                label="Active"
+                description="Enable this blackout period"
+                enabled={newBlackout.is_active}
+                onChange={(v) => setNewBlackout({ ...newBlackout, is_active: v })}
+              />
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => { setShowModal(false); setEditingBlackout(null); }} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button onClick={saveBlackout} className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white">
+                <Save className="w-4 h-4 mr-2" />
+                {editingBlackout ? 'Update' : 'Create'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Legal Documents Tab
+const LegalDocumentsTab = ({ token }) => {
+  const [documents, setDocuments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [editing, setEditing] = useState(false);
+  const [editedContent, setEditedContent] = useState({});
+
+  const docTypes = [
+    { type: 'employee_terms', label: 'Employee Terms & Conditions', icon: FileCheck },
+    { type: 'employer_partnership', label: 'Employer Partnership Agreement', icon: BookOpen },
+    { type: 'privacy_policy', label: 'Privacy Policy', icon: Shield },
+  ];
+
+  useEffect(() => {
+    fetchDocuments();
+  }, []);
+
+  const fetchDocuments = async () => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/legal-documents`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDocuments(data);
+      }
+    } catch (error) {
+      console.error('Error fetching documents:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const selectDocument = async (docType) => {
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/legal-documents/${docType}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSelectedDoc(data);
+        setEditedContent(data);
+      } else {
+        // Create default
+        setSelectedDoc({ document_type: docType, title: '', content: '', version: '1.0', effective_date: new Date().toISOString().split('T')[0] });
+        setEditedContent({ document_type: docType, title: '', content: '', version: '1.0', effective_date: new Date().toISOString().split('T')[0] });
+      }
+    } catch (error) {
+      console.error('Error fetching document:', error);
+    }
+  };
+
+  const saveDocument = async () => {
+    if (!selectedDoc?.document_type) return;
+    
+    try {
+      const response = await fetch(`${API_URL}/api/admin/settings/legal-documents/${selectedDoc.document_type}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          ...editedContent,
+          is_active: true
+        })
+      });
+      if (response.ok) {
+        toast.success('Document saved successfully');
+        setEditing(false);
+        fetchDocuments();
+        selectDocument(selectedDoc.document_type);
+      } else {
+        toast.error('Failed to save document');
+      }
+    } catch (error) {
+      toast.error('Error saving document');
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid lg:grid-cols-3 gap-6">
+      {/* Document List */}
+      <div className="lg:col-span-1 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="p-4 border-b border-slate-200 dark:border-slate-700">
+          <h3 className="font-bold text-slate-900 dark:text-white">Legal Documents</h3>
+          <p className="text-sm text-slate-500 mt-1">Select a document to view or edit</p>
+        </div>
+        <div className="divide-y divide-slate-200 dark:divide-slate-700">
+          {docTypes.map((doc) => {
+            const existingDoc = documents.find(d => d.document_type === doc.type && d.is_active);
+            return (
+              <button
+                key={doc.type}
+                onClick={() => selectDocument(doc.type)}
+                className={`w-full p-4 text-left hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors ${
+                  selectedDoc?.document_type === doc.type ? 'bg-purple-50 dark:bg-purple-500/10 border-l-4 border-l-purple-500' : ''
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-600 rounded-lg flex items-center justify-center">
+                    <doc.icon className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-medium text-slate-900 dark:text-white">{doc.label}</p>
+                    {existingDoc && (
+                      <p className="text-xs text-slate-500">Version {existingDoc.version}</p>
+                    )}
+                  </div>
+                  {existingDoc ? (
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+                  ) : (
+                    <span className="text-xs bg-amber-100 text-amber-700 px-2 py-1 rounded-full">Draft</span>
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Document Editor */}
+      <div className="lg:col-span-2">
+        {selectedDoc ? (
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+              <div>
+                <h3 className="font-bold text-slate-900 dark:text-white">
+                  {docTypes.find(d => d.type === selectedDoc.document_type)?.label}
+                </h3>
+                <p className="text-sm text-slate-500">Version {selectedDoc.version || '1.0'}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                {editing ? (
+                  <>
+                    <Button variant="outline" onClick={() => { setEditing(false); setEditedContent(selectedDoc); }} className="rounded-xl">
+                      Cancel
+                    </Button>
+                    <Button onClick={saveDocument} className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white">
+                      <Save className="w-4 h-4 mr-2" />
+                      Save Document
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={() => setEditing(true)} className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                  </Button>
+                )}
+              </div>
+            </div>
+            <div className="p-6 space-y-4">
+              {editing ? (
+                <>
+                  <div>
+                    <Label className="text-sm font-medium">Document Title</Label>
+                    <Input
+                      value={editedContent.title || ''}
+                      onChange={(e) => setEditedContent({ ...editedContent, title: e.target.value })}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium">Version</Label>
+                      <Input
+                        value={editedContent.version || '1.0'}
+                        onChange={(e) => setEditedContent({ ...editedContent, version: e.target.value })}
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium">Effective Date</Label>
+                      <Input
+                        type="date"
+                        value={editedContent.effective_date || ''}
+                        onChange={(e) => setEditedContent({ ...editedContent, effective_date: e.target.value })}
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium">Content (Markdown supported)</Label>
+                    <textarea
+                      value={editedContent.content || ''}
+                      onChange={(e) => setEditedContent({ ...editedContent, content: e.target.value })}
+                      className="mt-1 w-full h-96 px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-mono resize-none"
+                      placeholder="Enter document content..."
+                    />
+                  </div>
+                </>
+              ) : (
+                <div className="prose dark:prose-invert max-w-none">
+                  <h2>{selectedDoc.title}</h2>
+                  <p className="text-sm text-slate-500">Effective: {selectedDoc.effective_date || 'Not set'}</p>
+                  <div className="mt-4 whitespace-pre-wrap text-sm text-slate-700 dark:text-slate-300 bg-slate-50 dark:bg-slate-900 p-4 rounded-xl max-h-96 overflow-y-auto">
+                    {selectedDoc.content || 'No content yet. Click Edit to add content.'}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-12 text-center">
+            <FileText className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Select a Document</h3>
+            <p className="text-slate-500">Choose a document from the list to view or edit its content</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 // Main Component
 export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('global');
   const [hasChanges, setHasChanges] = useState(false);
+  const [token, setToken] = useState(null);
 
-  // Global Settings State
-  const [globalSettings, setGlobalSettings] = useState({
-    defaultAdvancePercent: 60,
-    minAdvanceAmount: 500,
-    maxAdvanceAmount: 100000,
-    dailyAdvanceLimit: 3,
-    minProcessingFee: 3.5,
-    maxProcessingFee: 6.0,
-    mobileFee: 50,
-    bankFee: 100,
-    defaultCooldown: 3,
-    weeklyAdvanceLimit: 5,
-    monthlyAdvanceLimit: 15,
-    newEmployeeWaitDays: 30,
-    instantMobileEnabled: true,
-    bankTransfersEnabled: true,
-    autoApprovalEnabled: true,
-    weekendAdvancesEnabled: false,
-  });
-
-  // Employer State
-  const [employers] = useState([
-    { id: 1, name: 'Safaricom PLC', code: 'SAF001', employeeCount: 1250, status: 'active' },
-    { id: 2, name: 'Kenya Airways', code: 'KQ002', employeeCount: 890, status: 'active' },
-    { id: 3, name: 'Equity Bank', code: 'EQB003', employeeCount: 2100, status: 'active' },
-    { id: 4, name: 'Nation Media Group', code: 'NMG004', employeeCount: 450, status: 'suspended' },
-    { id: 5, name: 'KPLC', code: 'KPC005', employeeCount: 1800, status: 'active' },
-  ]);
-  const [selectedEmployer, setSelectedEmployer] = useState(null);
-  const [employerSettings, setEmployerSettings] = useState({
-    advanceLimit: 60,
-    cooldownDays: 3,
-    processingFee: 4.5,
-    maxMonthlyAdvances: 10,
-    fundingModel: 'prefunded',
-    riskTier: 'low',
-    fundingBuffer: 20,
-    creditLimit: 5000000,
-    riskScore: 85,
-    ewaEnabled: true,
-    instantEnabled: true,
-    autoApprove: true,
-    weekendAccess: false,
-  });
-
-  // Employee State
-  const [employees] = useState([
-    { id: 1, name: 'John Kamau', email: 'john.kamau@safaricom.co.ke', employer: 'Safaricom PLC', riskLevel: 'low', totalAdvances: 12, repaymentRate: 100 },
-    { id: 2, name: 'Mary Wanjiku', email: 'mary.w@kq.co.ke', employer: 'Kenya Airways', riskLevel: 'low', totalAdvances: 8, repaymentRate: 100 },
-    { id: 3, name: 'Peter Ochieng', email: 'peter.o@equity.co.ke', employer: 'Equity Bank', riskLevel: 'medium', totalAdvances: 24, repaymentRate: 95 },
-    { id: 4, name: 'Grace Muthoni', email: 'grace.m@nation.co.ke', employer: 'Nation Media Group', riskLevel: 'high', totalAdvances: 45, repaymentRate: 78 },
-    { id: 5, name: 'David Kipchoge', email: 'david.k@kplc.co.ke', employer: 'KPLC', riskLevel: 'low', totalAdvances: 5, repaymentRate: 100 },
-  ]);
-  const [selectedEmployee, setSelectedEmployee] = useState(null);
-  const [employeeSettings, setEmployeeSettings] = useState({
-    useCustomSettings: false,
-    advanceLimit: 60,
-    cooldownDays: 3,
-    maxMonthlyAdvances: 10,
-    feeRate: 4.5,
-    riskScore: 85,
-    ewaEnabled: true,
-    vipStatus: false,
-    manualApproval: false,
-    onWatchlist: false,
-    adminNotes: '',
-  });
-
-  // Risk Settings State
-  const [riskSettings, setRiskSettings] = useState({
-    employerLowThreshold: 80,
-    employerMediumThreshold: 60,
-    employeeLowThreshold: 80,
-    employeeMediumThreshold: 60,
-    autoSuspendThreshold: 40,
-    reduceLimitsThreshold: 60,
-    autoSuspendOnFraud: true,
-    autoReduceOnWarning: true,
-    notifyOnHighRisk: true,
-    requireIdVerification: true,
-    requireFaceId: true,
-    requireAddressProof: true,
-    requireEmploymentContract: true,
-    reverificationFrequency: 'biannually',
-  });
-
-  // Notification Settings State
-  const [notificationSettings, setNotificationSettings] = useState({
-    emailNewEmployer: true,
-    emailLargeAdvance: true,
-    emailFraudAlert: true,
-    emailDailySummary: true,
-    emailWeeklyReport: true,
-    smsFraudAlert: true,
-    smsSystemAlert: true,
-    smsLargeTransaction: false,
-    largeAdvanceThreshold: 50000,
-    dailyVolumeThreshold: 1000000,
-    fraudAlertEmails: 'admin@eaziwage.com',
-    adminSmsNumbers: '+254700000000',
-  });
+  // Settings States
+  const [globalSettings, setGlobalSettings] = useState({});
+  const [riskSettings, setRiskSettings] = useState({});
+  const [notificationSettings, setNotificationSettings] = useState({});
 
   useEffect(() => {
-    setTimeout(() => setLoading(false), 1000);
+    const storedToken = localStorage.getItem('token');
+    setToken(storedToken);
+    if (storedToken) {
+      fetchAllSettings(storedToken);
+    }
   }, []);
+
+  const fetchAllSettings = async (authToken) => {
+    setLoading(true);
+    try {
+      const [globalRes, riskRes, notifRes] = await Promise.all([
+        fetch(`${API_URL}/api/admin/settings/platform`, { headers: { Authorization: `Bearer ${authToken}` } }),
+        fetch(`${API_URL}/api/admin/settings/risk`, { headers: { Authorization: `Bearer ${authToken}` } }),
+        fetch(`${API_URL}/api/admin/settings/notifications`, { headers: { Authorization: `Bearer ${authToken}` } }),
+      ]);
+
+      if (globalRes.ok) setGlobalSettings(await globalRes.json());
+      if (riskRes.ok) setRiskSettings(await riskRes.json());
+      if (notifRes.ok) setNotificationSettings(await notifRes.json());
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+      toast.error('Failed to load settings');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSaveAll = async () => {
     setSaving(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      const promises = [];
+      
+      if (activeTab === 'global' || activeTab === 'all') {
+        promises.push(
+          fetch(`${API_URL}/api/admin/settings/platform`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(globalSettings)
+          })
+        );
+      }
+      
+      if (activeTab === 'risk' || activeTab === 'all') {
+        promises.push(
+          fetch(`${API_URL}/api/admin/settings/risk`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(riskSettings)
+          })
+        );
+      }
+      
+      if (activeTab === 'notifications' || activeTab === 'all') {
+        promises.push(
+          fetch(`${API_URL}/api/admin/settings/notifications`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+            body: JSON.stringify(notificationSettings)
+          })
+        );
+      }
+
+      await Promise.all(promises);
       toast.success('Settings saved successfully');
       setHasChanges(false);
     } catch (error) {
@@ -1120,6 +1847,8 @@ export default function AdminSettings() {
     { id: 'employee', label: 'Employee Config', icon: Users },
     { id: 'risk', label: 'Risk & Compliance', icon: Shield },
     { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'blackouts', label: 'Blackout Periods', icon: CalendarOff },
+    { id: 'legal', label: 'Legal Documents', icon: FileText },
   ];
 
   if (loading) {
@@ -1142,10 +1871,10 @@ export default function AdminSettings() {
               <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-violet-600 rounded-xl flex items-center justify-center">
                 <Settings className="w-5 h-5 text-white" />
               </div>
-              Admin Settings
+              Admin Settings Portal
             </h1>
             <p className="text-slate-500 dark:text-slate-400 mt-1">
-              Configure EWA platform settings, employer rules, and compliance requirements
+              Configure EWA platform settings, employer rules, risk ranges, and compliance requirements
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -1155,24 +1884,26 @@ export default function AdminSettings() {
                 Unsaved changes
               </span>
             )}
-            <Button 
-              onClick={handleSaveAll}
-              disabled={saving}
-              className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
-              data-testid="save-settings-btn"
-            >
-              {saving ? (
-                <>
-                  <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4 mr-2" />
-                  Save All Settings
-                </>
-              )}
-            </Button>
+            {['global', 'risk', 'notifications'].includes(activeTab) && (
+              <Button 
+                onClick={handleSaveAll}
+                disabled={saving}
+                className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
+                data-testid="save-settings-btn"
+              >
+                {saving ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    Save Settings
+                  </>
+                )}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -1199,38 +1930,35 @@ export default function AdminSettings() {
         {activeTab === 'global' && (
           <GlobalSettingsTab 
             settings={globalSettings} 
-            onUpdate={(s) => { setGlobalSettings(s); setHasChanges(true); }} 
+            onUpdate={(s) => { setGlobalSettings(s); setHasChanges(true); }}
+            loading={false}
           />
         )}
         {activeTab === 'employer' && (
-          <EmployerConfigTab
-            employers={employers}
-            selectedEmployer={selectedEmployer}
-            onSelectEmployer={setSelectedEmployer}
-            employerSettings={employerSettings}
-            onUpdateEmployer={(s) => { setEmployerSettings(s); setHasChanges(true); }}
-          />
+          <EmployerConfigTab token={token} onSave={() => setHasChanges(false)} />
         )}
         {activeTab === 'employee' && (
-          <EmployeeConfigTab
-            employees={employees}
-            selectedEmployee={selectedEmployee}
-            onSelectEmployee={setSelectedEmployee}
-            employeeSettings={employeeSettings}
-            onUpdateEmployee={(s) => { setEmployeeSettings(s); setHasChanges(true); }}
-          />
+          <EmployeeConfigTab token={token} onSave={() => setHasChanges(false)} />
         )}
         {activeTab === 'risk' && (
           <RiskComplianceTab
-            riskSettings={riskSettings}
+            settings={riskSettings}
             onUpdate={(s) => { setRiskSettings(s); setHasChanges(true); }}
+            loading={false}
           />
         )}
         {activeTab === 'notifications' && (
           <NotificationSettingsTab
-            notificationSettings={notificationSettings}
+            settings={notificationSettings}
             onUpdate={(s) => { setNotificationSettings(s); setHasChanges(true); }}
+            loading={false}
           />
+        )}
+        {activeTab === 'blackouts' && (
+          <BlackoutPeriodsTab token={token} />
+        )}
+        {activeTab === 'legal' && (
+          <LegalDocumentsTab token={token} />
         )}
       </div>
     </AdminPortalLayout>
