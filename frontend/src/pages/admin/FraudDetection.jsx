@@ -649,6 +649,313 @@ const KPIsSection = () => {
   );
 };
 
+// Manual Fraud Rules Section
+const ManualRulesSection = ({ rules, onToggle, onEdit, onDelete, onCreate }) => {
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingRule, setEditingRule] = useState(null);
+  const [newRule, setNewRule] = useState({
+    name: '',
+    description: '',
+    type: 'amount_threshold',
+    threshold: '',
+    severity: 'medium',
+    enabled: true
+  });
+
+  const ruleTypes = [
+    { value: 'amount_threshold', label: 'Amount Threshold', icon: DollarSign },
+    { value: 'frequency', label: 'Frequency Limit', icon: Clock },
+    { value: 'velocity', label: 'Velocity Check', icon: Zap },
+    { value: 'pattern', label: 'Pattern Detection', icon: Activity },
+    { value: 'employer_manipulation', label: 'Employer Manipulation', icon: Building2 },
+  ];
+
+  const handleCreate = () => {
+    if (!newRule.name || !newRule.threshold) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    onCreate(newRule);
+    setNewRule({ name: '', description: '', type: 'amount_threshold', threshold: '', severity: 'medium', enabled: true });
+    setShowCreateModal(false);
+  };
+
+  const handleUpdate = () => {
+    if (!editingRule.name || !editingRule.threshold) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+    onEdit(editingRule);
+    setEditingRule(null);
+  };
+
+  const TypeIcon = ({ type }) => {
+    const iconConfig = ruleTypes.find(t => t.value === type);
+    const Icon = iconConfig?.icon || AlertTriangle;
+    return <Icon className="w-5 h-5" />;
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-white">Manual Fraud Rules</h3>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Create and manage custom fraud detection rules</p>
+        </div>
+        <Button 
+          onClick={() => setShowCreateModal(true)}
+          className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
+          data-testid="create-rule-btn"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Create Rule
+        </Button>
+      </div>
+
+      {/* Rules List */}
+      <div className="grid gap-4">
+        {rules.length === 0 ? (
+          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-8 text-center">
+            <Shield className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+            <p className="text-slate-600 dark:text-slate-400">No custom rules created yet</p>
+            <p className="text-sm text-slate-500 mt-1">Click "Create Rule" to add your first fraud detection rule</p>
+          </div>
+        ) : (
+          rules.map((rule) => (
+            <div 
+              key={rule.id}
+              className={`bg-white dark:bg-slate-800 rounded-2xl border p-5 transition-all ${
+                rule.enabled 
+                  ? 'border-emerald-200 dark:border-emerald-500/30' 
+                  : 'border-slate-200 dark:border-slate-700 opacity-60'
+              }`}
+            >
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
+                  rule.enabled ? 'bg-emerald-100 dark:bg-emerald-500/20' : 'bg-slate-100 dark:bg-slate-700'
+                }`}>
+                  <TypeIcon type={rule.type} />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="font-semibold text-slate-900 dark:text-white">{rule.name}</h4>
+                    <span className={`px-2 py-0.5 text-xs rounded-full font-medium ${
+                      rule.severity === 'high' ? 'bg-red-100 dark:bg-red-500/20 text-red-700 dark:text-red-300' :
+                      rule.severity === 'medium' ? 'bg-amber-100 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300' :
+                      'bg-blue-100 dark:bg-blue-500/20 text-blue-700 dark:text-blue-300'
+                    }`}>
+                      {rule.severity.charAt(0).toUpperCase() + rule.severity.slice(1)} Risk
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">{rule.description}</p>
+                  <div className="flex items-center gap-4 text-xs text-slate-500">
+                    <span>Type: <strong className="text-slate-700 dark:text-slate-300">{ruleTypes.find(t => t.value === rule.type)?.label}</strong></span>
+                    <span>Threshold: <strong className="text-slate-700 dark:text-slate-300">{rule.threshold}</strong></span>
+                    <span>Triggered: <strong className="text-slate-700 dark:text-slate-300">{rule.trigger_count || 0}x</strong></span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => onToggle(rule.id)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      rule.enabled ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'
+                    }`}
+                    data-testid={`toggle-rule-${rule.id}`}
+                  >
+                    <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform ${
+                      rule.enabled ? 'translate-x-[22px]' : 'translate-x-0.5'
+                    }`} />
+                  </button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setEditingRule(rule)}
+                    data-testid={`edit-rule-${rule.id}`}
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => onDelete(rule.id)}
+                    className="text-red-500 hover:text-red-600"
+                    data-testid={`delete-rule-${rule.id}`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Create Modal */}
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Create New Rule</h3>
+              <Button variant="ghost" size="sm" onClick={() => setShowCreateModal(false)}>
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium">Rule Name *</Label>
+                <Input
+                  value={newRule.name}
+                  onChange={(e) => setNewRule({ ...newRule, name: e.target.value })}
+                  placeholder="e.g., High Amount Detection"
+                  className="mt-1"
+                  data-testid="rule-name-input"
+                />
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Description</Label>
+                <Input
+                  value={newRule.description}
+                  onChange={(e) => setNewRule({ ...newRule, description: e.target.value })}
+                  placeholder="Describe what this rule detects"
+                  className="mt-1"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Rule Type</Label>
+                  <select
+                    value={newRule.type}
+                    onChange={(e) => setNewRule({ ...newRule, type: e.target.value })}
+                    className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+                  >
+                    {ruleTypes.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Severity</Label>
+                  <select
+                    value={newRule.severity}
+                    onChange={(e) => setNewRule({ ...newRule, severity: e.target.value })}
+                    className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Threshold *</Label>
+                <Input
+                  value={newRule.threshold}
+                  onChange={(e) => setNewRule({ ...newRule, threshold: e.target.value })}
+                  placeholder="e.g., >50000 or >3 per day"
+                  className="mt-1"
+                  data-testid="rule-threshold-input"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => setShowCreateModal(false)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleCreate} 
+                className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
+                data-testid="save-rule-btn"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Create Rule
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Modal */}
+      {editingRule && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white">Edit Rule</h3>
+              <Button variant="ghost" size="sm" onClick={() => setEditingRule(null)}>
+                <X className="w-5 h-5" />
+              </Button>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label className="text-sm font-medium">Rule Name *</Label>
+                <Input
+                  value={editingRule.name}
+                  onChange={(e) => setEditingRule({ ...editingRule, name: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Description</Label>
+                <Input
+                  value={editingRule.description}
+                  onChange={(e) => setEditingRule({ ...editingRule, description: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-medium">Rule Type</Label>
+                  <select
+                    value={editingRule.type}
+                    onChange={(e) => setEditingRule({ ...editingRule, type: e.target.value })}
+                    className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+                  >
+                    {ruleTypes.map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium">Severity</Label>
+                  <select
+                    value={editingRule.severity}
+                    onChange={(e) => setEditingRule({ ...editingRule, severity: e.target.value })}
+                    className="mt-1 w-full h-10 px-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm"
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <Label className="text-sm font-medium">Threshold *</Label>
+                <Input
+                  value={editingRule.threshold}
+                  onChange={(e) => setEditingRule({ ...editingRule, threshold: e.target.value })}
+                  className="mt-1"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 mt-6">
+              <Button variant="outline" onClick={() => setEditingRule(null)} className="rounded-xl">
+                Cancel
+              </Button>
+              <Button 
+                onClick={handleUpdate} 
+                className="rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 text-white"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Update Rule
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 // Fingerprint icon component (since lucide might not have it)
 const Fingerprint = ({ className }) => (
   <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
