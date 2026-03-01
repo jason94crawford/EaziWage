@@ -3796,11 +3796,12 @@ async def get_notification_settings(user: dict = Depends(require_role(UserRole.A
     """Get notification configuration"""
     settings = await db.platform_settings.find_one({"type": "notifications"}, {"_id": 0})
     if not settings:
-        settings = NotificationSettingsModel().model_dump()
-        settings["type"] = "notifications"
-        settings["id"] = str(uuid.uuid4())
-        settings["created_at"] = datetime.now(timezone.utc).isoformat()
-        await db.platform_settings.insert_one(settings)
+        default_settings = NotificationSettingsModel().model_dump()
+        default_settings["type"] = "notifications"
+        default_settings["id"] = str(uuid.uuid4())
+        default_settings["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.platform_settings.insert_one(default_settings)
+        settings = await db.platform_settings.find_one({"type": "notifications"}, {"_id": 0})
     return settings
 
 # Update Notification Settings
