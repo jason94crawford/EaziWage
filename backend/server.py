@@ -3911,6 +3911,17 @@ async def update_employer_settings(
         "changed_at": datetime.now(timezone.utc).isoformat()
     })
     
+    # Also log to unified audit trail
+    await db.audit_trail.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "employer_settings",
+        "employer_id": employer_id,
+        "changes": settings_dict,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat(),
+        "description": f"Updated settings for employer: {employer.get('company_name')}"
+    })
+    
     # Update or insert employer settings
     await db.employer_settings.update_one(
         {"employer_id": employer_id},
