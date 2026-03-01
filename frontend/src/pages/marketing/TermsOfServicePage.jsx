@@ -298,23 +298,6 @@ Jurisdiction shall lie in the courts of Nairobi.`
   },
 ];
 
-**Legal Department**
-Email: legal@eaziwage.com
-Phone: +254 700 000 000
-
-**Postal Address**
-EaziWage Limited
-Westlands Business Park, 4th Floor
-Nairobi, Kenya
-
-**For General Inquiries**
-Email: hello@eaziwage.com
-Website: www.eaziwage.com
-
-We aim to respond to all inquiries within 5 business days.`
-  }
-];
-
 export default function TermsOfServicePage() {
   const [activeSection, setActiveSection] = React.useState('acceptance');
 
