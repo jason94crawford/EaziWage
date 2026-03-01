@@ -335,6 +335,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - ✅ Face ID Verification added as Step 2 in Employee Onboarding (8 steps total)
 - ✅ Comprehensive Fraud Detection Framework in Admin Portal
 - ✅ **Admin Settings Portal** - Complete with 7 tabs (Global, Employer, Employee, Risk, Notifications, Blackouts, Legal)
+- ✅ **Audit Trail Dashboard** - Complete with filtering by admin, employer, date range, settings type, and CSV export
 
 ### P1 - High Priority
 - Implement full Employer Notifications page (not just bell icon)
