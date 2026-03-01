@@ -263,7 +263,7 @@ function App() {
           } />
           <Route path="/admin/settings" element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <PlaceholderPage title="Settings" description="System settings" />
+              <AdminSettings />
             </ProtectedRoute>
           } />
 
