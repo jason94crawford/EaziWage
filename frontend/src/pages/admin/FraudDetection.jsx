@@ -1071,8 +1071,41 @@ export default function FraudDetection() {
     toast.info(`Opening review for: ${alert.title}`);
   };
 
+  // Manual rules handlers
+  const handleToggleRule = (ruleId) => {
+    setRules(rules.map(rule => 
+      rule.id === ruleId ? { ...rule, enabled: !rule.enabled } : rule
+    ));
+    toast.success('Rule status updated');
+  };
+
+  const handleCreateRule = (newRule) => {
+    const rule = {
+      ...newRule,
+      id: Date.now(),
+      trigger_count: 0
+    };
+    setRules([...rules, rule]);
+    toast.success('Rule created successfully');
+  };
+
+  const handleEditRule = (updatedRule) => {
+    setRules(rules.map(rule => 
+      rule.id === updatedRule.id ? updatedRule : rule
+    ));
+    toast.success('Rule updated successfully');
+  };
+
+  const handleDeleteRule = (ruleId) => {
+    if (window.confirm('Are you sure you want to delete this rule?')) {
+      setRules(rules.filter(rule => rule.id !== ruleId));
+      toast.success('Rule deleted successfully');
+    }
+  };
+
   const sections = [
     { id: 'overview', label: 'Overview', icon: BarChart3 },
+    { id: 'rules', label: 'Manual Rules', icon: Settings },
     { id: 'taxonomy', label: 'Risk Taxonomy', icon: Scale },
     { id: 'scoring', label: 'Risk Scoring', icon: TrendingUp },
     { id: 'triggers', label: 'Suspension Triggers', icon: AlertTriangle },
