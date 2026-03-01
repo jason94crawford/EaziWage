@@ -4,7 +4,7 @@ import {
   User, MapPin, Building2, Calendar, ArrowRight, ArrowLeft,
   Phone, Briefcase, Wallet, CreditCard, Check, Sparkles,
   Shield, FileText, AlertCircle, ChevronRight, ChevronDown, Globe,
-  Upload, Camera, Home, Receipt, Landmark, X, File, Eye
+  Upload, Camera, Home, Receipt, Landmark, X, File, Eye, ScanFace
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
