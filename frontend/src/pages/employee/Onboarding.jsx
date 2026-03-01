@@ -416,6 +416,82 @@ export default function EmployeeOnboarding() {
     }
   };
 
+  // Face ID capture functions
+  const startFaceCapture = async () => {
+    setCapturingFaceId(true);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } 
+      });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        videoRef.current.play();
+      }
+    } catch (err) {
+      toast.error('Unable to access camera. Please allow camera permissions.');
+      setCapturingFaceId(false);
+    }
+  };
+
+  const stopFaceCapture = () => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    setCapturingFaceId(false);
+  };
+
+  const captureFaceId = async () => {
+    if (!videoRef.current || !canvasRef.current) return;
+    
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+    
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Convert canvas to blob
+    canvas.toBlob(async (blob) => {
+      if (blob) {
+        stopFaceCapture();
+        setUploadingFile('face_id');
+        
+        try {
+          const formData = new FormData();
+          formData.append('file', blob, 'face_id.jpg');
+          formData.append('document_type', 'face_id');
+          
+          const response = await kycApi.uploadFile(formData);
+          
+          setUploadedFiles(prev => ({
+            ...prev,
+            face_id: {
+              name: 'Face ID Captured',
+              url: response.data.document_url,
+              id: response.data.id
+            }
+          }));
+          
+          setFaceIdCaptured(true);
+          toast.success('Face ID captured successfully!');
+        } catch (err) {
+          toast.error(err.response?.data?.detail || 'Failed to save Face ID');
+        } finally {
+          setUploadingFile(null);
+        }
+      }
+    }, 'image/jpeg', 0.9);
+  };
+
+  const retakeFaceId = () => {
+    setFaceIdCaptured(false);
+    setUploadedFiles(prev => ({ ...prev, face_id: null }));
+    startFaceCapture();
+  };
+
   const handleSubmit = async () => {
     setError('');
     setLoading(true);
