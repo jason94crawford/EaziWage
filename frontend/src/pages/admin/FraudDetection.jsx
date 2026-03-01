@@ -1219,6 +1219,15 @@ export default function FraudDetection() {
         )}
 
         {activeSection === 'taxonomy' && <RiskTaxonomySection />}
+        {activeSection === 'rules' && (
+          <ManualRulesSection 
+            rules={rules}
+            onToggle={handleToggleRule}
+            onEdit={handleEditRule}
+            onDelete={handleDeleteRule}
+            onCreate={handleCreateRule}
+          />
+        )}
         {activeSection === 'scoring' && <RiskScoringSection />}
         {activeSection === 'triggers' && <SuspensionTriggersSection />}
         {activeSection === 'payroll' && <PayrollIntegritySection />}
