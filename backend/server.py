@@ -3783,6 +3783,16 @@ async def update_risk_settings(
         "changed_at": datetime.now(timezone.utc).isoformat()
     })
     
+    # Also log to unified audit trail
+    await db.audit_trail.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "risk_settings",
+        "changes": settings_dict,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat(),
+        "description": "Updated risk & compliance settings"
+    })
+    
     await db.platform_settings.update_one(
         {"type": "risk"},
         {"$set": settings_dict},
