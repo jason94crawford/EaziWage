@@ -6,13 +6,17 @@ import {
   RefreshCw, Download, FileText, Database, Lock, Smartphone,
   CreditCard, Globe, MapPin, Building2, UserX, Scale,
   BarChart3, PieChart, LineChart, Briefcase, DollarSign,
-  ShieldAlert, ShieldCheck, ShieldOff, UserCheck, ArrowUpRight
+  ShieldAlert, ShieldCheck, ShieldOff, UserCheck, ArrowUpRight,
+  Plus, Edit, Trash2, Save, X
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
 import { adminApi } from '../../lib/api';
 import { toast } from 'sonner';
 import AdminPortalLayout from '../../components/admin/AdminLayout';
+
+const API_URL = process.env.REACT_APP_BACKEND_URL;
 
 // Risk Level Badge Component
 const RiskBadge = ({ level }) => {
