@@ -500,7 +500,8 @@ export default function EmployeeOnboarding() {
       await employeeApi.create({
         ...formData,
         id_type: idType,
-        monthly_salary: parseFloat(formData.monthly_salary)
+        monthly_salary: parseFloat(formData.monthly_salary),
+        face_id_enabled: faceIdEnabled && faceIdCaptured
       });
       toast.success('Profile created successfully! Your documents are under review.');
       navigate('/employee');
