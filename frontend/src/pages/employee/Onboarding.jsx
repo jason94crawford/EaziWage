@@ -566,7 +566,8 @@ export default function EmployeeOnboarding() {
     switch (currentStep) {
       case 0: return true; // Welcome
       case 1: return agreedToTerms; // Terms
-      case 2: {
+      case 2: return true; // Face ID - can skip or complete
+      case 3: {
         // ID Verification - need ID number, DOB, and at least front ID
         const hasIdNumber = formData.national_id;
         const hasDob = formData.date_of_birth;
@@ -574,20 +575,20 @@ export default function EmployeeOnboarding() {
         const hasNationality = idType === 'passport' ? formData.nationality : true;
         return hasIdNumber && hasDob && hasIdFront && hasNationality;
       }
-      case 3: {
+      case 4: {
         // Address - need country, address, city, and proof of address (mandatory)
         return formData.country && formData.address_line1 && formData.city && uploadedFiles.address_proof;
       }
-      case 4: {
+      case 5: {
         // Tax - TIN is optional but recommended
         return true; // Can skip
       }
-      case 5: {
+      case 6: {
         // Employment - job title, type, salary, at least one payslip, and employment contract required
         return formData.job_title && formData.employment_type && formData.monthly_salary && 
                uploadedFiles.payslip_1 && uploadedFiles.employment_contract;
       }
-      case 6: {
+      case 7: {
         // Payment - need mobile money AND bank account (both mandatory)
         return formData.mobile_money_provider && formData.mobile_money_number && 
                formData.bank_name && formData.bank_account && uploadedFiles.bank_statement;
