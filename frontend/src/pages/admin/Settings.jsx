@@ -2247,6 +2247,7 @@ export default function AdminSettings() {
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'blackouts', label: 'Blackout Periods', icon: CalendarOff },
     { id: 'legal', label: 'Legal Documents', icon: FileText },
+    { id: 'audit', label: 'Audit Trail', icon: ClipboardList },
   ];
 
   if (loading) {
