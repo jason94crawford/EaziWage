@@ -3755,11 +3755,12 @@ async def get_risk_settings(user: dict = Depends(require_role(UserRole.ADMIN))):
     """Get risk configuration settings"""
     settings = await db.platform_settings.find_one({"type": "risk"}, {"_id": 0})
     if not settings:
-        settings = RiskSettingsModel().model_dump()
-        settings["type"] = "risk"
-        settings["id"] = str(uuid.uuid4())
-        settings["created_at"] = datetime.now(timezone.utc).isoformat()
-        await db.platform_settings.insert_one(settings)
+        default_settings = RiskSettingsModel().model_dump()
+        default_settings["type"] = "risk"
+        default_settings["id"] = str(uuid.uuid4())
+        default_settings["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.platform_settings.insert_one(default_settings)
+        settings = await db.platform_settings.find_one({"type": "risk"}, {"_id": 0})
     return settings
 
 # Update Risk Settings
