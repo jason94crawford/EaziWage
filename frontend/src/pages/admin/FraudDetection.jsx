@@ -12,7 +12,7 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { adminApi } from '../../lib/api';
 import { toast } from 'sonner';
-import AdminPortalLayout from '../../layouts/AdminPortalLayout';
+import AdminPortalLayout from '../../components/admin/AdminLayout';
 
 // Risk Level Badge Component
 const RiskBadge = ({ level }) => {
