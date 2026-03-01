@@ -256,6 +256,12 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - `GET /api/admin/settings/audit-log` - Get settings change audit log
 - `GET /api/legal-documents/{type}` - Public endpoint for legal documents (onboarding)
 
+### Comprehensive Audit Trail ✅ **NEW**
+- `GET /api/admin/audit-trail` - Get comprehensive audit trail with advanced filtering (audit_type, settings_type, changed_by, employer_id, employee_id, start_date, end_date, pagination)
+- `GET /api/admin/audit-trail/stats` - Get audit trail statistics (total changes, by type, by admin, daily activity)
+- `GET /api/admin/audit-trail/admins` - Get list of admins who have made changes
+- `POST /api/admin/audit-trail/migrate` - Migrate legacy audit logs to unified audit_trail
+
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
 - **Employee**: demo.employee@eaziwage.com / Employee@123
