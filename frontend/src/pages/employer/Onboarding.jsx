@@ -57,42 +57,253 @@ const REVENUE_RANGES = [
 // Employer Terms Content
 const EMPLOYER_TERMS = `EMPLOYER PARTNERSHIP AGREEMENT
 
-Last Updated: February 2026
+Last Updated: October 2026
 
-1. INTRODUCTION
-This Employer Partnership Agreement governs the relationship between your company ("Employer") and EaziWage Ltd ("EaziWage") for the provision of earned wage access services to your employees.
+1. INTRODUCTION & PURPOSE
+This Employer Partnership Agreement ("Agreement") governs the provision of earned wage access ("EWA") services by EaziWage Ltd ("EaziWage") to eligible employees of the Employer ("Employer").
+This Agreement establishes:
+• Payroll data responsibilities
+• Repayment facilitation obligations
+• Funding and liquidity protections
+• Fraud prevention cooperation
+• Suspension and termination rights
+• Risk review and audit powers
+This Agreement is legally binding upon onboarding approval.
 
-2. EMPLOYER RESPONSIBILITIES
-As an Employer Partner, you agree to:
-• Provide accurate payroll data on a regular basis
-• Facilitate automatic deductions from employee salaries for advance repayments
-• Maintain accurate employee records
-• Notify EaziWage of any changes to employee status
-• Not interfere with employees' rights to use the service
+2. SERVICE STRUCTURE
+EaziWage provides employees access to a portion of wages already earned but not yet paid.
+EaziWage:
+• Relies on payroll data supplied by Employer
+• Advances funds at its own risk
+• Recovers funds through payroll deduction or approved recovery mechanisms
+The Employer acknowledges that EaziWage is not a payroll processor, and relies entirely on Employer-supplied payroll data.
 
-3. EAZIWAGE RESPONSIBILITIES
-EaziWage agrees to:
-• Process advance requests within the agreed timeframes
-• Maintain confidentiality of all employer and employee data
-• Provide regular reports on service usage
-• Handle all customer support for employees
-• Comply with all applicable financial regulations
+3. EMPLOYER CORE OBLIGATIONS
+Employer shall:
+3.1 Provide complete, accurate, and timely payroll data, including:
+• Gross salary
+• Net salary
+• Accrued salary
+• Employment status
+• Termination notices
+• Leave or suspension status
+3.2 Immediately notify EaziWage of:
+• Employee resignation or termination or terminate EWA service on Employer Dashboard
+• Disciplinary suspension
+• Salary changes
+• Payroll disputes
+• Financial distress or insolvency risks
+3.3 Facilitate automatic payroll deductions for all approved advances and associated fees.
+3.4 Ensure no interference with repayment priority.
+3.5 Maintain internal payroll controls to prevent manipulation, collusion, or ghost employees.
 
-4. FEES AND PAYMENT
-• EaziWage charges employees a small fee per advance (3.5% - 6.5%)
-• There is NO cost to the employer for basic service
-• Premium features may attract additional fees (discussed separately)
-• All deductions are reconciled monthly
+4. PAYROLL DATA REPRESENTATIONS & WARRANTIES
+Employer represents and warrants that:
+• All payroll data submitted is accurate and complete.
+• No fictitious employees are included.
+• Salary amounts reflect true accrued earnings.
+• Payroll has not been artificially inflated.
+• No payroll manipulation exists for the purpose of increasing employee advance eligibility.
+Material misrepresentation constitutes fraud under this Agreement.
 
-5. DATA PROTECTION
-• We implement bank-grade security for all data
-• Employee financial data is never shared with employers
-• We comply with GDPR and local data protection laws
+5. FUNDING & LIQUIDITY PROTECTIONS
+5.1 Repayment Mechanism
+Employer authorizes EaziWage to recover all advance amounts via:
+• Payroll deduction
+• Direct debit
+• Standing instruction
+• Prefunded wallet structure (if implemented)
+5.2 Funding Failure
+If payroll deductions fail or funds are insufficient:
+• Employer shall immediately remit outstanding balances within 3 business days.
+• EaziWage may suspend all employee access.
+• EaziWage may accelerate recovery.
+5.3 Insolvency
+If Employer enters insolvency, business rescue, liquidation, or administration:
+• All outstanding advance amounts become immediately due.
+• EaziWage may pursue direct recovery.
+• EaziWage may suspend services immediately without notice.
 
-6. TERM AND TERMINATION
-• This agreement is effective upon completion of onboarding
-• Either party may terminate with 30 days written notice
-• Outstanding employee advances must be settled upon termination`;
+6. FRAUD PREVENTION & COOPERATION
+Employer agrees to:
+• Cooperate in fraud investigations
+• Provide payroll documentation upon request
+• Participate in anomaly reviews
+• Assist in verifying employee identity or employment
+EaziWage may implement:
+• Payroll delta analysis
+• Salary inflation detection
+• Cluster anomaly detection
+• Ghost employee audits
+• Payroll file fingerprinting
+Employer shall not obstruct such controls.
+
+7. RISK REVIEW & AUDIT RIGHTS
+EaziWage may conduct periodic risk reviews including:
+• Payroll audits
+• Funding reviews
+• Employment verification sampling
+• Exposure assessment
+The Employer may also request for a Risk Review to better risk exposure.
+Employer shall provide requested documentation within 5 business days.
+Failure to cooperate may result in suspension.
+
+8. SUSPENSION RIGHTS
+EaziWage may immediately suspend employee access if:
+• Payroll anomalies exceed internal thresholds
+• Employer funding buffer is insufficient
+• Payroll data integrity is compromised
+• Employer fails to remit funds
+• Fraud or collusion is suspected
+• Regulatory concerns arise
+• Exposure exceeds agreed limits
+Suspension may occur without prior notice where risk is material.
+During suspension:
+• No new advances will be processed
+• Existing repayment obligations remain enforceable
+
+9. REINSTATEMENT CONDITIONS
+Reinstatement may occur only upon:
+• Verification of payroll accuracy
+• Settlement of outstanding amounts
+• Confirmation of liquidity stability
+• Completion of internal risk review
+Reinstatement remains at EaziWage's sole discretion.
+
+10. FEES & COMMERCIAL TERMS
+10.1 Employee Fees
+Employees are charged a processing fee and transaction fee per advance as disclosed in Employee Terms and Conditions.
+10.2 Employer Fees
+Basic service may be provided at no cost. However, EaziWage reserves the right to:
+• Introduce employer subscription fees
+• Implement platform access fees
+• Charge premium service fees
+• Pass through regulatory or integration costs
+Any bank charges or fees imposed by the Employer's bank to remit funds to EaziWage shall be borne by the Employer.
+10.3 Cost Recovery
+Employer shall reimburse EaziWage for:
+• Failed debit charges
+• Bank reversal fees
+• Legal recovery costs
+• Fraud-related losses attributable to payroll misrepresentation
+
+11. LIMITATION OF LIABILITY
+EaziWage shall not be liable for:
+• Loss arising from inaccurate payroll data
+• Employee disputes unrelated to EaziWage processing
+• Employer insolvency events
+• Indirect or consequential damages
+Total liability shall not exceed fees received from Employer in the preceding 6 months.
+
+12. INDEMNITY
+Employer shall indemnify and hold EaziWage harmless from claims, losses, or damages arising from:
+• Payroll misrepresentation
+• Fraud
+• Failure to remit deductions
+• Regulatory non-compliance
+• Employee claims caused by Employer error
+
+13. TERM & TERMINATION
+13.1 Term
+Effective upon onboarding approval.
+13.2 Termination
+Either party may terminate with 30 days written notice.
+13.3 Immediate Termination
+EaziWage may terminate immediately if:
+• Fraud is detected
+• Employer funding fails
+• Insolvency occurs
+• Regulatory breaches arise
+• Payroll manipulation is confirmed
+13.4 Post-Termination Obligations
+Termination does not extinguish:
+• Outstanding repayment obligations
+• Indemnity rights
+• Audit rights
+• Cost recovery rights
+• Security, Assignment & Receivables Rights
+
+14. DATA PROTECTION
+Employer agrees to:
+• Comply with in-country Data Protection Acts and Laws
+• Lawfully share payroll data
+• Maintain secure data systems
+EaziWage will implement commercially reasonable security measures.
+
+15. REGULATORY COMPLIANCE
+Employer confirms compliance with:
+• Employment Act
+• Payroll deduction laws
+• Tax obligations
+• Anti-money laundering laws
+Employer warrants that payroll deductions are lawful.
+
+16. SECURITY, ASSIGNMENT & RECEIVABLES RIGHTS
+16.1 Ownership of Receivables
+Employer acknowledges and agrees that:
+• All advance amounts disbursed to employees by EaziWage constitute valid and enforceable receivables owed to EaziWage.
+• Such receivables include the principal advance amount, processing fees, transaction fees, and any associated recovery costs.
+• EaziWage retains full legal and beneficial ownership of such receivables at all times until fully repaid.
+Employer further acknowledges that payroll deductions made pursuant to this Agreement are held in trust for EaziWage and shall not form part of Employer working capital.
+
+16.2 Right to Assign & Transfer
+EaziWage may, at its sole discretion and without requiring further consent from Employer:
+• Assign, transfer, novate, pledge, or otherwise dispose of its rights, title, and interest in any receivables arising under this Agreement;
+• Grant security over such receivables to lenders, investors, banks, warehouse providers, securitisation vehicles, or other financing counterparties;
+• Sell or participate receivables on a full or partial basis.
+Employer irrevocably consents to such assignment or transfer.
+
+16.3 Security Interest
+Employer acknowledges that EaziWage may create a security interest over:
+• Employee receivables
+• Payroll deduction rights
+• Associated contractual claims
+Employer agrees to execute any commercially reasonable acknowledgments required by financing counterparties to perfect such security interests.
+
+16.4 Continuing Payroll Deduction Obligations
+In the event of assignment, pledge, or transfer:
+• Employer's obligation to deduct and remit payroll amounts remains unchanged.
+• Employer shall remit deductions directly to the designated account notified by EaziWage or its financing counterparty.
+• Employer shall not withhold, delay, or redirect payroll deductions without written authorization.
+
+16.5 Step-In Rights
+Where receivables have been assigned or pledged, EaziWage or its financing counterparty may:
+• Exercise step-in rights in respect of collection and enforcement.
+• Issue payment instructions directly to Employer.
+• Enforce recovery rights in the name of EaziWage or in its own name where legally permitted.
+Employer agrees to recognize such step-in rights upon written notice.
+
+16.6 No Set-Off
+Employer shall not:
+• Set off amounts owed to EaziWage against unrelated claims;
+• Withhold payroll deductions due to internal disputes;
+• Reduce remittances except where legally required and documented.
+
+16.7 Further Assurances
+Employer agrees to execute any additional documentation reasonably required to:
+• Facilitate securitisation
+• Perfect assignment
+• Enable warehouse financing
+• Support structured lending transactions
+Failure to provide such cooperation may constitute a material breach.
+
+16.8 Survival
+This clause survives termination of this Agreement until all receivables are fully repaid.
+
+17. CONFIDENTIALITY
+Both parties agree to maintain confidentiality of:
+• Commercial terms
+• Payroll data
+• Risk scoring methodologies
+• Technology systems
+
+18. DISPUTE RESOLUTION
+Disputes shall first be resolved through good faith negotiation.
+If unresolved, disputes shall be referred to arbitration in Nairobi under Kenyan law.
+
+19. GOVERNING LAW
+This Agreement is governed by the laws of the Republic of Kenya.
+Jurisdiction lies in Nairobi courts.`;
 
 // Onboarding Steps
 const STEPS = [
