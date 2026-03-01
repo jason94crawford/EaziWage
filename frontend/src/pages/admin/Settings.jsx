@@ -7,7 +7,8 @@ import {
   Globe, Database, Mail, Smartphone, FileText, Scale,
   TrendingUp, Activity, Zap, Ban, UserCheck, CreditCard,
   Plus, Trash2, X, Info, HelpCircle, ArrowUpRight, History,
-  FileCheck, BookOpen, CalendarOff
+  FileCheck, BookOpen, CalendarOff, ClipboardList, Filter,
+  Download, BarChart3, User, ArrowRight
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
