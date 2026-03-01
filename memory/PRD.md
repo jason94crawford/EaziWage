@@ -225,6 +225,30 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - `POST /api/admin/reconciliation/dispute/{id}` - Mark transaction as disputed
 - `POST /api/admin/reconciliation/bulk-reconcile` - Bulk reconcile transactions
 
+### Admin Settings Portal ✅ **NEW (March 2026)**
+- `GET /api/admin/settings/platform` - Get global platform settings
+- `PUT /api/admin/settings/platform` - Update global platform settings
+- `GET /api/admin/settings/risk` - Get risk configuration settings
+- `PUT /api/admin/settings/risk` - Update risk configuration settings
+- `GET /api/admin/settings/notifications` - Get notification configuration
+- `PUT /api/admin/settings/notifications` - Update notification configuration
+- `GET /api/admin/settings/employers` - Get employers for settings management
+- `GET /api/admin/settings/employers/{id}` - Get specific employer settings
+- `PUT /api/admin/settings/employers/{id}` - Update employer-specific settings
+- `GET /api/admin/settings/employees` - Get employees for settings management
+- `GET /api/admin/settings/employees/{id}` - Get specific employee settings
+- `PUT /api/admin/settings/employees/{id}` - Update employee-specific settings
+- `GET /api/admin/settings/blackouts` - Get all blackout periods
+- `POST /api/admin/settings/blackouts` - Create blackout period
+- `PUT /api/admin/settings/blackouts/{id}` - Update blackout period
+- `DELETE /api/admin/settings/blackouts/{id}` - Delete blackout period
+- `GET /api/admin/settings/legal-documents` - Get all legal documents
+- `GET /api/admin/settings/legal-documents/{type}` - Get specific legal document
+- `PUT /api/admin/settings/legal-documents/{type}` - Create/update legal document
+- `GET /api/admin/settings/legal-documents/{type}/history` - Get document version history
+- `GET /api/admin/settings/audit-log` - Get settings change audit log
+- `GET /api/legal-documents/{type}` - Public endpoint for legal documents (onboarding)
+
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
 - **Employee**: demo.employee@eaziwage.com / Employee@123
