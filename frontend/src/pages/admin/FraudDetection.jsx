@@ -1008,6 +1008,60 @@ export default function FraudDetection() {
     },
   ]);
 
+  // Manual fraud rules state
+  const [rules, setRules] = useState([
+    {
+      id: 1,
+      name: 'High Amount Advance',
+      description: 'Flag advances exceeding threshold amount',
+      type: 'amount_threshold',
+      threshold: '>50000 KES',
+      severity: 'high',
+      enabled: true,
+      trigger_count: 12
+    },
+    {
+      id: 2,
+      name: 'Rapid Advance Frequency',
+      description: 'Multiple advance requests in short period',
+      type: 'frequency',
+      threshold: '>3 per week',
+      severity: 'medium',
+      enabled: true,
+      trigger_count: 8
+    },
+    {
+      id: 3,
+      name: 'Salary Inflation Detection',
+      description: 'Salary increase >40% month-over-month',
+      type: 'employer_manipulation',
+      threshold: '>40% MoM',
+      severity: 'high',
+      enabled: true,
+      trigger_count: 3
+    },
+    {
+      id: 4,
+      name: 'EWA Limit Increase Alert',
+      description: 'Employer increased EWA limit beyond 60%',
+      type: 'employer_manipulation',
+      threshold: '>60% limit',
+      severity: 'high',
+      enabled: true,
+      trigger_count: 1
+    },
+    {
+      id: 5,
+      name: 'Cooldown Reduction Alert',
+      description: 'Employer reduced advance cooldown below 3 days',
+      type: 'employer_manipulation',
+      threshold: '<3 days',
+      severity: 'medium',
+      enabled: false,
+      trigger_count: 0
+    },
+  ]);
+
   useEffect(() => {
     // Simulate loading
     setTimeout(() => setLoading(false), 1000);
