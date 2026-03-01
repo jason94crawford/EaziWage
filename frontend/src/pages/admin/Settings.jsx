@@ -2359,6 +2359,9 @@ export default function AdminSettings() {
         {activeTab === 'legal' && (
           <LegalDocumentsTab token={token} />
         )}
+        {activeTab === 'audit' && (
+          <AuditTrailTab token={token} />
+        )}
       </div>
     </AdminPortalLayout>
   );
