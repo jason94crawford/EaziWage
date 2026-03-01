@@ -4062,6 +4062,22 @@ async def update_employee_settings_admin(
         "changed_at": datetime.now(timezone.utc).isoformat()
     })
     
+    # Get user info for description
+    user_info = await db.users.find_one({"id": employee.get("user_id")}, {"_id": 0, "full_name": 1})
+    employee_name = user_info.get("full_name", "Unknown") if user_info else "Unknown"
+    
+    # Also log to unified audit trail
+    await db.audit_trail.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "employee_settings",
+        "employee_id": employee_id,
+        "employer_id": employee.get("employer_id"),
+        "changes": settings_dict,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat(),
+        "description": f"Updated settings for employee: {employee_name}"
+    })
+    
     # Update or insert employee settings
     await db.employee_settings.update_one(
         {"employee_id": employee_id},
