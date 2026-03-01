@@ -7,246 +7,296 @@ import { Footer } from '../../components/layout/Footer';
 const sections = [
   {
     id: 'acceptance',
-    title: 'Acceptance of Terms',
+    title: '1. Acceptance of Terms',
     icon: FileText,
-    content: `Welcome to EaziWage. These Terms of Service ("Terms") govern your access to and use of the EaziWage platform, mobile applications, website, and related services (collectively, the "Services") provided by EaziWage Limited ("EaziWage", "we", "us", or "our").
+    content: `By accessing or using EaziWage's earned wage access services ("Services"), you confirm that you have read, understood, and agree to be legally bound by these Terms and Conditions ("Terms").
 
-By creating an account, accessing, or using our Services, you agree to be bound by these Terms. If you do not agree to these Terms, you may not access or use our Services.
+If you do not agree, you must not use the Services.
 
-These Terms constitute a legally binding agreement between you and EaziWage. Please read them carefully.
-
-**Eligibility**
-To use our Services, you must:
+EaziWage reserves the right to amend these Terms at any time. Continued use constitutes acceptance of updated Terms.`
+  },
+  {
+    id: 'eligibility',
+    title: '2. Eligibility',
+    icon: Users,
+    content: `To use the Services, you must:
 - Be at least 18 years of age
-- Be legally capable of entering into binding contracts
-- Be employed by an employer registered with EaziWage
-- Be a resident of Kenya, Uganda, Tanzania, or Rwanda
-- Not be prohibited from using the Services under applicable law`
+- Be a current employee of an approved EaziWage employer partner
+- Have a valid bank or registered mobile money account
+- Provide accurate, current, and complete information
+- Not be subject to any sanctions, fraud investigations, or regulatory restrictions
+
+EaziWage may verify your identity, employment status, payroll data, and bank/mobile account information at any time.
+
+**Eligibility is not guaranteed and may be revoked at EaziWage's discretion.**`
   },
   {
     id: 'services',
-    title: 'Description of Services',
+    title: '3. Service Description',
     icon: CreditCard,
-    content: `EaziWage provides an Earned Wage Access (EWA) platform that allows eligible employees to access a portion of their earned but unpaid wages before their regular payday.
+    content: `EaziWage provides earned wage access ("EWA") services enabling eligible employees to access a portion of wages already earned but not yet paid.
 
-**What EaziWage Is**
-- A platform to access wages you have already earned through your employment
-- A service that provides instant disbursement to your mobile money or bank account
-- A tool to help manage cash flow between paydays
+**EaziWage:**
+- Calculates earned wages based on payroll data provided by your employer
+- Determines available advance amounts using internal risk models
+- Transfers approved advances to your nominated payout account
 
-**What EaziWage Is Not**
-- EaziWage is NOT a loan product
-- EaziWage does NOT charge interest
-- EaziWage does NOT create debt obligations
-- EaziWage does NOT perform credit checks
-
-**Service Availability**
-- Services are available 24 hours a day, 7 days a week, subject to maintenance periods
-- We do not guarantee uninterrupted or error-free service
-- Features may vary by country and employer
-
-**Advance Limits**
-- You may access up to 60% of your earned wages, subject to employer policies
-- Minimum and maximum advance amounts may apply
-- Limits may be adjusted based on your usage history and risk profile`
+**Important:** EaziWage is not a bank and does not provide traditional credit facilities. Access to advances is discretionary and subject to risk assessment.`
   },
   {
-    id: 'account',
-    title: 'Your Account',
-    icon: Users,
-    content: `**Registration**
-To use our Services, you must create an account by providing accurate, complete, and current information. You agree to update your information promptly if it changes.
+    id: 'limits',
+    title: '4. Advance Limits & Risk Assessment',
+    icon: Scale,
+    content: `Advance limits are determined using automated risk models and may change without notice.
 
-**Account Security**
-You are responsible for:
-- Maintaining the confidentiality of your account credentials
-- All activities that occur under your account
-- Notifying us immediately of any unauthorized access or security breach
-- Using a strong password and enabling two-factor authentication when available
+**EaziWage may:**
+- Reduce advance limits
+- Introduce cooldown periods
+- Restrict withdrawal frequency
+- Adjust risk-based fees
+- Temporarily suspend or permanently restrict access
 
-**Account Verification**
-We may require you to verify your identity and employment status. This may include:
-- Government-issued identification
-- Employment verification from your employer
-- Mobile money or bank account verification
-- Biometric verification
-
-**Account Suspension or Termination**
-We may suspend or terminate your account if you:
-- Violate these Terms
-- Provide false or misleading information
-- Engage in fraudulent or suspicious activity
-- Fail to repay advances through payroll deduction
-- Are no longer employed by a registered employer`
+**Access to advances is not guaranteed** and may vary by employer, employee risk profile, or funding availability.`
   },
   {
     id: 'fees',
-    title: 'Fees and Payment',
+    title: '5. Fees & Pricing',
     icon: CreditCard,
-    content: `**Fee Structure**
-EaziWage charges a fee for each wage advance. Our fee ranges from 3.5% to 6.5% of the advance amount, depending on:
-- Your employer's plan tier (Starter, Business, or Enterprise)
-- Your personal risk profile based on usage history
-- The amount of the advance
+    content: `**5.1 Processing Fee**
+A processing fee applies to each approved advance. The fee is risk-based and may vary depending on internal risk assessment models, employer profile, transaction history, funding structure, and operational costs. Current indicative processing fees range between 3.5% and 6%, but may be adjusted at EaziWage's discretion.
 
-**Fee Disclosure**
-The exact fee for each advance is displayed before you confirm the transaction. By confirming the advance, you agree to pay the displayed fee.
+**5.2 Transaction / Disbursement Fee**
+A separate transaction or disbursement fee may apply to cover payment rail costs (including mobile money, bank transfer, card rails, or other payout channels).
 
-**No Hidden Fees**
-EaziWage does not charge:
-- Late payment fees
-- Interest charges
-- Monthly subscription fees
-- Account maintenance fees
-- Early access fees
+**5.3 Total Cost Transparency**
+The total cost (processing fee + transaction fee, where applicable) will be clearly displayed before you confirm any advance request.
 
-**Repayment**
-- Advance amounts plus fees are automatically deducted from your next paycheck
-- You authorize your employer to deduct the total amount from your wages
-- If your wages are insufficient to cover the full deduction, the remaining balance may be deducted from subsequent paychecks
+**5.4 No Interest Representation**
+EaziWage does not charge interest. Fees are fixed transaction-based service fees and do not accrue over time.
 
-**Payment Processing**
-- Advances are disbursed via Mobile Wallet (MTN Mobile Money, Airtel Money, etc.) or bank transfer
-- Disbursement is typically instant for mobile money (under 3 seconds)
-- Bank transfers may take 1-2 business days
-- We are not responsible for delays caused by third-party payment providers`
+**5.5 Fee Adjustments**
+EaziWage reserves the right to modify fee structures, introduce new fee categories, adjust pricing bands, and apply differentiated pricing by employer or employee risk tier.
+
+**5.6 Failed or Reversed Transactions**
+If a transfer fails due to incorrect payout details provided by you, or is reversed by a bank or mobile money provider:
+- Transaction fees remain payable
+- Additional reprocessing fees may apply
+- EaziWage may deduct associated costs from future advances
+
+**5.8 Refunds**
+Fees are non-refundable once an advance has been successfully disbursed, except where required by applicable law.`
   },
   {
-    id: 'user-conduct',
-    title: 'User Conduct',
-    icon: Scale,
-    content: `You agree not to:
+    id: 'repayment',
+    title: '6. Repayment Authorization',
+    icon: CreditCard,
+    content: `By using the Services, you:
+- Authorize your employer to deduct advance amounts and applicable fees from your salary
+- Authorize EaziWage to receive repayment directly from employer payroll systems
+- Consent to direct debit, payroll integration, or standing instruction recovery mechanisms
 
-**Prohibited Activities**
-- Use the Services for any illegal purpose or in violation of any laws
-- Provide false, inaccurate, or misleading information
-- Impersonate another person or entity
-- Attempt to gain unauthorized access to our systems or other users' accounts
-- Use automated means (bots, scripts) to access the Services without our permission
-- Interfere with or disrupt the Services or servers
-- Circumvent any security measures or access controls
-- Use the Services to harass, abuse, or harm others
-- Engage in any activity that could damage, disable, or impair the Services
-
-**Fraud Prevention**
-Any attempt to defraud EaziWage, employers, or other users will result in:
-- Immediate account termination
-- Reporting to law enforcement authorities
-- Civil action to recover damages
-- Notification to your employer
-
-**Compliance with Employer Policies**
-Your use of EaziWage may be subject to additional policies set by your employer. You agree to comply with any such policies communicated to you.`
+**If employment terminates before repayment:**
+- You remain personally liable for outstanding balances
+- EaziWage may pursue recovery directly
+- EaziWage may report default where legally permitted`
   },
   {
-    id: 'intellectual-property',
-    title: 'Intellectual Property',
+    id: 'fraud',
+    title: '7. Fraud Prevention & Verification',
     icon: Shield,
-    content: `**EaziWage Property**
-All content, features, and functionality of the Services, including but not limited to:
-- The EaziWage name, logo, and branding
-- Software, code, and technology
-- Text, graphics, images, and design
-- User interface and user experience
+    content: `EaziWage may implement fraud detection and verification measures including:
+- Device fingerprinting
+- SIM and mobile account verification
+- Payroll anomaly detection
+- Identity revalidation
+- Transaction monitoring
+- Behavioral analytics
+- Employment status confirmation
+- Employer funding verification
 
-are owned by EaziWage or our licensors and are protected by international copyright, trademark, patent, and other intellectual property laws.
-
-**License to Use**
-We grant you a limited, non-exclusive, non-transferable, revocable license to access and use the Services for your personal, non-commercial use, subject to these Terms.
-
-**Restrictions**
-You may not:
-- Copy, modify, or distribute any content from the Services
-- Reverse engineer, decompile, or disassemble any software
-- Remove any copyright or proprietary notices
-- Use our trademarks without prior written permission
-- Create derivative works based on the Services
-
-**User Content**
-Any content you submit to the Services (such as support requests or feedback) may be used by EaziWage for any purpose. You represent that you have the right to submit such content.`
+You agree to cooperate with verification requests.
+**Failure to cooperate may result in suspension.**`
   },
   {
-    id: 'disclaimers',
-    title: 'Disclaimers and Limitations',
+    id: 'suspension',
+    title: '8. Suspension & Restriction Rights',
     icon: AlertTriangle,
-    content: `**Disclaimer of Warranties**
-THE SERVICES ARE PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED. TO THE FULLEST EXTENT PERMITTED BY LAW, EAZIWAGE DISCLAIMS ALL WARRANTIES, INCLUDING:
-- MERCHANTABILITY
-- FITNESS FOR A PARTICULAR PURPOSE
-- NON-INFRINGEMENT
-- ACCURACY OR COMPLETENESS OF INFORMATION
-- UNINTERRUPTED OR ERROR-FREE SERVICE
+    content: `EaziWage may, at its sole discretion, suspend, freeze, limit, or terminate access to Services immediately where:
+- Fraud or suspected fraud is detected
+- Payroll anomalies arise
+- Employer funding failure occurs
+- Risk exposure exceeds internal thresholds
+- You breach these Terms
+- Identity cannot be verified
+- Regulatory obligations require suspension
+- System misuse is detected
+- Collusion with employer personnel is suspected
 
-**Limitation of Liability**
-TO THE MAXIMUM EXTENT PERMITTED BY LAW, EAZIWAGE SHALL NOT BE LIABLE FOR:
-- ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES
-- LOSS OF PROFITS, DATA, OR BUSINESS OPPORTUNITIES
-- DAMAGES ARISING FROM YOUR USE OR INABILITY TO USE THE SERVICES
-- DAMAGES CAUSED BY THIRD-PARTY SERVICES OR PAYMENT PROVIDERS
+**Suspension may occur without prior notice.**
 
-Our total liability for any claims arising under these Terms shall not exceed the total fees you paid to EaziWage in the twelve (12) months preceding the claim.
-
-**Third-Party Services**
-The Services may integrate with third-party services (mobile money providers, banks, etc.). We are not responsible for the availability, accuracy, or reliability of such services.`
+During suspension:
+- No new advances will be issued
+- Existing repayment obligations remain enforceable
+- Access to account features may be restricted`
   },
   {
-    id: 'indemnification',
-    title: 'Indemnification',
+    id: 'reinstatement',
+    title: '9. Reinstatement',
     icon: Shield,
-    content: `You agree to indemnify, defend, and hold harmless EaziWage, its affiliates, officers, directors, employees, agents, and licensors from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorneys' fees) arising out of or related to:
+    content: `Suspended accounts may be reinstated at EaziWage's discretion following:
+- Verification of employment
+- Identity revalidation
+- Confirmation of payroll accuracy
+- Employer funding confirmation
+- Completion of internal review
 
-- Your use of the Services
-- Your violation of these Terms
-- Your violation of any rights of another party
-- Your violation of any applicable law or regulation
-- Any content you submit through the Services
-- Any false or misleading information you provide
-
-This indemnification obligation will survive termination of your account and these Terms.`
+**Reinstatement is not guaranteed.**`
   },
   {
-    id: 'dispute-resolution',
-    title: 'Dispute Resolution',
+    id: 'employer-default',
+    title: '10. Employer Default & Liquidity Events',
+    icon: AlertTriangle,
+    content: `If your employer:
+- Fails to remit payroll deductions
+- Enters insolvency proceedings
+- Delays funding
+- Breaches funding agreements
+
+EaziWage may:
+- Suspend all employee access
+- Freeze advances
+- Accelerate recovery
+- Initiate direct recovery from employees
+
+**Employees acknowledge that employer insolvency may impact service availability.**`
+  },
+  {
+    id: 'user-obligations',
+    title: '11. User Obligations',
+    icon: Users,
+    content: `You agree to:
+- Maintain confidentiality of login credentials
+- Not share access with third parties
+- Not manipulate payroll data
+- Not attempt system exploitation
+- Immediately notify EaziWage of unauthorized activity
+- Maintain accurate bank/mobile details
+
+**You remain responsible for all activity under your account.**`
+  },
+  {
+    id: 'prohibited',
+    title: '12. Prohibited Conduct',
+    icon: AlertTriangle,
+    content: `You may not:
+- Provide false payroll or employment information
+- Attempt to override system controls
+- Use multiple accounts fraudulently
+- Engage in collusion with employer administrators
+- Misrepresent earned wage amounts
+
+**Confirmed fraud may result in:**
+- Permanent termination
+- Civil recovery
+- Criminal reporting where applicable`
+  },
+  {
+    id: 'data',
+    title: '13. Data Protection & Consent',
+    icon: Shield,
+    content: `You consent to:
+- Collection and processing of personal data
+- Payroll data access
+- Employer verification checks
+- Risk scoring and profiling
+- Sharing data with regulators where required
+
+All data processing complies with the applicable local Data Protection laws.`
+  },
+  {
+    id: 'availability',
+    title: '14. System Availability',
+    icon: Scale,
+    content: `EaziWage does not guarantee uninterrupted service.
+
+Services may be unavailable due to:
+- Maintenance
+- Security updates
+- Regulatory directives
+- Funding limitations
+- Force majeure events`
+  },
+  {
+    id: 'liability',
+    title: '15. Limitation of Liability',
+    icon: AlertTriangle,
+    content: `To the maximum extent permitted by law, EaziWage shall not be liable for:
+- Indirect or consequential loss
+- Loss arising from employer insolvency
+- Delays in payroll remittance
+- Data inaccuracies provided by employer
+- Temporary suspension actions
+- System downtime
+
+**Total liability shall not exceed the total fees paid by the user in the preceding 3 months.**`
+  },
+  {
+    id: 'indemnity',
+    title: '16. Indemnity',
+    icon: Shield,
+    content: `You agree to indemnify and hold EaziWage harmless from claims arising from:
+- Misrepresentation
+- Fraud
+- Breach of these Terms
+- Unauthorized account use`
+  },
+  {
+    id: 'termination',
+    title: '17. Termination',
     icon: Gavel,
-    content: `**Governing Law**
-These Terms shall be governed by and construed in accordance with the laws of the Republic of Kenya, without regard to its conflict of law provisions.
+    content: `EaziWage may terminate your access at any time.
 
-**Informal Resolution**
-Before filing any formal dispute, you agree to first contact us at legal@eaziwage.com to attempt to resolve the dispute informally. Most disputes can be resolved through good-faith discussion.
-
-**Arbitration**
-Any dispute that cannot be resolved informally shall be submitted to binding arbitration in Nairobi, Kenya, in accordance with the rules of the Nairobi Centre for International Arbitration (NCIA). The arbitrator's decision shall be final and binding.
-
-**Class Action Waiver**
-You agree to resolve disputes with EaziWage on an individual basis only. You waive any right to bring or participate in a class action, collective action, or representative action.
-
-**Time Limit**
-Any claim arising from these Terms must be filed within one (1) year after the cause of action arises, or such claim shall be permanently barred.`
+**Termination does not extinguish outstanding repayment obligations.**`
   },
   {
-    id: 'changes',
-    title: 'Changes to Terms',
-    icon: Calendar,
-    content: `We may modify these Terms at any time. When we make changes, we will:
+    id: 'regulatory',
+    title: '18. Regulatory Compliance',
+    icon: Scale,
+    content: `EaziWage operates in accordance with applicable on-country laws including:
+- Digital Credit regulations
+- Employment Act
+- Data Protection Act
+- Consumer protection legislation`
+  },
+  {
+    id: 'dispute',
+    title: '19. Dispute Resolution',
+    icon: Gavel,
+    content: `Disputes shall first be resolved through internal review.
 
-- Post the updated Terms on our website and mobile applications
-- Update the "Last Updated" date at the top of these Terms
-- Notify you via email or in-app notification of material changes
+If unresolved, disputes shall be submitted to arbitration in Nairobi under Kenyan law.`
+  },
+  {
+    id: 'governing',
+    title: '20. Governing Law',
+    icon: Gavel,
+    content: `These Terms are governed by the laws of the Republic of Kenya.
 
-**Your Acceptance**
-Your continued use of the Services after any changes constitutes your acceptance of the new Terms. If you do not agree to the modified Terms, you must stop using the Services and close your account.
-
-**No Waiver**
-Our failure to enforce any provision of these Terms shall not constitute a waiver of that provision or any other provision.
-
-**Severability**
-If any provision of these Terms is found to be unenforceable, the remaining provisions shall continue in full force and effect.`
+Jurisdiction shall lie in the courts of Nairobi.`
   },
   {
     id: 'contact',
-    title: 'Contact Information',
+    title: '21. Contact',
     icon: Mail,
-    content: `If you have any questions about these Terms, please contact us:
+    content: `For questions about these Terms, please contact us:
+
+**Email:** support@eaziwage.com
+
+**Hours:** Monday - Friday, 8:00 AM - 6:00 PM EAT
+
+**Response Time:** We aim to respond to all inquiries within 24-48 business hours.`
+  },
+];
 
 **Legal Department**
 Email: legal@eaziwage.com
