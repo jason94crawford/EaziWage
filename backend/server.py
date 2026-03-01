@@ -3590,6 +3590,652 @@ async def admin_bulk_employer_action(
         "modified_count": result.modified_count
     }
 
+# ======================== ADMIN SETTINGS PORTAL ENDPOINTS ========================
+
+# Platform Settings Model
+class PlatformSettingsModel(BaseModel):
+    # EWA Limits
+    default_advance_percent: float = 60
+    min_advance_amount: float = 500
+    max_advance_amount: float = 100000
+    daily_advance_limit: int = 3
+    weekly_advance_limit: int = 5
+    monthly_advance_limit: int = 15
+    # Fee Structure
+    min_processing_fee: float = 3.5
+    max_processing_fee: float = 6.0
+    mobile_fee: float = 50
+    bank_fee: float = 100
+    # Cooldown & Frequency
+    default_cooldown_days: int = 3
+    new_employee_wait_days: int = 30
+    # Features
+    instant_mobile_enabled: bool = True
+    bank_transfers_enabled: bool = True
+    auto_approval_enabled: bool = True
+    weekend_advances_enabled: bool = False
+    # Countries
+    enabled_countries: List[str] = ["KE", "UG", "TZ", "RW"]
+
+class RiskSettingsModel(BaseModel):
+    # Employer Risk Bands
+    employer_low_threshold: int = 80
+    employer_medium_threshold: int = 60
+    # Employee Risk Bands
+    employee_low_threshold: int = 80
+    employee_medium_threshold: int = 60
+    # Auto Actions
+    auto_suspend_threshold: int = 40
+    reduce_limits_threshold: int = 60
+    auto_suspend_on_fraud: bool = True
+    auto_reduce_on_warning: bool = True
+    notify_on_high_risk: bool = True
+    # Verification Requirements
+    require_id_verification: bool = True
+    require_face_id: bool = True
+    require_address_proof: bool = True
+    require_employment_contract: bool = True
+    reverification_frequency: str = "biannually"  # monthly, quarterly, biannually, annually, never
+
+class NotificationSettingsModel(BaseModel):
+    # Email
+    email_new_employer: bool = True
+    email_large_advance: bool = True
+    email_fraud_alert: bool = True
+    email_daily_summary: bool = True
+    email_weekly_report: bool = True
+    # SMS
+    sms_fraud_alert: bool = True
+    sms_system_alert: bool = True
+    sms_large_transaction: bool = False
+    # Thresholds
+    large_advance_threshold: float = 50000
+    daily_volume_threshold: float = 1000000
+    fraud_alert_emails: str = "admin@eaziwage.com"
+    admin_sms_numbers: str = "+254700000000"
+
+class EmployerSettingsModel(BaseModel):
+    advance_limit_percent: float = 60
+    cooldown_days: int = 3
+    processing_fee: float = 4.5
+    max_monthly_advances: int = 10
+    funding_model: str = "prefunded"  # prefunded, debit_order, invoice
+    risk_tier: str = "low"  # low, medium, high
+    funding_buffer_percent: int = 20
+    credit_limit: float = 5000000
+    # Employee Limits (imposed by employer)
+    employee_advance_limit_min: float = 10
+    employee_advance_limit_max: float = 60
+    employee_cooldown_min: int = 1
+    employee_cooldown_max: int = 14
+    # Features
+    ewa_enabled: bool = True
+    instant_enabled: bool = True
+    auto_approve: bool = True
+    weekend_access: bool = False
+
+class EmployeeSettingsModel(BaseModel):
+    use_custom_settings: bool = False
+    advance_limit_percent: Optional[float] = None
+    cooldown_days: Optional[int] = None
+    max_monthly_advances: Optional[int] = None
+    fee_rate: Optional[float] = None
+    # Access Control
+    ewa_enabled: bool = True
+    vip_status: bool = False
+    manual_approval: bool = False
+    on_watchlist: bool = False
+    admin_notes: Optional[str] = None
+
+class BlackoutPeriodModel(BaseModel):
+    name: str
+    start_date: str
+    end_date: str
+    applies_to: str = "all"  # all, employer_id, country
+    employer_id: Optional[str] = None
+    country: Optional[str] = None
+    reason: Optional[str] = None
+    is_active: bool = True
+
+class LegalDocumentModel(BaseModel):
+    document_type: str  # employee_terms, employer_partnership, privacy_policy
+    title: str
+    content: str
+    version: str
+    effective_date: str
+    is_active: bool = True
+
+# Get Platform Settings
+@api_router.get("/admin/settings/platform")
+async def get_platform_settings(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get global platform settings"""
+    settings = await db.platform_settings.find_one({"type": "global"}, {"_id": 0})
+    if not settings:
+        # Return defaults
+        settings = PlatformSettingsModel().model_dump()
+        settings["type"] = "global"
+        settings["id"] = str(uuid.uuid4())
+        settings["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.platform_settings.insert_one(settings)
+    return settings
+
+# Update Platform Settings
+@api_router.put("/admin/settings/platform")
+async def update_platform_settings(
+    data: PlatformSettingsModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update global platform settings"""
+    settings_dict = data.model_dump()
+    settings_dict["type"] = "global"
+    settings_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    settings_dict["updated_by"] = user["id"]
+    
+    # Log the change
+    await db.settings_audit_log.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "platform_settings",
+        "changes": settings_dict,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    await db.platform_settings.update_one(
+        {"type": "global"},
+        {"$set": settings_dict},
+        upsert=True
+    )
+    return {"message": "Platform settings updated successfully"}
+
+# Get Risk Settings
+@api_router.get("/admin/settings/risk")
+async def get_risk_settings(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get risk configuration settings"""
+    settings = await db.platform_settings.find_one({"type": "risk"}, {"_id": 0})
+    if not settings:
+        settings = RiskSettingsModel().model_dump()
+        settings["type"] = "risk"
+        settings["id"] = str(uuid.uuid4())
+        settings["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.platform_settings.insert_one(settings)
+    return settings
+
+# Update Risk Settings
+@api_router.put("/admin/settings/risk")
+async def update_risk_settings(
+    data: RiskSettingsModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update risk configuration settings"""
+    settings_dict = data.model_dump()
+    settings_dict["type"] = "risk"
+    settings_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    settings_dict["updated_by"] = user["id"]
+    
+    await db.settings_audit_log.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "risk_settings",
+        "changes": settings_dict,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    await db.platform_settings.update_one(
+        {"type": "risk"},
+        {"$set": settings_dict},
+        upsert=True
+    )
+    return {"message": "Risk settings updated successfully"}
+
+# Get Notification Settings
+@api_router.get("/admin/settings/notifications")
+async def get_notification_settings(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get notification configuration"""
+    settings = await db.platform_settings.find_one({"type": "notifications"}, {"_id": 0})
+    if not settings:
+        settings = NotificationSettingsModel().model_dump()
+        settings["type"] = "notifications"
+        settings["id"] = str(uuid.uuid4())
+        settings["created_at"] = datetime.now(timezone.utc).isoformat()
+        await db.platform_settings.insert_one(settings)
+    return settings
+
+# Update Notification Settings
+@api_router.put("/admin/settings/notifications")
+async def update_notification_settings(
+    data: NotificationSettingsModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update notification configuration"""
+    settings_dict = data.model_dump()
+    settings_dict["type"] = "notifications"
+    settings_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    settings_dict["updated_by"] = user["id"]
+    
+    await db.platform_settings.update_one(
+        {"type": "notifications"},
+        {"$set": settings_dict},
+        upsert=True
+    )
+    return {"message": "Notification settings updated successfully"}
+
+# Get all employers for settings management
+@api_router.get("/admin/settings/employers")
+async def get_employers_for_settings(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get list of employers with their settings"""
+    employers = await db.employers.find({}, {"_id": 0}).to_list(1000)
+    
+    # Get employee counts
+    for employer in employers:
+        employee_count = await db.employees.count_documents({"employer_id": employer["id"]})
+        employer["employee_count"] = employee_count
+        
+        # Get employer-specific settings if they exist
+        settings = await db.employer_settings.find_one({"employer_id": employer["id"]}, {"_id": 0})
+        employer["custom_settings"] = settings
+    
+    return employers
+
+# Get specific employer settings
+@api_router.get("/admin/settings/employers/{employer_id}")
+async def get_employer_settings(
+    employer_id: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get settings for a specific employer"""
+    employer = await db.employers.find_one({"id": employer_id}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    # Get employer-specific settings
+    settings = await db.employer_settings.find_one({"employer_id": employer_id}, {"_id": 0})
+    if not settings:
+        # Return defaults
+        settings = EmployerSettingsModel().model_dump()
+        settings["employer_id"] = employer_id
+    
+    return {
+        "employer": employer,
+        "settings": settings
+    }
+
+# Update employer settings
+@api_router.put("/admin/settings/employers/{employer_id}")
+async def update_employer_settings(
+    employer_id: str,
+    data: EmployerSettingsModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update settings for a specific employer"""
+    employer = await db.employers.find_one({"id": employer_id}, {"_id": 0})
+    if not employer:
+        raise HTTPException(status_code=404, detail="Employer not found")
+    
+    settings_dict = data.model_dump()
+    settings_dict["employer_id"] = employer_id
+    settings_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    settings_dict["updated_by"] = user["id"]
+    
+    # Log the change
+    await db.settings_audit_log.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "employer_settings",
+        "employer_id": employer_id,
+        "employer_name": employer.get("company_name"),
+        "changes": settings_dict,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Update or insert employer settings
+    await db.employer_settings.update_one(
+        {"employer_id": employer_id},
+        {"$set": settings_dict},
+        upsert=True
+    )
+    
+    # Also update the employer document with key settings
+    await db.employers.update_one(
+        {"id": employer_id},
+        {"$set": {
+            "ewa_limit_percentage": data.advance_limit_percent,
+            "advance_cooldown_days": data.cooldown_days,
+            "updated_at": datetime.now(timezone.utc).isoformat()
+        }}
+    )
+    
+    return {"message": "Employer settings updated successfully"}
+
+# Get employees for settings management
+@api_router.get("/admin/settings/employees")
+async def get_employees_for_settings(
+    employer_id: Optional[str] = None,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get list of employees with their settings"""
+    query = {}
+    if employer_id:
+        query["employer_id"] = employer_id
+    
+    employees = await db.employees.find(query, {"_id": 0}).to_list(1000)
+    
+    # Get employer names and risk levels
+    employer_ids = list(set(e.get("employer_id") for e in employees if e.get("employer_id")))
+    employers = await db.employers.find({"id": {"$in": employer_ids}}, {"_id": 0}).to_list(1000)
+    employer_map = {e["id"]: e for e in employers}
+    
+    for employee in employees:
+        emp_id = employee.get("employer_id")
+        if emp_id and emp_id in employer_map:
+            employee["employer_name"] = employer_map[emp_id].get("company_name", "Unknown")
+        
+        # Get user info
+        user_info = await db.users.find_one({"id": employee.get("user_id")}, {"_id": 0})
+        if user_info:
+            employee["full_name"] = user_info.get("full_name", "Unknown")
+            employee["email"] = user_info.get("email", "")
+        
+        # Determine risk level from score
+        score = employee.get("risk_score", 3.0)
+        if score and score >= 4:
+            employee["risk_level"] = "low"
+        elif score and score >= 3:
+            employee["risk_level"] = "medium"
+        else:
+            employee["risk_level"] = "high"
+        
+        # Get employee-specific settings
+        settings = await db.employee_settings.find_one({"employee_id": employee["id"]}, {"_id": 0})
+        employee["custom_settings"] = settings
+    
+    return employees
+
+# Get specific employee settings
+@api_router.get("/admin/settings/employees/{employee_id}")
+async def get_employee_settings_admin(
+    employee_id: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get settings for a specific employee"""
+    employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    # Get employee-specific settings
+    settings = await db.employee_settings.find_one({"employee_id": employee_id}, {"_id": 0})
+    if not settings:
+        settings = EmployeeSettingsModel().model_dump()
+        settings["employee_id"] = employee_id
+    
+    # Get employer settings (for constraints)
+    employer_settings = None
+    if employee.get("employer_id"):
+        employer_settings = await db.employer_settings.find_one(
+            {"employer_id": employee["employer_id"]}, {"_id": 0}
+        )
+    
+    # Get user info
+    user_info = await db.users.find_one({"id": employee.get("user_id")}, {"_id": 0})
+    if user_info:
+        employee["full_name"] = user_info.get("full_name", "Unknown")
+        employee["email"] = user_info.get("email", "")
+    
+    # Get advance history stats
+    advances = await db.advances.find(
+        {"employee_id": employee_id},
+        {"_id": 0, "status": 1, "amount": 1}
+    ).to_list(100)
+    
+    total_advances = len([a for a in advances if a.get("status") in ["approved", "disbursed"]])
+    repaid_advances = len([a for a in advances if a.get("status") == "repaid"])
+    repayment_rate = (repaid_advances / total_advances * 100) if total_advances > 0 else 100
+    
+    return {
+        "employee": employee,
+        "settings": settings,
+        "employer_settings": employer_settings,
+        "stats": {
+            "total_advances": total_advances,
+            "repayment_rate": round(repayment_rate, 1)
+        }
+    }
+
+# Update employee settings
+@api_router.put("/admin/settings/employees/{employee_id}")
+async def update_employee_settings_admin(
+    employee_id: str,
+    data: EmployeeSettingsModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update settings for a specific employee"""
+    employee = await db.employees.find_one({"id": employee_id}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
+    
+    settings_dict = data.model_dump()
+    settings_dict["employee_id"] = employee_id
+    settings_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    settings_dict["updated_by"] = user["id"]
+    
+    # Log the change
+    await db.settings_audit_log.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "employee_settings",
+        "employee_id": employee_id,
+        "changes": settings_dict,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    # Update or insert employee settings
+    await db.employee_settings.update_one(
+        {"employee_id": employee_id},
+        {"$set": settings_dict},
+        upsert=True
+    )
+    
+    # Update employee document with key settings
+    employee_update = {
+        "updated_at": datetime.now(timezone.utc).isoformat()
+    }
+    if data.use_custom_settings and data.advance_limit_percent:
+        employee_update["advance_limit"] = employee.get("monthly_salary", 0) * (data.advance_limit_percent / 100)
+    
+    if data.on_watchlist:
+        employee_update["on_watchlist"] = True
+    
+    await db.employees.update_one({"id": employee_id}, {"$set": employee_update})
+    
+    return {"message": "Employee settings updated successfully"}
+
+# ======================== BLACKOUT PERIODS ========================
+
+# Get all blackout periods
+@api_router.get("/admin/settings/blackouts")
+async def get_blackout_periods(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all blackout periods"""
+    blackouts = await db.blackout_periods.find({}, {"_id": 0}).to_list(100)
+    return blackouts
+
+# Create blackout period
+@api_router.post("/admin/settings/blackouts")
+async def create_blackout_period(
+    data: BlackoutPeriodModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Create a new blackout period"""
+    blackout_id = str(uuid.uuid4())
+    blackout_dict = data.model_dump()
+    blackout_dict["id"] = blackout_id
+    blackout_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    blackout_dict["created_by"] = user["id"]
+    
+    await db.blackout_periods.insert_one(blackout_dict)
+    return {"message": "Blackout period created", "id": blackout_id}
+
+# Update blackout period
+@api_router.put("/admin/settings/blackouts/{blackout_id}")
+async def update_blackout_period(
+    blackout_id: str,
+    data: BlackoutPeriodModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Update a blackout period"""
+    blackout_dict = data.model_dump()
+    blackout_dict["updated_at"] = datetime.now(timezone.utc).isoformat()
+    blackout_dict["updated_by"] = user["id"]
+    
+    result = await db.blackout_periods.update_one(
+        {"id": blackout_id},
+        {"$set": blackout_dict}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Blackout period not found")
+    
+    return {"message": "Blackout period updated"}
+
+# Delete blackout period
+@api_router.delete("/admin/settings/blackouts/{blackout_id}")
+async def delete_blackout_period(
+    blackout_id: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Delete a blackout period"""
+    result = await db.blackout_periods.delete_one({"id": blackout_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Blackout period not found")
+    return {"message": "Blackout period deleted"}
+
+# ======================== LEGAL DOCUMENTS ========================
+
+# Get all legal documents
+@api_router.get("/admin/settings/legal-documents")
+async def get_legal_documents(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get all legal documents"""
+    documents = await db.legal_documents.find({}, {"_id": 0}).to_list(100)
+    return documents
+
+# Get specific legal document
+@api_router.get("/admin/settings/legal-documents/{doc_type}")
+async def get_legal_document(
+    doc_type: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get a specific legal document by type"""
+    document = await db.legal_documents.find_one(
+        {"document_type": doc_type, "is_active": True},
+        {"_id": 0}
+    )
+    if not document:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return document
+
+# Create/Update legal document
+@api_router.put("/admin/settings/legal-documents/{doc_type}")
+async def update_legal_document(
+    doc_type: str,
+    data: LegalDocumentModel,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Create or update a legal document"""
+    # Deactivate previous version
+    await db.legal_documents.update_many(
+        {"document_type": doc_type, "is_active": True},
+        {"$set": {"is_active": False, "deactivated_at": datetime.now(timezone.utc).isoformat()}}
+    )
+    
+    # Create new version
+    doc_dict = data.model_dump()
+    doc_dict["id"] = str(uuid.uuid4())
+    doc_dict["document_type"] = doc_type
+    doc_dict["created_at"] = datetime.now(timezone.utc).isoformat()
+    doc_dict["created_by"] = user["id"]
+    
+    await db.legal_documents.insert_one(doc_dict)
+    
+    # Log the change
+    await db.settings_audit_log.insert_one({
+        "id": str(uuid.uuid4()),
+        "type": "legal_document",
+        "document_type": doc_type,
+        "version": data.version,
+        "changed_by": user["id"],
+        "changed_at": datetime.now(timezone.utc).isoformat()
+    })
+    
+    return {"message": "Legal document updated successfully"}
+
+# Get legal document history
+@api_router.get("/admin/settings/legal-documents/{doc_type}/history")
+async def get_legal_document_history(
+    doc_type: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get version history of a legal document"""
+    documents = await db.legal_documents.find(
+        {"document_type": doc_type},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    return documents
+
+# Public endpoint for legal documents (for employee/employer onboarding)
+@api_router.get("/legal-documents/{doc_type}")
+async def get_public_legal_document(doc_type: str):
+    """Get active legal document for public viewing"""
+    document = await db.legal_documents.find_one(
+        {"document_type": doc_type, "is_active": True},
+        {"_id": 0}
+    )
+    if not document:
+        # Return default content
+        defaults = {
+            "employee_terms": {
+                "title": "Employee Terms & Conditions",
+                "content": "Default employee terms and conditions...",
+                "version": "1.0"
+            },
+            "employer_partnership": {
+                "title": "Employer Partnership Agreement",
+                "content": "Default employer partnership agreement...",
+                "version": "1.0"
+            },
+            "privacy_policy": {
+                "title": "Privacy Policy",
+                "content": "Default privacy policy...",
+                "version": "1.0"
+            }
+        }
+        document = defaults.get(doc_type, {"title": "Document", "content": "", "version": "1.0"})
+        document["document_type"] = doc_type
+    return document
+
+# ======================== SETTINGS AUDIT LOG ========================
+
+@api_router.get("/admin/settings/audit-log")
+async def get_settings_audit_log(
+    limit: int = 50,
+    settings_type: Optional[str] = None,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get settings change audit log"""
+    query = {}
+    if settings_type:
+        query["type"] = settings_type
+    
+    logs = await db.settings_audit_log.find(
+        query,
+        {"_id": 0}
+    ).sort("changed_at", -1).to_list(limit)
+    
+    # Enrich with user names
+    for log in logs:
+        if log.get("changed_by"):
+            user_info = await db.users.find_one({"id": log["changed_by"]}, {"_id": 0})
+            if user_info:
+                log["changed_by_name"] = user_info.get("full_name", "Unknown")
+    
+    return logs
+
 @api_router.get("/")
 async def root():
     return {"message": "EaziWage API v1.0", "status": "running"}
