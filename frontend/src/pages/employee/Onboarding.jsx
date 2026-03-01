@@ -792,7 +792,7 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 1: // Terms
+      case 1: // Terms & Conditions
         return (
           <div className="py-6">
             <div className="text-center mb-8">
@@ -800,7 +800,7 @@ export default function EmployeeOnboarding() {
                 <Shield className="w-8 h-8 text-white" />
               </div>
               <h2 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-2">
-                Terms & Privacy
+                Terms & Conditions
               </h2>
               <p className="text-slate-600 dark:text-slate-300">
                 Please review and accept our terms to continue
@@ -808,12 +808,12 @@ export default function EmployeeOnboarding() {
             </div>
             
             <div className="space-y-4 max-w-md mx-auto">
-              {/* Terms of Service */}
+              {/* Terms & Conditions */}
               <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
                 <div className="p-4">
-                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Terms of Service</h3>
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2">Terms & Conditions</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                    By using EaziWage, you agree to our terms of service which govern your use of our earned wage access platform.
+                    By using EaziWage, you agree to our terms and conditions which govern your use of our earned wage access platform.
                   </p>
                   <button 
                     type="button"
@@ -821,7 +821,7 @@ export default function EmployeeOnboarding() {
                     className="text-primary text-sm font-medium hover:underline inline-flex items-center gap-1"
                     data-testid="toggle-terms-content"
                   >
-                    {showTermsContent ? 'Hide terms' : 'Read full terms'} 
+                    {showTermsContent ? 'Hide terms' : 'Read full terms & conditions'} 
                     <ChevronDown className={`w-4 h-4 transition-transform ${showTermsContent ? 'rotate-180' : ''}`} />
                   </button>
                 </div>
@@ -873,7 +873,7 @@ export default function EmployeeOnboarding() {
                   <Check className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5 text-white opacity-0 peer-checked:opacity-100" />
                 </div>
                 <label htmlFor="agree-terms" className="text-sm text-slate-700 dark:text-slate-300 cursor-pointer select-none">
-                  I have read and agree to the <strong>Terms of Service</strong> and <strong>Privacy Policy</strong>
+                  I have read and agree to the <strong>Terms & Conditions</strong> and <strong>Privacy Policy</strong>
                 </label>
               </div>
             </div>
