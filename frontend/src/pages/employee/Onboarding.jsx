@@ -714,7 +714,169 @@ export default function EmployeeOnboarding() {
           </div>
         );
 
-      case 2: // ID Verification (Scan ID/Passport)
+      case 2: // Face ID Verification
+        return (
+          <div className="py-6">
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/30">
+                <ScanFace className="w-8 h-8 text-white" />
+              </div>
+              <h2 className="font-heading text-2xl font-bold text-slate-900 dark:text-white mb-2">
+                Face ID Verification
+              </h2>
+              <p className="text-slate-600 dark:text-slate-300">
+                Enable secure biometric login for quick access
+              </p>
+            </div>
+            
+            <div className="space-y-6 max-w-md mx-auto">
+              {/* Benefits Card */}
+              <div className="p-4 bg-primary/5 dark:bg-primary/10 rounded-xl border border-primary/20">
+                <h4 className="font-semibold text-slate-900 dark:text-white mb-3">Why use Face ID?</h4>
+                <ul className="space-y-2">
+                  {[
+                    'Quick and secure login without passwords',
+                    'Enhanced security with biometric verification',
+                    'Fraud prevention for your account',
+                    'Seamless access to your dashboard'
+                  ].map((benefit, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                      <Check className="w-4 h-4 text-primary flex-shrink-0" />
+                      {benefit}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Face ID Capture Area */}
+              <div className="p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700">
+                {faceIdCaptured && uploadedFiles.face_id ? (
+                  // Success State
+                  <div className="text-center py-6">
+                    <div className="w-20 h-20 bg-primary/10 dark:bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Check className="w-10 h-10 text-primary" />
+                    </div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-2">Face ID Captured!</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                      Your biometric data has been securely saved.
+                    </p>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={retakeFaceId}
+                      className="rounded-xl"
+                      data-testid="retake-face-id"
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      Retake Photo
+                    </Button>
+                  </div>
+                ) : capturingFaceId ? (
+                  // Camera Active State
+                  <div className="space-y-4">
+                    <div className="relative bg-black rounded-xl overflow-hidden aspect-[4/3]">
+                      <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        muted
+                        className="w-full h-full object-cover"
+                      />
+                      {/* Face Guide Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <div className="w-48 h-60 border-4 border-white/50 rounded-full" />
+                      </div>
+                      <canvas ref={canvasRef} className="hidden" />
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={stopFaceCapture}
+                        className="flex-1 rounded-xl"
+                        data-testid="cancel-face-capture"
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Cancel
+                      </Button>
+                      <Button
+                        type="button"
+                        onClick={captureFaceId}
+                        disabled={uploadingFile === 'face_id'}
+                        className="flex-1 rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white"
+                        data-testid="capture-face-btn"
+                      >
+                        {uploadingFile === 'face_id' ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2" />
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Camera className="w-4 h-4 mr-2" />
+                            Capture
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
+                      Position your face within the oval guide and click Capture
+                    </p>
+                  </div>
+                ) : (
+                  // Initial State
+                  <div className="text-center py-6">
+                    <div className="w-20 h-20 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <ScanFace className="w-10 h-10 text-slate-400 dark:text-slate-500" />
+                    </div>
+                    <h4 className="font-semibold text-slate-900 dark:text-white mb-2">Set up Face ID</h4>
+                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                      Take a photo to enable biometric login
+                    </p>
+                    <Button
+                      type="button"
+                      onClick={startFaceCapture}
+                      className="rounded-xl bg-gradient-to-r from-primary to-emerald-600 text-white"
+                      data-testid="start-face-capture"
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      Start Camera
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              {/* Enable/Disable Toggle */}
+              <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800/30 rounded-xl border border-slate-200 dark:border-slate-700">
+                <div>
+                  <p className="font-medium text-slate-900 dark:text-white">Enable Face ID Login</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">Use face recognition to sign in</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFaceIdEnabled(!faceIdEnabled)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-300 ${
+                    faceIdEnabled ? "bg-primary" : "bg-slate-300 dark:bg-slate-700"
+                  }`}
+                  data-testid="face-id-toggle"
+                >
+                  <span className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-lg transition-transform duration-300 ${
+                    faceIdEnabled ? "translate-x-[22px]" : "translate-x-0.5"
+                  }`} />
+                </button>
+              </div>
+
+              {/* Skip Option */}
+              {!faceIdCaptured && (
+                <p className="text-center text-sm text-slate-500 dark:text-slate-400">
+                  You can also <button type="button" onClick={nextStep} className="text-primary font-medium hover:underline">skip this step</button> and set up Face ID later in Settings.
+                </p>
+              )}
+            </div>
+          </div>
+        );
+
+      case 3: // ID Verification (Scan ID/Passport)
         return (
           <div className="py-6">
             <div className="text-center mb-8">
