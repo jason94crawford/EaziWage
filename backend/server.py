@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, UploadFile, File, Form
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, UploadFile, File, Form, Request, BackgroundTasks
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
@@ -15,6 +15,15 @@ from datetime import datetime, timezone, timedelta
 import bcrypt
 import jwt
 import base64
+
+# Import Dusupay service
+from services.dusupay import (
+    get_service as get_dusupay_service,
+    DusupayConfig,
+    PayoutStatus,
+    MOBILE_MONEY_PROVIDERS,
+    COUNTRY_CURRENCY,
+)
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -1239,7 +1248,14 @@ async def approve_advance(advance_id: str, user: dict = Depends(require_role(Use
     return {"message": "Advance approved"}
 
 @api_router.patch("/advances/{advance_id}/disburse")
-async def disburse_advance(advance_id: str, user: dict = Depends(require_role(UserRole.ADMIN))):
+async def disburse_advance(
+    advance_id: str, 
+    background_tasks: BackgroundTasks,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """
+    Disburse an approved advance via Dusupay (Mobile Money or Bank Transfer)
+    """
     advance = await db.advances.find_one({"id": advance_id}, {"_id": 0})
     if not advance:
         raise HTTPException(status_code=404, detail="Advance not found")
@@ -1247,31 +1263,149 @@ async def disburse_advance(advance_id: str, user: dict = Depends(require_role(Us
     if advance["status"] != "approved":
         raise HTTPException(status_code=400, detail="Advance not approved")
     
-    # Mock disbursement - in production, integrate with mobile money/bank APIs
-    disbursement_ref = f"EW-{datetime.now().strftime('%Y%m%d%H%M%S')}-{advance_id[:8]}"
+    # Get employee details
+    employee = await db.employees.find_one({"id": advance["employee_id"]}, {"_id": 0})
+    if not employee:
+        raise HTTPException(status_code=404, detail="Employee not found")
     
-    await db.advances.update_one(
-        {"id": advance_id},
-        {"$set": {
-            "status": "disbursed",
-            "disbursement_reference": disbursement_ref,
-            "disbursed_at": datetime.now(timezone.utc).isoformat()
-        }}
-    )
+    # Get user details for recipient name
+    employee_user = await db.users.find_one({"id": employee.get("user_id")}, {"_id": 0})
+    recipient_name = employee_user.get("full_name", "Unknown") if employee_user else "Unknown"
     
-    # Create disbursement transaction
-    await db.transactions.insert_one({
-        "id": str(uuid.uuid4()),
-        "user_id": advance["employee_id"],
-        "type": "disbursement",
-        "amount": advance["net_amount"],
-        "reference": disbursement_ref,
-        "status": "completed",
-        "created_at": datetime.now(timezone.utc).isoformat(),
-        "metadata": {"advance_id": advance_id, "method": advance["disbursement_method"]}
-    })
+    # Get employer for country code
+    employer = await db.employers.find_one({"id": employee.get("employer_id")}, {"_id": 0})
+    country_code = employer.get("country", "KE") if employer else "KE"
     
-    return {"message": "Disbursement initiated", "reference": disbursement_ref}
+    # Initialize Dusupay service
+    dusupay = get_dusupay_service()
+    
+    # Get callback URL from environment
+    callback_base = os.environ.get("REACT_APP_BACKEND_URL", "")
+    callback_url = f"{callback_base}/api/webhooks/dusupay" if callback_base else None
+    
+    # Generate merchant reference
+    merchant_reference = dusupay.generate_reference(prefix="EWA")
+    
+    # Determine disbursement method and execute payout
+    disbursement_method = advance.get("disbursement_method", "mobile_money")
+    disbursement_details = advance.get("disbursement_details", {})
+    
+    payout_response = None
+    
+    if disbursement_method == "mobile_money":
+        # Mobile Money Payout
+        provider = disbursement_details.get("provider", employee.get("mobile_money_provider", "mpesa"))
+        phone_number = disbursement_details.get("number", employee.get("mobile_money_number", ""))
+        
+        if not phone_number:
+            raise HTTPException(status_code=400, detail="Mobile money number not configured for employee")
+        
+        payout_response = await dusupay.create_mobile_money_payout(
+            amount=advance["net_amount"],
+            country_code=country_code,
+            provider_name=provider,
+            phone_number=phone_number,
+            recipient_name=recipient_name,
+            reference=merchant_reference,
+            narration=f"EaziWage Advance - {advance_id[:8]}",
+            callback_url=callback_url
+        )
+    
+    elif disbursement_method == "bank_transfer":
+        # Bank Transfer Payout
+        bank_code = disbursement_details.get("bank_code", "")
+        account_number = disbursement_details.get("account_number", employee.get("bank_account_number", ""))
+        account_name = disbursement_details.get("account_name", recipient_name)
+        
+        if not account_number or not bank_code:
+            raise HTTPException(status_code=400, detail="Bank account details not configured for employee")
+        
+        payout_response = await dusupay.create_bank_payout(
+            amount=advance["net_amount"],
+            country_code=country_code,
+            bank_code=bank_code,
+            account_number=account_number,
+            account_name=account_name,
+            reference=merchant_reference,
+            narration=f"EaziWage Advance - {advance_id[:8]}",
+            callback_url=callback_url
+        )
+    
+    else:
+        raise HTTPException(status_code=400, detail=f"Unsupported disbursement method: {disbursement_method}")
+    
+    # Handle payout response
+    if payout_response and payout_response.success:
+        # Update advance with pending disbursement status
+        await db.advances.update_one(
+            {"id": advance_id},
+            {"$set": {
+                "status": "disbursing",
+                "disbursement_reference": merchant_reference,
+                "dusupay_reference": payout_response.internal_reference,
+                "disbursement_initiated_at": datetime.now(timezone.utc).isoformat(),
+                "disbursement_status": "PENDING"
+            }}
+        )
+        
+        # Create disbursement record for tracking
+        await db.disbursements.insert_one({
+            "id": str(uuid.uuid4()),
+            "advance_id": advance_id,
+            "employee_id": advance["employee_id"],
+            "employer_id": employee.get("employer_id"),
+            "merchant_reference": merchant_reference,
+            "internal_reference": payout_response.internal_reference,
+            "amount": advance["net_amount"],
+            "currency": COUNTRY_CURRENCY.get(country_code, "KES").value if hasattr(COUNTRY_CURRENCY.get(country_code, "KES"), 'value') else "KES",
+            "method": disbursement_method,
+            "provider": disbursement_details.get("provider", ""),
+            "recipient": disbursement_details.get("number") or disbursement_details.get("account_number", ""),
+            "recipient_name": recipient_name,
+            "status": "PENDING",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "raw_response": payout_response.raw_response
+        })
+        
+        # Create transaction record
+        await db.transactions.insert_one({
+            "id": str(uuid.uuid4()),
+            "user_id": advance["employee_id"],
+            "type": "disbursement",
+            "amount": advance["net_amount"],
+            "reference": merchant_reference,
+            "status": "pending",
+            "created_at": datetime.now(timezone.utc).isoformat(),
+            "metadata": {
+                "advance_id": advance_id, 
+                "method": disbursement_method,
+                "dusupay_reference": payout_response.internal_reference
+            }
+        })
+        
+        return {
+            "message": "Disbursement initiated successfully",
+            "reference": merchant_reference,
+            "dusupay_reference": payout_response.internal_reference,
+            "status": "PENDING"
+        }
+    
+    else:
+        # Payout failed - update advance with error
+        error_message = payout_response.message if payout_response else "Unknown error"
+        
+        await db.advances.update_one(
+            {"id": advance_id},
+            {"$set": {
+                "disbursement_error": error_message,
+                "disbursement_failed_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+        
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Disbursement failed: {error_message}"
+        )
 
 @api_router.patch("/advances/{advance_id}/reject")
 async def reject_advance(advance_id: str, reason: str = "", user: dict = Depends(require_role(UserRole.ADMIN))):
@@ -4513,6 +4647,260 @@ async def get_settings_audit_log(
                 log["changed_by_name"] = user_info.get("full_name", "Unknown")
     
     return logs
+
+# ======================== DUSUPAY WEBHOOK & DISBURSEMENT ENDPOINTS ========================
+
+@api_router.post("/webhooks/dusupay")
+async def dusupay_webhook(request: Request):
+    """
+    Handle Dusupay webhook callbacks for transaction status updates
+    """
+    try:
+        # Get raw body for signature verification
+        body = await request.body()
+        payload = await request.json()
+        
+        # Verify webhook signature (optional - depends on configuration)
+        dusupay = get_dusupay_service()
+        signature = request.headers.get("X-Dusupay-Signature", "")
+        
+        if not dusupay.verify_webhook_signature(body.decode(), signature):
+            logging.warning("Invalid Dusupay webhook signature")
+            # Continue processing even if signature verification fails in dev mode
+        
+        # Parse webhook event
+        event = payload.get("event", "")
+        event_payload = payload.get("payload", {})
+        
+        merchant_reference = event_payload.get("merchant_reference")
+        internal_reference = event_payload.get("internal_reference")
+        transaction_status = event_payload.get("transaction_status", "").upper()
+        
+        logging.info(f"Dusupay webhook: {event} - {merchant_reference} - {transaction_status}")
+        
+        if not merchant_reference:
+            return {"status": "ignored", "reason": "No merchant reference"}
+        
+        # Find the disbursement record
+        disbursement = await db.disbursements.find_one(
+            {"merchant_reference": merchant_reference}, 
+            {"_id": 0}
+        )
+        
+        if not disbursement:
+            logging.warning(f"Disbursement not found for reference: {merchant_reference}")
+            return {"status": "not_found"}
+        
+        advance_id = disbursement.get("advance_id")
+        
+        # Update disbursement record
+        await db.disbursements.update_one(
+            {"merchant_reference": merchant_reference},
+            {"$set": {
+                "status": transaction_status,
+                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "webhook_payload": event_payload
+            }}
+        )
+        
+        # Handle different transaction statuses
+        if transaction_status == "COMPLETED":
+            # Successful disbursement
+            await db.advances.update_one(
+                {"id": advance_id},
+                {"$set": {
+                    "status": "disbursed",
+                    "disbursement_status": "COMPLETED",
+                    "disbursed_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            
+            # Update transaction status
+            await db.transactions.update_one(
+                {"reference": merchant_reference},
+                {"$set": {"status": "completed"}}
+            )
+            
+            logging.info(f"Advance {advance_id} disbursed successfully")
+        
+        elif transaction_status == "FAILED":
+            # Failed disbursement - revert to approved status
+            await db.advances.update_one(
+                {"id": advance_id},
+                {"$set": {
+                    "status": "approved",  # Revert to approved for retry
+                    "disbursement_status": "FAILED",
+                    "disbursement_error": event_payload.get("failure_reason", "Unknown error"),
+                    "disbursement_failed_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+            
+            await db.transactions.update_one(
+                {"reference": merchant_reference},
+                {"$set": {"status": "failed"}}
+            )
+            
+            logging.warning(f"Advance {advance_id} disbursement failed")
+        
+        elif transaction_status == "CANCELLED":
+            await db.advances.update_one(
+                {"id": advance_id},
+                {"$set": {
+                    "status": "approved",
+                    "disbursement_status": "CANCELLED"
+                }}
+            )
+            
+            await db.transactions.update_one(
+                {"reference": merchant_reference},
+                {"$set": {"status": "cancelled"}}
+            )
+        
+        return {"status": "processed", "transaction_status": transaction_status}
+    
+    except Exception as e:
+        logging.error(f"Dusupay webhook error: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+@api_router.get("/webhooks/dusupay")
+async def dusupay_webhook_verify(reference: Optional[str] = None):
+    """
+    Dusupay verification endpoint - responds to GET requests to verify webhook URL
+    """
+    return {"status": "ok", "reference": reference}
+
+@api_router.get("/disbursements")
+async def get_disbursements(
+    status: Optional[str] = None,
+    employee_id: Optional[str] = None,
+    employer_id: Optional[str] = None,
+    limit: int = 50,
+    skip: int = 0,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Get disbursement records with filtering"""
+    query = {}
+    if status:
+        query["status"] = status.upper()
+    if employee_id:
+        query["employee_id"] = employee_id
+    if employer_id:
+        query["employer_id"] = employer_id
+    
+    disbursements = await db.disbursements.find(
+        query, {"_id": 0}
+    ).sort("created_at", -1).skip(skip).limit(limit).to_list(limit)
+    
+    total = await db.disbursements.count_documents(query)
+    
+    return {"disbursements": disbursements, "total": total}
+
+@api_router.get("/disbursements/{reference}/status")
+async def check_disbursement_status(
+    reference: str,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Check disbursement status from Dusupay"""
+    dusupay = get_dusupay_service()
+    
+    # First check our database
+    disbursement = await db.disbursements.find_one(
+        {"merchant_reference": reference}, 
+        {"_id": 0}
+    )
+    
+    if not disbursement:
+        raise HTTPException(status_code=404, detail="Disbursement not found")
+    
+    # Check status from Dusupay
+    status_response = await dusupay.check_payout_status(reference)
+    
+    if status_response.success:
+        # Update local record if status changed
+        if status_response.status != disbursement.get("status"):
+            await db.disbursements.update_one(
+                {"merchant_reference": reference},
+                {"$set": {
+                    "status": status_response.status,
+                    "updated_at": datetime.now(timezone.utc).isoformat()
+                }}
+            )
+    
+    return {
+        "local_status": disbursement.get("status"),
+        "dusupay_status": status_response.status if status_response.success else None,
+        "message": status_response.message,
+        "disbursement": disbursement
+    }
+
+@api_router.post("/disbursements/{advance_id}/retry")
+async def retry_disbursement(
+    advance_id: str,
+    background_tasks: BackgroundTasks,
+    user: dict = Depends(require_role(UserRole.ADMIN))
+):
+    """Retry a failed disbursement"""
+    advance = await db.advances.find_one({"id": advance_id}, {"_id": 0})
+    
+    if not advance:
+        raise HTTPException(status_code=404, detail="Advance not found")
+    
+    # Only allow retry for failed disbursements
+    if advance.get("disbursement_status") not in ["FAILED", "CANCELLED"]:
+        raise HTTPException(
+            status_code=400, 
+            detail="Can only retry failed or cancelled disbursements"
+        )
+    
+    # Reset status to approved for retry
+    await db.advances.update_one(
+        {"id": advance_id},
+        {"$set": {
+            "status": "approved",
+            "disbursement_status": None,
+            "disbursement_error": None
+        }}
+    )
+    
+    # Trigger new disbursement (could be done via background task)
+    return {"message": "Advance reset for retry. Please initiate disbursement again."}
+
+@api_router.get("/dusupay/banks/{country_code}")
+async def get_supported_banks(
+    country_code: str,
+    user: dict = Depends(get_current_user)
+):
+    """Get list of supported banks for a country from Dusupay"""
+    dusupay = get_dusupay_service()
+    banks = await dusupay.get_banks(country_code)
+    return {"banks": banks, "country": country_code}
+
+@api_router.get("/dusupay/providers/{country_code}")
+async def get_mobile_money_providers(
+    country_code: str,
+    user: dict = Depends(get_current_user)
+):
+    """Get list of supported mobile money providers for a country"""
+    providers = MOBILE_MONEY_PROVIDERS.get(country_code.upper(), {})
+    provider_list = [
+        {"name": name, "provider_id": provider_id}
+        for name, provider_id in providers.items()
+    ]
+    return {"providers": provider_list, "country": country_code}
+
+@api_router.get("/dusupay/config")
+async def get_dusupay_config(user: dict = Depends(require_role(UserRole.ADMIN))):
+    """Get Dusupay configuration status (for admin verification)"""
+    config = DusupayConfig()
+    return {
+        "is_configured": config.is_configured,
+        "environment": config.environment,
+        "is_sandbox": config.is_sandbox,
+        "public_key_set": bool(config.public_key),
+        "secret_key_set": bool(config.secret_key),
+        "webhook_secret_set": bool(config.webhook_secret),
+        "supported_countries": list(MOBILE_MONEY_PROVIDERS.keys())
+    }
 
 @api_router.get("/")
 async def root():

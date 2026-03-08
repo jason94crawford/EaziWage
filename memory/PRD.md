@@ -262,6 +262,17 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - `GET /api/admin/audit-trail/admins` - Get list of admins who have made changes
 - `POST /api/admin/audit-trail/migrate` - Migrate legacy audit logs to unified audit_trail
 
+### Dusupay Disbursement Integration ✅ **NEW (March 2026)**
+- `PATCH /api/advances/{id}/disburse` - Disburse via Dusupay (Mobile Money or Bank)
+- `POST /api/webhooks/dusupay` - Webhook handler for transaction status updates
+- `GET /api/webhooks/dusupay` - Webhook URL verification endpoint
+- `GET /api/disbursements` - Get disbursement records with filtering
+- `GET /api/disbursements/{reference}/status` - Check disbursement status
+- `POST /api/disbursements/{advance_id}/retry` - Retry failed disbursement
+- `GET /api/dusupay/banks/{country}` - Get supported banks by country
+- `GET /api/dusupay/providers/{country}` - Get mobile money providers by country
+- `GET /api/dusupay/config` - Check Dusupay configuration status
+
 ## Test Credentials
 - **Admin**: superadmin@eaziwage.com / Admin@12345
 - **Employee**: demo.employee@eaziwage.com / Employee@123
@@ -336,6 +347,7 @@ EaziWage is a full-stack earned wage access platform serving Kenya, Uganda, Tanz
 - ✅ Comprehensive Fraud Detection Framework in Admin Portal
 - ✅ **Admin Settings Portal** - Complete with 7 tabs (Global, Employer, Employee, Risk, Notifications, Blackouts, Legal)
 - ✅ **Audit Trail Dashboard** - Complete with filtering by admin, employer, date range, settings type, and CSV export
+- ✅ **Dusupay Disbursement Integration** - Mobile Money & Bank Transfer payouts for Kenya, Tanzania, Uganda, Rwanda (Mock mode until API credentials provided)
 
 ### P1 - High Priority
 - Implement full Employer Notifications page (not just bell icon)
